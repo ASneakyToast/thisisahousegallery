@@ -1,0 +1,191 @@
+---
+---
+<section class="header">
+  <a href="/" class="header-logo">
+    <img src="/media/house-logo.jpg"></img>
+    <p>This is a house gallery</p>
+  </a>
+
+  <p class="header-overlay_trigger header-overlay_trigger--hide">menu</p>
+
+  <section class="header-inline_nav">
+      <!-- Will include when we have exhibition content -->
+      <!-- 
+      <a href="/exhibitions/">
+        <p>Exhibitions</p>
+      </a>
+      -->
+      <a href="/schedule/">
+        <p>Schedule</p>
+      </a>
+      <a href="/about/">
+        <p>About</p>
+      </a>
+  </section>
+
+  <div class="overlay_nav">
+    <section class="overlay_nav-cards">
+      <a href="/exhibitions/" class="overlay_nav-card">
+        <img></img>
+        <p>EXHIBITIONS</p>
+      </a>
+      <a href="/schedule/" class="overlay_nav-card">
+        <img></img>
+        <p>SCHEDULE</p>
+      </a>
+      <a href="/about/" class="overlay_nav-card">
+        <img></img>
+        <p>ABOUT</p>
+      </a>
+    </section>
+  </div>
+</section>
+
+<style scoped lang="scss">
+  .header {
+    grid-area: header;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+
+    background-color: var(--color-base-white);
+    padding: var(--space-base-tiny) var(--space-base-small);
+    z-index: 16;
+
+    font-size: var(--font_size-tiny);
+    font-weight: 300;
+
+    &-logo {
+      display: flex;
+      flex-direction: row;
+      gap: var(--space-base-tiny);
+      align-items: center;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+
+      p {
+        color: var(--color-main-primary);
+        margin: auto 0;
+      }
+
+      img {
+        background-color: var(--color-base-white);
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    &-inline_nav {
+      display: flex;
+      flex-direction: row;
+      gap: var(--space-base-medium);
+
+      &--hide {
+        display: none;
+      }
+
+      a {
+        color: var(--color-main-primary);
+        text-decoration: none;
+        :hover {
+          text-decoration: underline;
+        }
+      }
+
+      p {
+        margin: 0;
+        padding: 0;
+      }
+    }
+
+    &-overlay_trigger {
+      color: var(--color-base-white);
+      font-size: var(--font_size-tiny);
+      font-weight: lighter;
+
+      margin: 0;
+      align-self: center;
+
+      &:hover {
+        cursor: var(--cursor-main--hover);
+      }
+
+      &--hide {
+        display: none;
+      }
+      &--close {
+        position: relative;
+        z-index: 24;
+        content: "close";
+      }
+    }
+
+  }
+
+  .overlay_nav {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 16;
+    box-sizing: border-box;
+
+    background-color: var(--color-main-primary);
+    margin: auto;
+    padding: var(--space-base-huge) var(--space-base-large) var(--space-base-large) var(--space-base-large);
+
+    &--open {
+      display: block;
+      position: absolute;
+    }
+
+    &-cards {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1024px;
+      margin: auto;
+    }
+
+    &-card {
+      background-color: var(--color-base-white);
+      color: var(--color-main-primary);
+      font-size: var(--font_size-large);
+      padding: var(--space-base-large);
+      border: 1px solid var(--color-base-white);
+      text-decoration: none;
+
+      & img {
+        height: 200px;
+        width: 200px;
+        background-color: var(--color-main-primary);
+        border: 1px solid var(--color-main-primary);
+      }
+
+      & p {
+        margin: var(--space-base-huge) 0 0 0;
+        font-size: var(--font_size-heading);
+        font-family: var(--font-secondary);
+      }
+    }
+  }
+
+</style>
+
+<script>
+  const overlay_nav = document.querySelector(".overlay_nav");
+  const menu_trigger = document.querySelector(".header-overlay_trigger");
+
+  menu_trigger.addEventListener("click", () => {
+    overlay_nav.classList.toggle("overlay_nav--open");
+    document.body.classList.toggle("no_scroll");
+    menu_trigger.classList.toggle("header-overlay_trigger--close");
+  });
+</script>

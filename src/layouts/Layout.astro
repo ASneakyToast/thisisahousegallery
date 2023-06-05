@@ -1,4 +1,6 @@
 ---
+import Header from "../components/Header.astro";
+
 export interface Props {
 	title: string;
 }
@@ -12,25 +14,116 @@ const { title } = Astro.props;
 		<meta charset="UTF-8" />
 		<meta name="description" content="Astro description">
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/media/house-favicon.jpg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
 	<body>
+    <Header />
 		<slot />
 	</body>
 </html>
+
 <style is:global>
-	:root {
-		--accent: 124, 58, 237;
-		--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background-color: #F6F6F6;
-	}
+  @font-face {
+    font-family: Rubik;
+    src: url("/Rubik-VariableFont_wght.ttf");
+  }
+  @font-face {
+    font-family: Merriweather;
+    src: url("/Merriweather-Regular.ttf");
+  }
+  @font-face {
+    font-family: SourceCodePro;
+    src: url("/fonts/SourceCodePro.ttf");
+  }
+  :root {
+    /* font styles */
+    --font-main: SourceCodePro, Sans-serif;
+    --font-secondary: SourceCodePro, serif;
+
+    --font_size-large: 32px;
+    --font_size-medium: 24px;
+    --font_size-small: 16px;
+    --font_size-tiny: 12px;
+    /* set fonts */
+    --font_size-title: var(--font_size-large);
+    --font_size-heading: var(--font_size-medium);
+    --font_size-detail: var(--font_size-medium);
+    --font_size-paragraph: var(--font_size-small);
+
+    /* color styles */
+    --color-base-brown: brown;
+    --color-base-lightgray: lightgray;
+    --color-base-tan: oldlace;
+    --color-base-white: white;
+    --color-base-black: #222222;
+    /* set color */
+    --color-main-primary: var(--color-base-black);
+    --color-main-subtle: var(--color-base-black);
+    --color-surface-main: var(--color-base-white);
+    --color-surface-warm: var(--color-base-tan);
+
+    /* spacing styles */
+    --space-base-ginormous: 128px;
+    --space-base-huge: 64px;
+    --space-base-large: 32px;
+    --space-base-medium: 24px;
+    --space-base-small: 16px;
+    --space-base-tiny: 8px;
+
+    /* screen sizes */
+    --screen-mobile: 425px;
+    --screen-tablet: 675px;
+    --screen-laptop: 1024px;
+
+    /* cursor styles */
+    --cursor-style-crazytriangle: url("/cur197.png"), auto;
+    --cursor-style-tree: url("/nat294.cur"), auto;
+    --cursor-style-tree--hover: url("/hol141.png"), auto;
+    --cursor-style-oxyblack: url("/cursors/oxyblack-default.cur"), auto;
+    --cursor-style-oxyblack--hover: url("/cursors/oxyblack-pointer.cur"), auto;
+    /* set cursor */
+    --cursor-main: default;
+    --cursor-main--hover: pointer;
+  }
+
+  html {
+    background-color: var(--color-surface-main);
+    cursor: var(--cursor-main);
+  }
+  body {
+    margin: 0;
+  }
+  a, button {
+    color: var(--color-main-primary);
+    cursor: var(--cursor-main);
+  }
+  a {
+    text-decoration: none;
+  }
+  a:hover, button:hover {
+    cursor: var(--cursor-main--hover);
+    text-decoration: underline;
+  }
+  h1, h2, h3, h4, h5, h6, p, li, button {
+    font-family: var(--font-main);
+  }
 	code {
 		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
 			Bitstream Vera Sans Mono, Courier New, monospace;
 	}
+  img {
+    vertical-align: top;
+    max-width: 100%;
+  }
+  hr {
+    border-bottom: 1px solid var(--color-main-primary);
+  }
+
+  .no_scroll {
+    height: 100vh;
+    overflow: hidden;
+  }
+
 </style>

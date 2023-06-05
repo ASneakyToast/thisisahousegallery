@@ -1,0 +1,144 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "This is a living room";
+const artists = [
+  { name: "Joseph Blake", link: "https://onequicktrick.com" },
+  { name: "Joel Lithgow", link: "https://joellithgow.com" }
+];
+const opening = "06.23";
+const closing = "07.07";
+
+const _exhibitionPhotosAmount = 7;
+---
+<Layout title=title>
+  <main class="layout">
+    <section class="head">
+      <section class="head-info">
+        <h1>{ title }</h1>
+        <h3>{ opening } - { closing }</h3>
+        <p>This is some bullshit intro text about this long and talks about the show. I'm thinking it's kinda like wall text but maybe even shorter and more fun. I think it should be about this long and yeah we could totally write this to I think it's just bullshit primer text.</p>
+
+        <section class="head-artists">
+          { artists.map( artist => (
+          <a href={ artist.link }><h2>{ artist.name }</h2></a>
+          ))}
+        </section>
+      </section>
+
+      <img src="/exhibitions/thisisalivingroom/listing_image.jpg"></img>
+    </section>
+
+    <hr></hr>
+
+    <section class="artwork_images">
+      <section class="artwork_images-images">
+        <img src="/exhibitions/thisisalivingroom/exhibition_shot-1.jpg"></img>
+        <img src="/exhibitions/thisisalivingroom/exhibition_shot-2.jpg"></img>
+        <img src="/exhibitions/thisisalivingroom/exhibition_shot-3.jpg"></img>
+        <img src="/exhibitions/thisisalivingroom/exhibition_shot-4.jpg"></img>
+        <img src="/exhibitions/thisisalivingroom/exhibition_shot-5.jpg"></img>
+        <img src="/exhibitions/thisisalivingroom/exhibition_shot-6.jpg"></img>
+        <img src="/exhibitions/thisisalivingroom/exhibition_shot-7.jpg"></img>
+      </section>
+      <p class="artwork_images-label">7 Artworks</p> <!-- TODO: make this change to label of artwork on hover -->
+    </section>
+
+    <hr></hr>
+
+    <section id="exhibition_images">
+      <img src="/exhibitions/thisisalivingroom/exhibition_shot-1.jpg"></img>
+      <img src="/exhibitions/thisisalivingroom/exhibition_shot-2.jpg"></img>
+      <img src="/exhibitions/thisisalivingroom/exhibition_shot-3.jpg"></img>
+      <img src="/exhibitions/thisisalivingroom/exhibition_shot-4.jpg"></img>
+      <img src="/exhibitions/thisisalivingroom/exhibition_shot-5.jpg"></img>
+      <img src="/exhibitions/thisisalivingroom/exhibition_shot-6.jpg"></img>
+      <img src="/exhibitions/thisisalivingroom/exhibition_shot-7.jpg"></img>
+    </section>
+  </main>
+</Layout>
+
+<style scoped lang="scss">
+  img {
+    max-width: 100%;
+  }
+
+  hr {
+    opacity: 10%;
+    margin: var(--space-base-huge);
+  }
+
+
+  .layout {
+    margin: auto;
+    padding: var(--space-base-large);
+    max-width: 1024px;
+  }
+
+  .head {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--space-base-huge);
+    margin-bottom: var(--space-base-large);
+
+    &-info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-base-medium);
+      min-width: 350px;
+      margin-top: var(--space-base-large);
+    }
+
+    h1, h3, p {
+      margin: 0;
+    }
+    h1 {
+      font-family: var(--font-secondary);
+      font-size: var(--font_size-title);
+    }
+    h3 {
+      font-size: var(--font_size-detail);
+      font-weight: lighter;
+    }
+    p {
+      font-size: var(--font_size-small);
+      line-height: 1.7;
+      font-weight: lighter;
+    }
+
+    &-artists {
+      margin-top: auto;
+      h2 {
+        display: inline-block;
+        font-size: var(--font_size-heading);
+        margin-right: var(--space-base-small);
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .artwork_images {
+    &-label {
+      text-align: center;
+      margin: var(--space-base-small) 0 -35px 0;
+    }
+
+    &-images {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-base-small);
+      height: 100px;
+    }
+  }
+
+  #exhibition_images {
+    columns: 3;
+    gap: var(--space-base-small);
+
+    img {
+      padding-bottom: var(--space-base-small);
+    }
+  }
+</style>

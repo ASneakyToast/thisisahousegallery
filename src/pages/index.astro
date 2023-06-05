@@ -1,81 +1,122 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
-		</p>
-		<ul role="list" class="link-card-grid">
-			<Card
-				href="https://docs.astro.build/"
-				title="Documentation"
-				body="Learn how Astro works and explore the official API docs."
-			/>
-			<Card
-				href="https://astro.build/integrations/"
-				title="Integrations"
-				body="Supercharge your project with new frameworks and libraries."
-			/>
-			<Card
-				href="https://astro.build/themes/"
-				title="Themes"
-				body="Explore a galaxy of community-built starter themes."
-			/>
-			<Card
-				href="https://astro.build/chat/"
-				title="Community"
-				body="Come say hi to our amazing Discord community. ❤️"
-			/>
-		</ul>
-	</main>
+<Layout title="House Gallery">
+  <section class="featured">
+    <img class="featured-main_image" src="/exhibitions/thisisalivingroom/Showcard001.png"></img>
+    <section class="featured-details" onclick="window.featuredCards.classList.toggle('featured-cards--closed')">
+      <h2><i>This is a Living Room</i></h2>
+      <h3>June 23 - July 07</h3>
+    </section>
+    <section id="featuredCards" class="featured-cards featured-cards--closed" onclick="window.featuredCards.classList.toggle('featured-cards--closed')">
+      <img src="exhibitions/thisisalivingroom/showcard-back.png"></img>
+      <section class="featured-cards-ctas">
+        <a target="_blank" href="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MTQ3djVjbDZpbzZ0b3RnNW9mc25zMnY4bzYgY19iZnFlbGZ1bnU4MjA1cTIyY2hrNjAwNDhxa0Bn&tmsrc=c_bfqelfunu8205q22chk60048qk%40group.calendar.google.com">
+          <p>Add to calendar</p>
+        </a>
+        <!--
+          <a href="/exhibitions/thisisalivingroom/Showcard.pdf" download="Thisisalivingroom-showcard.pdf">
+            <p>Save postcard.pdf</p>
+          </a>
+        -->
+      </section>
+    </section>
+  </section>
 </Layout>
 
-<style>
-	main {
+<style scope lang="scss">
+
+  body {
+    height: 100vh;
+  }
+
+  :global( .header ) {
+    position: fixed;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+	.layout {
 		margin: auto;
-		padding: 1.5rem;
-		max-width: 60ch;
+    padding: var(--space-base-huge) var(--space-base-large) var(--space-base-large) var(--space-base-large);
+    max-width: 1024px;
 	}
-	h1 {
-		font-size: 3rem;
-		font-weight: 800;
-		margin: 0;
-	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	.instructions {
-		line-height: 1.6;
-		margin: 1rem 0;
-		border: 1px solid rgba(var(--accent), 25%);
-		background-color: white;
-		padding: 1rem;
-		border-radius: 0.4rem;
-	}
-	.instructions code {
-		font-size: 0.875em;
-		font-weight: bold;
-		background: rgba(var(--accent), 12%);
-		color: rgb(var(--accent));
-		border-radius: 4px;
-		padding: 0.3em 0.45em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent));
-	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 1rem;
-		padding: 0;
-	}
+
+  .featured {
+    position: relative;
+    height: 100%;
+
+    &-cards {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 24;
+
+      display: flex;
+      gap: var(--space-base-small);
+      justify-content: center;
+
+      padding: var(--space-base-large);
+      box-sizing: border-box;
+
+      background-color: rgba(255,255,255,0.95);
+
+      font-weight: lighter;
+
+      overflow-y: scroll;
+
+      @media (max-width: 675px) {
+        display: block;
+      }
+
+      &--closed {
+        display: none;
+      }
+
+      & img {
+        max-width: 100%;
+        margin-bottom: var(--space-base-small);
+      }
+    }
+
+    &-details {
+      position: absolute;
+      bottom: var(--space-base-huge);
+      right: var(--space-base-huge);
+      padding: var(--space-base-tiny) var(--space-base-large);
+      background-color: white;
+
+      & h2 {
+        font-family: var(--font-secondary);
+        color: var(--color-main-primary);
+        text-decoration: none;
+        font-weight: lighter;
+      }
+
+      & h3 {
+        font-weight: lighter;
+      }
+
+      &:hover {
+        color: var(--color-base-white);;
+        cursor: var(--cursor-main--hover);
+        background-color: var(--color-main-primary);
+
+        h2 {
+          color: inherit;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    &-main_image {
+      width: 100%;
+      height: 700px;
+      object-fit: cover;
+      height: 100%;
+    }
+  }
 </style>

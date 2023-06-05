@@ -1,0 +1,91 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="About | House Gallery">
+  <main>
+    <aside>
+      <img src="/media/joey.jpg"></img>
+      <p>JOSEPH</p>
+    </aside>
+    <section>
+      <img src="/media/house.jpg"></img>
+      <p>This is a House Gallery is a gallery directed and lived in by Joel Lithgow and Joseph Blake. The gallery serves as a project and exhibition place for close friends, local artists, writers, and curators.</p>
+      <a href="mailto:thisisahousegallery@gmail.com">
+        <p>Contact us</p>
+      </a>
+    </section>
+    <aside>
+      <img src="/media/joel.jpg"></img>
+      <p>JOEL</p>
+    </aside>
+  </main>
+</Layout>
+
+<style lang="scss">
+  main {
+    display: grid;
+    grid-template-areas:
+      "joel house joey";
+    grid-template-columns: 1fr 3fr 1fr;
+
+    gap: var(--space-base-small);
+    margin: var(--space-base-small);
+
+    font-size: var(--font_size-tiny);
+    font-weight: 300;
+
+    @media (max-width: 1024px) {
+      grid-template-areas:
+      "house house" 
+      "joel joey";
+      grid-template-columns: 1fr 1fr;
+    }
+
+    & section {
+      grid-area: house;
+      max-width: 500px;
+      text-align: center;
+      place-self: center;
+      padding: var(--space-base-medium);
+
+      & img {
+        width: 100%;
+        max-width: 500px;
+        max-height: 500px;
+        background-color: lightgray;
+        object-fit: cover;
+        box-sizing: content-box;
+      }
+      & p {
+        text-align: justify;
+      }
+      & p:last-child {
+        float: right;
+      }
+      & p:last-child:hover {
+        text-decoration: underline;
+      }
+    }
+
+    & aside {
+      margin: var(--space-base-huge) 0;
+      padding: var(--space-base-large) 0;
+      & img {
+        width: 100px;
+        height: 100px;
+        background-color: lightgray;
+        object-fit: cover;
+      }
+      &:first-of-type {
+        grid-area: joel;
+      }
+      &:last-of-type {
+        grid-area: joey;
+        text-align: right;
+        margin: var(--space-base-ginormous) 0;
+        padding: var(--space-base-huge) 0;
+      }
+    }
+
+  }
+</style>

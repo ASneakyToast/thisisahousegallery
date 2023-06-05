@@ -1,0 +1,44 @@
+---
+const title = "This is a living room";
+const artists = [
+  { name: "Joseph Blake", link: "https://onequicktrick.com" },
+  { name: "Joel Lithgow", link: "https://joellithgow.com" }
+];
+const opening = "June 23";
+const closing = "July 07";
+
+import Layout from "../layouts/Layout.astro";
+---
+<dialog id="exhibitions_dialog">
+  <h1>{ title }</h1>
+  <h2>Opening: { opening }</h2>
+  <form method="dialog">
+    <button>X</button>
+  </form>
+</dialog>
+
+<style scope lang="scss">
+  .exhibition_preview {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    background-color: black;
+
+    h1 {
+      font-size: 64px;
+    }
+  }
+
+  dialog::backdrop {
+    background: rgba(0,0,0,1);
+  }
+</style>
+
+<script>
+  const preview_container = document.querySelector(".exhibition_preview");
+  preview_container.addEventListener("click", () => {
+    alert("clicked");
+  });
+</script>
