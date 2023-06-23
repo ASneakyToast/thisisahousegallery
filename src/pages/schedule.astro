@@ -30,8 +30,13 @@ import Layout from '../layouts/Layout.astro';
       <article class="small_exhibition">
         <section class="small_exhibition-info">
           <h3>Least Favorite Work</h3>
-          <h4>Large Group Show</h4>
-          <h5>07.14 - 07.28</h5>
+          <h4>Open Call Group Show</h4>
+          <h5>07.21 - 08.04</h5>
+        </section>
+        <section class="small_exhibition-add_to_cal">
+          <a class="cta" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link">
+            <button>Open Call</button>
+          </a>
         </section>
       </article>
 
@@ -39,20 +44,19 @@ import Layout from '../layouts/Layout.astro';
         <section class="small_exhibition-info">
           <h3>Tablets, Tables & Tombstones</h3>
           <h4>Annie Artell, Sophie Smith, Dareal Calderon</h4>
-          <h5>08.04 - 08.18</h5>
         </section>
       </article>
 
     </section>
 
-      <!--
+    <!--
     <section class="main-aside">
-        <a href="/exhibitions/leastfavoritework">
-          <h2>Open Call</h2>
-          <img></img>
-        </a>
+      <a class="cta" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link">
+        <h2>Open Call</h2>
+        <img></img>
+      </a>
     </section>
-      -->
+    -->
 
     <!--
       <section id="social" class="main-bottom">
@@ -177,6 +181,8 @@ import Layout from '../layouts/Layout.astro';
   .small_exhibition {
     border-top: 1px solid var(--color-main-primary);
     padding-top: 64px;
+    display: flex;
+    gap: var(--space-base-small);
 
     h3 {
       font-family: var(--font-secondary);
