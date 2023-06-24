@@ -15,10 +15,10 @@ import Layout from '../layouts/Layout.astro';
             <h5>06.23 - 07.07</h5>
           </div>
 
-          <a target="_blank" href="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MTQ3djVjbDZpbzZ0b3RnNW9mc25zMnY4bzYgY19iZnFlbGZ1bnU4MjA1cTIyY2hrNjAwNDhxa0Bn&tmsrc=c_bfqelfunu8205q22chk60048qk%40group.calendar.google.com">
+          <a target="_blank" href="mailto:thisisahousegallery@gmail.com">
             <section class="large_exhibition-add_to_cal">
-              <button>June 23</button>
-              <p>add to calendar</p>
+              <button>Experience it</button>
+              <p>Contact us</p>
             </section>
           </a>
         </section>
@@ -295,6 +295,8 @@ import Layout from '../layouts/Layout.astro';
       height: 64px;
       border: 1px solid var(--color-main-primary);
       background-color: var(--color-main-white);
+      overflow-wrap: break-word;
+      text-align: left;
     }
     &-add_to_cal button:hover {
       /* cursor: pointer; */
@@ -309,6 +311,7 @@ import Layout from '../layouts/Layout.astro';
       padding: 8px 12px;
       background-color: white;
       border: 1px solid var(--color-main-primary);
+      width: max-content;
     }
     &-add_to_cal:hover p {
       visibility: visible;
