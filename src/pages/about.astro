@@ -7,16 +7,23 @@ import Layout from "../layouts/Layout.astro";
       <img src="/media/joey.jpg"></img>
       <p>JOSEPH</p>
     </aside>
-    <section>
+    <section class="house">
       <img src="/media/house.jpg"></img>
       <p>This is a House Gallery is a gallery directed and lived in by Joel Lithgow and Joseph Blake. The gallery serves as a project and exhibition place for close friends, local artists, writers, and curators.</p>
-      <a href="mailto:thisisahousegallery@gmail.com">
-        <p>Contact us</p>
-      </a>
+      <section class="links">
+        <a href="mailto:thisisahousegallery@gmail.com">
+          <p>Contact us</p>
+        </a>
+        <a target="_blank" href="https://www.instagram.com/thisisahousegallery/">
+          <p>Instagram</p>
+        </a>
+      </section>
     </section>
     <aside>
-      <img src="/media/joel.jpg"></img>
-      <p>JOEL</p>
+      <a target="_blank" href="https://www.instagram.com/joellithgow/">
+        <img src="/media/joel.jpg"></img>
+        <p>JOEL</p>
+      </a>
     </aside>
   </main>
 </Layout>
@@ -41,7 +48,7 @@ import Layout from "../layouts/Layout.astro";
       grid-template-columns: 1fr 1fr;
     }
 
-    & section {
+    & .house {
       grid-area: house;
       max-width: 500px;
       text-align: center;
@@ -59,8 +66,12 @@ import Layout from "../layouts/Layout.astro";
       & p {
         text-align: justify;
       }
-      & p:last-child {
+      & .links {
+        display: flex;
+        gap: var(--space-base-large);
         float: right;
+      }
+      & p:last-child {
       }
       & p:last-child:hover {
         text-decoration: underline;
