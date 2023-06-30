@@ -1,0 +1,149 @@
+---
+const { title, artists, date, cta="true", cta_label, cta_tooltip, cta_url, img_url, featured } = Astro.props;
+---
+<article class="exhibition_listing">
+  <div class="row-spaced">
+    <section class={featured? "info info--featured" : "info"}>
+      <h4>{ title }</h2>
+      <h5>{ artists }</h5>
+      { date && <p>{ date }</p> }
+    </section>
+
+    { cta=="true" && 
+    <section class="cta">
+      <a target="_blank" href={ cta_url }>
+        <button>{ cta_label }</button>
+        <p class="tooltip">{ cta_tooltip }</p>
+      </a>
+    </section>
+    }
+  </div>
+
+  { img_url && 
+  <img src={ img_url } /> 
+  }
+</article>
+
+<style lang="scss">
+  @mixin row {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-base-small);
+  }
+  .row {
+    @include row;
+  }
+  .row-spaced {
+    @include row;
+    justify-content: space-between;
+  }
+  .row-large {
+    @include row;
+    gap: var(--space-base-huge);
+  }
+
+  @mixin column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-base-medium);
+  }
+  @mixin column-small {
+    @include column;
+    gap: var(--space-base-small);
+  }
+
+  @mixin font-small {
+    font-size: 0.83rem;
+    font-weight: lighter;
+  }
+  @mixin font-medium {
+    font-size: 1rem;
+    font-weight: lighter;
+  }
+  @mixin font-large {
+    font-size: 1.17rem;
+    font-weight: lighter;
+  }
+  @mixin font-huge {
+    font-size: 2rem;
+    font-weight: lighter;
+  }
+
+  @mixin molecule-small_cta {
+    position: relative;
+
+    & button {
+      width: 64px;
+      height: 64px;
+      border: 1px solid var(--color-main-primary);
+      background-color: var(--color-main-white);
+      overflow-wrap: break-word;
+      text-align: left;
+
+      &:hover {
+        background-color: var(--color-main-primary);
+        color: white;
+      }
+    }
+
+    &:hover .tooltip {
+      visibility: visible;
+    }
+    & .tooltip {
+      position: absolute;
+      top: 0px;
+      left: 72px;
+      visibility: hidden;
+      padding: 8px 12px;
+      margin: 0;
+      background-color: white;
+      border: 1px solid var(--color-main-primary);
+      z-index: 24;
+    }
+    & .tooltip::after {
+      content: " ";
+      position: absolute;
+      top: 50%;
+      right: 100%;
+      margin-top: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: transparent var(--color-main-primary) transparent transparent;
+    }
+}
+
+  .exhibition_listing {
+    @include column;
+    padding-bottom: var(--space-base-large);
+    border-bottom: 1px solid black;
+
+    & .info {
+      @include column-small;
+
+      h4, h5, p {
+        margin: 0;
+      }
+      h4 { @include font-large; }
+      h5 { @include font-medium; }
+      p  { @include font-small; }
+
+      &--featured {
+        h4 { @include font-huge; }
+      }
+    }
+
+    & .cta {
+      @include molecule-small_cta;
+    }
+
+    & img {
+      width: 470px;
+      background-color: lightgray;
+
+      @media (max-width: 1024px) {
+        width: 350px;
+      }
+    }
+  }
+
+</style>

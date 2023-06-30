@@ -1,51 +1,38 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import ExhibitionItem from "../components/exhibition-listing.astro";
 ---
 
 <Layout title="Schedule | House Gallery">
   <main class="layout">
     <section class="main-feature">
 
-      <article class="large_exhibition">
+      <ExhibitionItem 
+         title="This is a Living Room"
+         artists="Joel Lithgow & Joseph Blake"
+         date="06.23 - 07.07"
+         cta_label="Schedule a visit"
+         cta_tooltip="Contact"
+         cta_url="mailto:thisisahousegallery@gmail.com"
+         featured="false" />
 
-        <section class="large_exhibition-info">
-          <div>
-            <h2>This is a living room</h2>
-            <h3>Joel Lithgow & Joseph Blake</h3>
-            <h5>06.23 - 07.07</h5>
-          </div>
+      <ExhibitionItem 
+         title="Your Least Favorite Work"
+         artists="Open Call Group Show"
+         date="07.21 - 08.04"
+         cta="true"
+         cta_label="Submit Work"
+         cta_tooltip="Send it"
+         cta_url="https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link"
+         img_url="/exhibitions/yourleastfavoritework/Showcard001.jpg"
+         featured="true" />
 
-          <a target="_blank" href="mailto:thisisahousegallery@gmail.com">
-            <section class="large_exhibition-add_to_cal">
-              <button>Experience it</button>
-              <p>Contact us</p>
-            </section>
-          </a>
-        </section>
-
-        <img src="/exhibitions/thisisalivingroom/Showcard001.png"></img>
-
-      </article>
-
-      <article class="small_exhibition">
-        <section class="small_exhibition-info">
-          <h3>Least Favorite Work</h3>
-          <h4>Open Call Group Show</h4>
-          <h5>07.21 - 08.04</h5>
-        </section>
-        <section class="small_exhibition-add_to_cal">
-          <a class="cta" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link">
-            <button>Open Call</button>
-          </a>
-        </section>
-      </article>
-
-      <article class="small_exhibition">
-        <section class="small_exhibition-info">
-          <h3>Tablets, Tables & Tombstones</h3>
-          <h4>Annie Artell, Sophie Smith, Dareal Calderon</h4>
-        </section>
-      </article>
+      <ExhibitionItem 
+         title="Tablets, Tables & Tombstones"
+         artists="Annie Artell, Sophie Smith, Dareal Calderon"
+         date="??? - ???"
+         cta="false"
+         featured="false" />
 
     </section>
 
@@ -58,12 +45,10 @@ import Layout from '../layouts/Layout.astro';
     </section>
     -->
 
-    <!--
-      <section id="social" class="main-bottom">
-        <h2>Follow us</h2>
-        <h3><a href="instagram.com">@Thisisahousegallery</a></h3>
-      </section>
-    -->
+    <section id="social" class="main-bottom">
+      <h2>Follow us</h2>
+      <h3><a href="instagram.com">@Thisisahousegallery</a></h3>
+    </section>
   </main>
 </Layout>
 
@@ -111,12 +96,13 @@ import Layout from '../layouts/Layout.astro';
     padding: 32px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: var(--space-base-large);
 
     @media (max-width: 675px) {
       padding: 0;
     }
   }
+
   .main-aside {
     grid-area: aside;
     padding: 32px 0;
@@ -176,156 +162,6 @@ import Layout from '../layouts/Layout.astro';
   .head-nav a {
     text-decoration: underline;
     color: var(--color-main-primary);
-  }
-
-  .small_exhibition {
-    border-top: 1px solid var(--color-main-primary);
-    padding-top: 64px;
-    display: flex;
-    gap: var(--space-base-small);
-
-    h3 {
-      font-family: var(--font-secondary);
-    }
-    h3, h4, h5 {
-      margin: 0 0 16px 0;
-      font-weight: lighter;
-    }
-
-    &-add_to_cal {
-      position: relative;
-      align-self: start;
-      float: right;
-    }
-    &-add_to_cal button {
-      width: 64px;
-      height: 64px;
-      border: 1px solid var(--color-main-primary);
-      background-color: var(--color-main-white);
-    }
-    &-add_to_cal button:hover {
-      /* cursor: pointer; */
-      background-color: var(--color-main-primary);
-      color: white;
-    }
-    &-add_to_cal p {
-      position: absolute;
-      top: -12px;
-      left: 72px;
-      visibility: hidden;
-      padding: 8px 12px;
-      background-color: white;
-      border: 1px solid var(--color-main-primary);
-      z-index: 24;
-    }
-    &-add_to_cal:hover p {
-      visibility: visible;
-    }
-    &-add_to_cal p::after {
-      content: " ";
-      position: absolute;
-      top: 50%;
-      right: 100%;
-      margin-top: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: transparent var(--color-main-primary) transparent transparent;
-    }
-
-    & img {
-      width: 100px;
-      height: 100px;
-      background-color: lightgray;
-      float: right;
-      margin: 0 0 24px 24px;
-    }
-  }
-
-  .large_exhibition {
-    display: flex;
-    flex-direction: row;
-    gap: var(--space-base-small);
-    @media (max-width: 675px) {
-      flex-direction: column;
-    }
-
-    display: block;
-
-    &-info {
-      display: flex;
-      flex-direction: row;
-      gap: 32px;
-    }
-    h2 {
-      margin-top: 0;
-      font-size: var(--font_size-title);
-      font-family: var(--font-secondary);
-      font-weight: lighter;
-      text-decoration: none;
-      /*
-      &:hover {
-        text-decoration: underline;
-      }
-      */
-    }
-    h3 {
-      color: black;
-      align-self: right;
-      font-weight: lighter;
-      font-size: var(--font_size-small);
-    }
-    h5 {
-      font-weight: lighter;
-    }
-    & img {
-      width: 470px;
-      background-color: lightgray;
-
-      @media (max-width: 1024px) {
-        width: 350px;
-      }
-    }
-
-    &-add_to_cal {
-      position: relative;
-      align-self: start;
-    }
-    &-add_to_cal button {
-      width: 64px;
-      height: 64px;
-      border: 1px solid var(--color-main-primary);
-      background-color: var(--color-main-white);
-      overflow-wrap: break-word;
-      text-align: left;
-    }
-    &-add_to_cal button:hover {
-      /* cursor: pointer; */
-      background-color: var(--color-main-primary);
-      color: white;
-    }
-    &-add_to_cal p {
-      position: absolute;
-      top: -12px;
-      left: 72px;
-      visibility: hidden;
-      padding: 8px 12px;
-      background-color: white;
-      border: 1px solid var(--color-main-primary);
-      width: max-content;
-    }
-    &-add_to_cal:hover p {
-      visibility: visible;
-    }
-    &-add_to_cal p::after {
-      content: " ";
-      position: absolute;
-      top: 50%;
-      right: 100%;
-      margin-top: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: transparent var(--color-main-primary) transparent transparent;
-    }
   }
 
   .main-aside h2 {
