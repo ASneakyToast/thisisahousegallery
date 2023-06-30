@@ -5,11 +5,12 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="House Gallery">
   <section class="featured">
     <img class="featured-main_image" src="/exhibitions/thisisalivingroom/Showcard001.png"></img>
-    <section class="featured-details" onclick="window.featuredCards.classList.toggle('featured-cards--closed')">
+    <section class="featured-details" onclick="window.livingroomcards.classList.toggle('featured-cards--closed')">
       <h2><i>This is a Living Room</i></h2>
       <h3>June 23 - July 07</h3>
     </section>
-    <section id="featuredCards" class="featured-cards featured-cards--closed" onclick="window.featuredCards.classList.toggle('featured-cards--closed')">
+
+    <section id="livingroomcards" class="featured-cards featured-cards--closed" onclick="window.livingroomcards.classList.toggle('featured-cards--closed')">
       <img src="exhibitions/thisisalivingroom/showcard-back.png"></img>
       <section class="featured-cards-ctas">
         <a target="_blank" href="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MTQ3djVjbDZpbzZ0b3RnNW9mc25zMnY4bzYgY19iZnFlbGZ1bnU4MjA1cTIyY2hrNjAwNDhxa0Bn&tmsrc=c_bfqelfunu8205q22chk60048qk%40group.calendar.google.com">
@@ -22,6 +23,18 @@ import Layout from '../layouts/Layout.astro';
         -->
       </section>
     </section>
+  </section>
+
+  <section class="featured">
+    <img class="featured-main_image" src="/exhibitions/yourleastfavoritework/Showcard001.jpg"></img>
+    <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link">
+      <section class="featured-details" onclick="window.leastfavcards.classList.toggle('featured-cards--closed')">
+        <h2><i>Your Least Favorite Work</i></h2>
+        <h3>July 21 - August 04</h3>
+      </section>
+    </a>
+
+    </a>
   </section>
 </Layout>
 
