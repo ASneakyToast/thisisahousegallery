@@ -1,0 +1,142 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+import ImageData from "../../data/thisisalivingroom-image_data-r1-063023.json";
+let images = ImageData["@graph"];
+console.log(images);
+
+let exhibitionPhotos = images.filter( item => {
+  return item.tag.includes( "Exhibition" );
+});
+console.log(exhibitionPhotos);
+console.log("test");
+
+let primaryArtworkPhotos = images.filter( item => {
+  return item.tag.includes( "cover" );
+});
+
+let curatedPhotos = images.filter( item => {
+  if ( item.hasOwnProperty('tag') ) { console.log("it does") };
+  return ( item.tag.includes("Exhibition") || item.tag.includes("Cover") );
+  });
+---
+
+<Layout title="Exhibitions | House Gallery">
+  <div class="layout">
+
+    <article id="thisisalivingroom" class="exhibition">
+      <section class="exhibition-header">
+        <h2>This is a Living Room</h2>
+        <h3>06.23 - 07.07</h3>
+      </section>
+      <section class="exhibition-media">
+        <section class="exhibition-card">
+          <img src="/exhibitions/thisisalivingroom/Showcard001.png"></img>
+          <img src="/exhibitions/thisisalivingroom/showcard-back.png"></img>
+        </section>
+        <section class="exhibition-images">
+          {
+            Object.keys( curatedPhotos ).map(( key, i ) => {
+              return (
+                <img src={ "/exhibitions/thisisalivingroom/images/" + curatedPhotos[ key ].photo[0].filename } />
+              )
+            })
+          }
+        </section>
+      </section>
+    </article>
+
+  </div>
+</Layout>
+
+<script>
+  import ImageData from "../../data/thisisalivingroom-image_data-r1-063023.json";
+  let images = ImageData["@graph"];
+  let exhibitionPhotos = images.filter( item => {
+    return item.tag.includes( "Exhibition" );
+  });
+  console.log(exhibitionPhotos);
+  console.log("test");
+</script>
+
+<style lang="scss">
+  .layout {
+    padding: var(--space-base-huge) var(--space-base-large) var(--space-base-large) var(--space-base-large);
+    max-width: 1024px;
+    @media (max-width: 675px) {
+      padding: var(--space-base-medium) var(--space-base-small) var(--space-base-small) var(--space-base-small);
+    }
+    @media (max-width: 1024px) {
+      padding: var(--space-base-large) var(--space-base-medium) var(--space-base-medium) var(--space-base-medium);
+    }
+  }
+
+  .exhibition {
+    &-header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-base-medium);
+      border-bottom: 1px solid var(--color-base-black);
+
+      & h2 {
+        font-size: 2rem;
+        font-weight: lighter;
+      }
+
+      & h3 {
+        font-size: 1.17rem;
+        font-weight: lighter;
+      }
+    }
+
+    &-media {
+      display: flex;
+      gap: var(--space-base-large);
+
+      @media (max-width: 675px) {
+        display: block;
+      }
+    }
+    
+    &-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-base-small);
+      position: sticky;
+      top: 60px;
+      height: fit-content;
+
+      @media (max-width: 675px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-bottom: var(--space-base-medium);
+        position: relative;
+        top: 0;
+      }
+
+      & img {
+        max-height: 40vh;
+        margin: auto;
+      }
+    }
+
+    &-images {
+      flex: 5;
+      display: flex;
+      gap: var(--space-base-tiny);
+      flex-wrap: wrap;
+
+      & img {
+        max-height: 35vh;
+
+        @media (max-width: 675px) {
+          max-height: 25vh;
+        }
+      }
+    }
+  }
+
+</style>

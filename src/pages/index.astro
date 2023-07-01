@@ -17,10 +17,13 @@ import Layout from '../layouts/Layout.astro';
 
   <section class="featured">
     <img class="featured-main_image" src="/exhibitions/thisisalivingroom/Showcard001.png"></img>
-    <section class="featured-details" onclick="window.livingroomcards.classList.toggle('featured-cards--closed')">
-      <h2><i>This is a Living Room</i></h2>
-      <h3>June 23 - July 07</h3>
-    </section>
+    <!-- <section class="featured-details" onclick="window.livingroomcards.classList.toggle('featured-cards--closed')"> -->
+    <a href="/exhibitions#thisisalivingroom">
+      <section class="featured-details">
+        <h2><i>This is a Living Room</i></h2>
+        <h3>June 23 - July 07</h3>
+      </section>
+    </a>
 
     <section id="livingroomcards" class="featured-cards featured-cards--closed" onclick="window.livingroomcards.classList.toggle('featured-cards--closed')">
       <img src="exhibitions/thisisalivingroom/showcard-back.png"></img>

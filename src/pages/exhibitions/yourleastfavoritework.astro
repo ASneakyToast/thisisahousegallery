@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Your Least Favorite Work | House Gallery">
+  <main class="layout">
+    <section>
+
+    </section>
+  </main>
+</Layout>
+
+<style lang="scss">
+  main {
+		margin: auto;
+    padding: var(--space-base-huge) var(--space-base-large) var(--space-base-large) var(--space-base-large);
+    max-width: 1024px;
+
+    @media (max-width: 675px) {
+      padding: var(--space-base-medium) var(--space-base-small) var(--space-base-small) var(--space-base-small);
+    }
+
+    @media (max-width: 1024px) {
+      padding: var(--space-base-large) var(--space-base-medium) var(--space-base-medium) var(--space-base-medium);
+    }
+	}
+</style>

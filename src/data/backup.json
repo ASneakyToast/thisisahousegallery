@@ -1,0 +1,2176 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "https://tropy.org/v1/tropy#",
+    "template": {
+      "@type": "@id"
+    },
+    "photo": {
+      "@id": "https://tropy.org/v1/tropy#photo",
+      "@container": "@list"
+    },
+    "note": {
+      "@id": "https://tropy.org/v1/tropy#note",
+      "@container": "@list"
+    },
+    "selection": {
+      "@id": "https://tropy.org/v1/tropy#selection",
+      "@container": "@list"
+    },
+    "title": "http://purl.org/dc/elements/1.1/title",
+    "date": {
+      "@id": "http://purl.org/dc/elements/1.1/date",
+      "@type": "https://tropy.org/v1/tropy#date"
+    }
+  },
+  "@graph": [
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "360living",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "63726c0e430ce2439bd19cda6976d138",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "360living.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/63726c0e430ce2439bd19cda6976d138.jpg",
+          "protocol": "file",
+          "size": 2219149,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1375,
+          "date": 1688161265000,
+          "title": "360living"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "360livingslow",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "5c63643f79dbe7a7185366f3a4229f8c",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "360livingslow.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/5c63643f79dbe7a7185366f3a4229f8c.jpg",
+          "protocol": "file",
+          "size": 2558596,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1375,
+          "date": 1688161266000,
+          "title": "360livingslow"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "AdhocLampDetail3",
+      "tag": [
+        "Adhoc_Lamp",
+        "Detail",
+        "Joel Lithgow"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "135ffb3d76b7ea6dd78a6e911a75c66d",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "AdhocLampDetail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/135ffb3d76b7ea6dd78a6e911a75c66d.jpg",
+          "protocol": "file",
+          "size": 2882880,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 1830,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687778628000,
+          "title": "AdhocLampDetail3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Adhoclamp",
+      "tag": [
+        "Adhoc_Lamp",
+        "Cover",
+        "Joel Lithgow"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "41779c98ad11ec99dd5159ad56d51c3b",
+          "color": "rgb(248,248,232,1)",
+          "density": null,
+          "filename": "Adhoclamp.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/41779c98ad11ec99dd5159ad56d51c3b.jpg",
+          "protocol": "file",
+          "size": 1454164,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687780786000,
+          "title": "Adhoclamp"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "AdhoclampDetail1",
+      "tag": [
+        "Adhoc_Lamp",
+        "Detail",
+        "Joel Lithgow"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "b25bafa8ebbcd1f852d7bba922934ea9",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "AdhoclampDetail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/b25bafa8ebbcd1f852d7bba922934ea9.jpg",
+          "protocol": "file",
+          "size": 1245544,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687780862000,
+          "title": "AdhoclampDetail1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "AdhoclampDetail2",
+      "tag": [
+        "Adhoc_Lamp",
+        "Detail",
+        "Joel Lithgow"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "083d3fd1ee164587a4f73836b700c604",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "AdhoclampDetail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/083d3fd1ee164587a4f73836b700c604.jpg",
+          "protocol": "file",
+          "size": 1640621,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687780871000,
+          "title": "AdhoclampDetail2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Around",
+      "tag": [
+        "Around",
+        "Joseph Blake",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "58ae0834e5f3b1b9c6bd0b471425a65c",
+          "color": "rgb(216,200,184,1)",
+          "density": null,
+          "filename": "Around.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/58ae0834e5f3b1b9c6bd0b471425a65c.jpg",
+          "protocol": "file",
+          "size": 2592309,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687777802000,
+          "title": "Around"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "AroundDetail1",
+      "tag": [
+        "Around",
+        "Joseph Blake",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0eb7f90aea7402fe21fc24426216ce29",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "AroundDetail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/0eb7f90aea7402fe21fc24426216ce29.jpg",
+          "protocol": "file",
+          "size": 3167085,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687777906000,
+          "title": "AroundDetail1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "AroundDetail2",
+      "tag": [
+        "Around",
+        "Joseph Blake",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "83bb64f7157134e97288f51763726a1a",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "AroundDetail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/83bb64f7157134e97288f51763726a1a.jpg",
+          "protocol": "file",
+          "size": 6864854,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687777838000,
+          "title": "AroundDetail2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "AroundDetail3",
+      "tag": [
+        "Around",
+        "Joseph Blake",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "84411d6cb90b7cf0895d90edf47018b9",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "AroundDetail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/84411d6cb90b7cf0895d90edf47018b9.jpg",
+          "protocol": "file",
+          "size": 6355738,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687777862000,
+          "title": "AroundDetail3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "AroundDetail4",
+      "tag": [
+        "Joseph Blake",
+        "Around",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "2e01273b63990917fa980486ef90da80",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "AroundDetail4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/2e01273b63990917fa980486ef90da80.jpg",
+          "protocol": "file",
+          "size": 2859619,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687777945000,
+          "title": "AroundDetail4"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "AroundDetail5",
+      "tag": [
+        "Joseph Blake",
+        "Around",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0f84484b360cae43f9167fb9275ff324",
+          "color": "rgb(232,216,200,1)",
+          "density": null,
+          "filename": "AroundDetail5.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/0f84484b360cae43f9167fb9275ff324.jpg",
+          "protocol": "file",
+          "size": 3012061,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 1830,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687781710000,
+          "title": "AroundDetail5"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Decor3",
+      "tag": [
+        "Decor3",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "f1d5ef9c10b388df5e31c1c8d81b1d3f",
+          "color": "rgb(248,248,232,1)",
+          "density": null,
+          "filename": "Decor3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/f1d5ef9c10b388df5e31c1c8d81b1d3f.jpg",
+          "protocol": "file",
+          "size": 1521938,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1952,
+          "date": 1687779578000,
+          "title": "Decor3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Decor3Detail",
+      "tag": [
+        "Decor3",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0a78c4c1764c7ba91d23b4288686e15c",
+          "color": "rgb(248,232,184,1)",
+          "density": null,
+          "filename": "Decor3Detail.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/0a78c4c1764c7ba91d23b4288686e15c.jpg",
+          "protocol": "file",
+          "size": 2617499,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1952,
+          "date": 1687779585000,
+          "title": "Decor3Detail"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Decor7",
+      "tag": [
+        "Decor7",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "c0c1c024f1c21b6c5b4523594c661e20",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "Decor7.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/c0c1c024f1c21b6c5b4523594c661e20.jpg",
+          "protocol": "file",
+          "size": 2398707,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687781779000,
+          "title": "Decor7"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Decor7Detail",
+      "tag": [
+        "Decor7",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "fc5d581d452d73363917f2e645ce33a8",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "Decor7Detail.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/fc5d581d452d73363917f2e645ce33a8.jpg",
+          "protocol": "file",
+          "size": 1482793,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1952,
+          "date": 1687781481000,
+          "title": "Decor7Detail"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Goingoutside",
+      "tag": [
+        "Going_Outside",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "84c74ca22af9dadc2da725f4905006ac",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "Goingoutside.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/84c74ca22af9dadc2da725f4905006ac.jpg",
+          "protocol": "file",
+          "size": 2142309,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2439,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687779826000,
+          "title": "Goingoutside"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Howtomakepaper",
+      "tag": [
+        "How_to_make_paper",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0b0f17ddb43e894a7ab15a702cb298f2",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "Howtomakepaper.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/0b0f17ddb43e894a7ab15a702cb298f2.jpg",
+          "protocol": "file",
+          "size": 2160513,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1952,
+          "date": 1687779771000,
+          "title": "Howtomakepaper"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "HowtomakepaperDetail1",
+      "tag": [
+        "How_to_make_paper",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "3d0dcd62c5596e6b11574a857bd28567",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "HowtomakepaperDetail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/3d0dcd62c5596e6b11574a857bd28567.jpg",
+          "protocol": "file",
+          "size": 1954813,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779805000,
+          "title": "HowtomakepaperDetail1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "HowtomakepaperDetail2",
+      "tag": [
+        "How_to_make_paper",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "a473b20862e604f6c014e59e90d99c59",
+          "color": "rgb(248,248,232,1)",
+          "density": null,
+          "filename": "HowtomakepaperDetail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/a473b20862e604f6c014e59e90d99c59.jpg",
+          "protocol": "file",
+          "size": 1766289,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779813000,
+          "title": "HowtomakepaperDetail2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "HowtomakepaperDetail3",
+      "tag": [
+        "How_to_make_paper",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0fdea32e747cae74c5c89b2bb66cbd10",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "HowtomakepaperDetail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/0fdea32e747cae74c5c89b2bb66cbd10.jpg",
+          "protocol": "file",
+          "size": 2098143,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779816000,
+          "title": "HowtomakepaperDetail3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Install1",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "9608794cf45728a9be30e4ad32782d43",
+          "color": "rgb(216,200,184,1)",
+          "density": null,
+          "filename": "Install1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/9608794cf45728a9be30e4ad32782d43.jpg",
+          "protocol": "file",
+          "size": 2468559,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778194000,
+          "title": "Install1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Install2",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "c13390ed673cb81f24d92a0972abfd46",
+          "color": "rgb(232,216,200,1)",
+          "density": null,
+          "filename": "Install2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/c13390ed673cb81f24d92a0972abfd46.jpg",
+          "protocol": "file",
+          "size": 1897812,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778606000,
+          "title": "Install2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Install3",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "3e604773c2d3d4c2c2ad92503297fd12",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "Install3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/3e604773c2d3d4c2c2ad92503297fd12.jpg",
+          "protocol": "file",
+          "size": 1589989,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778889000,
+          "title": "Install3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Install4",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "7f2b03ce2d26bb65423bfbbb571c940a",
+          "color": "rgb(232,216,216,1)",
+          "density": null,
+          "filename": "Install4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/7f2b03ce2d26bb65423bfbbb571c940a.jpg",
+          "protocol": "file",
+          "size": 2396000,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 1830,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687778284000,
+          "title": "Install4"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Install5",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "2c74873ef9e26836efb598e05ef212fe",
+          "color": "rgb(200,184,168,1)",
+          "density": null,
+          "filename": "Install5.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/2c74873ef9e26836efb598e05ef212fe.jpg",
+          "protocol": "file",
+          "size": 2855241,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 1830,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687779857000,
+          "title": "Install5"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Install6",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "a9b08ff5684a400012f2ca98859d0b4b",
+          "color": "rgb(216,200,168,1)",
+          "density": null,
+          "filename": "Install6.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/a9b08ff5684a400012f2ca98859d0b4b.jpg",
+          "protocol": "file",
+          "size": 2747529,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 1830,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687780240000,
+          "title": "Install6"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Livingroom",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "bfd14eb3cd4ed51e64236085d88fa5db",
+          "color": "rgb(232,216,216,1)",
+          "density": null,
+          "filename": "Livingroom.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/bfd14eb3cd4ed51e64236085d88fa5db.jpg",
+          "protocol": "file",
+          "size": 3390341,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1688053763000,
+          "title": "Livingroom"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Mountain1",
+      "tag": [
+        "Mountian",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "213b7cafb173fcedb3d9837efc6dbee4",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "Mountain1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/213b7cafb173fcedb3d9837efc6dbee4.jpg",
+          "protocol": "file",
+          "size": 1369187,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1952,
+          "date": 1687780940000,
+          "title": "Mountain1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Mountain1Detail",
+      "tag": [
+        "Mountian",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "fc7853581cdf99d496687745b5523e67",
+          "color": "rgb(216,216,216,1)",
+          "density": null,
+          "filename": "Mountain1Detail.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/fc7853581cdf99d496687745b5523e67.jpg",
+          "protocol": "file",
+          "size": 2284588,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 1952,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687781271000,
+          "title": "Mountain1Detail"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Mountain2",
+      "tag": [
+        "Mountian2",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "c8602d2fecf5146c71c90aeea0e60800",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "Mountain2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/c8602d2fecf5146c71c90aeea0e60800.jpg",
+          "protocol": "file",
+          "size": 1633897,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 1952,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687779734000,
+          "title": "Mountain2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Mountain2Detail",
+      "tag": [
+        "Mountian2",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "bcc9ca794c7e3fa1ca4d35add795af62",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "Mountain2Detail.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/bcc9ca794c7e3fa1ca4d35add795af62.jpg",
+          "protocol": "file",
+          "size": 1432552,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 1953,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687781316000,
+          "title": "Mountain2Detail"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "PulpDump1",
+      "tag": [
+        "Pulp_Dump",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "50c3f475009b31aae2c0ae1415887cfa",
+          "color": "rgb(248,248,232,1)",
+          "density": null,
+          "filename": "PulpDump1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/50c3f475009b31aae2c0ae1415887cfa.jpg",
+          "protocol": "file",
+          "size": 1921212,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1952,
+          "date": 1687779625000,
+          "title": "PulpDump1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "PulpDump1Detail2",
+      "tag": [
+        "Pulp_Dump",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "11d266aca77682b5a7aa0bc7adbf9f69",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "PulpDump1Detail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/11d266aca77682b5a7aa0bc7adbf9f69.jpg",
+          "protocol": "file",
+          "size": 1460445,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779672000,
+          "title": "PulpDump1Detail2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "PulpDump1Detail3",
+      "tag": [
+        "Pulp_Dump",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "6c3fc76eb1ebd649bdf8f6685b8043b3",
+          "color": "rgb(248,248,232,1)",
+          "density": null,
+          "filename": "PulpDump1Detail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/6c3fc76eb1ebd649bdf8f6685b8043b3.jpg",
+          "protocol": "file",
+          "size": 2146073,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779655000,
+          "title": "PulpDump1Detail3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "PulpDump1andRu",
+      "tag": [
+        "Pulp_Dump",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "48813f889ee309cd0335af701761fdab",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "PulpDump1andRu.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/48813f889ee309cd0335af701761fdab.jpg",
+          "protocol": "file",
+          "size": 2280812,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779615000,
+          "title": "PulpDump1andRu"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "PulpWindowInstall2",
+      "tag": [
+        "Pulp_Window_Install_2",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "626f6d0372eaa1c82da135759b58a407",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "PulpWindowInstall2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/626f6d0372eaa1c82da135759b58a407.jpg",
+          "protocol": "file",
+          "size": 3025837,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778019000,
+          "title": "PulpWindowInstall2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "PulpWindowInstall2Detail1",
+      "tag": [
+        "Pulp_Window_Install_2",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "90198bdec01b8ea1b9836e3d4839ba80",
+          "color": "rgb(248,216,216,1)",
+          "density": null,
+          "filename": "PulpWindowInstall2Detail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/90198bdec01b8ea1b9836e3d4839ba80.jpg",
+          "protocol": "file",
+          "size": 2341692,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778065000,
+          "title": "PulpWindowInstall2Detail1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "PulpWindowInstall2Detail2",
+      "tag": [
+        "Pulp_Window_Install_2",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "f18ea5ae19cbac5e6151c72404af9283",
+          "color": "rgb(232,216,216,1)",
+          "density": null,
+          "filename": "PulpWindowInstall2Detail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/f18ea5ae19cbac5e6151c72404af9283.jpg",
+          "protocol": "file",
+          "size": 3049023,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778041000,
+          "title": "PulpWindowInstall2Detail2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "PulpWindowInstall2Detail3",
+      "tag": [
+        "Pulp_Window_Install_2",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0226058bdff366df9c9a6c3d0bb7478f",
+          "color": "rgb(232,200,200,1)",
+          "density": null,
+          "filename": "PulpWindowInstall2Detail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/0226058bdff366df9c9a6c3d0bb7478f.jpg",
+          "protocol": "file",
+          "size": 3016569,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778079000,
+          "title": "PulpWindowInstall2Detail3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "PulpWindowInstall2Detail4",
+      "tag": [
+        "Pulp_Window_Install_2",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "6165a570387877786d6734bf27428058",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "PulpWindowInstall2Detail4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/6165a570387877786d6734bf27428058.jpg",
+          "protocol": "file",
+          "size": 2640638,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778049000,
+          "title": "PulpWindowInstall2Detail4"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Territory",
+      "tag": [
+        "Territory",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "9452e8b069d875529a9571e467399cdc",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "Territory.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/9452e8b069d875529a9571e467399cdc.jpg",
+          "protocol": "file",
+          "size": 2724699,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779373000,
+          "title": "Territory"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "TerritoryDetail1",
+      "tag": [
+        "Territory",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "cd715c068ee9f972670cbb558e6a8e0d",
+          "color": "rgb(232,216,216,1)",
+          "density": null,
+          "filename": "TerritoryDetail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/cd715c068ee9f972670cbb558e6a8e0d.jpg",
+          "protocol": "file",
+          "size": 4037500,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779498000,
+          "title": "TerritoryDetail1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "TerritoryDetail2",
+      "tag": [
+        "Territory",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "6deb8cfecf4c843f5bc55e5d23ea7350",
+          "color": "rgb(248,216,200,1)",
+          "density": null,
+          "filename": "TerritoryDetail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/6deb8cfecf4c843f5bc55e5d23ea7350.jpg",
+          "protocol": "file",
+          "size": 3434637,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779420000,
+          "title": "TerritoryDetail2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "TerritoryDetail3",
+      "tag": [
+        "Territory",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "e29e24c79f61c42774bac61011fd7e4e",
+          "color": "rgb(232,216,200,1)",
+          "density": null,
+          "filename": "TerritoryDetail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/e29e24c79f61c42774bac61011fd7e4e.jpg",
+          "protocol": "file",
+          "size": 3706898,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779506000,
+          "title": "TerritoryDetail3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "TerritoryDetail4",
+      "tag": [
+        "Territory",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "03e3e75c484b1d56b3f0d14a8c5d2f1b",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "TerritoryDetail4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/03e3e75c484b1d56b3f0d14a8c5d2f1b.jpg",
+          "protocol": "file",
+          "size": 2640321,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779461000,
+          "title": "TerritoryDetail4"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "UntitledPulpSheet6",
+      "tag": [
+        "Untitled_Pulp_Sheet_6",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "b7926f6099e5bb639407df1259541d49",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "UntitledPulpSheet6.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/b7926f6099e5bb639407df1259541d49.jpg",
+          "protocol": "file",
+          "size": 1849054,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 1952,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2440,
+          "date": 1687779109000,
+          "title": "UntitledPulpSheet6"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "UntitledPulpSheet6Detail1",
+      "tag": [
+        "Untitled_Pulp_Sheet_6",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "3d72e125e635de734ba1f8ab9689b2c2",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "UntitledPulpSheet6Detail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/3d72e125e635de734ba1f8ab9689b2c2.jpg",
+          "protocol": "file",
+          "size": 1679296,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779145000,
+          "title": "UntitledPulpSheet6Detail1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "UntitledPulpSheet6Detail2",
+      "tag": [
+        "Untitled_Pulp_Sheet_6",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "02316eb2abf45e4da72b200abb8e70e3",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "UntitledPulpSheet6Detail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/02316eb2abf45e4da72b200abb8e70e3.jpg",
+          "protocol": "file",
+          "size": 1783491,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779195000,
+          "title": "UntitledPulpSheet6Detail2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "UntitledPulpSheet6Detail3",
+      "tag": [
+        "Untitled_Pulp_Sheet_6",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "16da76b710d64d6fd01acdb38347594b",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "UntitledPulpSheet6Detail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/16da76b710d64d6fd01acdb38347594b.jpg",
+          "protocol": "file",
+          "size": 1724948,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779203000,
+          "title": "UntitledPulpSheet6Detail3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "UntitledPulpSheet6Detail4",
+      "tag": [
+        "Untitled_Pulp_Sheet_6",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "30cfe0adc8ee8bda76f7575e5dd4eeb7",
+          "color": "rgb(232,216,216,1)",
+          "density": null,
+          "filename": "UntitledPulpSheet6Detail4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/30cfe0adc8ee8bda76f7575e5dd4eeb7.jpg",
+          "protocol": "file",
+          "size": 1458521,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779224000,
+          "title": "UntitledPulpSheet6Detail4"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "UntitledPulpSheet6Detail5",
+      "tag": [
+        "Untitled_Pulp_Sheet_6",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "bdc9f96e884407dbbfc3dca61870f4c5",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "UntitledPulpSheet6Detail5.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/bdc9f96e884407dbbfc3dca61870f4c5.jpg",
+          "protocol": "file",
+          "size": 1839176,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779199000,
+          "title": "UntitledPulpSheet6Detail5"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Waterfall3",
+      "tag": [
+        "Waterfall_3",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "c2f93b21e3a8f1979491160887148628",
+          "color": "rgb(248,248,232,1)",
+          "density": null,
+          "filename": "Waterfall3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/c2f93b21e3a8f1979491160887148628.jpg",
+          "protocol": "file",
+          "size": 3528497,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778214000,
+          "title": "Waterfall3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Waterfall3Detail1",
+      "tag": [
+        "Waterfall_3",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "b8459e1d24bd4469990e3d1a78173983",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "Waterfall3Detail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/b8459e1d24bd4469990e3d1a78173983.jpg",
+          "protocol": "file",
+          "size": 2539821,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778394000,
+          "title": "Waterfall3Detail1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Waterfall3Detail2",
+      "tag": [
+        "Waterfall_3",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "189e6b6015e929ea64567e55491afc97",
+          "color": "rgb(248,248,232,1)",
+          "density": null,
+          "filename": "Waterfall3Detail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/189e6b6015e929ea64567e55491afc97.jpg",
+          "protocol": "file",
+          "size": 2042823,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778404000,
+          "title": "Waterfall3Detail2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Waterfall3Detail3",
+      "tag": [
+        "Waterfall_3",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "df3e7bcdedb9df6f985e7a11e3f642e6",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "Waterfall3Detail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/df3e7bcdedb9df6f985e7a11e3f642e6.jpg",
+          "protocol": "file",
+          "size": 2784674,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778427000,
+          "title": "Waterfall3Detail3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Waterfall3Detail4",
+      "tag": [
+        "Waterfall_3",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "9621e1090cf497cd8a469bf3460bfbf7",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "Waterfall3Detail4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/9621e1090cf497cd8a469bf3460bfbf7.jpg",
+          "protocol": "file",
+          "size": 2015868,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687778374000,
+          "title": "Waterfall3Detail4"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "ulpDump1Detail1",
+      "tag": [
+        "Pulp_Dump",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "38ae3f719acf2e679028c6b673630705",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "ulpDump1Detail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Desktop/thisisalivingroom.tropy/assets/38ae3f719acf2e679028c6b673630705.jpg",
+          "protocol": "file",
+          "size": 1545900,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2440,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 1830,
+          "date": 1687779665000,
+          "title": "PulpDump1Detail1"
+        }
+      ]
+    }
+  ],
+  "version": "1.14.0"
+}
