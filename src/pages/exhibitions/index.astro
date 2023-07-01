@@ -3,20 +3,16 @@ import Layout from "../../layouts/Layout.astro";
 
 import ImageData from "../../data/thisisalivingroom-image_data-r1-063023.json";
 let images = ImageData["@graph"];
-console.log(images);
 
 let exhibitionPhotos = images.filter( item => {
   return item.tag.includes( "Exhibition" );
 });
-console.log(exhibitionPhotos);
-console.log("test");
 
 let primaryArtworkPhotos = images.filter( item => {
   return item.tag.includes( "cover" );
 });
 
 let curatedPhotos = images.filter( item => {
-  if ( item.hasOwnProperty('tag') ) { console.log("it does") };
   return ( item.tag.includes("Exhibition") || item.tag.includes("Cover") );
   });
 ---
@@ -48,16 +44,6 @@ let curatedPhotos = images.filter( item => {
 
   </div>
 </Layout>
-
-<script>
-  import ImageData from "../../data/thisisalivingroom-image_data-r1-063023.json";
-  let images = ImageData["@graph"];
-  let exhibitionPhotos = images.filter( item => {
-    return item.tag.includes( "Exhibition" );
-  });
-  console.log(exhibitionPhotos);
-  console.log("test");
-</script>
 
 <style lang="scss">
   .layout {
