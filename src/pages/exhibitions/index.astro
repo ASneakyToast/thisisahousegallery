@@ -1,23 +1,26 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import QuickviewThumbnails from "../../components/quickview-thumbnails.astro";
 
 import ImageData from "../../data/thisisalivingroom-image_data-r1-063023.json";
-let images = ImageData["@graph"];
+const images = ImageData["@graph"];
 
-let exhibitionPhotos = images.filter( item => {
+const exhibitionPhotos = images.filter( item => {
   return item.tag.includes( "Exhibition" );
 });
 
-let primaryArtworkPhotos = images.filter( item => {
+const primaryArtworkPhotos = images.filter( item => {
   return item.tag.includes( "cover" );
 });
 
-let curatedPhotos = images.filter( item => {
+const curatedPhotos = images.filter( item => {
   return ( item.tag.includes("Exhibition") || item.tag.includes("Cover") );
-  });
+});
 ---
 
 <Layout title="Exhibitions | House Gallery">
+  <QuickviewThumbnails></QuickviewThumbnails>
+
   <div class="layout">
 
     <article id="thisisalivingroom" class="exhibition">
@@ -34,14 +37,13 @@ let curatedPhotos = images.filter( item => {
           {
             Object.keys( curatedPhotos ).map(( key, i ) => {
               return (
-                <img src={ "/exhibitions/thisisalivingroom/images/" + curatedPhotos[ key ].photo[0].filename } />
+                <img class="quickview-item" src={ "/exhibitions/thisisalivingroom/images/" + curatedPhotos[ key ].photo[0].filename } />
               )
             })
           }
         </section>
       </section>
     </article>
-
   </div>
 </Layout>
 
@@ -125,4 +127,63 @@ let curatedPhotos = images.filter( item => {
     }
   }
 
+  .quickview-item {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
 </style>
+
+<script define:vars={{ images }}>
+  /* QUICKVIEW FUNCTION OPEN */
+  function openQuickview( e ) {
+    // get data
+    const imageData = images.find( image => {
+      return e.target.attributes.src.value.includes( image.title );
+    });
+    console.log(imageData);
+
+    // seralize data
+    // wait wtf am I doing this if I'm just loading the same image
+    let activeImageFilename = String.raw`${ imageData.photo[0].filename }`;
+    activeImageFilename = activeImageFilename.replace(/\s+/g, "%20"); //format filename to account for spacing
+    let selectedImage = e.target.attributes.src.value;
+    let imageTags = imageData.tag;
+    imageTags = imageTags.filter( tag => {
+      return tag !== "Cover";
+    });
+    let selectedArtwork = imageData.tag.filter( tag => {
+      return tag !== "Cover";
+    });
+    selectedArtwork = selectedArtwork[0];
+    const artworkImagesData = images.filter( image => {
+      return ( image.tag.includes( selectedArtwork ) );
+    });
+    const artworkImagesSrc = [];
+    artworkImagesData.forEach( item => {
+      let itemFilename = item.photo[0].filename;
+      let itemPath = `/exhibitions/thisisalivingroom/images/${ itemFilename }`;
+      artworkImagesSrc.push( itemPath );
+    });
+
+    // send data
+    const quickview = document.querySelector(".quickview-thumbnails");
+    const quickviewEvent = new CustomEvent( "quickview-open", {
+      detail: {
+        coverSrc: selectedImage,
+        images: artworkImagesSrc,
+        title: selectedArtwork
+      },
+    });
+    quickview.dispatchEvent( quickviewEvent );
+  }
+
+  /* QUICKVIEW ATTACH HANDLER */
+  const quickviewItems = document.querySelectorAll( ".quickview-item" );
+  quickviewItems.forEach(( item ) => {
+    item.addEventListener( "click", () => {
+      openQuickview( event );
+    });
+  });
+</script>

@@ -1,0 +1,172 @@
+<section class="quickview-thumbnails">
+  <section class="main">
+    <img src="" />
+    <p class="image-caption">Image caption for the hoes</p>
+  </section>
+  <button class="close">Close X</button>
+  <section class="info">
+    <!-- Add elements here? -->
+  </section>
+  <section class="thumbnails">
+    <!-- Add thumbnails here -->
+    <!-- Demo nails while I'm styling -->
+    <img src="" />
+    <img src="" />
+    <img src="" />
+  </section>
+</section>
+
+<script>
+  const quickview = document.querySelector(".quickview-thumbnails");
+  const closeButton = document.querySelector(".quickview-thumbnails .close");
+  const mainImage = document.querySelector(".quickview-thumbnails .main img");
+  const mainImageCaption = document.querySelector(".quickview-thumbnails .image-caption");
+  const thumbnailsContainer = document.querySelector(".quickview-thumbnails .thumbnails");
+  let thumbnails = document.querySelectorAll(".quickview-thumbnails .thumbnails img");
+  const infoContainer = document.querySelector(".quickview-thumbnails .info");
+
+  function setMainImage( newSrc ) {
+    mainImage.src = newSrc;
+    mainImageCaption.innerHTML = newSrc.replace(/^.*[\\\/]/, '');
+  }
+
+  closeButton.addEventListener( "click", () => {
+    quickview.classList.remove("quickview-thumbnails--open");
+  });
+
+  quickview.addEventListener( "quickview-open", ({ detail }) => {
+    // debug data
+    console.log( detail );
+
+    // toggle visibility
+    quickview.classList.add("quickview-thumbnails--open");
+
+    // reset data
+    thumbnailsContainer.innerHTML = "";
+    infoContainer.innerHTML = "";
+
+    // set data
+    setMainImage( detail.coverSrc, detail.title );
+
+    detail.images.forEach( src => {
+      let img = document.createElement("img");
+      img.src = src;
+      img.classList.add("thumbnail");
+      thumbnailsContainer.appendChild( img );
+    });
+    thumbnails = document.querySelectorAll(".quickview-thumbnails .thumbnails img");
+    thumbnails.forEach( thumbnail => {
+      thumbnail.addEventListener("click", () => {
+        setMainImage( event.target.src, event.target.filename );
+      });
+    });
+
+    let artworkInfo = document.createElement("p");
+    artworkInfo.innerHTML = detail.title;
+    infoContainer.appendChild( artworkInfo );
+  });
+</script>
+
+<style lang="scss">
+  .quickview-thumbnails {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 64;
+    visibility: hidden;
+    box-sizing: border-box;
+
+    /*
+    display: flex;
+    flex-direction: row;
+    padding: var(--space-base-large);
+    gap: var(--space-base-large);
+    */
+    display: grid;
+    grid-template-areas:
+      "main close"
+      "main info"
+      "main thumbnails";
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    padding: var(--space-base-large);
+
+    background-color: rgba(255,255,255,1);
+
+    @media (max-width: 768px) {
+      grid-template-areas:
+        "close"
+        "main"
+        "info"
+        "thumbnails";
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+
+    & .main {
+      grid-area: main;
+      min-height: fit-content;
+      display: flex;
+      flex-direction: column;
+
+      & img {
+        max-height: 100%;
+        margin-right: auto;
+      }
+    }
+
+    & .info {
+      text-align: right;
+      align-self: end;
+    }
+
+    & .thumbnails {
+      grid-area: thumbnails;
+      height: fit-content;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--space-base-small);
+      justify-content: right;
+
+      & :global(img) {
+        max-height: 100px;
+
+        @media (max-width: 675px) {
+          max-height: 50px;
+        }
+      }
+
+    }
+
+    & .close {
+      grid-area: close;
+      width: fit-content;
+      height: fit-content;
+      margin-left: auto;
+      margin-bottom: var(--space-base-small);
+
+      padding: var(--space-base-tiny) var(--space-base-small);
+      border: 1px solid #222222;
+      border-radius: 0;
+      background-color: #ffffff;
+
+      &:hover {
+        background-color: #222222;
+        color: #ffffff;
+      }
+    }
+
+    &--open {
+      visibility: visible;
+    }
+  }
+
+  img {
+    min-height: 200px;
+    min-width: 200px;
+    background: blue;
+  }
+</style>
