@@ -30,14 +30,14 @@ const curatedPhotos = images.filter( item => {
       </section>
       <section class="exhibition-media">
         <section class="exhibition-card">
-          <img src="/exhibitions/thisisalivingroom/Showcard001.png"></img>
-          <img src="/exhibitions/thisisalivingroom/showcard-back.png"></img>
+          <img src="/exhibitions/thisisalivingroom/Showcard001.jpg" alt="The promotional showcard for the exhibition 'This is a Living Room' by Joel Lithgow and Joseph Blake with This is a House Gallery."></img>
+          <img src="/exhibitions/thisisalivingroom/showcard-back.jpg" alt="The back side of the promotional showcard for the exhibition 'This is a Living Room' by Joel Lithgow and Joseph Blake with This is a House Gallery. It contains the show title, the opening date and address. It also states there will be a cool dog."></img>
         </section>
         <section class="exhibition-images">
           {
             Object.keys( curatedPhotos ).map(( key, i ) => {
               return (
-                <img class="quickview-item" src={ "/exhibitions/thisisalivingroom/images/" + curatedPhotos[ key ].photo[0].filename } />
+                <img class="quickview-item" alt="An exhibition photo of the show 'This is a living room' by Joel Lithgow and Joseph Blake with This is a House Gallery." src={ "/exhibitions/thisisalivingroom/images/" + curatedPhotos[ key ].photo[0].filename } />
               )
             })
           }
