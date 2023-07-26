@@ -1,6 +1,6 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import ExhibitionItem from "../components/exhibition-listing.astro";
+import Layout from "../../layouts/Layout.astro";
+import ExhibitionItem from "../../components/exhibition-listing.astro";
 ---
 
 <Layout title="Schedule | House Gallery">
@@ -11,6 +11,9 @@ import ExhibitionItem from "../components/exhibition-listing.astro";
          title="Your Least Fav Work"
          artists="Open Call Group Show"
          date="Party August 18th"
+         link="/schedule/yourleastfavwork"
+         open_call_url="https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link"
+         google_cal_invite_url="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MWtmbTBmdDVkbWsyNjQ4N2M4NWFjajN2aTggdGhpc2lzYWhvdXNlZ2FsbGVyeUBt&tmsrc=thisisahousegallery%40gmail.com"
          cta="true"
          cta_label="Submit Work"
          cta_tooltip="Send it"
@@ -87,7 +90,6 @@ import ExhibitionItem from "../components/exhibition-listing.astro";
   .main-feature {
     grid-area: feature;
     width: fit-content;
-    padding: 32px;
     display: flex;
     flex-direction: column;
     gap: var(--space-base-large);

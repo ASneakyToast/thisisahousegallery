@@ -1,12 +1,33 @@
 ---
-const { title, artists, date, cta="true", cta_label, cta_tooltip, cta_url, img_url, img_alt, featured } = Astro.props;
+const { title, artists, date, link, open_call_url, google_cal_invite_url, cta="true", cta_label, cta_tooltip, cta_url, img_url, img_alt, featured } = Astro.props;
 ---
 <article class="exhibition_listing">
   <div class="row-spaced">
+
     <section class={featured? "info info--featured" : "info"}>
-      <h4>{ title }</h2>
-      <h5>{ artists }</h5>
-      { date && <p>{ date }</p> }
+      { link ?
+        <a href={ link }>
+          <h4>{ title }</h2>
+        </a>
+        :
+        <h4>{ title }</h2>
+      }
+      { open_call_url ?
+        <a target="blank" href={ open_call_url }>
+          <h5>{ artists }</h5>
+        </a>
+        :
+        <h5>{ artists }</h5>
+      }
+      { google_cal_invite_url ?
+        <a target="blank" href={ google_cal_invite_url }>
+          { date && <p>{ date }</p> }
+        </a>
+        :
+        <span>
+          { date && <p>{ date }</p> }
+        </span>
+      }
     </section>
 
     { cta=="true" && 

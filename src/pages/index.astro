@@ -1,11 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link";
 ---
 
 <Layout title="House Gallery">
   <section class="featured">
     <img class="featured-main_image" src="/exhibitions/yourleastfavoritework/Showcard001.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'Your Least Fav Work' by This is a House Gallery."></img>
-    <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link">
+    <a href="/schedule/yourleastfavwork">
       <section class="featured-details" onclick="window.leastfavcards.classList.toggle('featured-cards--closed')">
         <h2><i>Your Least Favorite Work</i></h2>
         <h3>Put your shit in this show</h3>
