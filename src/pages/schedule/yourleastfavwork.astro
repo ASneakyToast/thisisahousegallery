@@ -4,10 +4,32 @@ import Layout from "../../layouts/Layout.astro";
 const title = "Your Least Favorite Work | House Gallery";
 
 const header = "Your Least Fav Work";
-const artists = "Open Call";
-const date="Party August 18th";
-const open_call_url="https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link"
-const google_cal_invite_url="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MWtmbTBmdDVkbWsyNjQ4N2M4NWFjajN2aTggdGhpc2lzYWhvdXNlZ2FsbGVyeUBt&tmsrc=thisisahousegallery%40gmail.com"
+const artists = [
+  { name: "Diana Markessinis", cta: "https://markessinis.com" },
+  { name: "James Seevers", cta: "https://jamesseevers.com" },
+  { name: "Tess Aykanian", cta: "https://instagram.com/chiquitatessita" },
+  { name: "Megan SooHoo", cta: "https://meganvsoohoo.com" },
+  { name: "Jack Boucher", cta: "https://instagram.com/legomaniac1256", received: false },
+  { name: "Mary Lou Grace", cta: "http://gracerobison.portfoliobox.net" },
+  { name: "Grace Scerni", cta: "https://instagram.com/gracescerni.art", received: false },
+  { name: "Kiran Sahgal", cta: "https://instagram.com/yay_kiku" },
+  { name: "Annie Artell", cta: "https://instagram.com/idontkissartell" },
+  { name: "Mike Hazel", cta: "https://instagram.com/Therichyoungrebel" },
+  { name: "Aston Grieco", cta: "https://instagram.com/eggshellpress" },
+  { name: "Anke Larsen-Yskamp", cta: "https://instagram.com/skymapsalvage", received: false },
+  { name: "Juan Huerta Coello", cta: "https://instagram.com/593___593", received: false },
+  { name: "Devin A", cta: "https://instagram.com/Indevstrongarm", received: false },
+  { name: "Vampire frog", cta: "https://instagram.com/Vampire_frog" },
+  { name: "Paige Warmington", cta: "https://pwarm.art", received: false },
+  { name: "Dina Mendoza", cta: "https://instagram.com/Blvinthedream", received: false },
+  { name: "Sarah Portnell-Speir", cta: "https://instagram.com/sarahpixels" },
+  { name: "Manuel Noah Angeja", cta: "https://Manuelangeja.com" },
+  { name: "Joel Lithgow", cta: "https://instagram.com/joellithgow" },
+  { name: "Joseph Blake", cta: "https://onequicktrick.com" },
+]
+const date = "Party August 18th";
+const open_call_url = false; /* "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link" */
+const google_cal_invite_url = "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MWtmbTBmdDVkbWsyNjQ4N2M4NWFjajN2aTggdGhpc2lzYWhvdXNlZ2FsbGVyeUBt&tmsrc=thisisahousegallery%40gmail.com"
 ---
 
 <Layout title={ title }>
@@ -15,25 +37,29 @@ const google_cal_invite_url="https://calendar.google.com/calendar/event?action=T
     <section class="layout-main">
       <section class="info"> 
         <h1>{ header }</h1>
-      <hr></hr>
-      { google_cal_invite_url ?
-        <h2>> <a target="_blank" href={ google_cal_invite_url }>{ date }</a></h2>
-        :
-        <h2>> { date }</h2>
-      }
-      { open_call_url ?
-        <h3>> <a target="_blank" href={ open_call_url }>{ artists }</a></h3>
-        :
-        <h3>> { artists }</h3>
-      }
-      </section>
 
-      <section class="description">
-        <p>An open call show where artists submitted their least favorite artwork. Come see everything that was in a storage box now in a bigger box we call our living room.</p>
+        { google_cal_invite_url ?
+          <h2>> <a target="_blank" href={ google_cal_invite_url }>{ date }</a></h2>
+          :
+          <h2>> { date }</h2>
+        }
+
+        <p class="description">An open call show where artists submitted their least favorite artwork. Come see everything that was in a storage box now in a bigger box we call our living room.</p>
+
+        <hr></hr>
+
+        <section class="artists">
+          { artists.map(( artist ) => (
+            artist.cta ? (
+              <h3><a target="_blank" href={ artist.cta }>{ artist.name }</a></h3>
+            ) : (
+              <h3>{ artist.name }</h3>
+            )
+          ))}
+        </section>
       </section>
     </section>
 
-    </section>
     <section class="layout-aside">
       <section class="images">
         <img src="/exhibitions/yourleastfavoritework/Showcard001.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'Your Least Fav Work' by This is a House Gallery."></img>
@@ -100,6 +126,19 @@ const google_cal_invite_url="https://calendar.google.com/calendar/event?action=T
 
   .description {
     width: 75%;
+  }
+
+  .artists {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-base-small);
+    margin: var(--space-base-large) 0;
+
+    & h3 {
+      margin: 0;
+      padding: 0;
+    }
   }
 
   .images {
