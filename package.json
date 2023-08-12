@@ -10,7 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/vue": "^2.2.1",
     "astro": "^2.4.1",
-    "sass": "^1.62.1"
+    "sass": "^1.62.1",
+    "vue": "^3.3.4"
   }
 }
