@@ -1,32 +1,44 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import artist_data from "../../data/yourleastfavoritework-artists.json";
 
 const title = "Your Least Favorite Work | House Gallery";
 
 const header = "Your Least Fav Work";
+
 const artists = [
-  { name: "Diana Markessinis", cta: "https://markessinis.com" },
-  { name: "James Seevers", cta: "https://jamesseevers.com" },
-  { name: "Tess Aykanian", cta: "https://instagram.com/chiquitatessita" },
-  { name: "Megan SooHoo", cta: "https://meganvsoohoo.com" },
+  { name: "Diana Markessinis", cta: "https://markessinis.com", received: true},
+  { name: "James Seevers", cta: "https://jamesseevers.com", received: true},
+  { name: "Tess Aykanian", cta: "https://instagram.com/chiquitatessita", received: true},
+  { name: "Megan SooHoo", cta: "https://meganvsoohoo.com", received: true},
   { name: "Jack Boucher", cta: "https://instagram.com/legomaniac1256", received: false },
-  { name: "Mary Lou Grace", cta: "http://gracerobison.portfoliobox.net" },
+  { name: "Mary Lou Grace", cta: "http://gracerobison.portfoliobox.net", received: true},
   { name: "Grace Scerni", cta: "https://instagram.com/gracescerni.art", received: false },
-  { name: "Kiran Sahgal", cta: "https://instagram.com/yay_kiku" },
-  { name: "Annie Artell", cta: "https://instagram.com/idontkissartell" },
-  { name: "Mike Hazel", cta: "https://instagram.com/Therichyoungrebel" },
-  { name: "Aston Grieco", cta: "https://instagram.com/eggshellpress" },
+  { name: "Kiran Sahgal", cta: "https://instagram.com/yay_kiku", received: true},
+  { name: "Annie Artell", cta: "https://instagram.com/idontkissartell", received: true},
+  { name: "Mike Hazel", cta: "https://instagram.com/Therichyoungrebel", received: true},
+  { name: "Aston Grieco", cta: "https://instagram.com/eggshellpress", received: true},
   { name: "Anke Larsen-Yskamp", cta: "https://instagram.com/skymapsalvage", received: false },
   { name: "Juan Huerta Coello", cta: "https://instagram.com/593___593", received: false },
   { name: "Devin A", cta: "https://instagram.com/Indevstrongarm", received: false },
-  { name: "Vampire frog", cta: "https://instagram.com/Vampire_frog" },
+  { name: "Vampire frog", cta: "https://instagram.com/Vampire_frog", received: true},
   { name: "Paige Warmington", cta: "https://pwarm.art", received: false },
   { name: "Dina Mendoza", cta: "https://instagram.com/Blvinthedream", received: false },
-  { name: "Sarah Portnell-Speir", cta: "https://instagram.com/sarahpixels" },
-  { name: "Manuel Noah Angeja", cta: "https://Manuelangeja.com" },
-  { name: "Joel Lithgow", cta: "https://instagram.com/joellithgow" },
-  { name: "Joseph Blake", cta: "https://onequicktrick.com" },
+  { name: "Sarah Portnell-Speir", cta: "https://instagram.com/sarahpixels", received: true},
+  { name: "Manuel Noah Angeja", cta: "https://Manuelangeja.com", received: true},
+  { name: "Joel Lithgow", cta: "https://instagram.com/joellithgow", received: true},
+  { name: "Joseph Blake", cta: "https://onequicktrick.com", received: true},
 ]
+artists.sort((a, b) => {
+  if (a.name < b.name) {
+    return -1;
+  }
+  if (a.name > b.name) {
+    return 1;
+  }
+  return 0;
+});
+
 const date = "Party August 18th";
 const open_call_url = false; /* "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link" */
 const google_cal_invite_url = "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MWtmbTBmdDVkbWsyNjQ4N2M4NWFjajN2aTggdGhpc2lzYWhvdXNlZ2FsbGVyeUBt&tmsrc=thisisahousegallery%40gmail.com"
@@ -49,11 +61,15 @@ const google_cal_invite_url = "https://calendar.google.com/calendar/event?action
         <hr></hr>
 
         <section class="artists">
-          { artists.map(( artist ) => (
-            artist.cta ? (
-              <h3><a target="_blank" href={ artist.cta }>{ artist.name }</a></h3>
-            ) : (
-              <h3>{ artist.name }</h3>
+          { artist_data.map(( artist ) => (
+            artist["Received Work"] == "True" && (
+              artist["Website"] ? (
+                <h3><a target="_blank" href={ "https://"+artist["Website"] }>{ artist["Name"] }</a></h3>
+              ) : artist["Instagram"] ? (
+                <h3><a target="_blank" href={ "https://instagram.com/"+artist["Instagram"] }>{ artist["Name"] }</a></h3>
+              ) : (
+                <h3>{ artist["Name"] }</h3>
+              )
             )
           ))}
         </section>
