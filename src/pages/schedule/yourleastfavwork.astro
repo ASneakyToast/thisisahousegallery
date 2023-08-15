@@ -1,39 +1,19 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import ImageWithQuickview from "../../components/image-with-quickview.svelte";
+// import QuickviewSimple from "../../components/quickview-simple.svelte";
+
 import artist_data from "../../data/yourleastfavoritework-artists.json";
 
 const title = "Your Least Favorite Work | House Gallery";
 
 const header = "Your Least Fav Work";
 
-const artists = [
-  { name: "Diana Markessinis", cta: "https://markessinis.com", received: true},
-  { name: "James Seevers", cta: "https://jamesseevers.com", received: true},
-  { name: "Tess Aykanian", cta: "https://instagram.com/chiquitatessita", received: true},
-  { name: "Megan SooHoo", cta: "https://meganvsoohoo.com", received: true},
-  { name: "Jack Boucher", cta: "https://instagram.com/legomaniac1256", received: false },
-  { name: "Mary Lou Grace", cta: "http://gracerobison.portfoliobox.net", received: true},
-  { name: "Grace Scerni", cta: "https://instagram.com/gracescerni.art", received: false },
-  { name: "Kiran Sahgal", cta: "https://instagram.com/yay_kiku", received: true},
-  { name: "Annie Artell", cta: "https://instagram.com/idontkissartell", received: true},
-  { name: "Mike Hazel", cta: "https://instagram.com/Therichyoungrebel", received: true},
-  { name: "Aston Grieco", cta: "https://instagram.com/eggshellpress", received: true},
-  { name: "Anke Larsen-Yskamp", cta: "https://instagram.com/skymapsalvage", received: false },
-  { name: "Juan Huerta Coello", cta: "https://instagram.com/593___593", received: false },
-  { name: "Devin A", cta: "https://instagram.com/Indevstrongarm", received: false },
-  { name: "Vampire frog", cta: "https://instagram.com/Vampire_frog", received: true},
-  { name: "Paige Warmington", cta: "https://pwarm.art", received: false },
-  { name: "Dina Mendoza", cta: "https://instagram.com/Blvinthedream", received: false },
-  { name: "Sarah Portnell-Speir", cta: "https://instagram.com/sarahpixels", received: true},
-  { name: "Manuel Noah Angeja", cta: "https://Manuelangeja.com", received: true},
-  { name: "Joel Lithgow", cta: "https://instagram.com/joellithgow", received: true},
-  { name: "Joseph Blake", cta: "https://onequicktrick.com", received: true},
-]
-artists.sort((a, b) => {
-  if (a.name < b.name) {
+artist_data.sort((a, b) => {
+  if (a["Name"] < b["Name"]) {
     return -1;
   }
-  if (a.name > b.name) {
+  if (a["Name"] > b["Name"]) {
     return 1;
   }
   return 0;
@@ -77,9 +57,19 @@ const google_cal_invite_url = "https://calendar.google.com/calendar/event?action
     </section>
 
     <section class="layout-aside">
+      <!--
+      <QuickviewSimple></QuickviewSimple> 
+      -->
       <section class="images">
         <img src="/exhibitions/yourleastfavoritework/Showcard001.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'Your Least Fav Work' by This is a House Gallery."></img>
         <img src="/exhibitions/yourleastfavoritework/Showcard-back.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'Your Least Fav Work' by This is a House Gallery."></img>
+        <!--
+        <ImageWithQuickview client:load 
+          image_url="/exhibitions/yourleastfavoritework/Showcard-back.jpg"
+          alt_text="A zoomed in view of the promotional showcard for the exhibition 'Your Least Fav Work' by This is a House Gallery."
+          caption="uh">
+        </ImageWithQuickview>
+        -->
       </section>
     </section>
   </main>
