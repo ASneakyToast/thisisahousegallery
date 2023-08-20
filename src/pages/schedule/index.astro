@@ -1,12 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import ExhibitionItem from "../../components/exhibition-listing.astro";
+import ExhibitionItem from "../../components/organisms/schedule-listing-item.astro";
 ---
 
 <Layout title="Schedule | House Gallery">
   <main class="layout">
     <section class="main-feature">
 
+      <!--
       <ExhibitionItem 
          title="Your Least Fav Work"
          artists="Group Show"
@@ -17,16 +18,26 @@ import ExhibitionItem from "../../components/exhibition-listing.astro";
          cta_label="Join Us"
          cta_tooltip="at the party"
          cta_url="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MWtmbTBmdDVkbWsyNjQ4N2M4NWFjajN2aTggdGhpc2lzYWhvdXNlZ2FsbGVyeUBt&tmsrc=thisisahousegallery%40gmail.com"
-         img_url="/exhibitions/yourleastfavoritework/Showcard001.jpg"
+         img_url="/exhibitions/yourleastfavwork/showcards/showcard-main--front.jpg"
          img_alt="The promotional showcard for the exhibition 'Your Least Fav Work' with This is a House Gallery."
          featured="true" />
+      -->
 
       <ExhibitionItem 
-         title="Tablets, Tables & Tombstones"
-         artists="Annie Artell, Sophie Smith, Dareal Calderon"
-         date="??? - ???"
-         cta="false"
-         featured="false" />
+        title="Tablets, Tables & Tombstones"
+        artists="Annie Artell, Sophie Smith, Dareal Calderon"
+        date="November 03, 2023"
+        cta="false"
+        featured="false"
+      />
+
+      <ExhibitionItem 
+        title="This is my First Time"
+        artists="Open Call Group Show"
+        date="Spring 2024"
+        cta="false"
+        featured="false"
+      />
 
     </section>
 
@@ -92,6 +103,8 @@ import ExhibitionItem from "../../components/exhibition-listing.astro";
     display: flex;
     flex-direction: column;
     gap: var(--space-base-large);
+
+    margin-top: 32px;
 
     @media (max-width: 675px) {
       padding: 0;
