@@ -6,6 +6,15 @@ import ExhibitionListingItem from "../../components/organisms/exhibition-listing
 import ImageData from "../../data/thisisalivingroom-image_data-r1-063023.json";
 const images = ImageData["@graph"];
 
+import LeastFavWorkImageData from "../../data/yourleastfavwork-images.json";
+const leastfavwork_images = LeastFavWorkImageData["@graph"].filter( item => {
+  return (
+    item.tag.includes("Opening") 
+    || item.tag.includes("Cover") 
+    || item.tag.includes("Exhibition")
+  )
+});;
+
 const curatedPhotos = images.filter( item => {
   return ( item.tag.includes("Exhibition") || item.tag.includes("Cover") );
 });
@@ -18,7 +27,7 @@ const curatedPhotos = images.filter( item => {
     <ExhibitionListingItem client:load
         title = "Your Least Fav Work"
         title_slug = "yourleastfavwork"
-        gallery_images = {curatedPhotos}
+        gallery_images = { leastfavwork_images }
         card_images = {{
            front_src: "/exhibitions/yourleastfavwork/showcards/showcard-main--front.jpg",
            back_src: "/exhibitions/yourleastfavwork/showcards/showcard-main--back.jpg",
@@ -29,7 +38,7 @@ const curatedPhotos = images.filter( item => {
     <ExhibitionListingItem client:load
         title = "This is a Living Room"
         title_slug = "thisisalivingroom"
-        gallery_images = {curatedPhotos}
+        gallery_images = { curatedPhotos }
         card_images = {{
            front_src: "/exhibitions/thisisalivingroom/Showcard001.jpg",
            back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",

@@ -1,17 +1,10 @@
 <script>
   import QuickviewThumbnails from "../../components/quickview-thumbnails.astro";
 
-  import ImageData from "../../data/thisisalivingroom-image_data-r1-063023.json";
-  const images = ImageData["@graph"];
-
   export let title = "Exhibition title";
   export let title_slug = "exhibition_title";
   export let date = "06.23 - 07-07";
   export let gallery_images = "";
-
-  console.log("testing");
-  console.log(gallery_images);
-
   export let card_images = {
     front_src: "/exhibitions/thisisalivingroom/Showcard001.jpg",
     back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",
@@ -38,7 +31,7 @@
       {#each gallery_images as photo, index}
         <img 
           class="quickview-item" 
-          src={ "/exhibitions/thisisalivingroom/images/" + gallery_images[ index ].photo[0].filename }
+          src={ "/exhibitions/" + title_slug + "/images/" + gallery_images[ index ].photo[0].filename }
           alt="An exhibition photo of the show 'This is a living room' by Joel Lithgow and Joseph Blake with This is a House Gallery." 
         />
       {/each}

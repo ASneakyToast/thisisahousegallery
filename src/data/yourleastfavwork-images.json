@@ -1,0 +1,389 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "https://tropy.org/v1/tropy#",
+    "template": {
+      "@type": "@id"
+    },
+    "photo": {
+      "@id": "https://tropy.org/v1/tropy#photo",
+      "@container": "@list"
+    },
+    "note": {
+      "@id": "https://tropy.org/v1/tropy#note",
+      "@container": "@list"
+    },
+    "selection": {
+      "@id": "https://tropy.org/v1/tropy#selection",
+      "@container": "@list"
+    },
+    "title": "http://purl.org/dc/elements/1.1/title",
+    "date": {
+      "@id": "http://purl.org/dc/elements/1.1/date",
+      "@type": "https://tropy.org/v1/tropy#date"
+    }
+  },
+  "@graph": [
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "ManuelandJames",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "e6887242e48116c5ca373a1cae5ec827",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "ManuelandJames.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/e6887242e48116c5ca373a1cae5ec827.jpg",
+          "protocol": "file",
+          "size": 7353973,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 4000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3000,
+          "date": 1692360324000,
+          "title": "ManuelandJames"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "allgone",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "3bf700a37ebd358dd5ef46bde86b2e75",
+          "color": "rgb(8,8,8,1)",
+          "density": null,
+          "filename": "allgone.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/3bf700a37ebd358dd5ef46bde86b2e75.jpg",
+          "protocol": "file",
+          "size": 5295498,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2491,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3322,
+          "date": 1692376445000,
+          "title": "allgone"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "johan",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "e036185fc06b9966c5e149cf665df245",
+          "color": "rgb(168,136,104,1)",
+          "density": null,
+          "filename": "johan.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/e036185fc06b9966c5e149cf665df245.jpg",
+          "protocol": "file",
+          "size": 5221981,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3084,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2312,
+          "date": 1692464807000,
+          "title": "johan"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "outside1",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "70433bf57188d864fcfdaaadfcae768d",
+          "color": "rgb(8,8,24,1)",
+          "density": null,
+          "filename": "outside1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/70433bf57188d864fcfdaaadfcae768d.jpg",
+          "protocol": "file",
+          "size": 5380115,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2651,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3534,
+          "date": 1692368374000,
+          "title": "outside1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "outside2",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "ab39059a7c8c3df9009fe17e0c6b25f0",
+          "color": "rgb(24,24,40,1)",
+          "density": null,
+          "filename": "outside2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/ab39059a7c8c3df9009fe17e0c6b25f0.jpg",
+          "protocol": "file",
+          "size": 3757784,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2613,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3484,
+          "date": 1692369918000,
+          "title": "outside2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "outside3",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "43c3f27230d8e2a3de41874912f32dc8",
+          "color": "rgb(8,8,8,1)",
+          "density": null,
+          "filename": "outside3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/43c3f27230d8e2a3de41874912f32dc8.jpg",
+          "protocol": "file",
+          "size": 4770725,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2593,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3457,
+          "date": 1692364267000,
+          "title": "outside3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "roof",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "b0426d18738293d5a81215fd00eeb5a6",
+          "color": "rgb(8,8,8,1)",
+          "density": null,
+          "filename": "roof.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/b0426d18738293d5a81215fd00eeb5a6.jpg",
+          "protocol": "file",
+          "size": 4761599,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 4032,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3024,
+          "date": 1692464507000,
+          "title": "roof"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "roofcrop",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "7498aa115ce83279c2baecc42f477931",
+          "color": "rgb(8,8,8,1)",
+          "density": null,
+          "filename": "roofcrop.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/7498aa115ce83279c2baecc42f477931.jpg",
+          "protocol": "file",
+          "size": 6144506,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3024,
+          "date": 1692464842000,
+          "title": "roofcrop"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "room2",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "17296951d5dc06afcbc893df27bef3aa",
+          "color": "rgb(200,200,200,1)",
+          "density": null,
+          "filename": "room2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/17296951d5dc06afcbc893df27bef3aa.jpg",
+          "protocol": "file",
+          "size": 4562533,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2502,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3336,
+          "date": 1692360291000,
+          "title": "room2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "roomlikewhoa",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "c573139e0d18e31b4e549bb27086f2ad",
+          "color": "rgb(184,168,152,1)",
+          "density": null,
+          "filename": "roomlikewhoa.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/c573139e0d18e31b4e549bb27086f2ad.jpg",
+          "protocol": "file",
+          "size": 5182525,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4000,
+          "date": 1692359696000,
+          "title": "roomlikewhoa"
+        }
+      ]
+    }
+  ],
+  "version": "1.14.0"
+}
