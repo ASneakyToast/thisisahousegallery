@@ -1,0 +1,151 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ImageWithQuickview from "../../components/image-with-quickview.svelte";
+// import QuickviewSimple from "../../components/quickview-simple.svelte";
+
+import artist_data from "../../data/tabletstablestombstones-artists.json";
+artist_data.sort((a, b) => {
+  if (a["Name"] < b["Name"]) {
+    return -1;
+  }
+  if (a["Name"] > b["Name"]) {
+    return 1;
+  }
+  return 0;
+});
+
+const title = "Tablets Tables Tombstones | House Gallery";
+
+const header = "Tablets Tables and Tombstones";
+
+const date = "Opening Reception - November 11th";
+const open_call_url = false;
+const google_cal_invite_url = "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MjE5aGFoczNmZGtscTA3YzQzanZqYW5nNTkgZjRiM2Q0NmZkOThlZGY1NzJlNTNjYzU5YjY3MTU5NzVlMjAyMWY2MzkzMTU0NjQyNTZlYjFiNjNhNDRlMWQ1NkBn&tmsrc=f4b3d46fd98edf572e53cc59b6715975e2021f639315464256eb1b63a44e1d56%40group.calendar.google.com";
+---
+
+<Layout title={ title }>
+  <main class="layout">
+    <section class="layout-main">
+      <section class="info"> 
+        <h1>{ header }</h1>
+
+        { google_cal_invite_url ?
+          <h2>> <a target="_blank" href={ google_cal_invite_url }>{ date }</a></h2>
+          :
+          <h2>> { date }</h2>
+        }
+        <!-- <h2>> <a target="_blank" href="https://goo.gl/maps/b8VMR7rNgoSbX8js8">361 Lester Ave</a></h2> -->
+
+        <section class="artists">
+          { artist_data.map(( artist ) => (
+            artist["Received Work"] == "True" && (
+              artist["Website"] ? (
+                <h3><a target="_blank" href={ "https://"+artist["Website"] }>{ artist["Name"] }</a></h3>
+              ) : artist["Instagram"] ? (
+                <h3><a target="_blank" href={ "https://instagram.com/"+artist["Instagram"] }>{ artist["Name"] }</a></h3>
+              ) : (
+                <h3>{ artist["Name"] }</h3>
+              )
+            )
+          ))}
+        </section>
+
+        <hr></hr>
+
+        <img src="/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'Your Least Fav Work' by This is a House Gallery."></img>
+
+        <!-- Get Joey to write this
+          <p class="description">An open call show where artists submitted their least favorite artwork. Come see everything that was in a storage box now in a bigger box we call our living room.</p>
+        -->
+      </section>
+    </section>
+
+    <!--
+    <section class="layout-aside">
+      <section class="images">
+        <img src="/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'Your Least Fav Work' by This is a House Gallery."></img>
+      </section>
+    </section>
+    -->
+  </main>
+</Layout>
+
+<style lang="scss">
+
+  /* Guess I gotta do this everywhere until I refactor the layout */
+  main {
+    margin: auto;
+    padding: var(--space-base-huge) var(--space-base-large) var(--space-base-large) var(--space-base-large);
+    max-width: 1024px;
+
+    @media (max-width: 675px) {
+      padding: var(--space-base-medium) var(--space-base-small) var(--space-base-small) var(--space-base-small);
+    }
+
+    @media (max-width: 1024px) {
+      padding: var(--space-base-large) var(--space-base-medium) var(--space-base-medium) var(--space-base-medium);
+    }
+
+    & h1 {
+      font-size: 2rem;
+      font-weight: lighter;
+    }
+    & h2 {
+      font-size: 1.17rem;
+      font-weight: lighter;
+    }
+    & h3 {
+      font-size: 1rem;
+      font-weight: lighter;
+    }
+    & p {
+      font-weight: lighter;
+    }
+
+    & hr {
+      margin: var(--space-base-large) 0;
+    }
+  }
+
+  .layout {
+    display: grid;
+    grid-template-areas:
+      "main" "aside";
+    grid-template-columns: 3fr 1fr;
+    gap: var(--space-base-huge);
+
+    @media (max-width: 1024px) {
+      grid-template-areas:
+        "header"
+        "aside";
+    }
+  }
+
+  .info {
+  }
+
+
+  .description {
+    width: 75%;
+  }
+
+  .artists {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-base-small);
+    margin: var(--space-base-large) 0;
+
+    & h3 {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .images {
+    & img {
+      margin-bottom: var(--space-base-small);
+    }
+  }
+
+</style>
