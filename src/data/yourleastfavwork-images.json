@@ -243,42 +243,6 @@
     {
       "@type": "Item",
       "template": "https://tropy.org/v1/templates/generic",
-      "title": "roof",
-      "tag": [
-        "Opening"
-      ],
-      "photo": [
-        {
-          "@type": "Photo",
-          "checksum": "b0426d18738293d5a81215fd00eeb5a6",
-          "color": "rgb(8,8,8,1)",
-          "density": null,
-          "filename": "roof.jpg",
-          "mimetype": "image/jpeg",
-          "orientation": 1,
-          "page": 0,
-          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/b0426d18738293d5a81215fd00eeb5a6.jpg",
-          "protocol": "file",
-          "size": 4761599,
-          "template": "https://tropy.org/v1/templates/photo",
-          "angle": 0,
-          "brightness": 0,
-          "contrast": 0,
-          "height": 4032,
-          "hue": 0,
-          "mirror": false,
-          "negative": false,
-          "saturation": 0,
-          "sharpen": 0,
-          "width": 3024,
-          "date": 1692464507000,
-          "title": "roof"
-        }
-      ]
-    },
-    {
-      "@type": "Item",
-      "template": "https://tropy.org/v1/templates/generic",
       "title": "roofcrop",
       "tag": [
         "Opening"

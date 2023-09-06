@@ -61,14 +61,17 @@ const curatedPhotos = images.filter( item => {
   }
 </style>
 
-<script define:vars={{ images }}>
+<script define:vars={{ images, leastfavwork_images }}>
   /* QUICKVIEW FUNCTION OPEN */
   function openQuickview( e ) {
+    // get parent id
+    const exhibition_id = e.target.closest(".exhibition-title").id;
+
     // get data
-    const imageData = images.find( image => {
+    const all_images = images.concat(leastfavwork_images);
+    const imageData = all_images.find( image => {
       return e.target.attributes.src.value.includes( image.title );
     });
-    console.log(imageData);
 
     // seralize data
     // wait wtf am I doing this if I'm just loading the same image
@@ -83,13 +86,13 @@ const curatedPhotos = images.filter( item => {
       return tag !== "Cover";
     });
     selectedArtwork = selectedArtwork[0];
-    const artworkImagesData = images.filter( image => {
+    const artworkImagesData = all_images.filter( image => {
       return ( image.tag.includes( selectedArtwork ) );
     });
     const artworkImagesSrc = [];
     artworkImagesData.forEach( item => {
       let itemFilename = item.photo[0].filename;
-      let itemPath = `/exhibitions/thisisalivingroom/images/${ itemFilename }`;
+      let itemPath = `/exhibitions/${ exhibition_id }/images/${ itemFilename }`;
       artworkImagesSrc.push( itemPath );
     });
 
