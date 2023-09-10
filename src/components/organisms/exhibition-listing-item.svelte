@@ -102,7 +102,7 @@
       max-height: 35vh;
 
       @media (max-width: 675px) {
-        max-height: 25vh;
+        max-height: 20vh;
       }
     }
   }

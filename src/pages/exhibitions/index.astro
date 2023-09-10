@@ -3,21 +3,31 @@ import Layout from "../../layouts/Layout.astro";
 import QuickviewThumbnails from "../../components/quickview-thumbnails.astro";
 import ExhibitionListingItem from "../../components/organisms/exhibition-listing-item.svelte";
 
+/* Move to utils */
+const shuffle = (array: string[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
 import ImageData from "../../data/thisisalivingroom-image_data-r1-063023.json";
 const images = ImageData["@graph"];
+const curatedPhotos = images.filter( item => {
+  return ( item.tag.includes("Exhibition") || item.tag.includes("Cover") );
+});
 
 import LeastFavWorkImageData from "../../data/yourleastfavwork-images.json";
-const leastfavwork_images = LeastFavWorkImageData["@graph"].filter( item => {
+const leastfavwork_image_data = LeastFavWorkImageData["@graph"];
+let leastfavwork_images = leastfavwork_image_data.filter( item => {
   return (
     item.tag.includes("Opening") 
     || item.tag.includes("Cover") 
     || item.tag.includes("Exhibition")
   )
-});;
-
-const curatedPhotos = images.filter( item => {
-  return ( item.tag.includes("Exhibition") || item.tag.includes("Cover") );
 });
+leastfavwork_images = shuffle(leastfavwork_images);
 
 ---
 <Layout title="Exhibitions | House Gallery">
@@ -66,10 +76,24 @@ const curatedPhotos = images.filter( item => {
   function openQuickview( e ) {
     // get parent id
     const exhibition_id = e.target.closest(".exhibition-title").id;
+    console.log(exhibition_id);
 
-    // get data
+    // get image data
     const all_images = images.concat(leastfavwork_images);
-    const imageData = all_images.find( image => {
+
+    let exhibition_images = all_images;
+    switch ( exhibition_id ) {
+      case 'thisisalivingroom':
+        exhibition_images = images;
+        break;
+      case 'yourleastfavwork':
+        exhibition_images = leastfavwork_images;
+        break;
+      default:
+        console.log("Had trouble finding the exhibition id.");
+    }
+
+    const imageData = exhibition_images.find( image => {
       return e.target.attributes.src.value.includes( image.title );
     });
 
@@ -86,7 +110,7 @@ const curatedPhotos = images.filter( item => {
       return tag !== "Cover";
     });
     selectedArtwork = selectedArtwork[0];
-    const artworkImagesData = all_images.filter( image => {
+    const artworkImagesData = exhibition_images.filter( image => {
       return ( image.tag.includes( selectedArtwork ) );
     });
     const artworkImagesSrc = [];
@@ -102,7 +126,8 @@ const curatedPhotos = images.filter( item => {
       detail: {
         coverSrc: selectedImage,
         images: artworkImagesSrc,
-        title: selectedArtwork
+        title: selectedArtwork,
+        exhibition: exhibition_id,
       },
     });
     quickview.dispatchEvent( quickviewEvent );

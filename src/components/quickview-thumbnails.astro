@@ -59,6 +59,9 @@
       thumbnail.addEventListener("click", () => {
         setMainImage( event.target.src, event.target.filename );
       });
+      thumbnail.addEventListener("mouseover", () => {
+        setMainImage( event.target.src, event.target.filename );
+      });
     });
 
     let artworkInfo = document.createElement("p");
@@ -128,11 +131,11 @@
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      gap: var(--space-base-small);
+      gap: var(--space-base-tiny);
       justify-content: right;
 
       & :global(img) {
-        max-height: 100px;
+        max-height: 50px;
 
         @media (max-width: 675px) {
           max-height: 50px;

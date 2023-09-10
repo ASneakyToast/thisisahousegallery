@@ -27,6 +27,546 @@
     {
       "@type": "Item",
       "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall1",
+      "tag": [
+        "Unused"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "3217080304f1ce081814145c148dcf6b",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "LFinstall1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/3217080304f1ce081814145c148dcf6b.jpg",
+          "protocol": "file",
+          "size": 6170722,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4000,
+          "date": 1693067331000,
+          "title": "LFinstall1"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall10",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "81cc82b66941d65756bbfb46b0311ce9",
+          "color": "rgb(216,200,184,1)",
+          "density": null,
+          "filename": "LFinstall10.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/81cc82b66941d65756bbfb46b0311ce9.jpg",
+          "protocol": "file",
+          "size": 6546928,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2798,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3731,
+          "date": 1693037487000,
+          "title": "LFinstall10"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall11",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "ad41fa10304faa0e5fe4a360f93cdc81",
+          "color": "rgb(232,216,200,1)",
+          "density": null,
+          "filename": "LFinstall11.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/ad41fa10304faa0e5fe4a360f93cdc81.jpg",
+          "protocol": "file",
+          "size": 5503809,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4000,
+          "date": 1693041986000,
+          "title": "LFinstall11"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall12",
+      "tag": [
+        "Unused"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "f423c778d4357295a75f4abc7d04c561",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "LFinstall12.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/f423c778d4357295a75f4abc7d04c561.jpg",
+          "protocol": "file",
+          "size": 6233720,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 4000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3000,
+          "date": 1693065720000,
+          "title": "LFinstall12"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall13",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "f97f7edb29172437f55fcb8a130022b7",
+          "color": "rgb(56,40,24,1)",
+          "density": null,
+          "filename": "LFinstall13.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/f97f7edb29172437f55fcb8a130022b7.jpg",
+          "protocol": "file",
+          "size": 7580636,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3578,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2683,
+          "date": 1693040561000,
+          "title": "LFinstall13"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall14",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "fe1ed1489c8d6db9d9345556d9826f17",
+          "color": "rgb(216,216,200,1)",
+          "density": null,
+          "filename": "LFinstall14.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/fe1ed1489c8d6db9d9345556d9826f17.jpg",
+          "protocol": "file",
+          "size": 9788891,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2830,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3773,
+          "date": 1693042443000,
+          "title": "LFinstall14"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall1crop",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "ef66b64752e463f393c847f93ba43502",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "LFinstall1crop.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/ef66b64752e463f393c847f93ba43502.jpg",
+          "protocol": "file",
+          "size": 1401221,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2500,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3334,
+          "date": 1693067331000,
+          "title": "LFinstall1crop"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall2",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "6589e575c3a0ef7b489f78a8441f4e46",
+          "color": "rgb(152,136,120,1)",
+          "density": null,
+          "filename": "LFinstall2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/6589e575c3a0ef7b489f78a8441f4e46.jpg",
+          "protocol": "file",
+          "size": 6672764,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4000,
+          "date": 1693042366000,
+          "title": "LFinstall2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall3",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "d79cbdae866c01b56bb544b95062ec1e",
+          "color": "rgb(248,248,232,1)",
+          "density": null,
+          "filename": "LFinstall3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/d79cbdae866c01b56bb544b95062ec1e.jpg",
+          "protocol": "file",
+          "size": 23596804,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "date": 1693037285000,
+          "title": "LFinstall3"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall4",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "80cbdb14663d78ffef9a2f5a28ed064b",
+          "color": "rgb(248,232,200,1)",
+          "density": null,
+          "filename": "LFinstall4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/80cbdb14663d78ffef9a2f5a28ed064b.jpg",
+          "protocol": "file",
+          "size": 7825767,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4000,
+          "date": 1693038150000,
+          "title": "LFinstall4"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall5",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "f3357363c042f6b35df25958ca5e166e",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "LFinstall5.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/f3357363c042f6b35df25958ca5e166e.jpg",
+          "protocol": "file",
+          "size": 3335517,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4000,
+          "date": 1693065369000,
+          "title": "LFinstall5"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall6",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "2a04c23f33ef27959c8a28d3cd65537b",
+          "color": "rgb(248,232,200,1)",
+          "density": null,
+          "filename": "LFinstall6.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/2a04c23f33ef27959c8a28d3cd65537b.jpg",
+          "protocol": "file",
+          "size": 7282411,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3712,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2784,
+          "date": 1693037617000,
+          "title": "LFinstall6"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall7",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "fdea882a545e00df9ea0bea7282ef176",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "LFinstall7.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/fdea882a545e00df9ea0bea7282ef176.jpg",
+          "protocol": "file",
+          "size": 5544004,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4000,
+          "date": 1693037876000,
+          "title": "LFinstall7"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall8",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "beee5c689c88d3ce1a7345c1ea81f3b2",
+          "color": "rgb(168,152,136,1)",
+          "density": null,
+          "filename": "LFinstall8.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/beee5c689c88d3ce1a7345c1ea81f3b2.jpg",
+          "protocol": "file",
+          "size": 5820984,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4000,
+          "date": 1693041106000,
+          "title": "LFinstall8"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "LFinstall9",
+      "tag": [
+        "Exhibition"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "d77f11342e1fc2a5b3192f4d2a2a0056",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "LFinstall9.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/d77f11342e1fc2a5b3192f4d2a2a0056.jpg",
+          "protocol": "file",
+          "size": 6744800,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3000,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4000,
+          "date": 1693038166000,
+          "title": "LFinstall9"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
       "title": "ManuelandJames",
       "tag": [
         "Opening"
@@ -55,8 +595,8 @@
           "saturation": 0,
           "sharpen": 0,
           "width": 3000,
-          "date": 1692360324000,
-          "title": "ManuelandJames"
+          "title": "ManuelandJames",
+          "date": 1692360324000
         }
       ]
     },
@@ -91,8 +631,8 @@
           "saturation": 0,
           "sharpen": 0,
           "width": 3322,
-          "date": 1692376445000,
-          "title": "allgone"
+          "title": "allgone",
+          "date": 1692376445000
         }
       ]
     },
@@ -127,8 +667,8 @@
           "saturation": 0,
           "sharpen": 0,
           "width": 2312,
-          "date": 1692464807000,
-          "title": "johan"
+          "title": "johan",
+          "date": 1692464807000
         }
       ]
     },
@@ -163,8 +703,8 @@
           "saturation": 0,
           "sharpen": 0,
           "width": 3534,
-          "date": 1692368374000,
-          "title": "outside1"
+          "title": "outside1",
+          "date": 1692368374000
         }
       ]
     },
@@ -199,8 +739,8 @@
           "saturation": 0,
           "sharpen": 0,
           "width": 3484,
-          "date": 1692369918000,
-          "title": "outside2"
+          "title": "outside2",
+          "date": 1692369918000
         }
       ]
     },
@@ -235,8 +775,8 @@
           "saturation": 0,
           "sharpen": 0,
           "width": 3457,
-          "date": 1692364267000,
-          "title": "outside3"
+          "title": "outside3",
+          "date": 1692364267000
         }
       ]
     },
@@ -271,8 +811,8 @@
           "saturation": 0,
           "sharpen": 0,
           "width": 3024,
-          "date": 1692464842000,
-          "title": "roofcrop"
+          "title": "roofcrop",
+          "date": 1692464842000
         }
       ]
     },
@@ -307,8 +847,8 @@
           "saturation": 0,
           "sharpen": 0,
           "width": 3336,
-          "date": 1692360291000,
-          "title": "room2"
+          "title": "room2",
+          "date": 1692360291000
         }
       ]
     },
@@ -343,8 +883,8 @@
           "saturation": 0,
           "sharpen": 0,
           "width": 4000,
-          "date": 1692359696000,
-          "title": "roomlikewhoa"
+          "title": "roomlikewhoa",
+          "date": 1692359696000
         }
       ]
     }
