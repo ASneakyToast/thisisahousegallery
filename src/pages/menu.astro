@@ -1,0 +1,54 @@
+---
+import Layout from "../layouts/Layout-no_header.astro";
+import SmartHeader from "../components/organisms/smart-header.astro";
+---
+<Layout title="Menu | House Gallery">
+  <SmartHeader 
+    transition:name="header"
+    transition:persist />
+  <nav class="menu">
+    <section class="menu-links">
+      <h2>EXHIBITIONS</h2>
+      <a href="/exhibitions/">
+        <h3>> Memories</h3>
+      </a>
+      <a href="/schedule/tabletstablestombstones">
+        <h3>> Next show</h3>
+      </a>
+      <h2>CONNECT</h2>
+      <section class="menu-social">
+        <a target="_blank" href="https://www.instagram.com/thisisahousegallery/">
+          <h3>> Instagram</h3>
+        </a>
+      </section>
+      <h2>MORE</h2>
+      <a href="/about/">
+        <h3>> About us</h3>
+      </a>
+    </section>
+  </nav>
+</Layout>
+
+<style lang="scss">
+  .menu {
+    margin: var(--space-page-gutter);
+
+    & h2 {
+      font-size: var(--font_size-subheading);
+      font-weight: 700;
+      letter-spacing: 2px;
+
+      display: none;
+
+      /*
+      background-color: #111111;;
+      color: white;
+      width: fit-content;
+      padding: 4px 16px;
+      */
+    }
+    & h3 {
+      font-size: var(--font_size-heading);
+    }
+  }
+</style>
