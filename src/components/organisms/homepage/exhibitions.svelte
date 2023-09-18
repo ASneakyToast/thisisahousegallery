@@ -23,7 +23,7 @@
       <a href="/exhibitions/#{previous_show}">
         <p class="exhibitions__pathway pathway-option__last">> Previous</p>
       </a>
-      <a href="/exhibitions/thisisalivingroom">
+      <a href="/exhibitions/#thisisalivingroom">
         <p class="exhibitions__pathway pathway-option__your">> First Show</p>
       </a>
     </section>
