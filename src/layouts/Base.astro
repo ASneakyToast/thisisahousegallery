@@ -1,6 +1,6 @@
 ---
 import {ViewTransitions} from 'astro:transitions';
-import StyleTokens from '../styles/tokens.astro';
+// import StyleTokens from '../styles/tokens.astro';
 
 export interface Props {
 	title: string;
@@ -16,7 +16,7 @@ const { title } = Astro.props;
 		<meta name="description" content="We turned our living room into a gallery.">
 		<meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/media/house-favicon.png" />
-    <StyleTokens />
+    <!-- <StyleTokens /> -->
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
     <ViewTransitions />
@@ -85,6 +85,90 @@ const { title } = Astro.props;
     /* set cursor */
     --cursor-main: default;
     --cursor-main--hover: pointer;
+  }
+
+  :root {
+    /* spacing styles */
+    --space-base-ginormous: 128px;
+    --space-base-huge: 64px;
+    --space-base-large: 32px;
+    --space-base-medium: 24px;
+    --space-base-small: 16px;
+    --space-base-tiny: 8px;
+
+    /* font sizes */
+    --font_size-huge: 64px;
+    --font_size-large: 32px;
+    --font_size-medium: 24px;
+    --font_size-small: 16px;
+    --font_size-tiny: 12px;
+  }
+
+  /*_____Responsive_Values_____*/
+
+  /* Mobile */
+  @media (max-width: 420px) {
+    :root {
+      --space-page-gutter: var(--space-base-small);
+      --space-section-gap: var(--space-base-medium);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+     }
+  }
+
+  /* Tablet */
+  @media (min-width: 420px) and (max-width: 767px) {
+    :root {
+      --space-page-gutter: var(--space-base-medium);
+      --space-section-gap: var(--space-base-medium);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+    }
+  }
+
+  /* Laptop */
+  @media (min-width: 768px) and (max-width: 1439px) {
+    :root {
+      --space-page-gutter: var(--space-base-huge);
+      --space-section-gap: var(--space-base-large);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 1440px) and (max-width: 2559px) {
+    :root {
+      --space-page-gutter: var(--space-base-ginormous);
+      --space-section-gap: var(--space-base-large);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+    }
+  }
+
+  /* 4k */
+  @media (min-width: 2560px) {
+    :root {
+      --space-page-gutter: calc(var(--space-base-ginormous)*2);
+      --space-section-gap: var(--space-base-huge);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+    }
   }
 
   html {
