@@ -1,0 +1,30 @@
+---
+const { color } = Astro.props;
+---
+
+<section class="footer footer--black">
+  <p>This is a House Gallery</p>
+  <p>copywright © 2023, joel lithgow & joseph blake, all rights reserved</p>
+</section>
+
+<style>
+  .footer {
+    padding: 20px 140px;
+
+    background: white;
+    color: black;
+    
+    text-align: center;
+  }
+
+  p {
+    font-size: 8px;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 8px;
+  }
+
+  p:last-child {
+    border-top: 0.5px solid black;
+  }
+</style>

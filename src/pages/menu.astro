@@ -3,17 +3,15 @@ import Layout from "../layouts/Layout-no_header.astro";
 import SmartHeader from "../components/organisms/smart-header.astro";
 ---
 <Layout title="Menu | House Gallery">
-  <SmartHeader 
-    transition:name="header"
-    transition:persist />
+  <SmartHeader />
   <nav class="menu">
     <section class="menu-links">
       <h2>EXHIBITIONS</h2>
-      <a href="/exhibitions/">
-        <h3>> Memories</h3>
-      </a>
       <a href="/schedule/tabletstablestombstones">
         <h3>> Next show</h3>
+      </a>
+      <a href="/exhibitions/">
+        <h3>> Memories</h3>
       </a>
       <h2>CONNECT</h2>
       <section class="menu-social">
@@ -31,7 +29,7 @@ import SmartHeader from "../components/organisms/smart-header.astro";
 
 <style lang="scss">
   .menu {
-    margin: var(--space-page-gutter);
+    margin: calc(var(--space-section-gap)*2) var(--space-page-gutter);
 
     & h2 {
       font-size: var(--font_size-subheading);

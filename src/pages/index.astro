@@ -1,149 +1,136 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import Tableau from '../components/organisms/homepage-tableau.astro';
+import Exhibitions from '../components/organisms/homepage/exhibitions.svelte';
+import Memories from '../components/organisms/homepage/memories.svelte';
+import NFTRoom from '../components/organisms/homepage/the-room.svelte';
+import Resources from '../components/organisms/homepage/resources.svelte';
+import Footer from '../components/organisms/footer.astro';
 
+import thisisalivingroom_image_data from "../data/thisisalivingroom-images.json";
+const thisisalivingroom_images = thisisalivingroom_image_data["@graph"].filter( item => {
+  return (
+    item.tag.includes("Opening") 
+    || item.tag.includes("Cover") 
+    || item.tag.includes("Exhibition")
+  )
+});
+
+import LeastFavWorkImageData from "../data/yourleastfavwork-images.json";
+const leastfavwork_images = LeastFavWorkImageData["@graph"].filter( item => {
+  return (
+    item.tag.includes("Opening") 
+    || item.tag.includes("Cover") 
+    || item.tag.includes("Exhibition")
+  )
+});
+
+function RandomSize() {
+  let size = Math.floor(Math.random()*3)+1;
+  return size;
+}
+function RandomSide() {
+  let side = Math.floor(Math.random()*2)+1;
+  switch( side ) {
+    case 1:
+      return "left"
+    case 2:
+      return "right"
+  }
+}
+const memory_images = [];
+leastfavwork_images.forEach(( item, index ) => {
+  memory_images.push({
+    src: `/exhibitions/yourleastfavwork/images/${ item.photo[0].filename }`,
+    alt: "Photo from opening reception of Your Least Fav Work.",
+    size: RandomSize(),
+    side: RandomSide(),
+  });
+});
 const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link";
 ---
 
 <Layout title="House Gallery">
-  <section class="featured">
-    <img 
-      class="featured-main_image" 
-      src="/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg"
-      alt="A zoomed in view of the promotional showcard for the exhibition 'Tablets, Tables, and Tombstones'."
-      style="background-image: url('/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg'); object-fit: contain;"
-    >
-    <a href="/schedule/tabletstablestombstones">
-      <section class="featured-details" onclick="window.leastfavcards.classList.toggle('featured-cards--closed')">
-        <h2><i>Tablets Tables and Tombstones</i></h2>
-        <h3>November 11 - January 13</h3>
-      </section>
-    </a>
-  </section>
-  <section class="featured">
-    <img class="featured-main_image" src="/exhibitions/yourleastfavwork/showcards/showcard-main--front.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'Your Least Fav Work' by This is a House Gallery."></img>
-    <a href="/schedule/yourleastfavwork">
-      <section class="featured-details" onclick="window.leastfavcards.classList.toggle('featured-cards--closed')">
-        <h2><i>Your Least Favorite Work</i></h2>
-        <h3>August 18 - September 01</h3>
-      </section>
+  <section class="intro">
+    <!-- <h1><b>This is a House Gallery</b> is something about stuff and all that you know and it could prob be this long.</h1> -->
+    <!-- <h1><b>This is a House Gallery</b> is a living room for artists, exhibitions, & parities.</h1> -->
+    <h1><b>This is a House Galley</b> serves as a project and exhibition place for close friends, local artists, writers, and curators.</h1>
+    <a href="/about">
+      <p class="intro-button">Find out who lives here</p>
     </a>
   </section>
 
-  <section class="featured">
-    <img class="featured-main_image" src="/exhibitions/thisisalivingroom/Showcard001.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'This is a Living Room' by Joel Lithgow and Joseph Blake with This is a House Gallery."></img>
-    <!-- <section class="featured-details" onclick="window.livingroomcards.classList.toggle('featured-cards--closed')"> -->
-    <a href="/exhibitions#thisisalivingroom">
-      <section class="featured-details">
-        <h2><i>This is a Living Room</i></h2>
-        <h3>June 23 - July 07</h3>
-      </section>
-    </a>
+  <Exhibitions 
+    client:load
+    previous_show="yourleastfavwork"
+    upcoming_show="tabletstablestombstones"
+  />
 
-    <!-- Not used since it goes straight to the page, should turn into a component for later on?
-    <section id="livingroomcards" class="featured-cards featured-cards--closed" onclick="window.livingroomcards.classList.toggle('featured-cards--closed')">
-      <img src="exhibitions/thisisalivingroom/showcard-back.jpg"></img>
-      <section class="featured-cards-ctas">
-        <a target="_blank" href="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MTQ3djVjbDZpbzZ0b3RnNW9mc25zMnY4bzYgY19iZnFlbGZ1bnU4MjA1cTIyY2hrNjAwNDhxa0Bn&tmsrc=c_bfqelfunu8205q22chk60048qk%40group.calendar.google.com">
-          <p>Add to calendar</p>
-        </a>
-      </section>
-      -->
-    </section>
-  </section>
+  <Memories 
+    client:load
+    images={memory_images}
+  />
+
+  <!-- 
+    <NFTRoom />
+  -->
+    <Resources />
+
+  <Footer />
+
 </Layout>
 
 <style scope lang="scss">
-
   body {
     height: 100vh;
   }
 
+  .intro {
+    padding: calc(var(--space-section-gap)*3) 0 var(--space-section-gap);
+    margin: 0 var(--space-page-gutter);
+    box-sizing: border-box;
+    min-height: 60vh;
+    @media screen and (min-width: 768px) {
+      min-height: 90vh;
+    }
+
+    h1 {
+      width: 95%;
+      @media screen and (min-width: 768px) {
+        width: 66%;
+      }
+      font-size: var(--font_size-title);
+      line-height: 140%;
+      b {
+        letter-spacing: -2px;
+      }
+    }
+
+    &-button {
+      border: 1px solid black;
+      color: black;
+      padding: 8px 24px;
+      width: fit-content;
+      font-size: 18px;
+      display: inline-block;
+    }
+    &-button:hover {
+      background-color: black;
+      color: white;
+    }
+  }
+
   :global( .header ) {
-    position: fixed;
+    position: sticky;
     width: 100%;
     box-sizing: border-box;
   }
 
+  /*
 	.layout {
 		margin: auto;
     padding: var(--space-base-huge) var(--space-base-large) var(--space-base-large) var(--space-base-large);
     max-width: 1024px;
 	}
-
-  .featured {
-    position: relative;
-    height: 100%;
-
-    &-cards {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 24;
-
-      display: flex;
-      gap: var(--space-base-small);
-      justify-content: center;
-
-      padding: var(--space-base-large);
-      box-sizing: border-box;
-
-      background-color: rgba(255,255,255,0.95);
-
-      font-weight: lighter;
-
-      overflow-y: scroll;
-
-      @media (max-width: 675px) {
-        display: block;
-      }
-
-      &--closed {
-        display: none;
-      }
-
-      & img {
-        max-width: 100%;
-        margin-bottom: var(--space-base-small);
-      }
-    }
-
-    &-details {
-      position: absolute;
-      bottom: var(--space-base-huge);
-      right: var(--space-base-huge);
-      padding: var(--space-base-tiny) var(--space-base-large);
-      background-color: white;
-
-      & h2 {
-        font-family: var(--font-secondary);
-        color: var(--color-main-primary);
-        text-decoration: none;
-        font-weight: lighter;
-      }
-
-      & h3 {
-        font-weight: lighter;
-      }
-
-      &:hover {
-        color: var(--color-base-white);;
-        cursor: var(--cursor-main--hover);
-        background-color: var(--color-main-primary);
-
-        h2 {
-          color: inherit;
-          text-decoration: underline;
-        }
-      }
-    }
-
-    &-main_image {
-      width: 100%;
-      height: 700px;
-      object-fit: cover;
-      height: 100%;
-    }
-  }
+  */
 </style>

@@ -1,0 +1,75 @@
+<style is:global>
+  :root {
+    /* spacing styles */
+    --space-base-ginormous: 128px;
+    --space-base-huge: 64px;
+    --space-base-large: 32px;
+    --space-base-medium: 24px;
+    --space-base-small: 16px;
+    --space-base-tiny: 8px;
+
+    /* font sizes */
+    --font_size-huge: 64px;
+    --font_size-large: 32px;
+    --font_size-medium: 24px;
+    --font_size-small: 16px;
+    --font_size-tiny: 12px;
+
+    /*_____Responsive_Values_____*/
+
+    /* Mobile */
+    @media screen and (max-width: 420px) {
+      --space-page-gutter: var(--space-base-small);
+      --space-section-gap: var(--space-base-medium);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+    }
+
+    /* Tablet */
+    @media screen and (min-width: 420px) and (max-width: 767px) {
+      --space-page-gutter: var(--space-base-medium);
+      --space-section-gap: var(--space-base-medium);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+    }
+
+    /* Laptop */
+    @media screen and (min-width: 768px) and (max-width: 1439px) {
+      --space-page-gutter: var(--space-base-huge);
+      --space-section-gap: var(--space-base-large);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+    }
+
+    /* Desktop */
+    @media screen and (min-width: 1440px) and (max-width: 2559px) {
+      --space-page-gutter: var(--space-base-ginormous);
+      --space-section-gap: var(--space-base-large);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+    }
+
+    /* 4k */
+    @media screen and (min-width: 2560px) {
+      --space-page-gutter: calc(var(--space-base-ginormous)*2);
+      --space-section-gap: var(--space-base-huge);
+
+      --font_size-title: var(--font_size-large);
+      --font_size-heading: var(--font_size-medium);
+      --font_size-detail: var(--font_size-medium);
+      --font_size-paragraph: var(--font_size-small);
+    }
+  }
+</style>

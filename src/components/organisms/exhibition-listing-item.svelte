@@ -45,8 +45,12 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-base-medium);
+    margin-bottom: var(--space-base-large);
     border-bottom: 1px solid var(--color-base-black);
+    position: sticky;
+    top: 35px;
+    background: white;
+    z-index: 1;
 
     & h2, h3 {
       font-weight: var(--font_weight-small);
@@ -75,7 +79,7 @@
     flex-direction: column;
     gap: var(--space-base-small);
     position: sticky;
-    top: 60px;
+    top: 170px;
     height: fit-content;
 
     @media (max-width: 675px) {

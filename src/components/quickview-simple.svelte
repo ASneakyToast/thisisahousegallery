@@ -40,3 +40,26 @@
   });
 
 </script>
+
+<section class="quickview_simple" on:click={ destroyThis }>
+  <img src={ image_url } alt={ alt_text }/>
+</section>
+
+<style lang="scss">
+  .quickview_simple {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: var(--space-section-gap);
+
+    background: white;
+
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+</style>
