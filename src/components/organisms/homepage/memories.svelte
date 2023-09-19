@@ -49,14 +49,13 @@
 </section>
 
 <style lang="scss">
+  /* I guess I don't need this cuz it's no longer a custom component
   .memories :global(.memories__image) {
       max-height: 250px;
       display: inline-block;
-      /* padding: 0 25px 25px 0; */
       padding: 10px;
   }
   .memories :global(.memories__image--1) {
-    /* Really gotta fix this up for diff breakpoints */
     max-height: 100px;
     max-height: 12vh;
     max-height: none;
@@ -80,9 +79,10 @@
   .memories :global(.memories__image--left) {
     float: left;
   }
+  */
 
   .memories {
-    padding: 80px 0;
+    padding: 80px 0 40px;
     overflow-x: scroll;
 
     & h2 {
@@ -94,40 +94,46 @@
     &__images {
       position: relative;
       padding: 20px 40px;
-
+      width: max-content;
       height: 77vh;
     }
 
     &__image {
-      max-height: 250px;
       display: inline-block;
-      /* padding: 0 25px 25px 0; */
       padding: 10px;
+      max-height: 100%;
+    }
 
-      /* Really gotta fix this up for diff breakpoints */
-      &--1 {
-        max-height: 100px;
-        max-height: 12vh;
-        max-height: none;
-        max-width: 6vw;
+    @media screen and (min-width: 768px) {
+      &__images {
+        width: auto;
       }
-      &--2 {
-        max-height: 150px;
-        max-height: 18vh;
-        max-height: none;
-        max-width: 8vw;
-      }
-      &--3 {
+      &__image {
         max-height: 250px;
-        max-height: 29vh;
-        max-height: none;
-        max-width: 23vw;
-      }
-      &--right {
-        float: right;
-      }
-      &--left {
-        float: left;
+        &--1 {
+          max-height: 100px;
+          max-height: 12vh;
+          max-height: none;
+          max-width: 6vw;
+        }
+        &--2 {
+          max-height: 150px;
+          max-height: 18vh;
+          max-height: none;
+          max-width: 8vw;
+        }
+        &--3 {
+          max-height: 250px;
+          max-height: 29vh;
+          max-height: none;
+          max-width: 23vw;
+        }
+        &--right {
+          float: right;
+        }
+        &--left {
+          float: left;
+        }
       }
     }
   }
