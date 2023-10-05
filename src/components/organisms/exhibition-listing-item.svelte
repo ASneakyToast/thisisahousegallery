@@ -39,7 +39,7 @@
   </section>
 </div>
 
-<style>
+<style lang="scss">
   .exhibition-header {
     display: flex;
     flex-direction: row;
