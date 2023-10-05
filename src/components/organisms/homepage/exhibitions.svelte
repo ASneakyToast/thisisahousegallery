@@ -36,6 +36,11 @@
       </a>
     </article>
     <article class="exhibitions__card pathway-card__next">
+      <a href="/schedule/tabletstablestombstones">
+        <img src="exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg" />
+      </a>
+    </article>
+    <article class="exhibitions__card pathway-card__third">
       <a href="/exhibitions#thisisalivingroom">
         <img src="exhibitions/thisisalivingroom/Showcard001.jpg" />
       </a>
@@ -147,6 +152,7 @@
 
     /* Previous */
     &__card:nth-child(1) {
+      right: 45%;
       padding: 283px 74px;
     }
     /* Next */
@@ -160,7 +166,7 @@
     /* Open Call */
     &__card:nth-child(3) {
       width: 40%;
-      margin-top: -54px;
+      margin-top: 120px;
       float: right;
     }
   }

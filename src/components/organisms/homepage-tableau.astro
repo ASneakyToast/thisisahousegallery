@@ -1,8 +1,19 @@
 ---
-const { img_src, img_alt, link, heading, subheading } = Astro.props
+import {
+  BackgroundImage,
+  ImageSupportDetection,
+} from "astro-imagetools/components";
+
+const { img_src, img_alt, link, heading, subheading, animation } = Astro.props
 ---
-<section class="homepage-tableau">
-  <img class="homepage-tableau__image" src={ img_src } alt={ img_alt }></img>
+<section class:list={["homepage-tableau", animation ]}>
+  <!--
+  <img 
+    src={ img_src }
+    alt={ img_alt }
+    class:list={["homepage-tableau__image", "homepage-tabluea__image--{ animation }"]}
+  />
+  -->
   <a href={ link }>
     <section class="homepage-tableau__details">
       <h2><i>{ heading }</i></h2>
@@ -12,9 +23,25 @@ const { img_src, img_alt, link, heading, subheading } = Astro.props
 </section>
 
 <style lang="scss">
+  @keyframes zoomslowinandout {
+    from {background-size: 500%}
+    to {background-size: 5%}
+  }
+  
+  .zoomslowinandout {
+    animation-name: zoomslowinandout;
+    animation-duration: 20s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+  }
+
   .homepage-tableau {
     position: relative;
     height: 100%;
+
+    background-image: url("/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg");
+    background-position: center;
 
     &__image {
       width: 100%;
