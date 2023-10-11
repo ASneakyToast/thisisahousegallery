@@ -114,6 +114,10 @@ const google_cal_invite_url = "https://calendar.google.com/calendar/event?action
     grid-template-columns: 3fr 1fr;
     gap: var(--space-base-huge);
 
+    @media (max-width: 678px) {
+      grid-template-columns: 1fr;
+    }
+
     @media (max-width: 1024px) {
       grid-template-areas:
         "header"
