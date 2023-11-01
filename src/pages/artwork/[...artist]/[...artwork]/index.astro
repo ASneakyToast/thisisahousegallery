@@ -1,0 +1,125 @@
+---
+import { Debug } from 'astro:components';
+
+import artwork_database from "../../../../data/artwork-database.json";
+import { slugify } from "../../../../utils/basic-javascript.js";
+import { get_artists_work, get_artwork_data, get_artists_work_with_images } from "../../../../utils/db-handler.js";
+import { get_artwork_images } from "../../../../utils/image-db-handler.js";
+import Layout from "../../../../layouts/Layout.astro";
+
+export function getStaticPaths() {
+  return artwork_database.map(( item ) => {
+    let artist = slugify(item["Artist"]);
+    item["Slug"] = slugify(item["Title"]);
+    item["Images"] = get_artwork_images(item["Title"]);
+
+    item["Cover"] = item["Images"].filter( image => {
+      return ( image.tag.includes( "Cover" ) );
+    });
+    
+    return {
+      params: { artist: artist, artwork: item["Slug"] },
+      props: { item }
+    };
+  });
+}
+
+const { artist, artwork } = Astro.params;
+const { item } = Astro.props;
+
+---
+
+<Layout title={`House Gallery | ${ item["Artist"] } | ${ item["Title"] }`}>
+  <main>
+    <section class="info">
+      <a class="info__name" href=`/artwork/${ slugify(item['Artist']) }`>
+        <p>> { item["Artist"] }</p>
+      </a>
+      <p class="info__title">{ item["Title"] }</p>
+
+      <hr />
+
+      <p>Date: { item["Date"] }</p>
+      <p>Size: { item["Size"] }</p>
+      <p>Materials: { item["Materials"] }</p>
+      <p>Exhibition: <a href={`/exhibitions#${slugify(item['Exhibitions'])}`}>{ item["Exhibitions"] }</a></p>
+
+      <p>Images:</p>
+      <section class="info__images">
+        { item["Images"].map(( item ) => (
+          <img class="info__image" src={`/media/exhibition-images/${ item.photo[0].filename }`}>
+        ))}
+      </section>
+    </section>
+
+    <section class="main-image">
+      <img class="main-image__image" src={`/media/exhibition-images/${ item["Cover"][0].photo[0].filename }`}>
+      <p class="main-image__detail">{ item['Title'] } ({ item['Date'] }), { item['Artist'] }</p>
+    </section>
+  </main>
+</div>
+
+<script is:inline>
+  main_image = document.querySelector(".main-image__image");
+  thumbnails = document.querySelectorAll(".info__image");
+
+  console.log( thumbnails );
+
+  thumbnails.forEach( item => {
+    item.addEventListener( "click", () => {
+      main_image.src = item.src;
+    });
+  });
+</script>
+
+<style lang="scss">
+  main {
+    display: grid;
+    grid-template-columns: 3fr 5fr;
+    margin: var(--space-section-gap) var(--space-page-gutter);
+    gap: var(--space-section-gap);
+  }
+
+  .main-image {
+    height: 80vh;
+    justify-self: right;
+
+    & img {
+      height: 100%;
+    }
+
+    &__detail {
+      font-size: var(--font_size-detail);
+      font_weight: var(--font_weight-light);
+    }
+  }
+
+  .info {
+    color: var(--color-surface-primary-text);
+
+    &__name {
+      font-size: var(--font_size-paragraph);
+      display: inline-block;
+
+      & p {
+        margin: 0;
+      }
+    }
+
+    &__title {
+      font-size: var(--font_size-heading);
+      font_weight: var(--font_weight-heavy);
+    }
+
+    &__images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    &__image {
+      aspect-ratio: 1/1;
+      height: 77px;
+    }
+  }
+</style>

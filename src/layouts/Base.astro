@@ -55,25 +55,42 @@ const { title } = Astro.props;
     --font-main: SourceCodePro, Sans-serif;
     --font-secondary: SourceCodePro, serif;
 
-    --font_weight-small: lighter;
+    --font_weight-small: 300;
+    --font_weight-regular: 400;
+    --font_weight-heavy: 700;
 
     /* set fonts */
 
-    /* color styles */
+    /* SIZE */
+    /* global */
     --color-base-brown: brown;
     --color-base-lightgray: lightgray;
     --color-base-tan: oldlace;
     --color-base-white: white;
     --color-base-black: #222222;
-    /* set color */
+
+    /* alias */
     --color-main-primary: var(--color-base-black);
     --color-main-subtle: var(--color-base-black);
     --color-surface-main: var(--color-base-white);
     --color-surface-warm: var(--color-base-tan);
 
-    /* default spacing */
+    --color-surface-primary-background: var(--color-base-white);
+    --color-surface-primary-text: var(--color-base-black);
+    --color-surface-primary-accent: var(--color-base-black);
+    --color-surface-secondary-background: var(--color-base-black);
+    --color-surface-secondary-text: var(--color-base-white);
+    --color-surface-secondary-accent: var(--color-base-white);
+
+    /* SIZE */
+    /* global */
     --space-page-gutter: 140px;
+    --space-heading-gap: 110px;
     --space-section-gap: 40px;
+    --space-item-gap: 14px;
+
+    /* alias */
+    --size-button-padding: var(--space-base-tiny) var(--space-base-small);
 
     --font_size-title: 20px;
     --font_size-heading: 18px;
@@ -94,9 +111,7 @@ const { title } = Astro.props;
     /* set cursor */
     --cursor-main: default;
     --cursor-main--hover: pointer;
-  }
 
-  :root {
     /* spacing styles */
     --space-base-ginormous: 128px;
     --space-base-huge: 64px;
@@ -123,7 +138,7 @@ const { title } = Astro.props;
 
       --font_size-title: var(--font_size-large);
       --font_size-heading: var(--font_size-medium);
-      --font_size-detail: var(--font_size-medium);
+      --font_size-detail: var(--font_size-tiny);
       --font_size-paragraph: var(--font_size-small);
      }
   }
@@ -136,7 +151,7 @@ const { title } = Astro.props;
 
       --font_size-title: var(--font_size-large);
       --font_size-heading: var(--font_size-medium);
-      --font_size-detail: var(--font_size-medium);
+      --font_size-detail: var(--font_size-tiny);
       --font_size-paragraph: var(--font_size-small);
     }
   }
@@ -149,7 +164,7 @@ const { title } = Astro.props;
 
       --font_size-title: var(--font_size-large);
       --font_size-heading: var(--font_size-medium);
-      --font_size-detail: var(--font_size-medium);
+      --font_size-detail: var(--font_size-tiny);
       --font_size-paragraph: var(--font_size-small);
     }
   }
@@ -162,7 +177,7 @@ const { title } = Astro.props;
 
       --font_size-title: var(--font_size-large);
       --font_size-heading: var(--font_size-medium);
-      --font_size-detail: var(--font_size-medium);
+      --font_size-detail: var(--font_size-tiny);
       --font_size-paragraph: var(--font_size-small);
     }
   }
@@ -175,7 +190,7 @@ const { title } = Astro.props;
 
       --font_size-title: var(--font_size-large);
       --font_size-heading: var(--font_size-medium);
-      --font_size-detail: var(--font_size-medium);
+      --font_size-detail: var(--font_size-tiny);
       --font_size-paragraph: var(--font_size-small);
     }
   }
@@ -187,12 +202,18 @@ const { title } = Astro.props;
   body {
     margin: 0;
   }
+
+  hr {
+    width: 100%;
+  }
+
   a, button {
     color: var(--color-main-primary);
     cursor: var(--cursor-main);
   }
   a {
     text-decoration: none;
+    color: inherit;
   }
   a:hover, button:hover {
     cursor: var(--cursor-main--hover);

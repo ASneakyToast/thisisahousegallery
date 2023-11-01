@@ -1,0 +1,109 @@
+---
+import artwork_database from "../../../data/artwork-database.json";
+import { slugify } from "../../../utils/basic-javascript";
+import Layout from "../../../layouts/Layout.astro";
+
+// Create pages
+export function getStaticPaths() {
+
+  /*
+  return artwork_database.map(({ slug, title }) => {
+    return {
+      params: { slug },
+      props: { title }
+    };
+  });
+  */
+
+  /*
+  // Get unique list of artist names
+  let every_frickin_artist = [];
+  artwork_database.forEach( artwork => {
+    every_frickin_artist.push( artwork["Artist"] );  
+  });
+  let unique_artist_list = [...new Set(every_frickin_artist)];
+
+  // Turn list into slugified params
+  let all_params = [];
+  unique_artist_list.forEach( artist_name => {
+    all_params.push({
+      params: {artist: slugify(artist_name)}
+    })
+  })
+
+  return all_params;
+  */
+  return artwork_database.map(( item ) => {
+    item["Slug"] = slugify(item["Artist"]);
+    
+    return {
+      params: { slug: item["Slug"] },
+      props: { item }
+      };
+  });
+}
+
+const { slug } = Astro.params;
+const { item } = Astro.props;
+
+---
+
+<Layout title="House Gallery | { slug }">
+  <p>{ slug }</p>
+</Layout>
+
+<script>
+
+  import { slugify } from "../../../utils/basic-javascript";
+  import artwork_database from "../../../data/artwork-database.json";
+
+  console.log( artwork_database );
+  let seralized_data = artwork_database.map( item => {
+    // Slugify artist name
+    item["Slug"] = slugify(item["Artist"]);
+    console.log(item["Artist"]);
+    
+    // - Pass to params
+    return {
+      params: { artist: item["Slug"] },
+      props: { item }
+    }
+  });
+  console.log( seralized_data );
+
+  /*
+  return artwork_database.map( item => {
+    return {
+      params: { item.slug },
+      props: { item.title }
+    };
+  });
+  */
+
+  /*
+  // Get unique list of artist names
+  let every_frickin_artist = [];
+  artwork_database.forEach( artwork => {
+    every_frickin_artist.push( artwork["Artist"] );  
+  });
+  let unique_artist_list = [...new Set(every_frickin_artist)];
+
+  // Turn list into slugified params
+  let artist_params = [];
+  unique_artist_list.forEach( artist_name => {
+    all_params.push({
+      params: {artist: slugify(artist_name)}
+    })
+  })
+  console.log( all_params );
+  */
+
+  /*
+  // Get artwork related to artist
+  const artwork = artwork_database.filter( item => {
+    return (
+      item.artist == artist
+    )
+  });
+  */
+</script>

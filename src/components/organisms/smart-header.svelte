@@ -1,0 +1,90 @@
+<script>
+  let can_go_back = window.history.length > 1;
+
+  can_go_back = document.referrer.indexOf("localhost:4321") == -1;
+  alert(document.referrer.indexOf(window.location.hostname) == -1);
+</script>
+
+<section class="header --smart" >
+  <a href="/" class="header-logo">
+    <img src="/media/house-logo.png"/>
+  </a>
+
+  <section class="header-inline_nav">
+    {#if can_go_back}
+      <a onclick="window.history.go(-1);">
+        <p>Back</p>
+      </a>
+    {:else}
+      <a href="/menu">
+        <p>Menu</p>
+      </a>
+    {/if}
+  </section>
+</section>
+
+<style scoped lang="scss">
+  .header {
+    grid-area: header;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: var(--space-base-small);
+    align-items: center;
+    position: sticky;
+    top: 0;
+
+    background-color: var(--color-base-white);
+    padding: var(--space-base-tiny) var(--space-base-small);
+    z-index: 16;
+
+    font-size: var(--font_size-tiny);
+    font-weight: 300;
+
+    &-logo {
+      display: flex;
+      flex-direction: row;
+      gap: var(--space-base-tiny);
+      align-items: center;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+
+      p {
+        color: var(--color-main-primary);
+        margin: auto 0;
+      }
+
+      img {
+        background-color: var(--color-base-white);
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    &-inline_nav {
+      display: flex;
+      flex-direction: row;
+      gap: var(--space-base-medium);
+
+      &--hide {
+        display: none;
+      }
+
+      a {
+        color: var(--color-main-primary);
+        text-decoration: none;
+        :hover {
+          text-decoration: underline;
+        }
+      }
+
+      p {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+</style>

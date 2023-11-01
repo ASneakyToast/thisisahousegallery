@@ -1,0 +1,80 @@
+---
+import artwork_database from "../../../data/artwork-database.json";
+import { slugify } from "../../../utils/basic-javascript";
+import Layout from "../../../layouts/Layout.astro";
+
+// Create pages
+export function getStaticPaths() {
+
+  // Get unique list of artist names
+  let every_frickin_artist = [];
+  artwork_database.forEach( artwork => {
+    every_frickin_artist.push( artwork["Artist"] );  
+  });
+  let unique_artist_list = [...new Set(every_frickin_artist)];
+
+  // Turn list into slugified params
+  let all_params = [];
+  unique_artist_list.forEach( artist_name => {
+    all_params.push({
+      params: {artist: slugify(artist_name)}
+    })
+  })
+
+  return all_params;
+}
+
+const { artist } = Astro.params;
+
+// Get artwork related to artist
+const artwork = artwork_database.filter( item => {
+  return (
+    item.artist == artist
+  )
+});
+---
+
+<Layout title="House Gallery | { artist }">
+  <p>{ artist }</p>
+  <p>{ artwork }</p>
+</Layout>
+
+<script>
+
+  import { slugify } from "../../../utils/basic-javascript";
+  import artwork_database from "../../../data/artwork-database.json";
+
+  // Get unique list of artist names
+  let every_frickin_artist = [];
+  artwork_database.forEach( artwork => {
+    every_frickin_artist.push( artwork["Artist"] );  
+  });
+  let unique_artist_list = [...new Set(every_frickin_artist)];
+
+  // Turn list into slugified params
+  let all_params = [];
+  unique_artist_list.forEach( artist_name => {
+    all_params.push({
+      params: {artist: slugify(artist_name)}
+    })
+  })
+  console.log( all_params );
+
+  // Get artwork related to artist
+  const artwork = artwork_database.filter( item => {
+    return (
+      item.artist == artist
+    )
+  });
+
+  // import artwork_data_src from "../../data/thisisalivingroom-images.json";
+  // let artwork_data = artwork_data_src["@graph"];
+
+  // # I think it would be smart to create a util for querying just relevant data
+  // # But actually...it's a static site so lots of data doesn't matter
+  // import all_artists from "../../data/artists.json";
+  // let artis_data = all_artists["@graph"];
+
+  // console.log( artwork_data );
+
+</script>
