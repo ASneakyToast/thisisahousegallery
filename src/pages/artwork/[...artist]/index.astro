@@ -1,52 +1,57 @@
 ---
-import artwork_database from "../../../data/artwork-database.json";
-import { slugify } from "../../../utils/basic-javascript.js";
-import { get_artists_work, get_artists_work_with_images } from "../../../utils/db-handler.js";
-import { get_artwork_images } from "../../../utils/image-db-handler.js";
+import * as db from "../../../utils/db-handler.js";
+import * as image_db from "../../../utils/image-db-handler.js";
 import Layout from "../../../layouts/Layout.astro";
+import { slugify } from "../../../utils/basic-javascript.js";
 
 export function getStaticPaths() {
-  return artwork_database.map(( item ) => {
-    item["Slug"] = slugify(item["Artist"]);
-    let artworks = get_artists_work_with_images(item["Artist"]);
-    
+  return db.get_all_artists().map( data => {
+
+    // seralize data
+    data["Slug"] = slugify( data["Name"] );
+    data["Artwork"] = db.get_artists_work_with_images( data["Name"] );
+    data["Artwork"].forEach( (artwork, index) => {
+      artwork["Cover"] = image_db.get_artwork_cover( artwork["ID"] );
+    });
+
+    // global page data
     return {
-      params: { artist: item["Slug"] },
-      props: { artworks, name: item["Artist"] }
-      };
+      params: { artist: data["Slug"] },
+      props: { data }
+    };
   });
 }
 
+// scoped page data
 const { artist } = Astro.params;
-const { artworks, name } = Astro.props;
-
+const { data } = Astro.props;
 ---
-<Layout title={`House Gallery | ${ name }`}>
+
+<Layout title={`House Gallery | ${ data["Name"]}`}>
   <main class="page-artist">
     <section class="page-artist__title">
-      <h1>{ name }</h1>
+      <h1>{ data["Name"]}</h1>
       <hr/>
     </section>
 
     <section class="page-artist__artworks">
-      { artworks.map(( artwork ) => (
+      { data["Artwork"].map(( artwork ) => (
         <>
           <section class="page-artist__artwork">
-            <p class="page-artist__heading">
-              <a href={`/artwork/${ artist }/${ slugify(artwork["Title"]) }`}>
-                { artwork["Title"] }
-              </a>
-            </p>
-            <p>Date: { artwork["Date"] }</p>
-            <p>Size: { artwork["Size"] }</p>
-            <p>Materials: { artwork["Materials"] }</p>
-            <p>Exhibition: <a href={`/exhibitions#${slugify(artwork['Exhibitions'])}`}>{ artwork["Exhibitions"] }</a></p>
+            <section class="page-artist__cover-image">
+              <img src={`/media/exhibition-images/${ artwork["Cover"].photo[0].filename }`}>
+            </section>
 
-            {/* TODO: I think it's better to utilize a svelte image with quickview component (which utilizes an onclick) */}
-            <section class="page-artist__artwork-images">
-              { artwork["Images"].map(( item ) => (
-                <img class="page-artist__artwork-image" src={`/media/exhibition-images/${ item.photo[0].filename }`}>
-              ))}
+            <section class="page-artist__artwork-info">
+              <p class="page-artist__heading">
+                <a href={`/artwork/${ artist }/${ slugify(artwork["Title"]) }`}>
+                  { artwork["Title"] }
+                </a>
+              </p>
+              <p>Date: { artwork["Date"] }</p>
+              <p>Size: { artwork["Size"] }</p>
+              <p>Materials: { artwork["Materials"] }</p>
+              <p>Exhibition: <a href={`/exhibitions#${slugify(artwork['Exhibitions'])}`}>{ artwork["Exhibitions"] }</a></p>
             </section>
           </section>
 
@@ -92,8 +97,9 @@ const { artworks, name } = Astro.props;
     }
 
     &__artwork {
-      // padding: var(--space-section-gap) 0;
-      // border-bottom: 1px solid var(--color-surface-primary-accent);
+      display: grid;
+      grid-template-columns: 1fr 3fr;
+      gap: var(--space-element-gap);
     }
 
     &__artwork-images {

@@ -1,0 +1,65 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "https://tropy.org/v1/tropy#",
+    "template": {
+      "@type": "@id"
+    },
+    "photo": {
+      "@id": "https://tropy.org/v1/tropy#photo",
+      "@container": "@list"
+    },
+    "note": {
+      "@id": "https://tropy.org/v1/tropy#note",
+      "@container": "@list"
+    },
+    "selection": {
+      "@id": "https://tropy.org/v1/tropy#selection",
+      "@container": "@list"
+    },
+    "title": "http://purl.org/dc/elements/1.1/title",
+    "date": {
+      "@id": "http://purl.org/dc/elements/1.1/date",
+      "@type": "https://tropy.org/v1/tropy#date"
+    }
+  },
+  "@graph": [
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "room2",
+      "tag": [
+        "Opening"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "17296951d5dc06afcbc893df27bef3aa",
+          "color": "rgb(200,200,200,1)",
+          "density": null,
+          "filename": "room2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/yourleastfavwork.tropy/assets/17296951d5dc06afcbc893df27bef3aa.jpg",
+          "protocol": "file",
+          "size": 4562533,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2502,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3336,
+          "title": "room2",
+          "date": 1692360291000
+        }
+      ]
+    }
+  ],
+  "version": "1.15.2"
+}

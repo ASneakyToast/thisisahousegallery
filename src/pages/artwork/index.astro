@@ -1,0 +1,48 @@
+---
+import * as db from "../../utils/db-handler.js";
+import * as image_db from "../../utils/image-db-handler.js";
+import Layout from "../../layouts/Layout.astro";
+import { slugify } from "../../utils/basic-javascript.js";
+
+let artworks = db.get_all_artwork();
+artworks.forEach( (artwork, index) => {
+  artwork["Cover"] = image_db.get_artwork_cover( artwork["ID"] );
+});
+---
+
+<Layout title="House Gallery | Artwork">
+  <main>
+    <section class="page-info">
+      <h1>Artwork</h1>
+      <h2>Everything that has been shown in this living room.</h2>
+    </section>
+
+    <section class="page-images">
+      { artworks.map( artwork => (
+        <a href={`/artwork/${ slugify(artwork["Artist"]) }/${ slugify(artwork["Title"]) }`}>
+          <img class="artwork-image" src={`/media/exhibition-images/${ artwork["Cover"].photo[0].filename }`}>
+        </a>
+      ))}
+    </section>
+  </main>
+</Layout>
+
+<style lang="scss">
+  main {
+    display: grid;
+    grid-template-columns: 3fr 5fr;
+    margin: var(--space-section-gap) var(--space-page-gutter);
+    gap: var(--space-section-gap);
+  }
+
+  .page-images {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: var(--space-item-gap);
+
+    & img {
+      aspect-ratio: 1/1;
+      object-fit: cover;
+    }
+  }
+</style>

@@ -1,44 +1,44 @@
 ---
 import { Debug } from 'astro:components';
 
-import artwork_database from "../../../../data/artwork-database.json";
-import { slugify } from "../../../../utils/basic-javascript.js";
-import { get_artists_work, get_artwork_data, get_artists_work_with_images } from "../../../../utils/db-handler.js";
-import { get_artwork_images } from "../../../../utils/image-db-handler.js";
+import * as db from "../../../../utils/db-handler.js";
+import * as image_db from "../../../../utils/image-db-handler.js";
 import Layout from "../../../../layouts/Layout.astro";
+import { slugify } from "../../../../utils/basic-javascript.js";
 
 export function getStaticPaths() {
-  return artwork_database.map(( item ) => {
-    let artist = slugify(item["Artist"]);
-    item["Slug"] = slugify(item["Title"]);
-    item["Images"] = get_artwork_images(item["Title"]);
-
-    item["Cover"] = item["Images"].filter( image => {
-      return ( image.tag.includes( "Cover" ) );
-    });
+  return db.get_all_artwork().map( artwork => {
     
+    // seralize data
+    artwork["Images"] = image_db.get_artwork_images( artwork["ID"] );
+
+    // global page data
     return {
-      params: { artist: artist, artwork: item["Slug"] },
-      props: { item }
+      params: { 
+        artist: slugify(artwork["Artist"]),
+        artwork: slugify(artwork["Title"])
+      },
+      props: { item: artwork }   
     };
   });
 }
 
+// scoped page data
 const { artist, artwork } = Astro.params;
 const { item } = Astro.props;
-
 ---
 
 <Layout title={`House Gallery | ${ item["Artist"] } | ${ item["Title"] }`}>
   <main>
     <section class="info">
-      <a class="info__name" href=`/artwork/${ slugify(item['Artist']) }`>
-        <p>> { item["Artist"] }</p>
+      <a href="/artwork">
+        <p>> artwork</p>
       </a>
       <p class="info__title">{ item["Title"] }</p>
 
       <hr />
 
+      <p>Artist: <a class="info__name" href=`/artwork/${ slugify(item['Artist']) }`>{ item["Artist"] }</a></p>
       <p>Date: { item["Date"] }</p>
       <p>Size: { item["Size"] }</p>
       <p>Materials: { item["Materials"] }</p>
@@ -53,7 +53,7 @@ const { item } = Astro.props;
     </section>
 
     <section class="main-image">
-      <img class="main-image__image" src={`/media/exhibition-images/${ item["Cover"][0].photo[0].filename }`}>
+      <img class="main-image__image" src={`/media/exhibition-images/${ item["Cover"].photo[0].filename }`}>
       <p class="main-image__detail">{ item['Title'] } ({ item['Date'] }), { item['Artist'] }</p>
     </section>
   </main>
