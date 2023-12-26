@@ -1,0 +1,224 @@
+---
+import * as image_db from "../../utils/image-db-handler.js";
+import * as db from "../../utils/db-handler.js";
+import QuickviewThumbnails from "../../components/quickview-thumbnails.astro";
+import ExhibitionListingItem from "../../components/organisms/exhibition-listing-item.svelte";
+import Layout from "../../layouts/Layout.astro";
+import { shuffle } from "../../utils/basic-javascript.js";
+
+/*
+import ImageData from "../../data/thisisalivingroom-images.json";
+const images = ImageData["@graph"];
+const curatedPhotos = images.filter( item => {
+  return ( item.tag.includes("Exhibition") || item.tag.includes("Cover") );
+});
+
+import LeastFavWorkImageData from "../../data/yourleastfavwork-images.json";
+const leastfavwork_image_data = LeastFavWorkImageData["@graph"];
+let leastfavwork_images = leastfavwork_image_data.filter( item => {
+  return (
+    item.tag.includes("Opening") 
+    || item.tag.includes("Cover") 
+    || item.tag.includes("Exhibition")
+  )
+});
+leastfavwork_images = shuffle(leastfavwork_images);
+*/
+
+// get curated set of this is a living room images
+let thisisalivingroom_all_images = image_db.get_exhibition_images( "This is a Living Room" );
+let thisisalivingroom_images = thisisalivingroom_all_images.filter( item => {
+    return (
+      item.tag.includes("Opening") 
+      || item.tag.includes("Cover") 
+      || item.tag.includes("Exhibition")
+    )
+});
+thisisalivingroom_images = shuffle(thisisalivingroom_images);
+
+// get curated set of least fav work images
+let leastfavwork_all_images = image_db.get_exhibition_images( "Your Least Fav Work" );
+let leastfavwork_images = leastfavwork_all_images.filter( item => {
+    return (
+      item.tag.includes("Opening") 
+      || item.tag.includes("Cover") 
+      || item.tag.includes("Exhibition")
+    )
+});
+leastfavwork_images = shuffle(leastfavwork_images);
+
+// Attach extra data to image
+thisisalivingroom_images.map( item => {
+  item["Data"] = db.get_artwork_data( item["InstanceID"] );
+});
+leastfavwork_images.map( item => {
+  item["Data"] = db.get_artwork_data( item["InstanceID"] );
+});
+
+// console.log( leastfavwork_images );
+
+// import image for optimization - version 1
+/*
+leastfavwork_images.forEach( async item => {
+  let image = await import( `../../media/exhibition-images/${ item.photo[0].filename }?w=1000&format=webp;avif;jpg` );
+  item["cover"] = {
+    src: image.default,
+    alt: "",
+  };
+});
+thisisalivingroom_images.forEach( async item => {
+  let image = await import( `../../media/exhibition-images/${ item.photo[0].filename }?w=1000&format=webp;avif;jpg` );
+  item["cover"] = {
+    src: image.default,
+    alt: "",
+  };
+});
+*/
+
+// import image for optimization - version 2
+const glob_images = import.meta.glob( "../../media/exhibition-images/*", { 
+  query: { format: "webp;avif;jpg", w: "200;400;600;1200", picture: "" },
+  import: 'default'
+})
+leastfavwork_images.forEach( async item => {
+  let image = await glob_images[ `../../media/exhibition-images/${ item.photo[0].filename }` ]();
+  item["cover"] = {
+    src: image,
+    alt: "",
+  };
+});
+thisisalivingroom_images.forEach( async item => {
+  let image = await glob_images[ `../../media/exhibition-images/${ item.photo[0].filename }` ]();
+  item["cover"] = {
+    src: image,
+    alt: "",
+  };
+});
+
+---
+
+<Layout title="Exhibitions | House Gallery">
+  <QuickviewThumbnails></QuickviewThumbnails>
+
+  <div class="layout">
+    <ExhibitionListingItem client:load
+        title = "Your Least Fav Work"
+        title_slug = "yourleastfavwork"
+        gallery_images = { leastfavwork_images }
+        card_images = {{
+           front_src: "/exhibitions/yourleastfavwork/showcards/showcard-main--front.jpg",
+           back_src: "/exhibitions/yourleastfavwork/showcards/showcard-main--back.jpg",
+         }}
+        date="08.19 - 09-01"
+    />
+
+    <ExhibitionListingItem client:load
+        title = "This is a Living Room"
+        title_slug = "thisisalivingroom"
+        gallery_images = { thisisalivingroom_images }
+        card_images = {{
+           front_src: "/exhibitions/thisisalivingroom/Showcard001.jpg",
+           back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",
+         }}
+        date="06.23 - 07.07"
+    />
+  </div>
+</Layout>
+
+<style lang="scss">
+  .layout {
+    padding: var(--space-base-huge) var(--space-base-large) var(--space-base-large) var(--space-base-large);
+    @media (max-width: 675px) {
+      padding: var(--space-base-medium) var(--space-base-small) var(--space-base-small) var(--space-base-small);
+    }
+    @media (max-width: 1024px) {
+      padding: var(--space-base-large) var(--space-base-medium) var(--space-base-medium) var(--space-base-medium);
+    }
+  }
+</style>
+
+<script define:vars={{ thisisalivingroom_all_images, leastfavwork_all_images }}>
+  /* QUICKVIEW FUNCTION OPEN */
+  function openQuickview( e ) {
+    // get parent id
+    const exhibition_id = e.target.closest(".exhibition-title").id;
+    // console.log(exhibition_id);
+
+    switch ( exhibition_id ) {
+      case 'thisisalivingroom':
+        exhibition_images = thisisalivingroom_all_images;
+        break;
+      case 'yourleastfavwork':
+        exhibition_images = leastfavwork_all_images;
+        break;
+      default:
+        console.log("Had trouble finding the exhibition id.");
+    }
+
+    const imageData = exhibition_images.find( image => {
+      return e.target.attributes.src.value.includes( image.title );
+    });
+
+    // seralize data
+    // wait wtf am I doing this if I'm just loading the same image
+    let activeImageFilename = String.raw`${ imageData.photo[0].filename }`;
+    activeImageFilename = activeImageFilename.replace(/\s+/g, "%20"); //format filename to account for spacing
+    let selectedImage = e.target.attributes.src.value;
+
+    console.log( selectedImage );
+
+    let imageTags = imageData.tag;
+    imageTags = imageTags.filter( tag => {
+      return tag !== "Cover";
+    });
+
+    console.log( imageData );
+
+    let selectedArtwork = imageData.tag.filter( tag => {
+      return (
+        tag !== "Cover"
+        || tag !== "Detail"
+        || tag !== "Your Least Fav Work"
+        || tag !== "This is a Living Room"
+      )
+    });
+    selectedArtwork = selectedArtwork[0];
+
+    console.log( "selectedArtwork" );
+    console.log( selectedArtwork );
+
+    const artworkImagesData = exhibition_images.filter( image => {
+      return ( image.tag.includes( selectedArtwork ) );
+    });
+
+    console.log( artworkImagesData );
+
+    const artworkImagesSrc = [];
+    artworkImagesData.forEach( item => {
+      let itemFilename = item.photo[0].filename;
+      // let itemPath = `/exhibitions/${ exhibition_id }/images/${ itemFilename }`;
+      let itemPath = `/media/exhibition-images/${ itemFilename }`;
+      artworkImagesSrc.push( itemPath );
+    });
+
+    // send data
+    const quickview = document.querySelector(".quickview-thumbnails");
+    const quickviewEvent = new CustomEvent( "quickview-open", {
+      detail: {
+        coverSrc: selectedImage,
+        images: artworkImagesSrc,
+        title: selectedArtwork,
+        exhibition: exhibition_id,
+      },
+    });
+    quickview.dispatchEvent( quickviewEvent );
+  }
+
+  /* QUICKVIEW ATTACH HANDLER */
+  const quickviewItems = document.querySelectorAll( ".quickview-item" );
+  quickviewItems.forEach(( item ) => {
+    item.addEventListener( "click", () => {
+      openQuickview( event );
+    });
+  });
+</script>

@@ -1,135 +1,106 @@
 ---
-import { shuffle } from "../../utils/basic-javascript.js";
-
 import Layout from "../../layouts/Layout.astro";
-import QuickviewThumbnails from "../../components/quickview-thumbnails.astro";
-import ExhibitionListingItem from "../../components/organisms/exhibition-listing-item.svelte";
+import data from "../../data/exhibition-database.json";
 
-import ImageData from "../../data/thisisalivingroom-images.json";
-const images = ImageData["@graph"];
-const curatedPhotos = images.filter( item => {
-  return ( item.tag.includes("Exhibition") || item.tag.includes("Cover") );
-});
-
-import LeastFavWorkImageData from "../../data/yourleastfavwork-images.json";
-const leastfavwork_image_data = LeastFavWorkImageData["@graph"];
-let leastfavwork_images = leastfavwork_image_data.filter( item => {
-  return (
-    item.tag.includes("Opening") 
-    || item.tag.includes("Cover") 
-    || item.tag.includes("Exhibition")
-  )
-});
-leastfavwork_images = shuffle(leastfavwork_images);
-
+const next_show = false;
 ---
-<Layout title="Exhibitions | House Gallery">
-  <QuickviewThumbnails></QuickviewThumbnails>
 
-  <div class="layout">
-    <ExhibitionListingItem client:load
-        title = "Your Least Fav Work"
-        title_slug = "yourleastfavwork"
-        gallery_images = { leastfavwork_images }
-        card_images = {{
-           front_src: "/exhibitions/yourleastfavwork/showcards/showcard-main--front.jpg",
-           back_src: "/exhibitions/yourleastfavwork/showcards/showcard-main--back.jpg",
-         }}
-        date="08.19 - 09-01"
-    />
+<Layout title="Exhibitions | House Gallery" type="normal">
+  <section class="tabbed-nav">
+    <h1 class="tabbed-nav__current">Exhibitions</h1>
+    <p class="tabbed-nav__item">Memories</p>
+  </section>
 
-    <ExhibitionListingItem client:load
-        title = "This is a Living Room"
-        title_slug = "thisisalivingroom"
-        gallery_images = { curatedPhotos }
-        card_images = {{
-           front_src: "/exhibitions/thisisalivingroom/Showcard001.jpg",
-           back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",
-         }}
-        date="06.23 - 07.07"
-    />
+  <hr></hr>
+
+  <div class="exhibitions">
+    <h2>Upcoming:</h2>
+    <section class="exh__upcoming">
+      <!-- Idea for when Johannes announce show -->
+      <!--
+      <article>
+        <div>
+          <h4>Show title</h4> 
+          <p>info n' stuff
+      </article>
+      -->
+      <p>Find out when the next show is:</p>
+      <a href="mailinglist">
+        <p>> Subscribe to the mailing list</p>
+      </a>
+      <a href="instagram">
+        <p>> Follow our instagram</p>
+      </a>
+    </section>
+
+    <h2>Past:</h2>
+    <section class="exh__past">
+      <!--
+      <article class="past-exh">
+        <h4>{ data.ttt.title }</h4>
+        <img src={ data.ttt.showcard.front } alt="Showcard">
+        <img src={ data.ttt.showcard.back } alt="Showcard">
+      </article>
+      -->
+      <a href="/exhibitions/tabletstablestombstones">
+        <img src={ data.ttt.showcard.front } alt="Showcard" />
+      </a>
+      <a href="/exhibitions/yourleastfavoritework">
+        <img src={ data.yourleastfavwork.showcard.front } alt="Showcard" />
+      </a>
+      <a href="/exhibitions/thisisalivingroom">
+        <img src={ data.thisisalivingroom.showcard.front } alt="Showcard" />
+      </a>
+    </section>
+
   </div>
 </Layout>
 
 <style lang="scss">
-  .layout {
-    padding: var(--space-base-huge) var(--space-base-large) var(--space-base-large) var(--space-base-large);
-    @media (max-width: 675px) {
-      padding: var(--space-base-medium) var(--space-base-small) var(--space-base-small) var(--space-base-small);
+  .tabbed-nav {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    justify-content: space-between;
+    align-items: center;
+
+    &__current {
+      font-weight: 700;
+      letter-spacing: 10px;
+      text-transform: uppercase;
+      text-decoration: underline;
+      text-underline-offset: 32px;
+      text-underline-thickness: 4px;
     }
-    @media (max-width: 1024px) {
-      padding: var(--space-base-large) var(--space-base-medium) var(--space-base-medium) var(--space-base-medium);
+
+    &__item {
+      font-weight: 400;
     }
   }
+
+  .exhibitions {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: var(--space-item-gap);
+  }
+
+  .exh__upcoming {
+    border-bottom: 1px solid black;
+  }
+
+  .exh__past {
+    img {
+      width: 30%;
+      padding-right: var(--space-item-gap);
+    }
+  }
+
+  /*
+  .past-exh {
+    img {
+      max-width: 30vw;
+      padding-right: var(--space-item-gap);
+    }
+  }
+  */
 </style>
-
-<script define:vars={{ images, leastfavwork_images }}>
-  /* QUICKVIEW FUNCTION OPEN */
-  function openQuickview( e ) {
-    // get parent id
-    const exhibition_id = e.target.closest(".exhibition-title").id;
-    console.log(exhibition_id);
-
-    // get image data
-    const all_images = images.concat(leastfavwork_images);
-
-    let exhibition_images = all_images;
-    switch ( exhibition_id ) {
-      case 'thisisalivingroom':
-        exhibition_images = images;
-        break;
-      case 'yourleastfavwork':
-        exhibition_images = leastfavwork_images;
-        break;
-      default:
-        console.log("Had trouble finding the exhibition id.");
-    }
-
-    const imageData = exhibition_images.find( image => {
-      return e.target.attributes.src.value.includes( image.title );
-    });
-
-    // seralize data
-    // wait wtf am I doing this if I'm just loading the same image
-    let activeImageFilename = String.raw`${ imageData.photo[0].filename }`;
-    activeImageFilename = activeImageFilename.replace(/\s+/g, "%20"); //format filename to account for spacing
-    let selectedImage = e.target.attributes.src.value;
-    let imageTags = imageData.tag;
-    imageTags = imageTags.filter( tag => {
-      return tag !== "Cover";
-    });
-    let selectedArtwork = imageData.tag.filter( tag => {
-      return tag !== "Cover";
-    });
-    selectedArtwork = selectedArtwork[0];
-    const artworkImagesData = exhibition_images.filter( image => {
-      return ( image.tag.includes( selectedArtwork ) );
-    });
-    const artworkImagesSrc = [];
-    artworkImagesData.forEach( item => {
-      let itemFilename = item.photo[0].filename;
-      let itemPath = `/exhibitions/${ exhibition_id }/images/${ itemFilename }`;
-      artworkImagesSrc.push( itemPath );
-    });
-
-    // send data
-    const quickview = document.querySelector(".quickview-thumbnails");
-    const quickviewEvent = new CustomEvent( "quickview-open", {
-      detail: {
-        coverSrc: selectedImage,
-        images: artworkImagesSrc,
-        title: selectedArtwork,
-        exhibition: exhibition_id,
-      },
-    });
-    quickview.dispatchEvent( quickviewEvent );
-  }
-
-  /* QUICKVIEW ATTACH HANDLER */
-  const quickviewItems = document.querySelectorAll( ".quickview-item" );
-  quickviewItems.forEach(( item ) => {
-    item.addEventListener( "click", () => {
-      openQuickview( event );
-    });
-  });
-</script>

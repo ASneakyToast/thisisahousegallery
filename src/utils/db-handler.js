@@ -1,6 +1,6 @@
-import artwork_database from "../data/artwork-database-nov_04_2023.json";
+import artwork_database from "../data/artwork-database-dec_25_2023-v2.json";
 import artist_database from "../data/artist-database.json";
-import { get_artwork_images } from "../utils/image-db-handler.js";
+import * as image_db from "../utils/image-db-handler.js";
 import { slugify } from "../utils/basic-javascript.js";
 
 export function get_all_artists() {
@@ -8,8 +8,16 @@ export function get_all_artists() {
 };
 
 export function get_all_artwork() {
-  return artwork_database;
+  return artwork_database.filter( item => {
+    return ( item.Published == "TRUE" );
+  })
 };
+
+// Modify db for easy-access keys
+// > Attach cover image
+get_all_artwork().forEach( item => {
+  item.Cover = image_db.get_artwork_cover( item["ID"] );
+});
 
 export function get_artists_work( artist ) {
   return artwork_database.filter( item => {
@@ -23,14 +31,14 @@ export function get_artists_work_with_images( artist ) {
   });
 
   artwork_list.forEach( item => {
-    item["Images"] = get_artwork_images( item["ID"] );
+    item["Images"] = image_db.get_artwork_images( item["ID"] );
   });
 
   return artwork_list;
 }
 
-export function get_artwork_data( title_slug ) {
-    return  artwork_database.filter( item => {
-      return slugify(item["Tile"]) == title_slug;
+export function get_artwork_data( id ) {
+    return artwork_database.filter( item => {
+      return item["ID"] == id;
     })
 }

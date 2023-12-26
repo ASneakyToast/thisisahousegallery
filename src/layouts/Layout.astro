@@ -2,14 +2,19 @@
 import BaseLayout from "../layouts/Base.astro";
 import Header from "../components/Header.astro";
 
-export interface Props {
-	title: string;
-}
-
-const { title } = Astro.props;
+const { title, type } = Astro.props;
 ---
 
 <BaseLayout title={ title }>
   <Header />
-  <slot />
+    <div class:list={["body", type]}>
+    <slot />
+  </div>
 </BaseLayout>
+
+<style lang="scss">
+  .body.normal {
+    margin: var(--space-heading-gap) 0;
+    padding: 0 var(--space-page-gutter);
+  }
+</style>

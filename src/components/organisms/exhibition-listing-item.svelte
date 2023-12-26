@@ -1,5 +1,6 @@
 <script>
   import QuickviewThumbnails from "../../components/quickview-thumbnails.astro";
+  import { slugify } from "../../utils/basic-javascript.js";
 
   export let title = "Exhibition title";
   export let title_slug = "exhibition_title";
@@ -9,9 +10,20 @@
     front_src: "/exhibitions/thisisalivingroom/Showcard001.jpg",
     back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",
   }
+
+  function isArtwork( photo_item ) {
+    // work backwards by reducing all other tag types
+    if ( photo_item.tag.includes( "Opening" ) 
+      || photo_item.tag.includes( "Exhibition" )
+      || photo_item.tag.includes( "Detail" )) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 </script>
 
-<div id={ title_slug } class="exhibition-title">
+<div id={ title_slug } class="exhibition-listing-item exhibition-title">
   <section class="exhibition-header">
     <h2>{ title }</h2>
     <h3>{ date }</h3>
@@ -27,19 +39,45 @@
         alt="The back side of the promotional showcard for the exhibition '{ title }' by This is a House Gallery."
       />
     </section>
+
     <section class="exhibition-images">
       {#each gallery_images as photo, index}
         <img 
           class="quickview-item" 
-          src={ "/exhibitions/" + title_slug + "/images/" + gallery_images[ index ].photo[0].filename }
-          alt="An exhibition photo of the show 'This is a living room' by Joel Lithgow and Joseph Blake with This is a House Gallery." 
+          srcset={ photo.srcset }
+          alt="" 
         />
+
+        <!-- Ok maybe we fuck this off for now -->
+        <!-- the whole point was to have different quickviews -->
+        <!--
+        {#if isArtwork( photo ) }
+          {#if photo["cover"].src }
+            <a href={`/artwork/${ slugify(photo["Data"][0]["Artist"])}/${ slugify(photo["Data"][0]["Title"])}`}>
+            <img 
+              srcset={ photo["cover"].src }
+              alt={ photo["cover"].alt } 
+            />
+            </a>
+          {/if}
+        {:else}
+          <img 
+            class="quickview-item" 
+            srcset={ photo["cover"].srcset }
+            alt={ photo["cover"].alt } 
+          />
+        {/if}
+        -->
       {/each}
     </section>
   </section>
 </div>
 
 <style lang="scss">
+  .exhibition-listing-item {
+    margin-bottom: var(--space-base-large);
+  }
+
   .exhibition-header {
     display: flex;
     flex-direction: row;

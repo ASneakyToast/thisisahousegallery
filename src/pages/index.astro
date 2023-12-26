@@ -1,31 +1,13 @@
 ---
-import { shuffle } from "../utils/basic-javascript.js";
-
+import * as image_db from "../utils/image-db-handler.js";
 import Layout from "../layouts/Layout.astro";
+import { Image } from 'astro:assets';
 import Tableau from '../components/organisms/homepage-tableau.astro';
 import Exhibitions from '../components/organisms/homepage/exhibitions.svelte';
 import Memories from '../components/organisms/homepage/memories.svelte';
 import NFTRoom from '../components/organisms/homepage/the-room.svelte';
 import Resources from '../components/organisms/homepage/resources.svelte';
 import Footer from '../components/organisms/footer.astro';
-
-import thisisalivingroom_image_data from "../data/thisisalivingroom-images.json";
-const thisisalivingroom_images = thisisalivingroom_image_data["@graph"].filter( item => {
-  return (
-    item.tag.includes("Opening") 
-    || item.tag.includes("Cover") 
-    || item.tag.includes("Exhibition")
-  )
-});
-
-import LeastFavWorkImageData from "../data/yourleastfavwork-images.json";
-const leastfavwork_images = LeastFavWorkImageData["@graph"].filter( item => {
-  return (
-    item.tag.includes("Opening") 
-    || item.tag.includes("Cover") 
-    || item.tag.includes("Exhibition")
-  )
-});
 
 function RandomSize() {
   let size = Math.floor(Math.random()*3)+1;
@@ -40,38 +22,49 @@ function RandomSide() {
       return "right"
   }
 }
-let memory_images = [];
-thisisalivingroom_images.forEach(( item, index ) => {
+let curated_images = image_db.get_all_images().filter( item => {
+  return (
+    item.tag.includes("Opening") 
+    || item.tag.includes("Exhibition")
+  )
+});
+let memory_images = []
+const glob_images = import.meta.glob( "../media/exhibition-images/*", { 
+  query: { format: "webp;avif;jpg", w: "200;400;600;1200", picture: "" },
+  import: 'default'
+})
+
+curated_images.forEach(async (item) => {
+  let image = await glob_images[ `../media/exhibition-images/${ item.photo[0].filename }` ]();
+
   memory_images.push({
-    src: `/exhibitions/thisisalivingroom/images/${ item.photo[0].filename }`,
+    src: image,
     alt: "Photo from opening reception of This is a Living Room.",
     size: RandomSize(),
     side: RandomSide(),
   });
 });
-leastfavwork_images.forEach(( item, index ) => {
-  memory_images.push({
-    src: `/exhibitions/yourleastfavwork/images/${ item.photo[0].filename }`,
-    alt: "Photo from opening reception of Your Least Fav Work.",
-    size: RandomSize(),
-    side: RandomSide(),
-  });
-});
-memory_images = shuffle(memory_images);
 
 const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link";
 ---
 
 <Layout title="House Gallery">
   <section class="intro">
-    <!-- <h1><b>This is a House Gallery</b> is something about stuff and all that you know and it could prob be this long.</h1> -->
-    <!-- <h1><b>This is a House Gallery</b> is a living room for artists, exhibitions, & parities.</h1> -->
     <h1><b>This is a House Gallery</b> serves as a project and exhibition place for close friends, local artists, writers, and curators.</h1>
     <a href="/about">
       <p class="intro-button">Find out who lives here</p>
     </a>
   </section>
 
+  <Tableau 
+    img_src={import(`/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg`)}
+    img_alt="Showcard for the art exhibition 'Tablets Tables and Tombstones'."
+    link="/schedule/tabletstablestombstones"
+    heading="Tablets Tables and Tombstones"
+    subheading="Come to the next show"
+    animation="zoomslowinandout"
+  />
+  <!--
   <Tableau 
     img_src="/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg"
     img_alt="Showcard for the art exhibition 'Tablets Tables and Tombstones'."
@@ -80,6 +73,7 @@ const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7Xeqj
     subheading="Come to the next show"
     animation="zoomslowinandout"
   />
+  -->
 
 <!--
   <Exhibitions 

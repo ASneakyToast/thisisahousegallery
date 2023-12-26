@@ -2,9 +2,10 @@
 import * as db from "../../../utils/db-handler.js";
 import * as image_db from "../../../utils/image-db-handler.js";
 import Layout from "../../../layouts/Layout.astro";
+import { Image } from 'astro:assets';
 import { slugify } from "../../../utils/basic-javascript.js";
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
   return db.get_all_artists().map( data => {
 
     // seralize data
@@ -25,6 +26,8 @@ export function getStaticPaths() {
 // scoped page data
 const { artist } = Astro.params;
 const { data } = Astro.props;
+
+console.log( data["Artwork"][0].Cover.srcset );
 ---
 
 <Layout title={`House Gallery | ${ data["Name"]}`}>
@@ -39,13 +42,19 @@ const { data } = Astro.props;
         <>
           <section class="page-artist__artwork">
             <section class="page-artist__cover-image">
-              <img src={`/media/exhibition-images/${ artwork["Cover"].photo[0].filename }`}>
+              <Image 
+                src={ import(`../../../media/exhibition-images/${ artwork["Cover"].photo[0].filename }`) }
+                alt=""
+                densities={[1.5, 2]}
+                width="400px"
+                height="400px"
+              />
             </section>
 
             <section class="page-artist__artwork-info">
               <p class="page-artist__heading">
                 <a href={`/artwork/${ artist }/${ slugify(artwork["Title"]) }`}>
-                  { artwork["Title"] }
+                  <span set:html={ artwork["Title"] } />
                 </a>
               </p>
               <p>Date: { artwork["Date"] }</p>
@@ -111,6 +120,11 @@ const { data } = Astro.props;
 
     &__artwork-image {
       max-width: 200px;
+    }
+
+    &__cover-image img {
+      object-fit: cover;
+      height: auto;
     }
   }
 </style>

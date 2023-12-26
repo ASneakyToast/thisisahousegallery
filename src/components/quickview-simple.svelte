@@ -1,12 +1,3 @@
-<section id="testing" class="quickview_simple">
-  <img />
-  <h1>Big Text box</h1>
-  <p>{ image_url }</p>
-  <p>{ alt_text }</p>
-  <p>{ caption }</p>
-  <button on:click={ destroyThis }>DESTROY ME</button>
-</section>
-
 <script>
   //const quickview_simple_element = document.querySelector(".quickview_simple");
   import { onMount } from 'svelte';
@@ -42,7 +33,7 @@
 </script>
 
 <section class="quickview_simple" on:click={ destroyThis }>
-  <img src={ image_url } alt={ alt_text }/>
+  <img srcset={ image_url } alt={ alt_text }/>
 </section>
 
 <style lang="scss">
@@ -53,8 +44,11 @@
     right: 0;
     bottom: 0;
     padding: var(--space-section-gap);
+    z-index: 32;
 
     background: white;
+
+    cursor: pointer;
 
     & img {
       width: 100%;

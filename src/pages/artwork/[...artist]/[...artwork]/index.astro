@@ -4,6 +4,7 @@ import { Debug } from 'astro:components';
 import * as db from "../../../../utils/db-handler.js";
 import * as image_db from "../../../../utils/image-db-handler.js";
 import Layout from "../../../../layouts/Layout.astro";
+import { Image } from 'astro:assets';
 import { slugify } from "../../../../utils/basic-javascript.js";
 
 export function getStaticPaths() {
@@ -47,7 +48,22 @@ const { item } = Astro.props;
       <p>Images:</p>
       <section class="info__images">
         { item["Images"].map(( item ) => (
-          <img class="info__image" src={`/media/exhibition-images/${ item.photo[0].filename }`}>
+          <img 
+            class="info__image" 
+            src={ import(`../../../../media/exhibition-images/${ item.photo[0].filename }`) }
+          />
+          <!-- This sucks -->
+          <!-- It uses this 200px size for the swap -->
+          <!--
+          <Image 
+            class="info__image"
+            src={ import(`../../../../media/exhibition-images/${ item.photo[0].filename }`) }
+            alt=""
+            densities={[1.5, 2]}
+            width="200px"
+            height="200px"
+          />
+          -->
         ))}
       </section>
     </section>
@@ -115,6 +131,11 @@ const { item } = Astro.props;
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
+    }
+
+    &__image {
+      width: auto;
+      object-fit: cover;
     }
 
     &__image {

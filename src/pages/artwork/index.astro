@@ -2,12 +2,11 @@
 import * as db from "../../utils/db-handler.js";
 import * as image_db from "../../utils/image-db-handler.js";
 import Layout from "../../layouts/Layout.astro";
-import { slugify } from "../../utils/basic-javascript.js";
+import { Image } from 'astro:assets';
+import { slugify, shuffle } from "../../utils/basic-javascript.js";
 
 let artworks = db.get_all_artwork();
-artworks.forEach( (artwork, index) => {
-  artwork["Cover"] = image_db.get_artwork_cover( artwork["ID"] );
-});
+artworks = shuffle( artworks );
 ---
 
 <Layout title="House Gallery | Artwork">
@@ -20,7 +19,13 @@ artworks.forEach( (artwork, index) => {
     <section class="page-images">
       { artworks.map( artwork => (
         <a href={`/artwork/${ slugify(artwork["Artist"]) }/${ slugify(artwork["Title"]) }`}>
-          <img class="artwork-image" src={`/media/exhibition-images/${ artwork["Cover"].photo[0].filename }`}>
+          <Image 
+            src={ import(`../../media/exhibition-images/${ artwork["Cover"].photo[0].filename }`) }
+            alt=""
+            densities={[1.5, 2]}
+            width="200px"
+            height="200px"
+          />
         </a>
       ))}
     </section>
@@ -36,13 +41,15 @@ artworks.forEach( (artwork, index) => {
   }
 
   .page-images {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-item-gap);
 
     & img {
       aspect-ratio: 1/1;
       object-fit: cover;
+      width: 100px;
+      height: 100px;
     }
   }
 </style>

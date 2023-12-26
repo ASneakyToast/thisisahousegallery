@@ -1,0 +1,2440 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "https://tropy.org/v1/tropy#",
+    "template": {
+      "@type": "@id"
+    },
+    "photo": {
+      "@id": "https://tropy.org/v1/tropy#photo",
+      "@container": "@list"
+    },
+    "note": {
+      "@id": "https://tropy.org/v1/tropy#note",
+      "@container": "@list"
+    },
+    "selection": {
+      "@id": "https://tropy.org/v1/tropy#selection",
+      "@container": "@list"
+    },
+    "title": "http://purl.org/dc/elements/1.1/title",
+    "InstanceID": "http://ns.adobe.com/xap/1.0/mm/InstanceID",
+    "date": {
+      "@id": "http://purl.org/dc/elements/1.1/date",
+      "@type": "https://tropy.org/v1/tropy#date"
+    },
+    "creator": "http://purl.org/dc/elements/1.1/creator"
+  },
+  "@graph": [
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Sophie1",
+      "InstanceID": "55",
+      "tag": [
+        "Cover",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "devils playground"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "ffdb341904c561c4e644e4af023a394f",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "Sophie1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/ffdb341904c561c4e644e4af023a394f.jpg",
+          "protocol": "file",
+          "size": 5043660,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 5888,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5888,
+          "title": "Sophie1",
+          "date": 1702799070000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "TInstall10",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "b57dc303d679c2eddbfab11d160a5ccb",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "TInstall10.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/b57dc303d679c2eddbfab11d160a5ccb.jpg",
+          "protocol": "file",
+          "size": 7462320,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "TInstall10",
+          "date": 1702791825000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall1",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0faba455c9d00271b427fac46e782c4c",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "Tinstall1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/0faba455c9d00271b427fac46e782c4c.jpg",
+          "protocol": "file",
+          "size": 17476940,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 5688,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 7584,
+          "title": "Tinstall1",
+          "date": 1702792615000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall11",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "12f48a125e4125c90ee89435354da07b",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "Tinstall11.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/12f48a125e4125c90ee89435354da07b.jpg",
+          "protocol": "file",
+          "size": 13067405,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8155,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6101,
+          "title": "Tinstall11",
+          "date": 1702802779000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall12",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "781b8bc15a13ac05dfa0cb82da07bc9a",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "Tinstall12.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/781b8bc15a13ac05dfa0cb82da07bc9a.jpg",
+          "protocol": "file",
+          "size": 7864873,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "Tinstall12",
+          "date": 1702791715000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall13",
+      "InstanceID": "57",
+      "tag": [
+        "Detail",
+        "Exhibition",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "Radial Dissonance"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0c9c594105148a530ff7740ad6a2ba3e",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "Tinstall13.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/0c9c594105148a530ff7740ad6a2ba3e.jpg",
+          "protocol": "file",
+          "size": 15169949,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7814,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5861,
+          "title": "Tinstall13",
+          "date": 1702793142000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall14",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "6382797a85449040d014f0c18bb05a05",
+          "color": "rgb(200,200,184,1)",
+          "density": null,
+          "filename": "Tinstall14.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/6382797a85449040d014f0c18bb05a05.jpg",
+          "protocol": "file",
+          "size": 16047286,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "Tinstall14",
+          "date": 1702794093000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall15",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "08cf6ef4e68ec54a6fd32e61fc630b39",
+          "color": "rgb(200,200,200,1)",
+          "density": null,
+          "filename": "Tinstall15.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/08cf6ef4e68ec54a6fd32e61fc630b39.jpg",
+          "protocol": "file",
+          "size": 13578572,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7222,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5417,
+          "title": "Tinstall15",
+          "date": 1702792802000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall16",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "a44fa15324ee98a5a80d50dcee81fe8c",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "Tinstall16.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/a44fa15324ee98a5a80d50dcee81fe8c.jpg",
+          "protocol": "file",
+          "size": 2788838,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "Tinstall16",
+          "date": 1702791008000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall17",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "6991dd1e3cfabb6c1d0aba757f9c5a21",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "Tinstall17.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/6991dd1e3cfabb6c1d0aba757f9c5a21.jpg",
+          "protocol": "file",
+          "size": 3080424,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "Tinstall17",
+          "date": 1702791044000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall2",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "1c7d3a2d146e94016123ac0af71289d7",
+          "color": "rgb(216,200,200,1)",
+          "density": null,
+          "filename": "Tinstall2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/1c7d3a2d146e94016123ac0af71289d7.jpg",
+          "protocol": "file",
+          "size": 16970418,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 5911,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 7881,
+          "date": 1702792680000,
+          "title": "Tinstall2"
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall3",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "f7e209ee2fd0fd24a0a6258df1c9bc5d",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "Tinstall3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/f7e209ee2fd0fd24a0a6258df1c9bc5d.jpg",
+          "protocol": "file",
+          "size": 16307389,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "Tinstall3",
+          "date": 1702790986000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall4",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "4ccf35395219486c2e5ed7e8d285d10f",
+          "color": "rgb(216,216,200,1)",
+          "density": null,
+          "filename": "Tinstall4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/4ccf35395219486c2e5ed7e8d285d10f.jpg",
+          "protocol": "file",
+          "size": 10113895,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 5692,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 7589,
+          "title": "Tinstall4",
+          "date": 1702792655000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall5",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "4473f1a945f673dff5afa15dc0046b1e",
+          "color": "rgb(200,200,200,1)",
+          "density": null,
+          "filename": "Tinstall5.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/4473f1a945f673dff5afa15dc0046b1e.jpg",
+          "protocol": "file",
+          "size": 5259769,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2940,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3921,
+          "title": "Tinstall5",
+          "date": 1702819227000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall6",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "af317b8957c3d5ad27b5e70189991403",
+          "color": "rgb(200,184,168,1)",
+          "density": null,
+          "filename": "Tinstall6.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/af317b8957c3d5ad27b5e70189991403.jpg",
+          "protocol": "file",
+          "size": 14371720,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "Tinstall6",
+          "date": 1702793224000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall7",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "4bc868b80acd930bde6c0ece1183f398",
+          "color": "rgb(200,200,184,1)",
+          "density": null,
+          "filename": "Tinstall7.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/4bc868b80acd930bde6c0ece1183f398.jpg",
+          "protocol": "file",
+          "size": 15769071,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 5794,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 7725,
+          "title": "Tinstall7",
+          "date": 1702792784000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall8",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "7a4808fa02a74e87b8545538b16b0869",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "Tinstall8.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/7a4808fa02a74e87b8545538b16b0869.jpg",
+          "protocol": "file",
+          "size": 7156854,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "Tinstall8",
+          "date": 1702791849000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Tinstall9",
+      "creator": "Dareal Calderon",
+      "InstanceID": "65",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "silent oath"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0e47f5760f0eefc062ebd34d96fabd61",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "Tinstall9.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/0e47f5760f0eefc062ebd34d96fabd61.jpg",
+          "protocol": "file",
+          "size": 10695712,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "Tinstall9",
+          "date": 1702791072000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "annie1",
+      "creator": "Annie Artell",
+      "InstanceID": "68",
+      "tag": [
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "Whispering votive",
+        "Cover"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "993970c08aea9835ac6189d09768d2cf",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "annie1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/993970c08aea9835ac6189d09768d2cf.jpg",
+          "protocol": "file",
+          "size": 4273681,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7319,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5489,
+          "title": "annie1",
+          "date": 1702790783000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "annie2",
+      "InstanceID": "62",
+      "tag": [
+        "Cover",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "We look up while they look down"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "e81303c23bbed3fd7ef0f0a8313104d2",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "annie2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/e81303c23bbed3fd7ef0f0a8313104d2.jpg",
+          "protocol": "file",
+          "size": 10558558,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7830,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5872,
+          "title": "annie2",
+          "date": 1702791371000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "annie3",
+      "InstanceID": "61",
+      "tag": [
+        "Cover",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "Mutated stone"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "e30be9c95a616cabe0ccfee1809f2373",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "annie3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/e30be9c95a616cabe0ccfee1809f2373.jpg",
+          "protocol": "file",
+          "size": 10417579,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7745,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5809,
+          "title": "annie3",
+          "date": 1702791419000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "annie4",
+      "InstanceID": "57",
+      "tag": [
+        "Cover",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "Radial Dissonance"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "932c13730ae2f8d8451290a3213b153a",
+          "color": "rgb(216,216,216,1)",
+          "density": null,
+          "filename": "annie4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/932c13730ae2f8d8451290a3213b153a.jpg",
+          "protocol": "file",
+          "size": 20800687,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6831,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5123,
+          "title": "annie4",
+          "date": 1702196059000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "annie5",
+      "InstanceID": "58",
+      "tag": [
+        "Cover",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "A helmet for my prayers"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "c85cfa24617e49268c56245c42214357",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "annie5.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/c85cfa24617e49268c56245c42214357.jpg",
+          "protocol": "file",
+          "size": 16521492,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7704,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5778,
+          "title": "annie5",
+          "date": 1702794028000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "anniedetail1",
+      "creator": "Annie Artell",
+      "InstanceID": "68",
+      "tag": [
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "Whispering votive",
+        "Detail"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "5a0db4d0424b27a3a41fe84574e82778",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "anniedetail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/5a0db4d0424b27a3a41fe84574e82778.jpg",
+          "protocol": "file",
+          "size": 5494267,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "anniedetail1",
+          "date": 1702790814000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "anniedetail2",
+      "InstanceID": "62",
+      "tag": [
+        "Detail",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "We look up while they look down"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "d41d5d77fe15f24590ee7727ca07189f",
+          "color": "rgb(232,216,200,1)",
+          "density": null,
+          "filename": "anniedetail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/d41d5d77fe15f24590ee7727ca07189f.jpg",
+          "protocol": "file",
+          "size": 11363904,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "anniedetail2",
+          "date": 1702791404000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "anniedetail3",
+      "InstanceID": "62",
+      "tag": [
+        "Detail",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "We look up while they look down"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "85d2f91bd0d4d8bb4b458d3702c85ae3",
+          "color": "rgb(232,216,216,1)",
+          "density": null,
+          "filename": "anniedetail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/85d2f91bd0d4d8bb4b458d3702c85ae3.jpg",
+          "protocol": "file",
+          "size": 7816336,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "anniedetail3",
+          "date": 1702791391000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "anniedetail4",
+      "InstanceID": "61",
+      "tag": [
+        "Detail",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "Mutated stone"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "14998ffcf74b701174ad15d4b1347d8c",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "anniedetail4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/14998ffcf74b701174ad15d4b1347d8c.jpg",
+          "protocol": "file",
+          "size": 12792920,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "anniedetail4",
+          "date": 1702791435000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "anniedetail5",
+      "InstanceID": "57",
+      "tag": [
+        "Detail",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "Radial Dissonance"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "56b67793a1ef832e75c75a3399fb9d78",
+          "color": "rgb(248,88,24,1)",
+          "density": null,
+          "filename": "anniedetail5.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/56b67793a1ef832e75c75a3399fb9d78.jpg",
+          "protocol": "file",
+          "size": 25456555,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "anniedetail5",
+          "date": 1702196084000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "anniedetail6",
+      "InstanceID": "57",
+      "tag": [
+        "Detail",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "Radial Dissonance"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "fe4c989c456479bb8c53a80f62a561f9",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "anniedetail6.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/fe4c989c456479bb8c53a80f62a561f9.jpg",
+          "protocol": "file",
+          "size": 19206180,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "anniedetail6",
+          "date": 1702822699000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "anniedetail7",
+      "InstanceID": "58",
+      "tag": [
+        "Detail",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "A helmet for my prayers"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "6e4338e0d01f290feee5ff746b40eaa5",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "anniedetail7.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/6e4338e0d01f290feee5ff746b40eaa5.jpg",
+          "protocol": "file",
+          "size": 16843105,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7446,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5585,
+          "title": "anniedetail7",
+          "date": 1702794005000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "anniedetail8",
+      "InstanceID": "58",
+      "tag": [
+        "Detail",
+        "Annie Artell",
+        "Tablets Tables and Tombstones",
+        "A helmet for my prayers"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "dd63aa7324ebebfdb333ae77f9c400a3",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "anniedetail8.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/dd63aa7324ebebfdb333ae77f9c400a3.jpg",
+          "protocol": "file",
+          "size": 19877716,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "anniedetail8",
+          "date": 1702792120000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "annieshelf",
+      "tag": [
+        "Exhibition",
+        "Tablets Tables and Tombstones"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "cfa57a8855cb139d2934e360ae72f5cf",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "annieshelf.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/cfa57a8855cb139d2934e360ae72f5cf.jpg",
+          "protocol": "file",
+          "size": 9479225,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "annieshelf",
+          "date": 1702791751000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "dareal1",
+      "creator": "Dareal Calderon",
+      "InstanceID": "60",
+      "tag": [
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "god, iteration 1"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "74f33235f1d79f3f3de6e4d7c6e8cc08",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "dareal1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/74f33235f1d79f3f3de6e4d7c6e8cc08.jpg",
+          "protocol": "file",
+          "size": 9140665,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 5479,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5479,
+          "title": "dareal1",
+          "date": 1702799057000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "dareal2",
+      "creator": "Dareal Calderon",
+      "InstanceID": "65",
+      "tag": [
+        "Cover",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "silent oath"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "b8b64b4a0638d15630074195db5b1dab",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "dareal2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/b8b64b4a0638d15630074195db5b1dab.jpg",
+          "protocol": "file",
+          "size": 6120146,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 4001,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4001,
+          "title": "dareal2",
+          "date": 1702791555000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "dareal3",
+      "creator": "Dareal Calderon",
+      "InstanceID": "66",
+      "tag": [
+        "Cover",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "lust for life"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "e8c8f34a012bff6705c2032decc95ed8",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "dareal3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/e8c8f34a012bff6705c2032decc95ed8.jpg",
+          "protocol": "file",
+          "size": 19940684,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "dareal3",
+          "date": 1702819748000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdeatail12",
+      "creator": "Dareal Calderon",
+      "InstanceID": "66",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "lust for life"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "b95227e109fd40848f66623749384851",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "darealdeatail12.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/b95227e109fd40848f66623749384851.jpg",
+          "protocol": "file",
+          "size": 11701901,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "darealdeatail12",
+          "date": 1702798766000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail1",
+      "creator": "Dareal Calderon",
+      "InstanceID": "60",
+      "tag": [
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "god, iteration 1"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "79978e462a04031974b9c39e05ad56c1",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "darealdetail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/79978e462a04031974b9c39e05ad56c1.jpg",
+          "protocol": "file",
+          "size": 7003111,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "darealdetail1",
+          "date": 1702195277000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail10",
+      "creator": "Dareal Calderon",
+      "InstanceID": "66",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "lust for life"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "5d9c60fa24983304cdfe387515030f7b",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "darealdetail10.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/5d9c60fa24983304cdfe387515030f7b.jpg",
+          "protocol": "file",
+          "size": 9984782,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "darealdetail10",
+          "date": 1702798754000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail11",
+      "creator": "Dareal Calderon",
+      "InstanceID": "66",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "lust for life"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "dbf1c673ada762e32861497c5044a44d",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "darealdetail11.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/dbf1c673ada762e32861497c5044a44d.jpg",
+          "protocol": "file",
+          "size": 14302935,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "darealdetail11",
+          "date": 1702798799000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail2",
+      "creator": "Dareal Calderon",
+      "InstanceID": "60",
+      "tag": [
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "god, iteration 1"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "78090af44aa8073f0d5042ada7d3eb35",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "darealdetail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/78090af44aa8073f0d5042ada7d3eb35.jpg",
+          "protocol": "file",
+          "size": 6377195,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "darealdetail2",
+          "date": 1702791131000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail3",
+      "creator": "Dareal Calderon",
+      "InstanceID": "65",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "silent oath"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "dc3ddebd8445c27c830e9381c1903090",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "darealdetail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/dc3ddebd8445c27c830e9381c1903090.jpg",
+          "protocol": "file",
+          "size": 15855085,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "darealdetail3",
+          "date": 1702791510000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail4",
+      "creator": "Dareal Calderon",
+      "InstanceID": "65",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "silent oath"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "f15605ff11a71fcc1a5328ba8ae89fbe",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "darealdetail4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/f15605ff11a71fcc1a5328ba8ae89fbe.jpg",
+          "protocol": "file",
+          "size": 18161581,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7776,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5832,
+          "title": "darealdetail4",
+          "date": 1702791501000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail5",
+      "creator": "Dareal Calderon",
+      "InstanceID": "65",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "silent oath"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "b5efebb60f13abf4dc890008381d91b7",
+          "color": "rgb(216,200,184,1)",
+          "density": null,
+          "filename": "darealdetail5.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/b5efebb60f13abf4dc890008381d91b7.jpg",
+          "protocol": "file",
+          "size": 13786768,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "darealdetail5",
+          "date": 1702793923000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail6",
+      "creator": "Dareal Calderon",
+      "InstanceID": "65",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "silent oath"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "6885257423c10608f0f521ce1419e6c7",
+          "color": "rgb(232,232,216,1)",
+          "density": null,
+          "filename": "darealdetail6.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/6885257423c10608f0f521ce1419e6c7.jpg",
+          "protocol": "file",
+          "size": 21095466,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "darealdetail6",
+          "date": 1702794125000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail7",
+      "creator": "Dareal Calderon",
+      "InstanceID": "66",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "lust for life"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "63f3cbf4d9d4bf8dfdc2c6cbb86e083c",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "darealdetail7.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/63f3cbf4d9d4bf8dfdc2c6cbb86e083c.jpg",
+          "protocol": "file",
+          "size": 4809783,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "darealdetail7",
+          "date": 1702799133000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail8",
+      "creator": "Dareal Calderon",
+      "InstanceID": "66",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "lust for life"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "0a20575f8f3ee76e19ee235f76b17689",
+          "color": "rgb(248,232,152,1)",
+          "density": null,
+          "filename": "darealdetail8.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/0a20575f8f3ee76e19ee235f76b17689.jpg",
+          "protocol": "file",
+          "size": 20412467,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "darealdetail8",
+          "date": 1702798787000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "darealdetail9",
+      "creator": "Dareal Calderon",
+      "InstanceID": "66",
+      "tag": [
+        "Detail",
+        "Dareal Calderon",
+        "Tablets Tables and Tombstones",
+        "lust for life"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "9e1bf92ef499c6363b9b152e39edcc4f",
+          "color": "rgb(200,216,200,1)",
+          "density": null,
+          "filename": "darealdetail9.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/9e1bf92ef499c6363b9b152e39edcc4f.jpg",
+          "protocol": "file",
+          "size": 16728724,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "darealdetail9",
+          "date": 1702798803000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophie2",
+      "InstanceID": "53",
+      "tag": [
+        "Cover",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "what I leanred from the coyotes"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "88c0d2b813e6e29e67185854e4456cb5",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "sophie2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/88c0d2b813e6e29e67185854e4456cb5.jpg",
+          "protocol": "file",
+          "size": 10514939,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 5912,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4434,
+          "title": "sophie2",
+          "date": 1702792680000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophie3",
+      "InstanceID": "56",
+      "tag": [
+        "Cover",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "my ruination"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "14b71c8d5fa6c27b41796ead3aec147e",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "sophie3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/14b71c8d5fa6c27b41796ead3aec147e.jpg",
+          "protocol": "file",
+          "size": 4151285,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6943,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5207,
+          "title": "sophie3",
+          "date": 1702791265000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophie4",
+      "InstanceID": "54",
+      "tag": [
+        "Cover",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "72 and sunny"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "ae538a31864cc3c4af7c0441449b2a51",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "sophie4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/ae538a31864cc3c4af7c0441449b2a51.jpg",
+          "protocol": "file",
+          "size": 6751225,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "sophie4",
+          "date": 1702799108000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail1",
+      "InstanceID": "53",
+      "tag": [
+        "Detail",
+        "Exhibition",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "what I leanred from the coyotes"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "1488697313469985fd21424556efbf6e",
+          "color": "rgb(216,200,184,1)",
+          "density": null,
+          "filename": "sophiedetail1.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/1488697313469985fd21424556efbf6e.jpg",
+          "protocol": "file",
+          "size": 11323087,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "sophiedetail1",
+          "date": 1702793247000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail10",
+      "InstanceID": "54",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "72 and sunny"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "b969e62c6eb5425b7f845a1c58110002",
+          "color": "rgb(248,232,184,1)",
+          "density": null,
+          "filename": "sophiedetail10.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/b969e62c6eb5425b7f845a1c58110002.jpg",
+          "protocol": "file",
+          "size": 13496625,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 8160,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 6120,
+          "title": "sophiedetail10",
+          "date": 1702792419000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail11",
+      "InstanceID": "54",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "72 and sunny"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "68e9331565e25ac6b6eefe64e695da0f",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "sophiedetail11.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/68e9331565e25ac6b6eefe64e695da0f.jpg",
+          "protocol": "file",
+          "size": 4444362,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 2652,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2652,
+          "title": "sophiedetail11",
+          "date": 1702225124000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail2",
+      "InstanceID": "53",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "what I leanred from the coyotes"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "6ea7930b2af4f88230a458d469bb8c61",
+          "color": "rgb(216,200,200,1)",
+          "density": null,
+          "filename": "sophiedetail2.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/6ea7930b2af4f88230a458d469bb8c61.jpg",
+          "protocol": "file",
+          "size": 13806872,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7656,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5742,
+          "title": "sophiedetail2",
+          "date": 1702793056000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail3",
+      "InstanceID": "53",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "what I leanred from the coyotes"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "bfba6b7ee1c7655a1d048f2dbd0810b1",
+          "color": "rgb(248,232,216,1)",
+          "density": null,
+          "filename": "sophiedetail3.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/bfba6b7ee1c7655a1d048f2dbd0810b1.jpg",
+          "protocol": "file",
+          "size": 15267681,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 5723,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 7630,
+          "title": "sophiedetail3",
+          "date": 1702195455000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail4",
+      "InstanceID": "55",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "devils playground"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "c6e44530a7559dce9714cc37a0140c4e",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "sophiedetail4.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/c6e44530a7559dce9714cc37a0140c4e.jpg",
+          "protocol": "file",
+          "size": 3530746,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 7357,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5518,
+          "title": "sophiedetail4",
+          "date": 1702796594000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail5",
+      "InstanceID": "55",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "devils playground"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "069ef84fa08adeabcd3bb4fc3e553e99",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "sophiedetail5.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/069ef84fa08adeabcd3bb4fc3e553e99.jpg",
+          "protocol": "file",
+          "size": 14003467,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "sophiedetail5",
+          "date": 1702791163000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail6",
+      "InstanceID": "55",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "devils playground"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "e00dea6a7bc5d15be08dc4c03f128c20",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "sophiedetail6.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/e00dea6a7bc5d15be08dc4c03f128c20.jpg",
+          "protocol": "file",
+          "size": 4552536,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6824,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 5118,
+          "title": "sophiedetail6",
+          "date": 1702796603000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail7",
+      "InstanceID": "56",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "my ruination"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "4a4bea628af4ca7633f46d1651b92a93",
+          "color": "rgb(248,232,232,1)",
+          "density": null,
+          "filename": "sophiedetail7.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/4a4bea628af4ca7633f46d1651b92a93.jpg",
+          "protocol": "file",
+          "size": 1509972,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3653,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 2739,
+          "title": "sophiedetail7",
+          "date": 1702791237000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail8",
+      "InstanceID": "56",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "my ruination"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "1ffd2066eb75d48c72f375800e59f73b",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "sophiedetail8.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/1ffd2066eb75d48c72f375800e59f73b.jpg",
+          "protocol": "file",
+          "size": 5734811,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "sophiedetail8",
+          "date": 1702791351000
+        }
+      ]
+    },
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "sophiedetail9",
+      "InstanceID": "55",
+      "tag": [
+        "Detail",
+        "Sophie Smith",
+        "Tablets Tables and Tombstones",
+        "devils playground"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "acf59bf8587095a14d3e176ae2d4d9dc",
+          "color": "rgb(248,248,248,1)",
+          "density": null,
+          "filename": "sophiedetail9.jpg",
+          "mimetype": "image/jpeg",
+          "orientation": 1,
+          "page": 0,
+          "path": "/Users/joellithgow/Downloads/thisisahousegallery.tropy/assets/acf59bf8587095a14d3e176ae2d4d9dc.jpg",
+          "protocol": "file",
+          "size": 7880225,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 0,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 6120,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 8160,
+          "title": "sophiedetail9",
+          "date": 1702791935000
+        }
+      ]
+    }
+  ],
+  "version": "1.15.2"
+}
