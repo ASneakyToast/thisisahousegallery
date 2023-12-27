@@ -1,10 +1,12 @@
 ---
 import * as image_db from "../utils/image-db-handler.js";
 import * as db from "../utils/db-handler.js";
-import ExhData from "../data/exhibition-database.json";
+import ExhDataRaw from "../data/exhibition-database.json";
 import Layout from "../layouts/Layout.astro";
 import ListingItem from "../components/organisms/exhibition-listing-item.svelte";
 import { shuffle } from "../utils/basic-javascript.js";
+
+let ExhData = JSON.parse(JSON.stringify( ExhDataRaw ));
 
 // Curated set of least fav work images
 // > get all least fav images
@@ -47,9 +49,21 @@ let ttt_images = ttt_all_images.filter( item => {
 });
 // > shuffle
 ttt_images = shuffle(ttt_images);
+
+// Seralize single string of artists into array
+// > this create a copy
+// let ttt_artists = ExhData.ttt.artists.split(',').map( item => item.trim() );
+// > this mutates the raw data
+// ExhData.ttt.artists = ExhData.ttt.artists.split(',').map( item => item.trim() );
+// > now that I deep copied it
+let exhibition_keys = Object.keys( ExhData );
+exhibition_keys.forEach( key => {
+  ExhData[ key ].artist_list = ExhData[ key ].artists.split(',').map( item => item.trim() );
+});
 ---
 
 <Layout title="Memories | House Gallery" type="normal">
+  <h1 class="title">Memories</h1>
   <ListingItem client:load
       title = { ExhData.ttt.title }
       title_slug = { ExhData.ttt.slug }
@@ -59,6 +73,7 @@ ttt_images = shuffle(ttt_images);
         back_src: ExhData.ttt.showcard.back,
       }}
       date = { ExhData.ttt.date }
+      artists={ ExhData.ttt.artist_list }
   />
 
   <ListingItem client:load
@@ -70,6 +85,7 @@ ttt_images = shuffle(ttt_images);
          back_src: "/exhibitions/yourleastfavwork/showcards/showcard-main--back.jpg",
        }}
       date="08.19 - 09.01"
+      artists={ ExhData.yourleastfavwork.artist_list }
   />
 
   <ListingItem client:load
@@ -81,5 +97,18 @@ ttt_images = shuffle(ttt_images);
          back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",
        }}
       date="06.23 - 07.07"
+      artists={ ExhData.thisisalivingroom.artist_list }
   />
 </Layout>
+
+<style>
+  .title {
+    font-size: 20px;
+    letter-spacing: 20px;
+    text-transform: uppercase;
+    font-weight: 700;
+
+    /* I like this but not yet! */
+    display: none;
+  }
+</style>

@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import ImageWithQuickview from "../../components/image-with-quickview.svelte";
 // import QuickviewSimple from "../../components/quickview-simple.svelte";
 
-import artist_data from "../../data/tabletstablestombstones-artists.json";
+import artist_data from "../../data/old/tabletstablestombstones-artists.json";
 artist_data.sort((a, b) => {
   if (a["Name"] < b["Name"]) {
     return -1;
@@ -20,7 +20,9 @@ const header = "Tablets Tables and Tombstones";
 
 const date = "Opening Reception - November 11th";
 const open_call_url = false;
-const google_cal_invite_url = "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MjE5aGFoczNmZGtscTA3YzQzanZqYW5nNTkgZjRiM2Q0NmZkOThlZGY1NzJlNTNjYzU5YjY3MTU5NzVlMjAyMWY2MzkzMTU0NjQyNTZlYjFiNjNhNDRlMWQ1NkBn&tmsrc=f4b3d46fd98edf572e53cc59b6715975e2021f639315464256eb1b63a44e1d56%40group.calendar.google.com";
+
+// const google_cal_invite_url = "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MjE5aGFoczNmZGtscTA3YzQzanZqYW5nNTkgZjRiM2Q0NmZkOThlZGY1NzJlNTNjYzU5YjY3MTU5NzVlMjAyMWY2MzkzMTU0NjQyNTZlYjFiNjNhNDRlMWQ1NkBn&tmsrc=f4b3d46fd98edf572e53cc59b6715975e2021f639315464256eb1b63a44e1d56%40group.calendar.google.com";
+const google_cal_invite_url = "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MW52bDVvNnRrcGFpcnRtcHN2NjFic2V0czAgdGhpc2lzYWhvdXNlZ2FsbGVyeUBt&tmsrc=thisisahousegallery%40gmail.com"
 ---
 
 <Layout title={ title }>

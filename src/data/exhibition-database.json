@@ -7,7 +7,8 @@
     "showcard": {
       "front": "/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg",
       "back": "/exhibitions/tabletstablestombstones/showcards/showcard-main--back.png"
-    }
+    },
+    "square": "/exhibitions/tabletstablestombstones/showcards/showcard-main--back.png"
   },
 
   "yourleastfavwork": {
@@ -24,7 +25,7 @@
   "thisisalivingroom": {
     "title": "This is a Living Room",
     "slug": "thisisalivingroom",
-    "artists": "Joel Lithgow & Joseph Blake",
+    "artists": "Joel Lithgow, Joseph Blake",
     "date": "06.23 - 07.07",
     "showcard": {
       "front": "/exhibitions/thisisalivingroom/Showcard001.jpg",

@@ -1,14 +1,29 @@
 <script>
-  import QuickviewThumbnails from "../../components/quickview-thumbnails.astro";
+  // import QuickviewThumbnails from "../../components/quickview-thumbnails.astro";
+  import QuickviewSimple from "../../components/quickview-simple.svelte";
+
   import { slugify } from "../../utils/basic-javascript.js";
 
   export let title = "Exhibition title";
   export let title_slug = "exhibition_title";
   export let date = "06.23 - 07-07";
   export let gallery_images = "";
+  export let artists = ["Joel Lithgow", "John Frost"];
   export let card_images = {
     front_src: "/exhibitions/thisisalivingroom/Showcard001.jpg",
     back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",
+  }
+
+  function zoomOnThis( event ) {
+    const parent_container = document.body;
+    const quickview_component = new QuickviewSimple({
+      target: parent_container,
+      props: { 
+        image_url : event.target.srcset, 
+        alt_text : event.target.alt,
+        caption : "caption",
+      }
+    })
   }
 
   function isArtwork( photo_item ) {
@@ -25,7 +40,16 @@
 
 <div id={ title_slug } class="exhibition-listing-item exhibition-title">
   <section class="exhibition-header">
-    <h2>{ title }</h2>
+    <section>
+      <h2>{ title }</h2>
+
+      <section class="exhibition-header__artists">
+        {#each artists as name}
+          <p>{ name }</p>
+        {/each}
+      </section>
+    </section>
+
     <h3>{ date }</h3>
   </section>
   <section class="exhibition-media">
@@ -46,6 +70,7 @@
           class="quickview-item" 
           srcset={ photo.srcset }
           alt="" 
+          on:click={ zoomOnThis }
         />
 
         <!-- Ok maybe we fuck this off for now -->
@@ -80,6 +105,7 @@
 
   .exhibition-header {
     display: flex;
+    gap: var(--space-base-medium);
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -95,9 +121,22 @@
     }
     & h2 {
       font-size: var(--font_size-large);
+      margin-bottom: var(--space-base-medium);
     }
     & h3 {
       font-size: var(--font_size-small); 
+    }
+
+    &__artists {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--space-base-small);
+      margin-bottom: var(--space-base-medium);
+
+      p {
+        margin: 0;
+      }
     }
   }
 

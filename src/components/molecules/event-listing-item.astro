@@ -1,0 +1,70 @@
+---
+import Image from "astro:assets";
+
+const processed_marketing_materials = import.meta.glob( "/src/media/marketing-materials/*", {
+  query: { format: "webp;avif;jpg", w: "200;400;600;1200" },
+  import: "default",
+  eager: true
+});
+
+const { 
+  title, 
+  subtitle,
+  detail,
+  image_path
+} = Astro.props;
+---
+<article class="event-item">
+  <section class="event-item__info">
+    <p class="event-item__title">{ title }</p>
+    <p class="event-item__subtitle">{ subtitle }</p>
+    <p class="event-item__detail">{ detail }</p>
+  </section>
+  <img 
+    class="event-item__image"
+    srcset={ processed_marketing_materials[ image_path ]}
+  />
+</article>
+
+<style lang="scss">
+  .event-item {
+    padding-bottom: var(--space-base-large);
+    border-bottom: 1px solid black;
+
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-base-large);
+
+    &__image {
+      max-width: 150px;
+      max-height: 150px;
+      aspect-ratio: 1/1;
+    }
+
+    &__info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-base-small);
+    }
+
+    &__title {
+      font-size: 2rem;
+      font-weight: lighter;
+
+      margin: 0;
+    }
+
+    &__subtitle {
+      font-size: 1.17rem;
+      font-weight: lighter;
+
+      margin: 0;
+    }
+
+    &__detail {
+      font-size: var(--font_size-small); 
+
+      margin: 0;
+    }
+  }
+</style>

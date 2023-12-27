@@ -1,7 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import ExhibitionItem from "../../components/organisms/schedule-listing-item.astro";
-import TextSmall from "../../components/atoms/text-small.astro";
+import EventItem from "../../components/molecules/event-listing-item.astro";
 ---
 
 <Layout title="Schedule | House Gallery">
@@ -24,6 +24,14 @@ import TextSmall from "../../components/atoms/text-small.astro";
          featured="true" />
       -->
 
+      <EventItem
+        title="Tablets Tables & Tombstones"
+        subtitle="Closing reception"
+        detail="January 01"
+        image_path="/src/media/marketing-materials/tablets_tables_tombstones-evergreen-square.jpeg"
+      />
+
+      <!--
       <ExhibitionItem 
         title="Tablets, Tables & Tombstones"
         artists="Annie Artell, Sophie Smith, Dareal Calderon"
@@ -36,6 +44,7 @@ import TextSmall from "../../components/atoms/text-small.astro";
          img_alt="The promotional showcard for the exhibition 'Tablets Tables and Tombstones' with This is a House Gallery."
         featured="false"
       />
+      -->
 
       <ExhibitionItem 
         title="This is my First Time"

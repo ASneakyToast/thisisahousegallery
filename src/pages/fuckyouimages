@@ -1,0 +1,73 @@
+---
+import * as db from "../utils/db.js";
+import Layout from "../layouts/Layout.astro";
+import { Image, Picture } from 'astro:assets';
+// import { Picture } from 'astro:assets';
+
+// Blunt notation
+import bluntProcess from '/src/media/exhibition-images/sophiedetail9.jpg';
+
+db.testMe();
+
+let pImages = db.getProcessedImages();
+let testImagePath = db.getTestImagePath();
+testImagePath = '/src/media/exhibition-images/sophiedetail9.jpg';
+
+// Fancy bracket notation?
+let fancyProcess = import.meta.glob( "/src/media/exhibition-images/*", { 
+  query: { format: "webp;avif;jpg", w: "200;400;600;1200" },
+  import: 'default',
+  eager: true
+});
+let fancyTestPath = fancyProcess[ testImagePath ];
+console.log( fancyTestPath );
+
+// Simple notation
+let simpleProcess = import.meta.glob( "/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
+---
+
+<Layout title="House Gallery">
+  <h1 class="title">New year new site</h1>
+
+  <img
+    class="main-image"
+    srcset={ fancyTestPath }
+    alt=""
+  />
+
+  <Image
+    class="main-image"
+    src={ simpleProcess[ testImagePath ]() }
+    alt=""
+    widths={[240, 540, 720, 1440, 2560 ]}
+    sizes={`(max-width: 360px) 240px, (max-width: 720px) 540px, (max-width: 1600px) 720px, (max-width: 2560px) 1440px, (min-width: 2561px) 2560px`}
+  />
+
+  <Picture
+    class="main-image"
+    src={ simpleProcess[ testImagePath ]() }
+    alt=""
+    widths={[240, 540, 720, 1440, 2560 ]}
+    sizes={`(max-width: 360px) 240px, (max-width: 720px) 540px, (max-width: 1600px) 720px, (max-width: 2560px) 1440px, (min-width: 2561px) 2560px`}
+    formats={['avif', 'webp']}
+  />
+
+  <Picture
+    class="main-image"
+    src={ bluntProcess }
+    alt=""
+    formats={['avif', 'webp']}
+  />
+</Layout>
+
+<style lang="scss">
+  .title {
+    font-size: 32px;
+    color: green;
+  }
+
+  .main-image {
+    max-height: 66vh;
+    width: auto;
+  }
+</style>
