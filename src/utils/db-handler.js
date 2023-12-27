@@ -26,7 +26,7 @@ export function get_artists_work( artist ) {
 }
 
 export function get_artists_work_with_images( artist ) {
-  let artwork_list = artwork_database.filter( item => {
+  let artwork_list = get_all_artwork().filter( item => {
     return item["Artist"] == artist;
   });
 

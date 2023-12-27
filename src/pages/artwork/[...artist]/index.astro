@@ -30,6 +30,8 @@ const { data } = Astro.props;
 // console.log( data["Artwork"][0].Cover.srcset );
 
 const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
+
+console.log( data );
 ---
 
 <Layout title={`House Gallery | ${ data["Name"]}`}>
@@ -55,7 +57,7 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
 
             <section class="page-artist__artwork-info">
               <p class="page-artist__heading">
-                <a href={`/artwork/${ artist }/${ slugify(artwork["Title"]) }`}>
+                <a href={`/artwork/${ artist }/${ slugify(artwork["ID"]) }`}>
                   <span set:html={ artwork["Title"] } />
                 </a>
               </p>
