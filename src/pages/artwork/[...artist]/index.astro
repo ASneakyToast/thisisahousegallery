@@ -27,7 +27,9 @@ export async function getStaticPaths() {
 const { artist } = Astro.params;
 const { data } = Astro.props;
 
-console.log( data["Artwork"][0].Cover.srcset );
+// console.log( data["Artwork"][0].Cover.srcset );
+
+const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
 ---
 
 <Layout title={`House Gallery | ${ data["Name"]}`}>
@@ -43,11 +45,11 @@ console.log( data["Artwork"][0].Cover.srcset );
           <section class="page-artist__artwork">
             <section class="page-artist__cover-image">
               <Image 
-                src={ import(`../../../media/exhibition-images/${ artwork["Cover"].photo[0].filename }`) }
+                src={ processed_images[`/src/media/exhibition-images/${ artwork["Cover"].photo[0].filename }`]() }
                 alt=""
                 densities={[1.5, 2]}
-                width="400px"
-                height="400px"
+                width=400
+                height=400
               />
             </section>
 
