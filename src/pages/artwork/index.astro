@@ -7,6 +7,8 @@ import { slugify, shuffle } from "../../utils/basic-javascript.js";
 
 let artworks = db.get_all_artwork();
 artworks = shuffle( artworks );
+
+const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
 ---
 
 <Layout title="House Gallery | Artwork">
@@ -20,11 +22,11 @@ artworks = shuffle( artworks );
       { artworks.map( artwork => (
         <a href={`/artwork/${ slugify(artwork["Artist"]) }/${ slugify(artwork["Title"]) }`}>
           <Image 
-            src={ import(`../../media/exhibition-images/${ artwork["Cover"].photo[0].filename }`) }
-            alt=""
-            densities={[1.5, 2]}
-            width="200px"
-            height="200px"
+            class="quickview-item" 
+            src={ processed_images[`/src/media/exhibition-images/${artwork.Cover.photo[0].filename}`]() }
+            alt="" 
+            width=200
+            height=200
           />
         </a>
       ))}
