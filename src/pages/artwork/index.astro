@@ -20,7 +20,7 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
 
     <section class="page-images">
       { artworks.map( artwork => (
-        <a href={`/artwork/${ slugify(artwork["Artist"]) }/${ slugify(artwork["Title"]) }`}>
+        <a href={`/artwork/${ slugify(artwork["Artist"]) }/${ slugify(artwork["ID"]) }`}>
           <Image 
             class="quickview-item" 
             src={ processed_images[`/src/media/exhibition-images/${artwork.Cover.photo[0].filename}`]() }

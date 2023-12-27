@@ -17,7 +17,7 @@ export function getStaticPaths() {
     return {
       params: { 
         artist: slugify(artwork["Artist"]),
-        artwork: slugify(artwork["Title"])
+        artworkID: slugify(artwork["ID"])
       },
       props: { item: artwork }   
     };
@@ -25,7 +25,7 @@ export function getStaticPaths() {
 }
 
 // scoped page data
-const { artist, artwork } = Astro.params;
+const { artist, artworkID } = Astro.params;
 const { item } = Astro.props;
 
 const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
@@ -37,7 +37,7 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
       <a href="/artwork">
         <p>> artwork</p>
       </a>
-      <p class="info__title">{ item["Title"] }</p>
+      <p class="info__title" set:html={ item["Title"] } />
 
       <hr />
 
@@ -78,8 +78,12 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
     </section>
 
     <section class="main-image">
-      <img class="main-image__image" src={`/media/exhibition-images/${ item["Cover"].photo[0].filename }`}>
-      <p class="main-image__detail">{ item['Title'] } ({ item['Date'] }), { item['Artist'] }</p>
+      <Image 
+        class="main-image__image" 
+        src={ processed_images[`/src/media/exhibition-images/${ item["Cover"].photo[0].filename }`]() }
+        alt=""
+      />
+      <p class="main-image__detail"><span set:html={ item['Title'] }/> ({ item['Date'] }), { item['Artist'] }</p>
     </section>
   </main>
 </div>
@@ -111,6 +115,7 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
 
     & img {
       height: 100%;
+      width: auto;
     }
 
     &__detail {
