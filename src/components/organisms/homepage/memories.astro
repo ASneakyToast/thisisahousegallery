@@ -1,0 +1,123 @@
+---
+import { Image } from 'astro:assets';
+
+const { images } = Astro.props;
+
+const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
+console.log( processed_images );
+
+---
+
+<section id="memories" class="memories">
+  <hr>
+  <section class="memories__images">
+    { images.map( image => (
+      <Image
+        class={ `memories__image memories__image--${ image.size } memories__image--${ image.side }`}
+        src={ processed_images[image.src]() }
+        alt={ image.alt }
+        width="1440"
+        format="webp"
+        role="img"
+        aria-label={ image.alt }
+      />
+    ))}
+  </section>
+</section>
+
+<style lang="scss">
+  .memories {
+    padding: 80px 0 40px;
+    overflow-x: scroll;
+
+    & h2 {
+      margin: 0 140px 40px;
+      padding: 10px 30px;
+      width: fit-content;
+    }
+
+    &__images {
+      position: relative;
+      padding: 20px 40px;
+      width: max-content;
+      height: 77vh;
+    }
+
+    &__image {
+      display: inline-block;
+      padding: 10px;
+      cursor: pointer;
+      height: auto;
+    }
+
+    @media screen and (min-width: 768px) {
+      &__images {
+        width: auto;
+      }
+      &__image {
+        max-height: 250px;
+        &--1 {
+          max-height: 100px;
+          max-height: 12vh;
+          max-height: none;
+          max-width: 6vw;
+        }
+        &--2 {
+          max-height: 150px;
+          max-height: 18vh;
+          max-height: none;
+          max-width: 8vw;
+        }
+        &--3 {
+          max-height: 250px;
+          max-height: 29vh;
+          max-height: none;
+          max-width: 23vw;
+        }
+        &--right {
+          float: right;
+        }
+        &--left {
+          float: left;
+        }
+      }
+    }
+  }
+
+  .fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+    box-sizing: border-box;
+    background: white;
+    padding: 32px;
+    z-index: 32;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+</style>
+
+<script>
+  const quickview_items = document.querySelectorAll(".memories__images");
+  console.log( quickview_items );
+
+  quickview_items.forEach( item => {
+    item.addEventListener( "click", ( event ) => {
+      console.log( event );
+
+      if ( event.target.classList.contains("fullscreen") ) {
+        event.target.classList.add("hidden");
+      } else {
+        event.target.classList.toggle("fullscreen");
+      }
+    });
+  });
+</script>

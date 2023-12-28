@@ -4,7 +4,7 @@ import Layout from "../layouts/Layout.astro";
 import { Image } from 'astro:assets';
 import Tableau from '../components/organisms/homepage-tableau.astro';
 import Exhibitions from '../components/organisms/homepage/exhibitions.svelte';
-import Memories from '../components/organisms/homepage/memories.svelte';
+import Memories from '../components/organisms/homepage/memories.astro';
 import NFTRoom from '../components/organisms/homepage/the-room.svelte';
 import Resources from '../components/organisms/homepage/resources.svelte';
 import Footer from '../components/organisms/footer.astro';
@@ -28,6 +28,24 @@ let curated_images = image_db.get_all_images().filter( item => {
     || item.tag.includes("Exhibition")
   )
 });
+
+/* Letting the svelte component process... */
+/* ...because that's where they render.... */
+/* ...and that seems to be the standard... */
+
+let memory_images = []
+curated_images.forEach( item => {
+  memory_images.push({
+    src: image_db.get_image_path( item.photo[0].filename ),
+    alt: "Photo from opening reception of This is a Living Room.",
+    size: RandomSize(),
+    side: RandomSide(),
+  });
+})
+console.log( memory_images );
+
+/* When I processed them here...*/
+/*
 let memory_images = []
 const glob_images = import.meta.glob( "../media/exhibition-images/*", { 
   query: { format: "webp;avif;jpg", w: "200;400;600;1200", picture: "" },
@@ -44,6 +62,7 @@ curated_images.forEach(async (item) => {
     side: RandomSide(),
   });
 });
+*/
 
 const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7XeqjlyWrvz3lx5VZRW4_Mq9wbQUJO6D8WE7V3iyIVvg/viewform?usp=sf_link";
 ---
@@ -84,10 +103,18 @@ const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7Xeqj
   />
 -->
 
+  <!-- When memories is astro -->
+  <Memories 
+    images={memory_images}
+  />
+
+  <!-- When memories is svelte -->
+  <!--
   <Memories 
     client:load
     images={memory_images}
   />
+  -->
 
   <!-- 
     <NFTRoom />

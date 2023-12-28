@@ -3,7 +3,7 @@ import * as image_db from "../utils/image-db-handler.js";
 import * as db from "../utils/db-handler.js";
 import ExhDataRaw from "../data/exhibition-database.json";
 import Layout from "../layouts/Layout.astro";
-import ListingItem from "../components/organisms/exhibition-listing-item.svelte";
+import ListingItem from "../components/organisms/exhibition-listing-item.astro";
 import { shuffle } from "../utils/basic-javascript.js";
 
 let ExhData = JSON.parse(JSON.stringify( ExhDataRaw ));
@@ -64,38 +64,32 @@ exhibition_keys.forEach( key => {
 
 <Layout title="Memories | House Gallery" type="normal">
   <h1 class="title">Memories</h1>
-  <ListingItem client:load
+  <ListingItem 
       title = { ExhData.ttt.title }
       title_slug = { ExhData.ttt.slug }
       gallery_images = { ttt_images }
-      card_images = {{
-        front_src: ExhData.ttt.showcard.front,
-        back_src: ExhData.ttt.showcard.back,
-      }}
+      card_front_src = { ExhData.ttt.showcard.front }
+      card_back_src = { ExhData.ttt.showcard.back }
       date = { ExhData.ttt.date }
       artists={ ExhData.ttt.artist_list }
   />
 
-  <ListingItem client:load
+  <ListingItem 
       title = "Your Least Fav Work"
       title_slug = "yourleastfavwork"
       gallery_images = { leastfavwork_images }
-      card_images = {{
-         front_src: "/exhibitions/yourleastfavwork/showcards/showcard-main--front.jpg",
-         back_src: "/exhibitions/yourleastfavwork/showcards/showcard-main--back.jpg",
-       }}
+      card_front_src = "/exhibitions/yourleastfavwork/showcards/showcard-main--front.jpg"
+      card_back_src = "/exhibitions/yourleastfavwork/showcards/showcard-main--back.jpg"
       date="08.19 - 09.01"
       artists={ ExhData.yourleastfavwork.artist_list }
   />
 
-  <ListingItem client:load
+  <ListingItem 
       title = "This is a Living Room"
       title_slug = "thisisalivingroom"
       gallery_images = { thisisalivingroom_images }
-      card_images = {{
-         front_src: "/exhibitions/thisisalivingroom/Showcard001.jpg",
-         back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",
-       }}
+      card_front_src = "/exhibitions/thisisalivingroom/Showcard001.jpg"
+      card_back_src = "/exhibitions/thisisalivingroom/showcard-back.jpg"
       date="06.23 - 07.07"
       artists={ ExhData.thisisalivingroom.artist_list }
   />

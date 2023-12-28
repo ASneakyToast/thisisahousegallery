@@ -31,7 +31,7 @@ export function get_artwork_cover( artwork_id ) {
 /* ...hopefully... */ 
 
 export function get_image_path( title ) {
-  return `src/media/exhibition-images/${ title }`;
+  return `/src/media/exhibition-images/${ title }`;
 }
 
 export function get_all_images() {

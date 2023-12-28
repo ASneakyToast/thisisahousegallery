@@ -1,51 +1,29 @@
-<script>
-  // import QuickviewThumbnails from "../../components/quickview-thumbnails.astro";
-  import QuickviewSimple from "../../components/quickview-simple.svelte";
-
+---
+  import { Image } from 'astro:assets';
   import { slugify } from "../../utils/basic-javascript.js";
 
-  export let title = "Exhibition title";
-  export let title_slug = "exhibition_title";
-  export let date = "06.23 - 07-07";
-  export let gallery_images = "";
-  export let artists = ["Joel Lithgow", "John Frost"];
-  export let card_images = {
+  let { 
+    title, 
+    title_slug, 
+    date, 
+    gallery_images, 
+    artists, 
+    card_front_src, 
+    card_back_src, 
+  } = Astro.props;
+
+   /*
+   let card_images = {
     front_src: "/exhibitions/thisisalivingroom/Showcard001.jpg",
     back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",
   }
+  */
 
-  function zoomOnThis( event ) {
-    const parent_container = document.body;
-    const quickview_component = new QuickviewSimple({
-      target: parent_container,
-      props: { 
-        image_url : event.target.srcset, 
-        alt_text : event.target.alt,
-        caption : "caption",
-      }
-    })
-  }
-
-  function isArtwork( photo_item ) {
-    // work backwards by reducing all other tag types
-    if ( photo_item.tag.includes( "Opening" ) 
-      || photo_item.tag.includes( "Exhibition" )
-      || photo_item.tag.includes( "Detail" )) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}", {
-    /* query: { format: "webp;avif;jpg", w: "200, 500, 1440" }, */
-    eager: true
-  });
+  const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
 
   console.log( gallery_images[0].photo[0].filename );
   console.log( processed_images[ `/src/media/exhibition-images/${ gallery_images[0].photo[0].filename }` ] );
-
-</script>
+---
 
 <div id={ title_slug } class="exhibition-listing-item exhibition-title">
   <section class="exhibition-header">
@@ -53,9 +31,9 @@
       <h2>{ title }</h2>
 
       <section class="exhibition-header__artists">
-        {#each artists as name}
+        { artists.map( name => (
           <p>{ name }</p>
-        {/each}
+        ))}
       </section>
     </section>
 
@@ -64,46 +42,29 @@
   <section class="exhibition-media">
     <section class="exhibition-card">
       <img 
-        src={ card_images.front_src }
+        src={ card_front_src }
         alt="The promotional showcard for the exhibition '{ title }' by This is a House Gallery."
+        class="quickview-item"
       />
       <img 
-        src="{ card_images.back_src }"
+        src={ card_back_src }
         alt="The back side of the promotional showcard for the exhibition '{ title }' by This is a House Gallery."
+        class="quickview-item"
       />
     </section>
 
     <section class="exhibition-images">
-      {#each gallery_images as photo, index}
-        <!--srcset={ photo.srcset }-->
-        <img 
-          src={ processed_images[ `/src/media/exhibition-images/${ photo.photo[0].filename }` ].default.src }
+      { gallery_images.map( photo => (
+        <Image 
+          src={ processed_images[ `/src/media/exhibition-images/${ photo.photo[0].filename }` ]() }
           class="quickview-item" 
           alt="" 
-          on:click={ zoomOnThis }
+          width="1440"
+          format="webp"
+          role="img"
+          aria-label={ photo.alt }
         />
-
-        <!-- Ok maybe we fuck this off for now -->
-        <!-- the whole point was to have different quickviews -->
-        <!--
-        {#if isArtwork( photo ) }
-          {#if photo["cover"].src }
-            <a href={`/artwork/${ slugify(photo["Data"][0]["Artist"])}/${ slugify(photo["Data"][0]["Title"])}`}>
-            <img 
-              srcset={ photo["cover"].src }
-              alt={ photo["cover"].alt } 
-            />
-            </a>
-          {/if}
-        {:else}
-          <img 
-            class="quickview-item" 
-            srcset={ photo["cover"].srcset }
-            alt={ photo["cover"].alt } 
-          />
-        {/if}
-        -->
-      {/each}
+      ))}
     </section>
   </section>
 </div>
@@ -191,6 +152,7 @@
 
     & img {
       max-height: 35vh;
+      width: auto;
 
       @media (max-width: 675px) {
         max-height: 20vh;
@@ -203,4 +165,30 @@
       cursor: pointer;
     }
   }
+
+  .fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: contain;
+    box-sizing: border-box;
+    background: white;
+    padding: 32px;
+    z-index: 32;
+  }
+
 </style>
+
+<script>
+  const quickview_items = document.querySelectorAll(".quickview-item");
+
+  quickview_items.forEach( item => {
+    item.addEventListener( "click", ( event ) => {
+      event.target.classList.toggle("fullscreen");
+    });
+  });
+</script>

@@ -3,6 +3,21 @@
 
   export let images = [];
 
+  const processed_images = import.meta.glob( 
+  "/src/media/exhibition-images/*.{avif,gif,heif,jpeg,jpg,png,tiff,webp}",
+    {
+      query: {
+        enhanced: true
+      }
+    }
+  );
+
+  console.log("wah wah wab wab a");
+  console.log(processed_images);
+
+  console.log("wah 2222 wab wab a");
+  console.log(processed_images[ images[0].src ].default );
+
   function zoomOnThis(event) {
     const parent_container = document.body;
     const quickview_component = new QuickviewSimple({
@@ -17,15 +32,28 @@
 </script> 
 
 <section id="memories" class="memories">
+  <enhanced:img src={ images[0].src } sizes="min(1280px, 100vw)"/>
+
   <hr>
   <section class="memories__images">
     {#each images as photo, index}
+      <enhanced:img
+        src={ processed_images[photo.src]() }
+        alt={ photo.alt }
+        sizes="min(1280px, 100vw)"
+        on:click={ zoomOnThis }
+        role="img"
+        aria-label="Description of the overall image"
+      />
+        <!--class="memories__image memories__image--{ photo.size } memories__image--{ photo.side }"-->
+      <!--
       <img
         class="memories__image memories__image--{ photo.size } memories__image--{ photo.side }"
         srcset={ photo.src }
         alt={ photo.alt }
         on:click={ zoomOnThis }
       />
+      -->
     {/each}
   </section>
 </section>
