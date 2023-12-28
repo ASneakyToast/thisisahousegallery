@@ -106,18 +106,20 @@ console.log( processed_images );
 </style>
 
 <script>
-  const quickview_items = document.querySelectorAll(".memories__images");
-  console.log( quickview_items );
+  document.addEventListener("astro:page-load", () => {
+    const quickview_items = document.querySelectorAll(".memories__image");
+    console.log( quickview_items );
 
-  quickview_items.forEach( item => {
-    item.addEventListener( "click", ( event ) => {
-      console.log( event );
+    quickview_items.forEach( item => {
+      item.addEventListener( "click", ( event ) => {
+        console.log( event );
 
-      if ( event.target.classList.contains("fullscreen") ) {
-        event.target.classList.add("hidden");
-      } else {
-        event.target.classList.toggle("fullscreen");
-      }
+        if ( event.target.classList.contains("fullscreen") ) {
+          event.target.classList.add("hidden");
+        } else {
+          event.target.classList.toggle("fullscreen");
+        }
+      });
     });
   });
 </script>

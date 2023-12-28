@@ -184,11 +184,13 @@
 </style>
 
 <script>
-  const quickview_items = document.querySelectorAll(".quickview-item");
+  document.addEventListener("astro:page-load", () => {
+    const quickview_items = document.querySelectorAll(".quickview-item");
 
-  quickview_items.forEach( item => {
-    item.addEventListener( "click", ( event ) => {
-      event.target.classList.toggle("fullscreen");
+    quickview_items.forEach( item => {
+      item.addEventListener( "click", ( event ) => {
+        event.target.classList.toggle("fullscreen");
+      });
     });
   });
 </script>
