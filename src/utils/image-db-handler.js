@@ -1,4 +1,4 @@
-import image_database from "../data/image-database-dec_25_2023-v2.json";
+import image_database from "../data/image-database-dec_28_2023.json";
 import artwork_database from "../data/artwork-database-dec_25_2023-v2.json";
 
 /* The before before */
@@ -29,6 +29,7 @@ export function get_artwork_cover( artwork_id ) {
 
 /* now here the sauce */
 /* ...hopefully... */ 
+/* ...nope........ */
 
 export function get_image_path( title ) {
   return `/src/media/exhibition-images/${ title }`;

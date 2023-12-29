@@ -1,6 +1,34 @@
-export function shuffle( array ) {
+// Seed random generator
+function splitMix(a) {
+  return function() {
+    a |= 0; a = a + 0x9e3779b9 | 0;
+    var t = a ^ a >>> 16; t = Math.imul(t, 0x21f0aaad);
+        t = t ^ t >>> 15; t = Math.imul(t, 0x735a2d97);
+    return ((t = t ^ t >>> 15) >>> 0) / 4294967296;
+  }
+}
+
+export function seededRandom( seed ) {
+  return splitMix( seed )();
+}
+
+export function shuffle( array, seed=0 ) {
   for (let i = array.length-1; i>0; i--) {
-    const j = Math.floor(Math.random() * (i+1));
+
+    let j;
+    // if no seed
+    if ( seed==0 ) {
+      // console.log("no seed ");
+      j = Math.floor(Math.random() * (i+1));
+    }
+    // if seed set
+    else { 
+      // console.log("yes seed ");
+      var rng = seededRandom( seed );
+      j = Math.floor(rng * (i+1));
+    }
+
+    // wizard
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
@@ -15,4 +43,8 @@ export function slugify(str) {
     .replace(/[^a-z0-9 -]/g, '') // remove non-alphanumeric characters
     .replace(/\s+/g, '-') // replace spaces with hyphens
     .replace(/-+/g, '-'); // remove consecutive hyphens
+}
+
+export function csvStringToArray( simpleCSV ) {
+  return simpleCSV.split(',').map( item => item.trim() );
 }

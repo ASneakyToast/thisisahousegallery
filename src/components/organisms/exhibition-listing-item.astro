@@ -4,7 +4,6 @@
 
   let { 
     title, 
-    title_slug, 
     date, 
     gallery_images, 
     artists, 
@@ -12,27 +11,23 @@
     card_back_src, 
   } = Astro.props;
 
-   /*
-   let card_images = {
-    front_src: "/exhibitions/thisisalivingroom/Showcard001.jpg",
-    back_src: "/exhibitions/thisisalivingroom/showcard-back.jpg",
-  }
-  */
-
   const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
 
-  console.log( gallery_images[0].photo[0].filename );
-  console.log( processed_images[ `/src/media/exhibition-images/${ gallery_images[0].photo[0].filename }` ] );
+  function isArtwork( image_data ) {
+    return image_data.tag.includes( "Cover" );
+  }
 ---
 
-<div id={ title_slug } class="exhibition-listing-item exhibition-title">
+<div id={ slugify( title ) } class="exhibition-listing-item exhibition-title">
   <section class="exhibition-header">
     <section>
       <h2>{ title }</h2>
 
       <section class="exhibition-header__artists">
         { artists.map( name => (
-          <p>{ name }</p>
+          <a href={ `/artwork/${ slugify( name ) }` }>
+            <p>{ name }</p>
+          </a>
         ))}
       </section>
     </section>
@@ -55,15 +50,44 @@
 
     <section class="exhibition-images">
       { gallery_images.map( photo => (
-        <Image 
-          src={ processed_images[ `/src/media/exhibition-images/${ photo.photo[0].filename }` ]() }
-          class="quickview-item" 
-          alt="" 
-          width="1440"
-          format="webp"
-          role="img"
-          aria-label={ photo.alt }
-        />
+        <>
+          { isArtwork( photo ) ? (
+          <a href={ `/artwork/${ slugify( photo.creator ) }/${ photo["InstanceID"] } `}>
+            <Image 
+              src={ processed_images[ `/src/media/exhibition-images/${ photo.photo[0].filename }` ]() }
+              alt="" 
+              width="1440"
+              format="webp"
+              role="img"
+              aria-label={ photo.alt }
+            />
+          </a>
+          ) : (
+            <Image 
+              src={ processed_images[ `/src/media/exhibition-images/${ photo.photo[0].filename }` ]() }
+              class="quickview-item" 
+              alt="" 
+              width="1440"
+              format="webp"
+              role="img"
+              aria-label={ photo.alt }
+            />
+          )
+        </>
+
+        <!-- Render all as same -->
+        <!--
+          <Image 
+            src={ processed_images[ `/src/media/exhibition-images/${ photo.photo[0].filename }` ]() }
+            class="quickview-item" 
+            alt="" 
+            width="1440"
+            format="webp"
+            role="img"
+            aria-label={ photo.alt }
+          />
+        -->
+
       ))}
     </section>
   </section>
@@ -181,11 +205,15 @@
     z-index: 32;
   }
 
+  .exhibition-card:has(.fullscreen) {
+    position: relative;
+  }
+
 </style>
 
 <script>
   document.addEventListener("astro:page-load", () => {
-    const quickview_items = document.querySelectorAll(".quickview-item");
+    let quickview_items = document.querySelectorAll(".quickview-item");
 
     quickview_items.forEach( item => {
       item.addEventListener( "click", ( event ) => {

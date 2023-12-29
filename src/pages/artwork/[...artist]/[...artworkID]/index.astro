@@ -5,7 +5,7 @@ import * as db from "../../../../utils/db-handler.js";
 import * as image_db from "../../../../utils/image-db-handler.js";
 import Layout from "../../../../layouts/Layout.astro";
 import { Image } from 'astro:assets';
-import { slugify } from "../../../../utils/basic-javascript.js";
+import { slugify, csvStringToArray } from "../../../../utils/basic-javascript.js";
 
 export function getStaticPaths() {
   return db.get_all_artwork().map( artwork => {
@@ -29,6 +29,10 @@ const { artist, artworkID } = Astro.params;
 const { item } = Astro.props;
 
 const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
+
+// Seralize single string of artists into array
+// maybe not...
+// should do a whole folder restructure :(((
 ---
 
 <Layout title={`House Gallery | ${ item["Artist"] } | ${ item["Title"] }`}>
@@ -45,7 +49,7 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
       <p>Date: { item["Date"] }</p>
       <p>Size: { item["Size"] }</p>
       <p>Materials: { item["Materials"] }</p>
-      <p>Exhibition: <a href={`/exhibitions#${slugify(item['Exhibitions'])}`}>{ item["Exhibitions"] }</a></p>
+      <p>Exhibition: <a href={`/memories#${slugify(item['Exhibitions'])}`}>{ item["Exhibitions"] }</a></p>
 
       <p>Images:</p>
       <section class="info__images">
@@ -54,25 +58,10 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
             class="info__image" 
             src={ processed_images[`/src/media/exhibition-images/${ item.photo[0].filename }`]() }
             alt=""
+            width="1440"
+            format="webp"
+            role="img"
           />
-          <!--
-          <img 
-            class="info__image" 
-            src={ import(`../../../../media/exhibition-images/${ item.photo[0].filename }`) }
-          />
-          -->
-          <!-- This sucks -->
-          <!-- It uses this 200px size for the swap -->
-          <!--
-          <Image 
-            class="info__image"
-            src={ import(`../../../../media/exhibition-images/${ item.photo[0].filename }`) }
-            alt=""
-            densities={[1.5, 2]}
-            width="200px"
-            height="200px"
-          />
-          -->
         ))}
       </section>
     </section>
@@ -82,6 +71,9 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
         class="main-image__image" 
         src={ processed_images[`/src/media/exhibition-images/${ item["Cover"].photo[0].filename }`]() }
         alt=""
+        width="1440"
+        format="webp"
+        role="img"
       />
       <p class="main-image__detail"><span set:html={ item['Title'] }/> ({ item['Date'] }), { item['Artist'] }</p>
     </section>

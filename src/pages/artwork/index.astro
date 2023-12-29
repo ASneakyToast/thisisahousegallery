@@ -11,11 +11,11 @@ artworks = shuffle( artworks );
 const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
 ---
 
-<Layout title="House Gallery | Artwork">
+<Layout title="House Gallery | Artwork" type="normal">
   <main>
     <section class="page-info">
-      <h1>Artwork</h1>
-      <h2>Everything that has been shown in this living room.</h2>
+      <h1 class="page-info__title">Artwork</h1>
+      <h2 class="page-info__subtitle">Everything that has been shown in this living room.</h2>
     </section>
 
     <section class="page-images">
@@ -38,7 +38,6 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
   main {
     display: grid;
     grid-template-columns: 3fr 5fr;
-    margin: var(--space-section-gap) var(--space-page-gutter);
     gap: var(--space-section-gap);
   }
 
@@ -52,6 +51,22 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
       object-fit: cover;
       width: 100px;
       height: 100px;
+    }
+  }
+
+  .page-info {
+    &__title {
+      font-size: 20px;
+      letter-spacing: 20px;
+      text-transform: uppercase;
+      font-weight: 700;
+
+      margin-top: 0;
+    }
+
+    &__subtitle {
+      font-size: var(--font_size-medium);
+      margin-bottom: var(--space-base-medium);
     }
   }
 </style>

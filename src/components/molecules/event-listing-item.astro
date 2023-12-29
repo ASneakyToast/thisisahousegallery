@@ -1,11 +1,14 @@
 ---
-import Image from "astro:assets";
+import { Image } from 'astro:assets';
 
+/*
 const processed_marketing_materials = import.meta.glob( "/src/media/marketing-materials/*", {
   query: { format: "webp;avif;jpg", w: "200;400;600;1200" },
   import: "default",
   eager: true
 });
+*/
+const processed_marketing_materials = import.meta.glob("/src/media/marketing-materials/*.{jpeg,jpg,png,gif}");
 
 const { 
   title, 
@@ -20,11 +23,27 @@ const {
     <p class="event-item__subtitle">{ subtitle }</p>
     <p class="event-item__detail">{ detail }</p>
   </section>
-  <img 
-    class="event-item__image"
-    srcset={ processed_marketing_materials[ image_path ]}
+  <Image 
+    class="event-item__image quickview-item"
+    src={ processed_marketing_materials[ image_path ]() }
+    alt="" 
+    width="1440"
+    format="webp"
+    role="img"
   />
 </article>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const quickview_items = document.querySelectorAll(".quickview-item");
+
+    quickview_items.forEach( item => {
+      item.addEventListener( "click", ( event ) => {
+        event.target.classList.toggle("fullscreen");
+      });
+    });
+  });
+</script>
 
 <style lang="scss">
   .event-item {
@@ -39,6 +58,7 @@ const {
       max-width: 150px;
       max-height: 150px;
       aspect-ratio: 1/1;
+      cursor: pointer;
     }
 
     &__info {
@@ -66,5 +86,20 @@ const {
 
       margin: 0;
     }
+  }
+
+  .fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: contain;
+    box-sizing: border-box;
+    background: white;
+    padding: 32px;
+    z-index: 32;
   }
 </style>
