@@ -4,6 +4,8 @@ import * as image_db from "../../../utils/image-db-handler.js";
 import Layout from "../../../layouts/Layout.astro";
 import { Image } from 'astro:assets';
 import { slugify } from "../../../utils/basic-javascript.js";
+import InstagramLogo from "../../../components/atoms/social-icons/instagram.astro";
+import ExternalLinkIcon from "../../../components/atoms/icons/external-link.astro";
 
 export async function getStaticPaths() {
   return db.get_all_artists().map( data => {
@@ -34,6 +36,20 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
   <main class="page-artist">
     <section class="page-artist__title">
       <h1>{ data["Name"]}</h1>
+
+      { data["Instagram"] && 
+        <a class="page-artist__instagram" target="_blank" href={`https://www.instagram.com/${ data['Instagram']}`}>
+          <p>{ data["Instagram"] }</p> 
+          <InstagramLogo />
+        </a>
+      }
+
+      { data["Website"] && 
+        <a class="page-artist__website" target="_blank" href={`https://${ data['Website']}`}>
+          <p>{ data["Website"] }</p>
+          <ExternalLinkIcon />
+        </a>
+      }
       <hr/>
     </section>
 
@@ -126,5 +142,17 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
       object-fit: cover;
       height: auto;
     }
+
+    &__instagram, &__website {
+      width: fit-content;
+      display: flex;
+      gap: var(--space-item-gap);
+      align-items: center;
+
+      p {
+        font-size: var(--font_size-heading);
+      }
+    }
   }
+
 </style>

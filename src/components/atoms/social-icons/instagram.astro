@@ -1,0 +1,18 @@
+---
+import svg from "../../../media/instagram-logo.svg?raw";
+
+const { width, height } = Astro.props;
+---
+
+<div class="instagram-logo">
+  <Fragment set:html={ svg } />
+</div>
+
+<style lang="scss" is:global>
+  .instagram-logo {
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+</style>

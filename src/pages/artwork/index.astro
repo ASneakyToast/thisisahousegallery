@@ -36,9 +36,17 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
 
 <style lang="scss">
   main {
-    display: grid;
-    grid-template-columns: 3fr 5fr;
+    display: flex;
+    flex-direction: column;
     gap: var(--space-section-gap);
+  }
+
+  @media only screen and (min-width: 860px) {
+    main {
+      display: grid;
+      grid-template-columns: 3fr 5fr;
+      gap: var(--space-section-gap);
+    }
   }
 
   .page-images {
