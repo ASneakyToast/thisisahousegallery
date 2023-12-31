@@ -37,25 +37,49 @@ console.log( processed_images );
     }
 
     &__images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-base-tiny);
+      justify-content: center;
+
       position: relative;
       padding: 20px 40px;
-      width: max-content;
-      height: 77vh;
+      width: auto;
+
+      gap: var(--space-base-tiny);
     }
 
     &__image {
       display: inline-block;
-      padding: 10px;
       cursor: pointer;
-      height: auto;
+      height: 25vw;
+      width: auto;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+    }
+
+    @media screen and (min-width: 580px) {
+      &__images {
+        &__image {
+
+        }
+      }
     }
 
     @media screen and (min-width: 768px) {
       &__images {
+        display: block;
+        position: relative;
+        padding: 20px 40px;
         width: auto;
+        height: 77vh;
       }
       &__image {
+        padding: 10px;
         max-height: 250px;
+        width: auto;
+        height: auto;
+
         &--1 {
           max-height: 100px;
           max-height: 12vh;
