@@ -50,8 +50,10 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
       <p>Size: { item["Size"] }</p>
       <p>Materials: { item["Materials"] }</p>
       <p>Exhibition: <a href={`/memories#${slugify(item['Exhibitions'])}`}>{ item["Exhibitions"] }</a></p>
+    </section>
 
-      <p>Images:</p>
+    <section>
+      <!-- <p>Images:</p> -->
       <section class="info__images">
         { item["Images"].map(( item ) => (
           <Image 
@@ -95,19 +97,35 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
 
 <style lang="scss">
   main {
-    display: grid;
-    grid-template-columns: 3fr 5fr;
-    margin: var(--space-section-gap) var(--space-page-gutter);
+    display: flex;
+    flex-direction: column-reverse;
     gap: var(--space-section-gap);
+    margin: var(--space-section-gap) var(--space-page-gutter);
+  }
+
+  @media only screen and (min-width: 860px) {
+    main {
+      display: grid;
+      grid-template-columns: 3fr 5fr;
+      gap: var(--space-section-gap);
+    }
   }
 
   .main-image {
-    height: 80vh;
+    height: auto;
+    max-height: 80vh;
     justify-self: right;
+    margin-bottom: var(--space-element-gap);
+
+    grid-column-start: 2;
+    grid-row-start: 1;
+    grid-row-end: 4;
 
     & img {
       height: 100%;
+      max-height: 77vh;
       width: auto;
+      object-fit: contain;
     }
 
     &__detail {
