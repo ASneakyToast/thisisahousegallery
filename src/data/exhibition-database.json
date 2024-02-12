@@ -1,4 +1,16 @@
 {
+  "afreakrevelant": {
+    "title": "A FREAK REVELANT",
+    "slug": "afreakrevelant",
+    "artists": "Johannes Valuear",
+    "date": "08.08 - 04.05",
+    "showcard": {
+      "front": "/exhibitions/afreakrevelant/showcards/showcard-main--front.jpg",
+      "back": "/exhibitions/afreakrevelant/showcards/showcard-main--back.png"
+    },
+    "square": "/exhibitions/afreakrevelant/showcards/showcard-main--back.png"
+  },
+
   "ttt": {
     "title": "Tablets Tables and Tombstones",
     "slug": "tabletstablestombstones",

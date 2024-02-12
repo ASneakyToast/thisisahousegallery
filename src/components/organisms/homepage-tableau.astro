@@ -1,14 +1,27 @@
 ---
+import { getImage } from "astro:assets"
+
+const marketing_images_glob = import.meta.glob( "/src/media/marketing-materials/*", { 
+  query: { format: "webp;avif;jpg", w: "200;400;600;1200", picture: "" },
+  import: 'default'
+})
+
 const { img_src, img_alt, link, heading, subheading, animation } = Astro.props
+
+/*
+console.log( img_src );
+console.log( marketing_images_glob );
+
+const background_image_optimized = await getImage({ src: marketing_images_glob[ img_src ] })
+style={`background-image: url("${ marketing_images_glob[ img_src ] }")`}>
+*/
+
+// const background_image_optimized = await getImage({ src: img_src })
+// style={`background-image: url("${ background_image_optimized.src }")`}>
 ---
-<section class:list={["homepage-tableau", animation ]}>
-  <!--
-  <img 
-    src={ img_src }
-    alt={ img_alt }
-    class:list={["homepage-tableau__image", "homepage-tabluea__image--{ animation }"]}
-  />
-  -->
+<section 
+  class:list={["homepage-tableau", animation]} 
+
   <a href={ link }>
     <section class="homepage-tableau__details">
       <h2><i>{ heading }</i></h2>
@@ -22,10 +35,21 @@ const { img_src, img_alt, link, heading, subheading, animation } = Astro.props
     from {background-size: 500%}
     to {background-size: 5%}
   }
-  
   .zoomslowinandout {
     animation-name: zoomslowinandout;
     animation-duration: 20s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+  }
+
+  @keyframes panleftandright {
+    from {background-position-x: -100%}
+    to {background-position-x: 100%}
+  }
+  .panleftandright {
+    animation-name: panleftandright;
+    animation-duration: 120s;
     animation-iteration-count: infinite;
     animation-direction: alternate;
     animation-timing-function: ease-in-out;
@@ -35,7 +59,7 @@ const { img_src, img_alt, link, heading, subheading, animation } = Astro.props
     position: relative;
     height: 100vh;
 
-    background-image: url("/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg");
+    background-image: url("/src/media/marketing-materials/a_freak_relevant-tableau.jpeg");
     background-position: center;
 
     &__image {

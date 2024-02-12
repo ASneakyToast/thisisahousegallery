@@ -25,7 +25,7 @@ function RandomSide() {
 let curated_images = image_db.get_all_images().filter( item => {
   return (
     item.tag.includes("Opening") 
-    || item.tag.includes("Exhibition")
+    // || item.tag.includes("Exhibition") // just people, not empty rooms
   )
 });
 
@@ -42,7 +42,6 @@ curated_images.forEach( item => {
     side: RandomSide(),
   });
 })
-console.log( memory_images );
 
 /* When I processed them here...*/
 /*
@@ -70,11 +69,24 @@ const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7Xeqj
 <Layout title="House Gallery">
   <section class="intro">
     <h1><b>This is a House Gallery</b> serves as a project and exhibition place for close friends, local artists, writers, and curators.</h1>
+    <a href="/schedule">
+      <p class="intro-button">Whens the next show?</p>
+    </a>
     <a href="/about">
-      <p class="intro-button">Find out who lives here</p>
+      <p class="">> Find out who lives here</p>
     </a>
   </section>
 
+  <Tableau 
+    img_src={`/src/media/marketing-materials/a_freak_relevant-tableau.jpeg`}
+    img_alt="Showcard for the art exhibition 'Tablets Tables and Tombstones'."
+    link="/schedule/tabletstablestombstones"
+    heading="A FREAK RELEVANT"
+    subheading="Opening reception on March 8th"
+    animation="panleftandright"
+  />
+
+  <!--
   <Tableau 
     img_src={`/src/media/exhibition-images/tabletstablestombstones/showcards/showcard-main--front.jpg`}
     img_alt="Showcard for the art exhibition 'Tablets Tables and Tombstones'."
@@ -84,7 +96,6 @@ const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7Xeqj
     animation="zoomslowinandout"
   />
 
-  <!--
   <Tableau 
     img_src="/exhibitions/tabletstablestombstones/showcards/showcard-main--front.jpg"
     img_alt="Showcard for the art exhibition 'Tablets Tables and Tombstones'."

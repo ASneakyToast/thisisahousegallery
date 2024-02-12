@@ -4,8 +4,6 @@ import { Image } from 'astro:assets';
 const { images } = Astro.props;
 
 const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
-console.log( processed_images );
-
 ---
 
 <section id="memories" class="memories">
