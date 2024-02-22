@@ -1,0 +1,114 @@
+---
+import * as image_db from "../../utils/image-db-handler.js";
+import Layout from "../../layouts/Layout.astro";
+import { Image } from 'astro:assets';
+import { shuffle } from "../../utils/basic-javascript.js";
+
+let memory_images = image_db.get_all_images().filter( item => {
+  return (
+    item.tag.includes("Opening")
+  )
+});
+
+console.log( memory_images );
+
+const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,jpg,png,gif}");
+---
+<Layout title="House Gallery | Artwork" type="normal">
+  <main>
+    <section class="page-info">
+      <h1 class="page-info__title">Memories</h1>
+      <h2 class="page-info__subtitle">Memories of people, peoples memories, collective memroies of the peoples. Idk I forgot what I wanted to say about these, I guess you'll know anyway.</h2>
+    </section>
+
+    <section class="page-images">
+      { memory_images.map( image => (
+          <Image 
+            class="quickview-item" 
+            src={ processed_images[`/src/media/exhibition-images/${image.photo[0].filename}`]() }
+            alt="" 
+            width=1440
+            height=1440
+            format="webp"
+          />
+        </a>
+      ))}
+    </section>
+  </main>
+</Layout>
+
+<style lang="scss">
+  main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section-gap);
+  }
+
+  @media only screen and (min-width: 860px) {
+    main {
+      display: grid;
+      grid-template-columns: 3fr 5fr;
+      gap: var(--space-section-gap);
+    }
+  }
+
+  .page-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-item-gap);
+
+    & img {
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      width: 32%;
+      height: auto;
+    }
+  }
+
+  .page-info {
+    &__title {
+      font-size: 20px;
+      letter-spacing: 20px;
+      text-transform: uppercase;
+      font-weight: 700;
+
+      margin-top: 0;
+    }
+
+    &__subtitle {
+      font-size: var(--font_size-medium);
+      margin-bottom: var(--space-base-medium);
+    }
+  }
+
+  .fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none;
+    max-height: none;
+    object-fit: contain !important;
+    aspect-ratio: auto !important;
+    box-sizing: border-box;
+    background: white;
+    padding: 32px;
+    z-index: 32;
+  }
+
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const quickview_items = document.querySelectorAll(".quickview-item");
+    console.log( quickview_items );
+
+    quickview_items.forEach( item => {
+      item.addEventListener( "click", ( event ) => {
+        console.log( event );
+        event.target.classList.toggle("fullscreen");
+      });
+    });
+  });
+</script>
