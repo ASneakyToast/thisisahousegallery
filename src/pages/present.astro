@@ -1,0 +1,24 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Image } from 'astro:assets';
+
+import present_img from "/src/media/present.jpg";
+---
+
+<Layout title="House Gallery | Present" type="normal">
+  <main>
+    <Image 
+      class="present-image" 
+      src={ present_img }
+      alt="" 
+      width=720
+    />
+    <p>Bubby :)</p>
+  </main>
+</Layout>
+
+<style>
+  .present-image {
+    height: auto;
+  }
+</style>

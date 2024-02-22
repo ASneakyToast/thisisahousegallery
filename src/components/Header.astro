@@ -6,11 +6,11 @@
     <p>This is a House Gallery</p>
   </a>
 
-  <section class="header-inline_nav">
-    <a href="/menu">
+  <a href="/menu">
+    <section class="header-inline_nav">
       <p>Menu</p>
-    </a>
-  </section>
+    </section>
+  </a>
 </section>
 
 <style scoped lang="scss">
@@ -28,7 +28,6 @@
     background-color: var(--color-base-white);
     width: 100%;
     box-sizing: border-box;
-    padding: var(--space-base-tiny) var(--space-base-small);
     z-index: 16;
 
     font-size: var(--font_size-tiny);
@@ -40,6 +39,7 @@
       gap: var(--space-base-tiny);
       align-items: center;
       text-decoration: none;
+      padding: var(--space-base-small) var(--space-base-small);
       &:hover {
         text-decoration: underline;
       }
@@ -60,6 +60,7 @@
       display: flex;
       flex-direction: row;
       gap: var(--space-base-medium);
+      padding: var(--space-base-small) var(--space-base-small);
 
       &--hide {
         display: none;
