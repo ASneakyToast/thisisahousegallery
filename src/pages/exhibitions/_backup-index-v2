@@ -1,0 +1,106 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import data from "../../data/exhibition-database.json";
+
+const next_show = false;
+---
+
+<Layout title="Exhibitions | House Gallery" type="normal">
+  <section class="tabbed-nav">
+    <h1 class="tabbed-nav__current">Exhibitions</h1>
+    <p class="tabbed-nav__item">Memories</p>
+  </section>
+
+  <hr></hr>
+
+  <div class="exhibitions">
+    <h2>Upcoming:</h2>
+    <section class="exh__upcoming">
+      <!-- Idea for when Johannes announce show -->
+      <!--
+      <article>
+        <div>
+          <h4>Show title</h4> 
+          <p>info n' stuff
+      </article>
+      -->
+      <p>Find out when the next show is:</p>
+      <a href="mailinglist">
+        <p>> Subscribe to the mailing list</p>
+      </a>
+      <a href="instagram">
+        <p>> Follow our instagram</p>
+      </a>
+    </section>
+
+    <h2>Past:</h2>
+    <section class="exh__past">
+      <!--
+      <article class="past-exh">
+        <h4>{ data.ttt.title }</h4>
+        <img src={ data.ttt.showcard.front } alt="Showcard">
+        <img src={ data.ttt.showcard.back } alt="Showcard">
+      </article>
+      -->
+      <a href="/exhibitions/tabletstablestombstones">
+        <img src={ data.ttt.showcard.front } alt="Showcard" />
+      </a>
+      <a href="/exhibitions/yourleastfavoritework">
+        <img src={ data.yourleastfavwork.showcard.front } alt="Showcard" />
+      </a>
+      <a href="/exhibitions/thisisalivingroom">
+        <img src={ data.thisisalivingroom.showcard.front } alt="Showcard" />
+      </a>
+    </section>
+
+  </div>
+</Layout>
+
+<style lang="scss">
+  .tabbed-nav {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    justify-content: space-between;
+    align-items: center;
+
+    &__current {
+      font-weight: 700;
+      letter-spacing: 10px;
+      text-transform: uppercase;
+      text-decoration: underline;
+      text-underline-offset: 32px;
+      text-underline-thickness: 4px;
+    }
+
+    &__item {
+      font-weight: 400;
+    }
+  }
+
+  .exhibitions {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: var(--space-item-gap);
+  }
+
+  .exh__upcoming {
+    border-bottom: 1px solid black;
+  }
+
+  .exh__past {
+    img {
+      width: 30%;
+      padding-right: var(--space-item-gap);
+    }
+  }
+
+  /*
+  .past-exh {
+    img {
+      max-width: 30vw;
+      padding-right: var(--space-item-gap);
+    }
+  }
+  */
+</style>

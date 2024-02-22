@@ -76,7 +76,7 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
               <p>Date: { artwork["Date"] }</p>
               <p>Size: { artwork["Size"] }</p>
               <p>Materials: { artwork["Materials"] }</p>
-              <p>Exhibition: <a href={`/memories#${slugify(artwork['Exhibitions'])}`}>{ artwork["Exhibitions"] }</a></p>
+              <p>Exhibition: <a href={`/exhibitions#${slugify(artwork['Exhibitions'])}`}>{ artwork["Exhibitions"] }</a></p>
             </section>
           </section>
 
