@@ -1,0 +1,145 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ImageWithQuickview from "../../components/image-with-quickview.svelte";
+// import QuickviewSimple from "../../components/quickview-simple.svelte";
+import { slugify, shuffle } from "../../utils/basic-javascript.js";
+
+import artist_data from "../../data/old/a_freak_relevant-artists.json";
+// # maybe I don't need to sort since there's only one artist??? 
+// # will it error???
+artist_data.sort((a, b) => {
+  if (a["Name"] < b["Name"]) {
+    return -1;
+  }
+  if (a["Name"] > b["Name"]) {
+    return 1;
+  }
+  return 0;
+});
+
+const title = "a freak relevant | House Gallery";
+
+const date = "Opening Reception - March 8th";
+const open_call_url = false;
+
+const google_cal_invite_url = "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=NGZnZGg0bWRqZzFvdW80aXVvMGQ1OTl1ZWogdGhpc2lzYWhvdXNlZ2FsbGVyeUBt&tmsrc=thisisahousegallery%40gmail.com"
+---
+
+<Layout title={ title }>
+  <main class="layout">
+    <section class="layout-main">
+      <section class="info"> 
+        <h1>This is a House Gallery presents: <i>Johannes Valvur: a freak relevant</i></h1>
+        <h2><a target="_blank" href={ google_cal_invite_url }>On view March 8th - April 18th, 2024</a></h2>
+        <h3>Featuring painting, drawing, and multimedia work by Oakland-based artist Johannes Valvur.</h3>
+
+        <br></br>
+
+        <section class="body">
+          <h4><i>ABOUT THE EXHIBITION</i></h4>
+          <p><b><i>Oakland, CA–</i></b> This is a House Gallery is kinda stoked to announce Johannes Valvur: a freak relevant, the first ever solo show by an insecure wizard who leaves magical items in his wake. Traveling with a paint pen, gorilla glue, and right-click save, he places symbols (⍓︎□︎◆︎❒︎) on defunct objects – discarded pieces of chimney, bricks, drywall, you get the picture – revitalizing them with a sense of humor and self-consciousness. While the art promises to be at least uniquely mid, we guarantee the vibes will be nothing short of immaculate. Join us for an atmosphere, free beer, stickers, and maybe some tattoos, on March 8 from 6-9pm (nice) at This is a House Gallery.</p>
+          <br></br>
+          <h4><i>ABOUT THE THIS IS A HOUSE GALLERY</i></h4>
+          <p>In the summer of 1963 2023, Joel Lithgow and Joseph Blake turned their living room into a gallery, calling it "This is a House Gallery". It serves as a project and exhibition place for local artists, people insecure about their practice, and really whoever wants to get hyped. Their shows are usually by artists for artists, although sometimes it’s for the people with the money (actually we haven’t done that yet.)</p>
+        </section>
+
+      </section>
+    </section>
+
+    <section class="layout-aside">
+      <section class="images">
+        <img src="/exhibitions/afreakrelevant/a_freak_relevant-opening-postcard.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+      </section>
+    </section>
+  </main>
+</Layout>
+
+<style lang="scss">
+
+  /* Guess I gotta do this everywhere until I refactor the layout */
+  main {
+    margin: auto;
+    padding: var(--space-base-huge) var(--space-base-large) var(--space-base-large) var(--space-base-large);
+    max-width: 1024px;
+
+    @media (max-width: 675px) {
+      padding: var(--space-base-medium) var(--space-base-small) var(--space-base-small) var(--space-base-small);
+    }
+
+    @media (max-width: 1024px) {
+      padding: var(--space-base-large) var(--space-base-medium) var(--space-base-medium) var(--space-base-medium);
+    }
+
+    & h1 {
+      font-size: var(--font_size-title);
+      font-weight: 700;
+    }
+    & h2 {
+      font-size: var(--font_size-medium);
+      font-weight: lighter;
+    }
+    & h3 {
+      font-size: var(--font_size-medium);
+      font-weight: lighter;
+    }
+    & p {
+      font-weight: lighter;
+    }
+
+    & hr {
+      margin: var(--space-base-large) 0;
+    }
+  }
+
+  .layout {
+    display: grid;
+    grid-template-areas:
+      "main" "aside";
+    grid-template-columns: 3fr 1fr;
+    gap: var(--space-base-huge);
+
+    @media (max-width: 678px) {
+      grid-template-columns: 1fr;
+    }
+
+    @media (max-width: 1024px) {
+      grid-template-areas:
+        "header"
+        "aside";
+    }
+  }
+
+  .description {
+    width: 75%;
+  }
+
+  .artists {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-base-small);
+    margin: var(--space-base-large) 0;
+
+    &__name {
+      margin: 0;
+      padding: 0;
+
+      font-family: var(--font-main);
+      font-weight: 300;
+      font-size: var(--font_size-medium);
+    }
+  }
+
+  .body {
+    h4 {
+      font-weight: 700;
+    }
+  }
+
+  .images {
+    & img {
+      margin-bottom: var(--space-base-small);
+    }
+  }
+
+</style>
