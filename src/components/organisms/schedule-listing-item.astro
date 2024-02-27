@@ -1,31 +1,31 @@
 ---
 const { title, artists, date, link, open_call_url, google_cal_invite_url, cta="true", cta_label, cta_tooltip, cta_url, img_url, img_alt, featured } = Astro.props;
 ---
-<article class="exhibition_listing">
+<article class="exhibition-listing">
   <div class="row-spaced">
 
-    <section class={featured? "info info--featured" : "info"}>
+    <section class="exhibition-listing__info">
       { link ?
         <a href={ link }>
-          <h4>{ title }</h2>
+          <h4 class={featured? "exhibition-listing__title exhibition-listing__title--featured" : "exhibition-listing__title"}>{ title }</h2>
         </a>
         :
-        <h4>{ title }</h2>
+        <h4 class="exhibition-listing__title">{ title }</h2>
       }
       { open_call_url ?
         <a target="blank" href={ open_call_url }>
-          <h5>{ artists }</h5>
+          <h5 class="exhibition-listing__subheading">{ artists }</h5>
         </a>
         :
-        <h5>{ artists }</h5>
+        <h5 class="exhibition-listing__subheading">{ artists }</h5>
       }
       { google_cal_invite_url ?
         <a target="blank" href={ google_cal_invite_url }>
-          { date && <p>{ date }</p> }
+          { date && <p class="exhibition-listing__detail">{ date }</p> }
         </a>
         :
         <span>
-          { date && <p>{ date }</p> }
+          { date && <p class="exhibition-listing__detail">{ date }</p> }
         </span>
       }
     </section>
@@ -41,7 +41,7 @@ const { title, artists, date, link, open_call_url, google_cal_invite_url, cta="t
   </div>
 
   { img_url && 
-  <img src={ img_url } alt={ img_alt }/> 
+    <img src={ img_url } alt={ img_alt }/> 
   }
 </article>
 
@@ -73,22 +73,6 @@ const { title, artists, date, link, open_call_url, google_cal_invite_url, cta="t
     gap: var(--space-base-small);
   }
 
-  @mixin font-small {
-    font-size: 0.83rem;
-    font-weight: lighter;
-  }
-  @mixin font-medium {
-    font-size: 1rem;
-    font-weight: lighter;
-  }
-  @mixin font-large {
-    font-size: 1.17rem;
-    font-weight: lighter;
-  }
-  @mixin font-huge {
-    font-size: 2rem;
-    font-weight: lighter;
-  }
 
   @mixin molecule-small_cta {
     position: relative;
@@ -133,24 +117,33 @@ const { title, artists, date, link, open_call_url, google_cal_invite_url, cta="t
     }
 }
 
-  .exhibition_listing {
+  .exhibition-listing {
     @include column;
     padding-bottom: var(--space-base-large);
     border-bottom: 1px solid black;
 
-    & .info {
+    &__info {
       @include column-small;
+    }
 
-      h4, h5, p {
-        margin: 0;
-      }
-      h4 { @include font-large; }
-      h5 { @include font-medium; }
-      p  { @include font-small; }
+    &__title, &__subheading, &__detail {
+      margin: 0;
+    }
+
+    &__title {
+      font-size: var(--font_size-heading);
+      font-weight: 700;
+      text-decoration: underline;
 
       &--featured {
-        h4 { @include font-huge; }
+        font-size: var(--font_size-title);
       }
+    }
+    &__subheading {
+      font-size: var(--font_size-paragraph);
+    }
+    &__detail  { 
+      font-size: var(--font_size-paragraph);
     }
 
     & .cta {
