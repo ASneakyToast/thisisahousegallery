@@ -13,6 +13,7 @@
     "@astrojs/svelte": "^5.0.2",
     "@astrojs/vue": "^4.0.5",
     "astro": "^4.0.7",
+    "interactjs": "^1.10.26",
     "sass": "^1.62.1",
     "seedrandom": "^3.0.5",
     "svelte": "^4.2.8",

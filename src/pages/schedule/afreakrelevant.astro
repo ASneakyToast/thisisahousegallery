@@ -50,6 +50,18 @@ const google_cal_invite_url = "https://calendar.google.com/calendar/event?action
       <section class="images">
         <img src="/exhibitions/afreakrelevant/a_freak_relevant-opening-postcard.jpg" alt="A zoomed in view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
       </section>
+      <section class="scatter_images">
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard1.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard2.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard3.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard4.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard5.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard6.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard7.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard8.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard9.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+        <img class="resize-drag" src="/exhibitions/afreakrelevant/showcards/frontcard10.png" alt="A front view of the promotional showcard for the exhibition 'a freak relevant' by Johannes Valvur at This is a House Gallery."></img>
+      </section>
     </section>
   </main>
 </Layout>
@@ -142,4 +154,63 @@ const google_cal_invite_url = "https://calendar.google.com/calendar/event?action
     }
   }
 
+  .scatter_images {
+    position: relative;
+    height: fit-content;
+
+    img {
+      position: absolute;
+    }
+  }
+
 </style>
+
+<script>
+  import interact from "interactjs";
+
+  function dragMoveListener (event) {
+    var target = event.target
+    // keep the dragged position in the data-x/data-y attributes
+    var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+    var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+    // translate the element
+    target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+    // update the posiion attributes
+    target.setAttribute('data-x', x)
+    target.setAttribute('data-y', y)
+  }
+
+  interact(".resize-drag")
+  .resizable({
+    // resize from all edges and corners
+    edges: { left: true, right: true, bottom: true, top: true },
+
+    listeners: {
+      move (event) {
+        var target = event.target
+        var x = (parseFloat(target.getAttribute('data-x')) || 0)
+        var y = (parseFloat(target.getAttribute('data-y')) || 0)
+
+        // update the element's style
+        target.style.width = event.rect.width + 'px'
+        target.style.height = event.rect.height + 'px'
+
+        // translate when resizing from top or left edges
+        x += event.deltaRect.left
+        y += event.deltaRect.top
+
+        target.style.transform = 'translate(' + x + 'px,' + y + 'px)'
+
+        target.setAttribute('data-x', x)
+        target.setAttribute('data-y', y)
+      }
+    },
+  })
+  .draggable({
+    listeners: {
+      move: dragMoveListener,
+    }
+  })
+</script>
