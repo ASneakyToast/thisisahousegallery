@@ -9,6 +9,8 @@ import NFTRoom from '../components/organisms/homepage/the-room.svelte';
 import Resources from '../components/organisms/homepage/resources.svelte';
 import Footer from '../components/organisms/footer.astro';
 
+import craneParty from "../media/crane-party.jpg";
+
 function RandomSize() {
   let size = Math.floor(Math.random()*3)+1;
   return size;
@@ -78,11 +80,11 @@ const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7Xeqj
   </section>
 
   <Tableau 
-    img_src={`/src/media/marketing-materials/a_freak_relevant-tableau.jpeg`}
-    img_alt="Showcard for the art exhibition 'Tablets Tables and Tombstones'."
+    img_src={`/src/media/crane-party.jpg`}
+    img_alt="Showcard for some art exhibition.'"
     link="/schedule/"
-    heading="A FREAK RELEVANT"
-    subheading="Opening reception on March 8th"
+    heading="A NEW SHOW IS COMING"
+    subheading="Stay tuned for June 21th"
     animation="panleftandright"
   />
 
