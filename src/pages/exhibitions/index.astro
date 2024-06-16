@@ -48,6 +48,23 @@ let ttt_images = ttt_all_images.filter( item => {
 // > shuffle
 ttt_images = shuffle(ttt_images, today);
 
+// Curated set of a FREAKS image
+// > get all realted freak images
+let a_freak_relevant_all_images = image_db.get_exhibition_images( "A Freak Relevant" );
+// > filter out detail images
+let a_freak_relevant_images = a_freak_relevant_all_images.filter( item => {
+    return (
+      item.tag.includes("Cover") 
+      || item.tag.includes("Exhibition")
+    )
+});
+// > shuffle
+a_freak_relevant_images = shuffle(a_freak_relevant_images, today);
+
+console.log("TesTING");
+console.log( a_freak_relevant_all_images );
+console.log( a_freak_relevant_images );
+
 // Seralize single string of artists into array
 // > this create a copy
 // let ttt_artists = ExhData.ttt.artists.split(',').map( item => item.trim() );
@@ -62,6 +79,16 @@ exhibition_keys.forEach( key => {
 
 <Layout title="Exhibitions | House Gallery" type="normal">
   <h1 class="title">Exhibitions</h1>
+  <ListingItem 
+      title = { ExhData.afreakrelevant.title }
+      title_slug = { ExhData.afreakrelevant.slug }
+      gallery_images = { a_freak_relevant_images }
+      card_front_src = { ExhData.afreakrelevant.showcard.front }
+      card_back_src = { ExhData.afreakrelevant.showcard.back }
+      date = { ExhData.afreakrelevant.date }
+      artists={ ExhData.afreakrelevant.artist_list }
+  />
+
   <ListingItem 
       title = { ExhData.ttt.title }
       title_slug = { ExhData.ttt.slug }

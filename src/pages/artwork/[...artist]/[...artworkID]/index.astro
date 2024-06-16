@@ -47,7 +47,9 @@ const processed_images = import.meta.glob("/src/media/exhibition-images/*.{jpeg,
 
       <p>Artist: <a class="info__name" href=`/artwork/${ slugify(item['Artist']) }`>{ item["Artist"] }</a></p>
       <p>Date: { item["Date"] }</p>
-      <p>Size: { item["Size"] }</p>
+      { item["Size"] !== "" && (
+        <p>Size: { item["Size"] }</p>
+      )}
       <p>Materials: { item["Materials"] }</p>
       <p>Exhibition: <a href={`/exhibitions#${slugify(item['Exhibitions'])}`}>{ item["Exhibitions"] }</a></p>
     </section>

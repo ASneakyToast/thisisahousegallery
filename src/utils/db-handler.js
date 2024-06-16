@@ -1,4 +1,5 @@
-import artwork_database from "../data/artwork-database-dec_25_2023-v2.json";
+//import artwork_database from "../data/artwork-database-dec_25_2023-v2.json";
+import artwork_database from "../data/artwork-database-06_14_2024-v1.json";
 import artist_database from "../data/artist-database-12_28_2023-v2.json";
 import * as image_db from "../utils/image-db-handler.js";
 import { slugify } from "../utils/basic-javascript.js";

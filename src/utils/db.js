@@ -1,5 +1,5 @@
 // I'm a fucking image processor bitch
-import image_database_raw from "../data/image-database-dec_25_2023.json";
+import image_database_raw from "../data/image-database-06_12_2024-v1.json";
 
 // make a deep copy
 let image_db = JSON.parse(JSON.stringify( image_database_raw ));

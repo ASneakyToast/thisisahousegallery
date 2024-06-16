@@ -1,4 +1,4 @@
-import image_database from "../data/image-database-dec_29_2023-v1.json";
+import image_database from "../data/image-database-06_12_2024-v1.json";
 import artwork_database from "../data/artwork-database-dec_25_2023-v2.json";
 
 /* The before before */

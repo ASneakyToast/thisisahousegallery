@@ -1,14 +1,14 @@
 {
-  "afreakrevelant": {
-    "title": "A FREAK REVELANT",
+  "afreakrelevant": {
+    "title": "A FREAK RELEVANT",
     "slug": "afreakrevelant",
     "artists": "Johannes Valuear",
     "date": "08.08 - 04.05",
     "showcard": {
-      "front": "/exhibitions/afreakrevelant/showcards/showcard-main--front.jpg",
-      "back": "/exhibitions/afreakrevelant/showcards/showcard-main--back.png"
+      "front": "/exhibitions/afreakrelevant/a_freak_relevant-opening-postcard.jpg",
+      "back": "/exhibitions/afreakrelevant/showcards/frontcard1.png"
     },
-    "square": "/exhibitions/afreakrevelant/showcards/showcard-main--back.png"
+    "square": "/exhibitions/afreakrelevant/showcards/showcard-main--back.png"
   },
 
   "ttt": {
