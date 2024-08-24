@@ -1,7 +1,11 @@
 ---
-import { getImage } from "astro:assets"
+import { getImage, Image } from "astro:assets"
 
 const marketing_images_glob = import.meta.glob( "/src/media/marketing-materials/*", { 
+  query: { format: "webp;avif;jpg", w: "200;400;600;1200", picture: "" },
+  import: 'default'
+})
+const all_images_glob = import.meta.glob( "/src/media/**/*", {
   query: { format: "webp;avif;jpg", w: "200;400;600;1200", picture: "" },
   import: 'default'
 })
@@ -9,9 +13,6 @@ const marketing_images_glob = import.meta.glob( "/src/media/marketing-materials/
 const { img_src, img_alt, link, heading, subheading, animation } = Astro.props
 
 /*
-console.log( img_src );
-console.log( marketing_images_glob );
-
 const background_image_optimized = await getImage({ src: marketing_images_glob[ img_src ] })
 style={`background-image: url("${ marketing_images_glob[ img_src ] }")`}>
 */
@@ -20,6 +21,14 @@ style={`background-image: url("${ marketing_images_glob[ img_src ] }")`}>
 // style={`background-image: url("${ background_image_optimized.src }")`}>
 ---
 <section class:list={["homepage-tableau", animation]}>
+
+  <Image
+    class="homepage-tableau__image"
+    src={ all_images_glob[img_src]() }
+    alt="Image alt"
+    width=1440
+    height=1440
+  />
 
   <a href={ link }>
     <section class="homepage-tableau__details">
@@ -58,8 +67,8 @@ style={`background-image: url("${ marketing_images_glob[ img_src ] }")`}>
     position: relative;
     height: 100vh;
 
-    background-image: url("/src/media/crane-party.jpg");
-    background-position: center;
+    /* background-image: url("/src/media/crane-party.jpg"); */
+    /* background-position: center; */
 
     &__image {
       width: 100%;

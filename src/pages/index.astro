@@ -11,6 +11,9 @@ import Footer from '../components/organisms/footer.astro';
 
 import craneParty from "../media/crane-party.jpg";
 
+function RandomNumber(min, max) {
+  return Math.floor(Math.random()*max)+min; 
+}
 function RandomSize() {
   let size = Math.floor(Math.random()*3)+1;
   return size;
@@ -44,6 +47,16 @@ curated_images.forEach( item => {
     side: RandomSide(),
   });
 })
+
+let exhibition_images = image_db.get_all_images().filter( item => {
+  return (
+    item.tag.includes("Exhibition") &&
+    item.tag.includes("A Freak Relevant")
+  )
+});
+let featuredFullWidthImage = exhibition_images[RandomNumber(0, exhibition_images.length)];
+console.log("fullwidthimage");
+console.log( featuredFullWidthImage );
 
 /* When I processed them here...*/
 /*
@@ -79,6 +92,7 @@ const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7Xeqj
     </a>
   </section>
 
+  <!--
   <Tableau 
     img_src={`/src/media/crane-party.jpg`}
     img_alt="Showcard for some art exhibition.'"
@@ -86,6 +100,16 @@ const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7Xeqj
     heading="A NEW SHOW IS COMING"
     subheading="Stay tuned for more info"
     animation="panleftandright"
+  />
+  -->
+
+  <Tableau 
+    img_src={`/src/media/exhibition-images/${featuredFullWidthImage.photo[0].filename}`}
+    img_alt="Showcard for the art exhibition 'Tablets Tables and Tombstones'."
+    link="/exhibitions/#a-freak-relevant"
+    heading="A Freak Relevant"
+    subheading="Johannes Valvur"
+    animation="zoomslowinandout"
   />
 
   <!--
@@ -132,7 +156,9 @@ const leastFavWorkFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeAXU7Xeqj
   <!-- 
     <NFTRoom />
   -->
+  <!--
     <Resources />
+  -->
 
   <Footer />
 

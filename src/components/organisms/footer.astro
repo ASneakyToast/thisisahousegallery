@@ -3,13 +3,15 @@ const { color } = Astro.props;
 ---
 
 <section class="footer footer--black">
-  <p>This is a House Gallery</p>
+  <p><b>This is a House Gallery</b></p>
   <p>copywright © 2023, joel lithgow & joseph blake, all rights reserved</p>
 </section>
 
 <style>
   .footer {
-    padding: 20px 140px;
+    border-top: 1px solid black;
+
+    padding: 40px 140px;
 
     background: white;
     color: black;
@@ -18,13 +20,9 @@ const { color } = Astro.props;
   }
 
   p {
-    font-size: 8px;
+    font-size: 14px;
     width: fit-content;
     margin: 0 auto;
-    padding: 8px;
-  }
-
-  p:last-child {
-    border-top: 0.5px solid black;
+    padding: 4px 8px;
   }
 </style>
