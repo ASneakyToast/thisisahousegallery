@@ -1,0 +1,115 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START prod_deploy]
+# Prod: Service Deploy + Jobs Deploy
+
+steps:
+
+  - id: "deploy-cloud-run-service"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "deploy", "${_SERVICE_NAME}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--command", "/start",
+      "--platform", "managed",
+      "--region", "${_REGION}",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--add-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+      "--allow-unauthenticated",
+      "--memory", "2048Mi",
+    ]
+
+  - id: "deploy-cloud-run-job-update_index"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_UPDATEINDEX}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--region", "${_REGION}",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+      "--memory", "1024Mi",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "update_index",
+    ]
+    waitFor: ['-']
+
+  - id: "deploy-cloud-run-job-fetch_instagram_media"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_INSTAGRAM}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--region", "${_REGION}",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+      "--memory", "1024Mi",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "fetch_instagram_media",
+    ]
+    waitFor: ['-']
+
+  - id: "deploy-cloud-run-job-clearsessions"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_CLEARSESSIONS}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--region", "${_REGION}",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+      "--memory", "1024Mi",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "clearsessions",
+    ]
+    waitFor: ['-']
+
+  - id: "deploy-cloud-run-job-publish_scheduled_pages"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_PUBLISH}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--region", "${_REGION}",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+      "--memory", "1024Mi",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "publish_scheduled_pages",
+    ]
+    waitFor: ['-']
+
+logsBucket: "gs://ccaedu-cloudbuild-log-prod/${_BUILD_TYPE}"
+
+substitutions:
+  _BUILD_TYPE: prod
+  _DB_INSTANCE_NAME: web-instance
+  _DJANGO_SETTINGS: cca.settings.production
+  _REGION: us-west1
+  _SERVICE_ACCOUNT: ccaedu-sa
+  _SERVICE_NAME: ccaedu-${_BUILD_TYPE}-service
+  _MGMT_CMD_PUBLISH: ccaedu-${_BUILD_TYPE}-mgmt-cmd-publish-scheduled-pages
+  _MGMT_CMD_CLEARSESSIONS: ccaedu-${_BUILD_TYPE}-mgmt-cmd-clearsessions
+  _MGMT_CMD_INSTAGRAM: ccaedu-${_BUILD_TYPE}-mgmt-cmd-fetch-instagram-media
+  _MGMT_CMD_UPDATEINDEX: ccaedu-${_BUILD_TYPE}-mgmt-cmd-update-index
+  _ARTIFACT_REGISTRY: ccaweb
+  _CLOUD_SQL_CONNECTION_NAME: ${PROJECT_ID}:${_REGION}:${_DB_INSTANCE_NAME}
+  _IMAGE_NAME: ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/${_SERVICE_NAME}
+
+options:
+  logging: GCS_ONLY
+  dynamic_substitutions: true
+
+# [END]

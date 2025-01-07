@@ -1,0 +1,7 @@
+# PRECAUTION: avoid production dependencies that aren't in development
+
+-r base.txt
+
+# Django
+# ------------------------------------------------------------------------------
+django-anymail[mailgun]==12.0  # https://github.com/anymail/django-anymail
