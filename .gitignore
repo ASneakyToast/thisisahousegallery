@@ -271,11 +271,11 @@ tags
 dump.rdb
 
 ### Project template
-thisisahousegallerybird/media/
+housegallery/media/
 
 .pytest_cache/
 .ipython/
-thisisahousegallerybird/static/webpack_bundles/
+housegallery/static/webpack_bundles/
 webpack-stats.json
 .env
 .envs/*

@@ -16,7 +16,13 @@ SECRET_KEY = env(
     default="84qabQD6jDUMuJ62oHduh7X0cmZ9CHP5phr2QsixrOE7dhwT6m9EIetnfTmidcyp",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
+ALLOWED_HOSTS = [
+    "localhost", 
+     "0.0.0.0", 
+     "127.0.0.1",
+ ]  # noqa: S104
+
+INTERNAL_IPS = ['127.0.0.1', ]
 
 
 # TEMPLATES
@@ -25,6 +31,16 @@ ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
 
 BASE_URL = 'http://localhost:8000'
 WAGTAILADMIN_BASE_URL = 'http://localhost:8000'
+
+
+# SECURITY
+# ------------------------------------------------------------------------------
+# Disable forcing HTTPS locally since development server supports HTTP only.
+SECURE_SSL_REDIRECT = False
+
+# Disable session expire on browser close
+SESSION_COOKIE_AGE = 60 * 20000
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 
 # CACHES
@@ -36,14 +52,6 @@ CACHES = {
         "LOCATION": "",
     },
 }
-
-
-# EMAIL
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend",
-)
 
 
 # WhiteNoise
@@ -62,6 +70,3 @@ INSTALLED_APPS += ["django_extensions"]
 # ------------------------------------------------------------------------------
 WEBPACK_LOADER["DEFAULT"]["CACHE"] = not DEBUG
 
-
-# Your stuff...
-# ------------------------------------------------------------------------------
