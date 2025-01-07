@@ -1,0 +1,73 @@
+/* House Gallery Typography Classes */
+
+.type-title {
+  font-family: var(--font-family-title);
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-title);
+  line-height: var(--line-height-title);
+  color: var(--color-text);
+}
+
+.type-heading {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+  color: var(--color-text);
+}
+
+.type-intro {
+  font-family: var(--font-family-intro);
+  font-size: var(--font-size-intro);
+  font-weight: var(--font-weight-intro);
+  line-height: var(--line-height-intro);
+  color: var(--color-text);
+}
+
+.type-quote {
+  font-family: var(--font-family-quote);
+  font-size: var(--font-size-quote);
+  font-weight: var(--font-weight-quote);
+  line-height: var(--line-height-quote);
+  color: var(--color-text);
+}
+
+.type-subheading {
+  font-family: var(--font-family-subheading);
+  font-size: var(--font-size-subheading);
+  font-weight: var(--font-weight-subheading);
+  line-height: var(--line-height-subheading);
+  color: var(--color-text);
+}
+
+.type-label {
+  font-family: var(--font-family-label);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-label);
+  line-height: var(--line-height-label);
+  color: var(--color-text);
+}
+
+.type-body {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+}
+
+.type-detail {
+  font-family: var(--font-family-detail);
+  font-size: var(--font-size-detail);
+  font-weight: var(--font-weight-detail);
+  line-height: var(--line-height-detail);
+  color: var(--color-text);
+}
+
+.rich-text-block p {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+}

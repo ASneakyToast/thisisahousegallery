@@ -1,0 +1,6 @@
+.blank-page-content {
+  width: 100%;
+  max-width: calc(100% - (var(--size-layout-gutter) * 2));
+  margin: 0 auto;
+  padding: var(--size-layout-section-spacing) 0;
+}

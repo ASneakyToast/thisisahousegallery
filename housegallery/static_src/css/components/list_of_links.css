@@ -1,0 +1,23 @@
+.list-of-links {
+    /* block-wrapper class handles the layout/spacing */
+}
+
+.list-of-links__title {
+    font-size: var(--font-size-subheading);
+    margin-bottom: var(--size-layout-element-spacing);
+    font-weight: var(--font-weight-subheading);
+}
+
+.list-of-links__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-layout-item-gap);
+}
+
+@media (min-width: 768px) {
+    .list-of-links__items {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--size-layout-item-gap);
+    }
+}

@@ -6,13 +6,14 @@ module.exports = {
   target: 'web',
   context: path.join(__dirname, '../'),
   entry: {
-    project: path.resolve(__dirname, '../thisisahousegallerybird/static/js/project'),
-    vendors: path.resolve(__dirname, '../thisisahousegallerybird/static/js/vendors'),
+    project: path.resolve(__dirname, '../housegallery/static_src/js/project'),
+    vendors: path.resolve(__dirname, '../housegallery/static_src/js/vendors'),
+    styles: path.resolve(__dirname, '../housegallery/static_src/css/index.js'),
   },
   output: {
     path: path.resolve(
       __dirname,
-      '../thisisahousegallerybird/static/webpack_bundles/',
+      '../housegallery/static_src/webpack_bundles/',
     ),
     publicPath: '/static/webpack_bundles/',
     filename: 'js/[name]-[fullhash].js',
@@ -47,6 +48,13 @@ module.exports = {
           },
           'sass-loader',
         ],
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name][ext]'
+        }
       },
     ],
   },

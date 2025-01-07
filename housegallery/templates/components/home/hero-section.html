@@ -1,0 +1,21 @@
+{% load wagtailcore_tags %}
+
+<section class="hero-section">
+  <h1 class="hero-section__intro" style="font-family: 'Montserrat'; text-wrap-style: pretty; font-weight: 100;">{{ value.intro }}</h1>
+
+  {% if value.ctas %}
+  <div class="hero-section__links">
+    <div class="hero-links">
+      <div class="hero-links__items">
+        {% for link in value.ctas.links %}
+          {% if link.block_type == 'button_link' %}
+            {% include "components/ui/button_link.html" with value=link.value %}
+          {% elif link.block_type == 'carrot_link' %}
+            {% include "components/ui/button_carrot.html" with value=link.value %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</section>

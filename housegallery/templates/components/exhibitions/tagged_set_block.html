@@ -1,0 +1,18 @@
+{% load wagtailimages_tags %}
+
+<div class="gallery-tagged-set">
+    {% if value.title %}
+        <h3 class="gallery-set-title">{{ value.title }}</h3>
+    {% endif %}
+    
+    <div class="gallery-images">
+        {% for image in images %}
+            <div class="gallery-image">
+                {% image image width-1440 format-webp as img %}
+                <img src="{{ img.url }}" alt="{{ image.title }}" class="quickview-item" loading="lazy">
+            </div>
+        {% empty %}
+            <p class="gallery-empty">No images found with tag "{{ value.tag }}"</p>
+        {% endfor %}
+    </div>
+</div>

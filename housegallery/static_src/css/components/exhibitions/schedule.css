@@ -1,0 +1,201 @@
+/* Schedule page styles - matching exhibitions page layout */
+
+.body.normal {
+  margin: var(--size-layout-heading-spacing) 0;
+  padding: 0 var(--size-layout-gutter);
+}
+
+/* Schedule sections */
+.schedule-section {
+  margin-bottom: var(--size-layout-section-spacing);
+}
+
+.section-heading {
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-light);
+  font-family: var(--font-family-heading);
+  margin-bottom: var(--size-layout-element-spacing);
+  color: var(--color-black);
+}
+
+.schedule-intro {
+  margin-bottom: var(--size-layout-section-spacing);
+}
+
+/* Schedule grid - matching exhibitions layout */
+.schedule-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-layout-section-spacing);
+}
+
+.schedule-listing-item {
+  display: flex;
+  flex-direction: row;
+  gap: var(--size-layout-section-spacing);
+  margin: var(--size-layout-section-spacing) 0;
+}
+
+@media (max-width: 768px) {
+  .schedule-listing-item {
+    flex-direction: column;
+    gap: var(--size-layout-element-spacing);
+  }
+}
+
+/* Event header - matching exhibition header */
+.event-header {
+  display: block;
+  margin-bottom: 0;
+  border-bottom: none;
+  flex: 1;
+}
+
+.event-header h2,
+.event-header h3 {
+  font-weight: var(--font-weight-light);
+  font-family: var(--font-family-heading);
+}
+
+.event-header h2 {
+  font-size: var(--font-size-large);
+  margin-bottom: var(--size-layout-item-gap);
+  margin-top: 0;
+}
+
+.event-header h3 {
+  font-size: var(--font-size-small);
+  margin-top: var(--size-layout-item-gap);
+  margin-bottom: var(--size-layout-item-gap);
+}
+
+.event-header__type {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--size-layout-item-gap);
+  margin-bottom: var(--size-layout-item-gap);
+}
+
+.event-header__type p {
+  margin: 0;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-normal);
+}
+
+/* Event gallery - matching exhibition gallery */
+.event-gallery {
+  flex: 1;
+  max-width: 300px;
+}
+
+@media (max-width: 768px) {
+  .event-gallery {
+    max-width: 100%;
+  }
+}
+
+.gallery-thumb {
+  width: 100%;
+  filter: drop-shadow(3px 4px 0px black);
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: auto;
+}
+
+/* View event link - matching view exhibition */
+.view-event {
+  display: inline-block;
+  margin-top: var(--size-layout-item-gap);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  transition: opacity 0.2s ease;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-detail);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-black);
+  padding-bottom: 2px;
+}
+
+.view-event:hover {
+  opacity: 0.7;
+}
+
+/* Schedule content */
+.schedule-content {
+  margin: var(--size-layout-section-spacing) 0;
+}
+
+/* Contact section */
+.schedule-contact {
+  margin-top: var(--size-layout-section-spacing);
+  border-top: 1px solid var(--color-border, #ddd);
+  padding-top: var(--size-layout-section-spacing);
+}
+
+.schedule-submission-info {
+  margin-bottom: var(--size-layout-element-spacing);
+}
+
+.schedule-contact-email {
+  margin-top: var(--size-layout-element-spacing);
+}
+
+.email-link {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-body);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.1rem;
+  color: var(--color-text, #000);
+  transition: opacity 0.2s ease;
+}
+
+.email-link:hover {
+  opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 675px) {
+  .title {
+    font-size: var(--font-size-heading);
+    letter-spacing: 15px;
+  }
+
+  .event-header h2 {
+    font-size: var(--font-size-heading);
+  }
+
+  .event-header h3 {
+    font-size: var(--font-size-subheading);
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: var(--font-size-subheading);
+    letter-spacing: 10px;
+  }
+
+  .event-header h2 {
+    font-size: var(--font-size-body);
+  }
+
+  .event-header h3 {
+    font-size: var(--font-size-small);
+  }
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: var(--size-layout-section-spacing);
+  color: var(--color-text, #666);
+}
+
+.empty-state p {
+  font-size: var(--font-size-body);
+  margin: 0;
+}

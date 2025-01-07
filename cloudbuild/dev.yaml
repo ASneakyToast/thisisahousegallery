@@ -1,0 +1,151 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START dev]
+# DEV - Cloudbuild build and deploy
+
+
+steps:
+
+  - id: "build-image"
+    name: "gcr.io/cloud-builders/docker"
+    args: [
+      "build",
+      "-t", "${_IMAGE_NAME}:latest",
+      "-t", "${_IMAGE_NAME}:${SHORT_SHA}",
+      "--build-arg", "build_type=${_BUILD_TYPE}",
+      "--build-arg", "cloud_project=${PROJECT_ID}",
+      "--build-arg", "django_settings=${_DJANGO_SETTINGS}",
+      "--cache-from", "${_IMAGE_NAME}:latest",
+      "--file=cloudbuild/Dockerfile",
+      "."]
+
+  - id: "push-image"
+    name: "gcr.io/cloud-builders/docker"
+    args: ["push", "${_IMAGE_NAME}", "--all-tags"]
+
+  - id: "deploy-service"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "deploy", "${_SERVICE_NAME}",
+      "--add-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+      "--allow-unauthenticated",
+      "--command", "/start",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--memory", "2048Mi",
+      "--no-traffic",
+      "--platform", "managed",
+      "--region", "${_REGION}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+    ]
+
+  - id: "run-migrations"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_MIGRATE}",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "migrate",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--execute-now",
+      "--memory", "1024Mi",
+      "--region", "${_REGION}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+    ]
+    waitFor: ['push-image']
+
+  - id: "release"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "services", "update-traffic", "${_SERVICE_NAME}",
+      "--to-latest",
+      "--region", "${_REGION}",
+    ]
+    waitFor: ['deploy-service', 'run-migrations']
+
+
+  - id: "deploy-update_index"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_UPDATEINDEX}",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "update_index",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--memory", "1024Mi",
+      "--region", "${_REGION}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+    ]
+    waitFor: ['push-image']
+
+  - id: "deploy-clearsessions"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_CLEARSESSIONS}",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "clearsessions",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--memory", "1024Mi",
+      "--region", "${_REGION}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+    ]
+    waitFor: ['push-image']
+
+  - id: "deploy-publish_scheduled_pages"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_PUBLISH}",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "publish_scheduled_pages",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--memory", "1024Mi",
+      "--region", "${_REGION}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+    ]
+    waitFor: ['push-image']
+
+
+logsBucket: "gs://housegallery-cloudbuild-log/${_BUILD_TYPE}"
+
+substitutions:
+  _ARTIFACT_REGISTRY: housegallery
+  _BUILD_TYPE: ''  # must define in the build trigger: staging/qa/dev-*
+  _CLOUD_SQL_CONNECTION_NAME: ${PROJECT_ID}:${_REGION}:${_DB_INSTANCE_NAME}
+  _DB_INSTANCE_NAME: housegallery
+  _DJANGO_SETTINGS: config.settings.production
+  _IMAGE_NAME: ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/${_SERVICE_NAME}
+  _MGMT_CMD_CLEARSESSIONS: housegallery-${_BUILD_TYPE}-mgmt-cmd-clearsessions
+  _MGMT_CMD_MIGRATE: housegallery-${_BUILD_TYPE}-mgmt-cmd-migrate
+  _MGMT_CMD_PUBLISH: ccaedu-${_BUILD_TYPE}-mgmt-cmd-publish-scheduled-pages
+  _MGMT_CMD_UPDATEINDEX: housegallery-${_BUILD_TYPE}-mgmt-cmd-update-index
+  _REGION: us-west2
+  _SERVICE_ACCOUNT: housegallerybutler
+  _SERVICE_NAME: housegallery-${_BUILD_TYPE}-service
+
+
+options:
+  logging: GCS_ONLY
+  dynamic_substitutions: true
+
+images:
+  - "${_IMAGE_NAME}:latest"
+  - "${_IMAGE_NAME}:${SHORT_SHA}"
+
+# [END]

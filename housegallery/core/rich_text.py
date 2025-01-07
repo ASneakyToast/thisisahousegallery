@@ -1,0 +1,6 @@
+MINIMAL_RICHTEXT = ['bold', 'italic']
+SIMPLE_RICHTEXT = ['bold', 'italic', 'strikethrough']
+LIMITED_RICHTEXT = ['h4', 'bold', 'italic', 'link', 'document-link', 'strikethrough']
+CAPTION_RICHTEXT = ['bold', 'italic', 'link', 'document-link', 'strikethrough']
+STANDARD_RICHTEXT = ['bold', 'italic', 'h3', 'h4', 'ol', 'ul', 'link', 'document-link', 'strikethrough']
+HERO_RICHTEXT = ['bold', 'italic', 'h1', 'link', 'document-link', 'strikethrough']

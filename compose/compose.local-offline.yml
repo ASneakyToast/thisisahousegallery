@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: housegallery_local_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=housegallery_local
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+
+  django:
+    extends:
+      file: docker-compose.yml
+      service: django-base
+    container_name: housegallery_local_offline_django
+    depends_on:
+      - postgres
+    env_file:
+      - ../.envs/.local-offline
+    command: /start
+
+  node:
+    extends:
+      file: docker-compose.yml
+      service: node
+    container_name: housegallery_local_offline_node
+    depends_on:
+      - django
+
+volumes:
+  postgres_data:
+  node_modules:

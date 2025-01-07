@@ -1,0 +1,19 @@
+{% load wagtailcore_tags %}
+
+<section class="exhibition-media">
+    <section class="exhibition-card">
+        {% for card in value %}
+            {% if card.block_type == 'showcard' %}
+                {% include_block card %}
+            {% endif %}
+        {% endfor %}
+    </section>
+    
+    <section class="exhibition-images">
+        {% for item in value %}
+            {% if item.block_type == 'image' %}
+                {% include_block item %}
+            {% endif %}
+        {% endfor %}
+    </section>
+</section>

@@ -1,0 +1,76 @@
+{% load static wagtailcore_tags %}
+
+<div class="header__overlay"></div>
+<header class="header">
+  <a class="header__logo" href="/">
+    <img src="{% static 'images/houseLogo-180x180.png' %}" alt="{{ site_name }}">
+    <p style="font-weight: 100; /*font-family: 'SourceCodePro';*/">This is a House Gallery</p>
+  </a>
+
+  {% if settings.core.NavigationSettings.main_menu %}
+    <nav class="header__navigation">
+
+      <!-- Always visible CTAs -->
+      <div class="header__ctas">
+        {% for item in settings.core.NavigationSettings.main_menu.links %}
+          {% if item.value.is_cta %}
+            <a href="{{ item.value.link.link_url }}"
+               class="cta-button primary"
+               {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+               {{ item.value.link.link_text }}
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Hamburger menu button -->
+      <button class="header__menu-button" aria-expanded="false" aria-controls="main-menu" aria-label="Toggle menu">
+        <p>Menu</p>
+        <div class="header__hamburger-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+
+      <!-- No menu container here anymore -->
+    </nav>
+  {% endif %}
+</header>
+
+<!-- Hamburger menu container - moved outside header -->
+{% if settings.core.NavigationSettings.main_menu %}
+  <div id="main-menu" class="main-menu__container">
+    <!-- Close button -->
+    <button class="main-menu__close-button" aria-label="Close menu">
+      <span class="main-menu__close-icon"></span>
+    </button>
+
+    <ul class="main-menu__items">
+      {% for item in settings.core.NavigationSettings.main_menu.links %}
+        {% if not item.value.is_cta %}
+          <li>
+            <a class="main-menu__item{% if request.path == item.value.link.link_url %} active{% endif %}"
+               href="{{ item.value.link.link_url }}"
+               {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+               {{ item.value.link.link_text }}
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    <!-- Mobile-only CTAs -->
+    <div class="header__ctas">
+      {% for item in settings.core.NavigationSettings.main_menu.links %}
+        {% if item.value.is_cta %}
+          <a href="{{ item.value.link.link_url }}"
+             class="cta-button primary"
+             {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+             {{ item.value.link.link_text }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

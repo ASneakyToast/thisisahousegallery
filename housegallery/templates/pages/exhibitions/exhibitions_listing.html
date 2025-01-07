@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}exhibitions-index{% endblock %}
+
+{% block content %}
+<div class="body normal">
+    <h1 class="title type-title">{{ page.title }}</h1>
+
+    {% if page.body %}
+    <div class="exhibition-content">
+        {% include_block page.body %}
+    </div>
+    {% endif %}
+    
+    {% if upcoming_exhibitions %}
+    <section class="exhibitions-section upcoming-exhibitions">
+        <h2 class="section-heading">Upcoming Exhibitions</h2>
+        <div class="exhibitions-grid">
+            {% for exhibition in upcoming_exhibitions %}
+                <div id="{{ exhibition.title|slugify }}" class="exhibition-listing-item exhibition-title">
+                    <section class="exhibition-header">
+                        <section>
+                            <h2>{{ exhibition.title }}</h2>
+                            <section class="exhibition-header__artists">
+                                {% for artist in exhibition.artists %}
+                                    <a href="{{ artist.url }}">
+                                        <p>{{ artist.name }}</p>
+                                    </a>
+                                {% endfor %}
+                            </section>
+                        </section>
+                        <h3>{{ exhibition.get_formatted_date_short }}</h3>
+                        <a href="{% pageurl exhibition %}" class="view-exhibition">View Exhibition Details</a>
+                    </section>
+
+                    {% with gallery_images=exhibition.get_all_gallery_images %}
+                        {% if gallery_images %}
+                            <div class="exhibition-gallery">
+                                {% for image_data in gallery_images|slice:":6" %}
+                                    {% image image_data.image width-300 as thumb %}
+                                    <div class="gallery-thumb" data-type="{{ image_data.type }}">
+                                        <img src="{{ thumb.url }}" alt="{{ image_data.caption|default:exhibition.title }}" loading="lazy">
+                                        {% if image_data.caption %}
+                                            <span class="thumb-caption">{{ image_data.caption }}</span>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                                {% if gallery_images|length > 6 %}
+                                    <div class="gallery-more">+{{ gallery_images|length|add:"-6" }} more</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    
+    {% if current_exhibitions %}
+    <section class="exhibitions-section current-exhibitions">
+        <h2 class="section-heading">Current Exhibitions</h2>
+        <div class="exhibitions-grid">
+            {% for exhibition in current_exhibitions %}
+                <div id="{{ exhibition.title|slugify }}" class="exhibition-listing-item exhibition-title">
+                    <section class="exhibition-header">
+                        <section>
+                            <h2>{{ exhibition.title }}</h2>
+                            <section class="exhibition-header__artists">
+                                {% for artist in exhibition.artists %}
+                                    <a href="{{ artist.url }}">
+                                        <p>{{ artist.name }}</p>
+                                    </a>
+                                {% endfor %}
+                            </section>
+                        </section>
+                        <h3>{{ exhibition.get_formatted_date_short }}</h3>
+                        <a href="{% pageurl exhibition %}" class="view-exhibition">View Exhibition Details</a>
+                    </section>
+
+                    {% with gallery_images=exhibition.get_all_gallery_images %}
+                        {% if gallery_images %}
+                            <div class="exhibition-gallery">
+                                {% for image_data in gallery_images|slice:":6" %}
+                                    {% image image_data.image width-300 as thumb %}
+                                    <div class="gallery-thumb" data-type="{{ image_data.type }}">
+                                        <img src="{{ thumb.url }}" alt="{{ image_data.caption|default:exhibition.title }}" loading="lazy">
+                                        {% if image_data.caption %}
+                                            <span class="thumb-caption">{{ image_data.caption }}</span>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                                {% if gallery_images|length > 6 %}
+                                    <div class="gallery-more">+{{ gallery_images|length|add:"-6" }} more</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    
+    {% if past_exhibitions %}
+    <section class="exhibitions-section past-exhibitions">
+        <h2 class="section-heading" style="font-family: var(--font-montserrat);">Past Exhibitions</h2>
+        <div class="exhibitions-grid">
+            {% for exhibition in past_exhibitions %}
+                <div id="{{ exhibition.title|slugify }}" class="exhibition-listing-item exhibition-title">
+                    <section class="exhibition-header">
+                        <section>
+                            <h2 style="font-family: var(--font-family-main); font-weight: 700;">{{ exhibition.title }}</h2>
+                            <section class="exhibition-header__artists">
+                                {% for artist in exhibition.artists %}
+                                    <a href="{{ artist.url }}">
+                                        <p style="font-weight: var(--font-weight-light); font-family: var(--font-family-heading); font-size: var(--font-size-detail, 12px);">{{ artist.name }}</p>
+                                    </a>
+                                {% endfor %}
+                            </section>
+                        </section>
+                        <h3>{{ exhibition.get_formatted_date_short }}</h3>
+                        <a href="{% pageurl exhibition %}" class="view-exhibition">View Exhibition Details</a>
+                    </section>
+
+                    {% with gallery_images=exhibition.get_all_gallery_images %}
+                        {% if gallery_images %}
+                            <div class="exhibition-gallery">
+                                {% for image_data in gallery_images|slice:":6" %}
+                                    {% image image_data.image width-300 as thumb %}
+                                    <div class="gallery-thumb" data-type="{{ image_data.type }}">
+                                        <img src="{{ thumb.url }}" alt="{{ image_data.caption|default:exhibition.title }}" loading="lazy">
+                                        {% if image_data.caption %}
+                                            <span class="thumb-caption">{{ image_data.caption }}</span>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                                {% if gallery_images|length > 6 %}
+                                    <div class="gallery-more">+{{ gallery_images|length|add:"-6" }} more</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if past_exhibitions.paginator.num_pages > 1 %}
+        <div class="pagination">
+            <ul>
+                {% if past_exhibitions.has_previous %}
+                    <li class="previous">
+                        <a href="?page={{ past_exhibitions.previous_page_number }}">&laquo; Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for page_num in past_exhibitions.paginator.page_range %}
+                    <li{% if page_num == past_exhibitions.number %} class="active"{% endif %}>
+                        <a href="?page={{ page_num }}">{{ page_num }}</a>
+                    </li>
+                {% endfor %}
+                
+                {% if past_exhibitions.has_next %}
+                    <li class="next">
+                        <a href="?page={{ past_exhibitions.next_page_number }}">Next &raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+    
+    {% if not upcoming_exhibitions and not current_exhibitions and not past_exhibitions %}
+    <div class="empty-state">
+        <p>No exhibitions currently available.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

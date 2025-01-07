@@ -1,0 +1,13 @@
+{% load wagtailcore_tags %}
+
+<section class="gallery-block gallery-{{ display_style }}{% if value.full_width %} gallery-full-width{% endif %}">
+    {% if value.title %}
+        <h2 class="gallery-title">{{ value.title }}</h2>
+    {% endif %}
+    
+    <div class="gallery-container gallery-{{ display_style }}-container">
+        {% for block in value.gallery_items %}
+            {% include_block block with display_style=display_style random_sizes=random_sizes full_width=value.full_width %}
+        {% endfor %}
+    </div>
+</section>

@@ -1,0 +1,65 @@
+/* Social Media Links Component */
+
+.social-media-link {
+  margin-bottom: 0.75rem;
+}
+
+.social-media-link__item {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-text);
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.social-media-link__item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateX(2px);
+}
+
+.social-media-link__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  color: var(--color-text);
+}
+
+/* Platform-specific colors on hover */
+.social-media-link__item--instagram:hover .social-media-link__icon {
+  color: #E1306C;
+}
+
+.social-media-link__item--facebook:hover .social-media-link__icon {
+  color: #1877F2;
+}
+
+.social-media-link__item--twitter:hover .social-media-link__icon {
+  color: #1DA1F2;
+}
+
+.social-media-link__item--linkedin:hover .social-media-link__icon {
+  color: #0077B5;
+}
+
+.social-media-link__item--youtube:hover .social-media-link__icon {
+  color: #FF0000;
+}
+
+.social-media-link__item--tiktok:hover .social-media-link__icon {
+  color: #000000;
+}
+
+.social-media-link__item--pinterest:hover .social-media-link__icon {
+  color: #E60023;
+}
+
+.social-media-link__item--vimeo:hover .social-media-link__icon {
+  color: #1AB7EA;
+}
+
+.social-media-link__text {
+  font-size: 0.9rem;
+}

@@ -1,0 +1,28 @@
+.footer {
+  background: var(--color-white);
+  color: var(--color-black);
+
+  padding: 2rem 1rem;
+  text-align: center;
+}
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.footer-title {
+  margin-bottom: 0.5rem;
+
+  font-size: var(--font-size-label);
+  font-family: var(--font-family-label);
+  line-height: var(--line-height-label);
+  font-weight: var(--font-weight-label);
+}
+.footer-copyright {
+  font-size: 0.9rem;
+  opacity: 0.8;
+
+  font-size: var(--font-size-detail);
+  font-family: var(--font-family-detail);
+  line-height: var(--line-height-detail);
+  font-weight: var(--font-weight-detail);
+}

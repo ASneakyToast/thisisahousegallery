@@ -1,0 +1,31 @@
+services:
+  django-base:
+    platform: linux/amd64
+    build:
+      context: ../.
+      dockerfile: ./compose/django/Dockerfile
+      args:
+        - django_settings=config.settings.local
+        - cloud_project=housegallery
+        - build_type=dev
+    volumes:
+      - ..:/app:z
+    ports:
+      - '8000:8000'
+    # Base service - extended by specific environments
+
+  node:
+    container_name: housegallery_node
+    platform: linux/amd64
+    build:
+      context: ../.
+      dockerfile: ./compose/node/Dockerfile
+    volumes:
+      - ..:/app:z
+      - node_modules:/app/node_modules
+    ports:
+      - '3000:3000'
+    command: npm run dev
+
+volumes:
+  node_modules:
