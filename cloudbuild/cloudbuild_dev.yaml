@@ -81,14 +81,14 @@ steps:
     waitFor: ['push-image']
 
 
-logsBucket: "gs://ccaedu-cloudbuild-log-staging/${_BUILD_TYPE}"
+logsBucket: "gs://housegallery-cloudbuild-log/${_BUILD_TYPE}"
 
 substitutions:
   _BUILD_TYPE: ''  # must define in the build trigger: staging/qa/dev-*
   _DB_INSTANCE_NAME: housegallery
   _DJANGO_SETTINGS: config.settings.production
   _REGION: us-west2
-  _SERVICE_ACCOUNT: housegallery-sa
+  _SERVICE_ACCOUNT: housegallerybutler
   _SERVICE_NAME: housegallery-${_BUILD_TYPE}-service
   _MGMT_CMD_CLEARSESSIONS: housegallery-${_BUILD_TYPE}-mgmt-cmd-clearsessions
   _MGMT_CMD_UPDATEINDEX: housegallery-${_BUILD_TYPE}-mgmt-cmd-update-index
