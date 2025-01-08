@@ -1,20 +1,19 @@
 
 #######################################
-FROM node:18-alpine AS frontend
+FROM node:20-alpine AS client-builder
 
-ENV APP_HOME /app
-WORKDIR $APP_HOME
+ARG APP_HOME=/app
+WORKDIR ${APP_HOME}
 
 # Install FE dependencies
-COPY package.json $APP_HOME/
-RUN npm install && npm cache clean --force
+COPY package.json ${APP_HOME}
+RUN npm install --loglevel verbose && npm cache clean --force
 
-# Copy FE configs and project files into the docker image
-COPY .babelrc .eslintrc $APP_HOME/
-COPY webpack/ $APP_HOME/webpack/
-COPY cca/static_src/ $APP_HOME/cca/static_src/
+# Copy project files into the docker image
+COPY . ${APP_HOME}
+
 # Build FE
-RUN npm run build:prod
+RUN npm run build
 
 
 #######################################
@@ -43,7 +42,7 @@ RUN pip wheel --wheel-dir /usr/src/app/wheels  \
 # Python 'run' stage
 FROM python AS python-run-stage
 
-ENV APP_HOME /app
+ARG APP_HOME=/app
 
 # Removes output stream buffering, allowing for more efficient logging
 # i.e. print stmt output to sys.stdout immediately (without flush)
@@ -61,9 +60,7 @@ ENV GCP_PROJECT="${cloud_project}"
 RUN echo "${DJANGO_SETTINGS_MODULE} - ${BUILD_TYPE} - ${GCP_PROJECT}"
 #----------------
 
-
 WORKDIR ${APP_HOME}
-
 
 RUN addgroup --system django \
     && adduser --system --ingroup django django
@@ -100,16 +97,9 @@ RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
 
 
-# Install application code
-COPY . ${APP_HOME}
+# copy application code to WORKDIR
+COPY --from=client-builder --chown=django:django ${APP_HOME} ${APP_HOME}
 
-
-# Collect django static files
-COPY --chown=django:django cca/static_src/images/ $APP_HOME/static/images
-
-# Collect webpack static files
-COPY --from=frontend --chown=django:django $APP_HOME/cca/static/ $APP_HOME/cca/static
-COPY --from=frontend --chown=django:django $APP_HOME/webpack-stats.json $APP_HOME/webpack-stats.json
 
 RUN chown -R django:django ${APP_HOME}
 
