@@ -23,6 +23,8 @@ FROM docker.io/python:3.9.12-slim-bullseye AS python
 # Python build stage
 FROM python AS python-build-stage
 
+ARG BUILD_ENVIRONMENT=production
+
 # Install apt packages
 RUN apt-get update && apt-get install --no-install-recommends -y \
   # dependencies for building Python packages
@@ -35,7 +37,7 @@ COPY ./requirements .
 
 # Create Python Dependency and Sub-Dependency Wheels.
 RUN pip wheel --wheel-dir /usr/src/app/wheels  \
-  -r prod.txt
+  -r ${BUILD_ENVIRONMENT}.txt
 
 
 #######################################
