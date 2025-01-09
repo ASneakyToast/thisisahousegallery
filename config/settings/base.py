@@ -1,6 +1,16 @@
+"""
+Django settings for thisisahousegallery.com.
+
+Referenced:
+- https://cloud.google.com/python/django/run
+- https://github.com/cookiecutter/cookiecutter-django
+- https://github.com/cca/cca-edu
+"""
+
 from pathlib import Path
 
 import io
+import json
 import os
 from urllib.parse import urlparse
 
@@ -10,14 +20,7 @@ from google.cloud import secretmanager
 env = environ.Env()
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-APPS_DIR = BASE_DIR / "thisisahousegallerybird"
-
-# Attempt to load the Project ID or Build Type from env
-PROJECT_ID = os.environ.get("GCP_PROJECT")
-BUILD_TYPE = os.environ.get("BUILD_TYPE")
-if not PROJECT_ID or not BUILD_TYPE:
-    raise Exception("No GCP_PROJECT or BUILD_TYPE. Exit")
-
+APPS_DIR = BASE_DIR / "housegallery"
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -29,12 +32,22 @@ USE_I18N = True
 USE_TZ = True
 LOCALE_PATHS = [str(BASE_DIR / "locale")]
 
+APP_NAME = env('APP_NAME', default='housegallery')
+
 # Basic configuration
 if 'PRIMARY_HOST' in env:
     WAGTAILADMIN_BASE_URL = 'https://%s' % env['PRIMARY_HOST']
 
-# SECRETS
+# SECRETS & GCP
 # ------------------------------------------------------------------------------
+
+# Attempt to load the Project ID or Build Type from env
+PROJECT_ID = os.environ.get("GCP_PROJECT")
+BUILD_TYPE = os.environ.get("BUILD_TYPE")
+if not PROJECT_ID or not BUILD_TYPE:
+    raise Exception("No GCP_PROJECT or BUILD_TYPE. Exit")
+
+
 # [START cloudrun_django_secret_config]
 def get_secret(project_id, client, secret_name):
     secret = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
@@ -46,8 +59,6 @@ client = secretmanager.SecretManagerServiceClient()
 env.read_env(get_secret(PROJECT_ID, client, 'housegallery-settings'))
 
 # [END cloudrun_django_secret_config]
-
-APP_NAME = env('APP_NAME', default='housegallery')
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -117,10 +128,6 @@ THIRD_PARTY_APPS = [
     "taggit",
     "crispy_forms",
     "crispy_bootstrap5",
-    "allauth",
-    "allauth.account",
-    "allauth.mfa",
-    "allauth.socialaccount",
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
@@ -133,8 +140,7 @@ GOOGLE_APPS = [
 ]
 
 LOCAL_APPS = [
-    "thisisahousegallerybird.users",
-    "thisisahousegallerybird.images",
+    "housegallery.images",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + WAGTAIL_APPS + THIRD_PARTY_APPS + LOCAL_APPS + GOOGLE_APPS
@@ -142,21 +148,17 @@ INSTALLED_APPS = DJANGO_APPS + WAGTAIL_APPS + THIRD_PARTY_APPS + LOCAL_APPS + GO
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "thisisahousegallerybird.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "housegallery.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
+# https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
-# https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
-AUTH_USER_MODEL = "users.User"
-# https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "users:redirect"
-# https://docs.djangoproject.com/en/dev/ref/settings/#login-url
-LOGIN_URL = "account_login"
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
@@ -192,7 +194,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
@@ -290,7 +291,6 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "thisisahousegallerybird.users.context_processors.allauth_settings",
             ],
         },
     },
@@ -335,9 +335,6 @@ ADMIN_URL = "admin/"
 ADMINS = [("""Joel Lithgow""", "joel-lithgow@thisisahousegallery.com")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
-# https://cookiecutter-django.readthedocs.io/en/latest/settings.html#other-environment-settings
-# Force the `admin` sign in process to go through the `django-allauth` workflow
-DJANGO_ADMIN_FORCE_ALLAUTH = env.bool("DJANGO_ADMIN_FORCE_ALLAUTH", default=False)
 
 # LOGGING
 # ------------------------------------------------------------------------------
@@ -349,7 +346,13 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s",
+            'format': json.dumps({
+                "date": "%(asctime)s",
+                "level": "%(levelname)s",
+                "name": "%(name)s:%(lineno)s",
+                "process": "%(process)d",
+                "thread": "%(thread)d",
+                "message": "%(message)s"}),
         },
     },
     "handlers": {
@@ -362,24 +365,6 @@ LOGGING = {
     "root": {"level": "INFO", "handlers": ["console"]},
 }
 
-
-# django-allauth
-# ------------------------------------------------------------------------------
-ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
-# https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_AUTHENTICATION_METHOD = "username"
-# https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_EMAIL_REQUIRED = True
-# https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-# https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_ADAPTER = "thisisahousegallerybird.users.adapters.AccountAdapter"
-# https://docs.allauth.org/en/latest/account/forms.html
-ACCOUNT_FORMS = {"signup": "thisisahousegallerybird.users.forms.UserSignupForm"}
-# https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_ADAPTER = "thisisahousegallerybird.users.adapters.SocialAccountAdapter"
-# https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_FORMS = {"signup": "thisisahousegallerybird.users.forms.UserSocialSignupForm"}
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
@@ -399,8 +384,8 @@ CORS_URLS_REGEX = r"^/api/.*$"
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
 SPECTACULAR_SETTINGS = {
-    "TITLE": "thisisahousegallerybird API",
-    "DESCRIPTION": "Documentation of API endpoints of thisisahousegallerybird",
+    "TITLE": "housegallery API",
+    "DESCRIPTION": "Documentation of API endpoints of housegallery",
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SCHEMA_PATH_PREFIX": "/api/",
@@ -415,5 +400,3 @@ WEBPACK_LOADER = {
         "IGNORE": [r".+\.hot-update.js", r".+\.map"],
     },
 }
-# Your stuff...
-# ------------------------------------------------------------------------------

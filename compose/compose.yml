@@ -1,7 +1,7 @@
 services:
   django:
-    container_name: thisisahousegallerybird_local_django
-    image: thisisahousegallerybird_local_django
+    container_name: housegallery_local_django
+    image: housegallery_local_django
     platform: linux/amd64
     depends_on:
       - housegallery-sql-proxy
@@ -22,7 +22,7 @@ services:
     command: /start
 
   housegallery-sql-proxy:
-    container_name: thisisahousegallerybird_local_sql_proxy
+    container_name: housegallery_local_sql_proxy
     platform: linux/amd64
     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.7.1
     volumes:
@@ -34,9 +34,9 @@ services:
     command: --address 0.0.0.0 housegallery:us-west2:housegallery
 
   node:
-    container_name: thisisahousegallerybird_local_node
+    container_name: housegallery_local_node
     platform: linux/amd64
-    image: thisisahousegallerybird_local_node
+    image: housegallery_local_node
     depends_on:
       - django
     build:
@@ -44,11 +44,12 @@ services:
       dockerfile: ./compose/node/Dockerfile
     volumes:
       - ..:/app:z
-      - thisisahousegallerybird_local_node_modules:/app/node_modules
+      - housegallery_local_node_modules:/app/node_modules
       # http://jdlm.info/articles/2016/03/06/lessons-building-node-app-docker.html
       # - /app/node_modules
     ports:
       - '3000:3000'
     command: npm run dev
+
 volumes:
-  thisisahousegallerybird_local_node_modules:
+  housegallery_local_node_modules:

@@ -1,7 +1,7 @@
 import pytest
 
-from thisisahousegallerybird.users.models import User
-from thisisahousegallerybird.users.tests.factories import UserFactory
+from housegallery.users.models import User
+from housegallery.users.tests.factories import UserFactory
 
 
 @pytest.fixture(autouse=True)
