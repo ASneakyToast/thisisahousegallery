@@ -22,6 +22,7 @@ env = environ.Env()
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = BASE_DIR / "housegallery"
 
+
 # GENERAL
 # ------------------------------------------------------------------------------
 DEBUG = env.bool("DJANGO_DEBUG", False)
@@ -34,12 +35,29 @@ LOCALE_PATHS = [str(BASE_DIR / "locale")]
 
 APP_NAME = env('APP_NAME', default='housegallery')
 
+
 # Basic configuration
+# ---------------------------------------------------------------------------------------
 if 'PRIMARY_HOST' in env:
     WAGTAILADMIN_BASE_URL = 'https://%s' % env['PRIMARY_HOST']
 
+if 'CACHE_PURGE_URL' in env:
+    INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
+    WAGTAILFRONTENDCACHE = {
+        'default': {
+            'BACKEND': 'wagtail.contrib.frontend_cache.backends.HTTPBackend',
+            'LOCATION': env('CACHE_PURGE_URL'),
+        },
+    }
+
+if env('PREPEND_WWW', default='false').lower().strip() == 'true':
+    PREPEND_WWW = True
+
+
 # SECRETS & GCP
 # ------------------------------------------------------------------------------
+if 'SECRET_KEY' in env:
+    SECRET_KEY = env('SECRET_KEY')
 
 # Attempt to load the Project ID or Build Type from env
 PROJECT_ID = os.environ.get("GCP_PROJECT")
@@ -59,6 +77,7 @@ client = secretmanager.SecretManagerServiceClient()
 env.read_env(get_secret(PROJECT_ID, client, 'housegallery-settings'))
 
 # [END cloudrun_django_secret_config]
+
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -95,6 +114,7 @@ else:
 # ------------------------------------------------------------------------------
 ROOT_URLCONF = "config.urls"
 WSGI_APPLICATION = "config.wsgi.application"
+
 
 # APPS
 # ------------------------------------------------------------------------------
@@ -145,10 +165,12 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + WAGTAIL_APPS + THIRD_PARTY_APPS + LOCAL_APPS + GOOGLE_APPS
 
+
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
 MIGRATION_MODULES = {"sites": "housegallery.contrib.sites.migrations"}
+
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -159,6 +181,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
+
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
@@ -180,6 +203,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+
 # MIDDLEWARE
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
@@ -197,6 +221,7 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
+
 # MEDIA & STATIC
 # ------------------------------------------------------------------------------
 # MEDIA_ROOT not used for GSB setup for django-storage
@@ -209,6 +234,7 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
+# STATIC_ROOT is not used for GSB setup for django-storage
 # STATIC_ROOT = str(BASE_DIR / "staticfiles")
 STATIC_URL = "/static/"
 
@@ -233,6 +259,7 @@ STORAGES = {
 }
 
 # [END local staticfiles]
+
 
 # WAGTAIL settings
 # ---------------------------------------------------------------------------------------
@@ -269,6 +296,7 @@ WAGTAIL_PASSWORD_REQUIRED_TEMPLATE = 'password_required.html'
 
 DEFAULT_PER_PAGE = 20
 
+
 # TEMPLATES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#templates
@@ -303,29 +331,42 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
+
 # FIXTURES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#fixture-dirs
 FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
 
-# SECURITY
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
-SESSION_COOKIE_HTTPONLY = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
-X_FRAME_OPTIONS = "DENY"
 
 # EMAIL
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND",
-    default="django.core.mail.backends.smtp.EmailBackend",
-)
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
-EMAIL_TIMEOUT = 5
+# ---------------------------------------------------------------------------------------
+if 'EMAIL_HOST' in env:
+    EMAIL_HOST = env('EMAIL_HOST')
+
+if 'EMAIL_PORT' in env:
+    try:
+        EMAIL_PORT = int(env('EMAIL_PORT'))
+    except ValueError:
+        pass
+
+if 'EMAIL_HOST_USER' in env:
+    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+
+if 'EMAIL_HOST_PASSWORD' in env:
+    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
+if env('EMAIL_USE_TLS', default='false').lower().strip() == 'true':
+    EMAIL_USE_TLS = True
+
+if env('EMAIL_USE_SSL', default='false').lower().strip() == 'true':
+    EMAIL_USE_SSL = True
+
+if 'EMAIL_SUBJECT_PREFIX' in env:
+    EMAIL_SUBJECT_PREFIX = env('EMAIL_SUBJECT_PREFIX')
+
+if 'SERVER_EMAIL' in env:
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL = env('SERVER_EMAIL')
+
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -336,16 +377,79 @@ ADMINS = [("""Joel Lithgow""", "joel-lithgow@thisisahousegallery.com")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 
+
+# SECURITY
+# ---------------------------------------------------------------------------------------
+# This configuration is required to achieve good security rating.
+# You can test it using https://securityheaders.com/
+# https://docs.djangoproject.com/en/stable/ref/middleware/#module-django.middleware.security
+
+# Force HTTPS redirect
+# https://docs.djangoproject.com/en/stable/ref/settings/#secure-ssl-redirect
+SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', default='true').strip().lower() == 'true'
+# If SECURE_SSL_REDIRECT == True, we need to exclude monitoring URLs from
+# from redirection to allow Google Cloud Load Balancer perform health checks
+# Has not effect when SECURE_SSL_REDIRECT == False
+SECURE_REDIRECT_EXEMPT = [
+    '^healthz/$'
+]
+
+# This will allow the cache to swallow the fact that the website is behind TLS
+# and inform the Django using "X-Forwarded-Proto" HTTP header.
+# https://docs.djangoproject.com/en/stable/ref/settings/#secure-proxy-ssl-header
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# https://docs.djangoproject.com/en/stable/ref/settings/#secure-browser-xss-filter
+SECURE_BROWSER_XSS_FILTER = env('SECURE_BROWSER_XSS_FILTER', default='true').lower().strip() == 'true'
+
+# https://docs.djangoproject.com/en/stable/ref/settings/#secure-content-type-nosniff
+SECURE_CONTENT_TYPE_NOSNIFF = env('SECURE_CONTENT_TYPE_NOSNIFF', default='true').lower().strip() == 'true'
+
+# This is a setting setting HSTS header. This will enforce the visitors to use
+# HTTPS for an amount of time specified in the header. Please make sure you
+# consult with sysadmin before setting this.
+# https://docs.djangoproject.com/en/stable/ref/settings/#secure-hsts-seconds
+if 'SECURE_HSTS_SECONDS' in env:
+    SECURE_HSTS_SECONDS = int(env('SECURE_HSTS_SECONDS'))
+
+# Content Security policy settings
+# http://django-csp.readthedocs.io/en/latest/configuration.html
+if 'CSP_DEFAULT_SRC' in env:
+    MIDDLEWARE.append('csp.middleware.CSPMiddleware')
+
+    # The “special” source values of 'self', 'unsafe-inline', 'unsafe-eval', and 'none' must be quoted!
+    # e.g.: CSP_DEFAULT_SRC = "'self'" Without quotes they will not work as intended.
+
+    CSP_DEFAULT_SRC = env('CSP_DEFAULT_SRC').split(',')
+    if 'CSP_SCRIPT_SRC' in env:
+        CSP_SCRIPT_SRC = env('CSP_SCRIPT_SRC').split(',')
+    if 'CSP_STYLE_SRC' in env:
+        CSP_STYLE_SRC = env('CSP_STYLE_SRC').split(',')
+    if 'CSP_IMG_SRC' in env:
+        CSP_IMG_SRC = env('CSP_IMG_SRC').split(',')
+    if 'CSP_CONNECT_SRC' in env:
+        CSP_CONNECT_SRC = env('CSP_CONNECT_SRC').split(',')
+
+# Referrer-policy header settings
+# https://django-referrer-policy.readthedocs.io/en/1.0/
+REFERRER_POLICY = env('SECURE_REFERRER_POLICY', default='no-referrer-when-downgrade').strip()
+
+
 # LOGGING
 # ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#logging
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
 # See https://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+
+# only output log to stdout on GCP
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'structured': {
             'format': json.dumps({
                 "date": "%(asctime)s",
                 "level": "%(levelname)s",
@@ -355,14 +459,21 @@ LOGGING = {
                 "message": "%(message)s"}),
         },
     },
-    "handlers": {
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',
+            'formatter': 'structured',
         },
     },
-    "root": {"level": "INFO", "handlers": ["console"]},
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        }
+    }
 }
 
 
