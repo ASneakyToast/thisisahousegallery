@@ -20,7 +20,6 @@ ALLOWED_HOSTS = [
     "localhost", 
      "0.0.0.0", 
      "127.0.0.1",
-     "https://housegallery-dev-jrl-service-591747915969.us-west2.run.app/"
  ]  # noqa: S104
 
 INTERNAL_IPS = ['127.0.0.1', ]
