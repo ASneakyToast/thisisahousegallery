@@ -14,7 +14,8 @@ SECRET_KEY = env(
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["thisisahousegallery.com"])
+# Don't need this because cloud run provides?
+# ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["thisisahousegallery.com"])
 
 
 # DATABASES
