@@ -25,7 +25,7 @@ repos:
     hooks:
       - id: prettier
         args: ['--tab-width', '2', '--single-quote']
-        exclude: 'thisisahousegallerybird/templates/'
+        exclude: 'housegallery/templates/'
 
   - repo: https://github.com/adamchainz/django-upgrade
     rev: '1.22.2'
