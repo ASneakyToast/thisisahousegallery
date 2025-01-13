@@ -6,6 +6,10 @@ from .base import SPECTACULAR_SETTINGS
 from .base import env
 
 DEBUG = True
+SECRET_KEY = env(
+    "DJANGO_SECRET_KEY",
+    default="84qabQD6jDUMuJ62oHduh7X0cmZ9CHP5phr2QsixrOE7dhwT6m9EIetnfTmidcyp",
+)
 
 # GENERAL
 # ------------------------------------------------------------------------------
