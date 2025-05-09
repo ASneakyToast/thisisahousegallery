@@ -1,5 +1,8 @@
 {% extends "base.html" %}
+{% load wagtailcore_tags %}
 
 {% block content %}
-<p>Foo Foo Bar Baby</p>
+<div class="blank-page-content">
+    {% include_block page.body %}
+</div>
 {% endblock content %}

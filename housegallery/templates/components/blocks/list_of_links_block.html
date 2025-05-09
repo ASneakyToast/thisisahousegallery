@@ -1,0 +1,17 @@
+{% load wagtailcore_tags %}
+
+<div class="list-of-links block-wrapper">
+    {% if value.title %}
+    <h3 class="list-of-links__title">{{ value.title }}</h3>
+    {% endif %}
+
+    <div class="list-of-links__items">
+        {% for link in value.links %}
+            {% if link.block_type == 'button_link' %}
+                {% include "components/ui/button_link.html" with value=link.value %}
+            {% elif link.block_type == 'carrot_link' %}
+                {% include "components/ui/button_carrot.html" with value=link.value %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>

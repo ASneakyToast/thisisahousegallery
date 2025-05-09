@@ -1,7 +1,16 @@
 from wagtail import blocks
 
 from housegallery.core.rich_text import MINIMAL_RICHTEXT
-from housegallery.core.blocks.links import ButtonLinkBlock, CarrotLinkBlock
+from housegallery.core.blocks.links import ButtonLinkBlock, CarrotLinkBlock, ListOfLinksBlock
+
+# Create a subclass of ListOfLinksBlock that hides the title field in the admin
+class HeroLinksBlock(ListOfLinksBlock):
+    """A collection of links for the hero section with the title field hidden."""
+
+    # Override the title field to make it not required and hide it in the admin
+    title = None  # This removes the field entirely
+
+
 
 
 class HeroSection(blocks.StructBlock):
@@ -13,12 +22,10 @@ class HeroSection(blocks.StructBlock):
         help_text='Introduction | Recommended: 10-15 words | Max length: 128 characters.'
     )
 
-    ctas = blocks.StreamBlock([
-        ('link_button', ButtonLinkBlock()),
-        ('link_carrot', CarrotLinkBlock()),
-    ],
-        help_text='Add some major links bro',
-        icon='link'
+    ctas = HeroLinksBlock(
+        required=False,
+        label='Call to Actions',
+        help_text='Add links for the hero section'
     )
 
     class Meta:

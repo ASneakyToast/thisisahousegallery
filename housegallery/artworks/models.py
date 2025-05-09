@@ -74,9 +74,18 @@ class Artwork(ClusterableModel):
         blank=True,
         max_length=255
     )
-    date_created = models.DateTimeField(
+    materials = models.TextField(
         blank=True,
-        auto_now_add=True,
+        max_length=255
+    )
+    size = models.CharField(
+        blank=True,
+        max_length=255,
+        help_text="Height x Width x Depth"
+    )
+    date = models.DateTimeField(
+        blank=True,
+        null=True,
     )
     artifacts = StreamField([
         ('image', ArtworkImageBlock()),
@@ -87,6 +96,7 @@ class Artwork(ClusterableModel):
     panels = [
         FieldPanel('title'),
         FieldPanel('artist'),
+        FieldPanel('date'),
         FieldPanel('description'),
         FieldPanel('artifacts'),
     ]

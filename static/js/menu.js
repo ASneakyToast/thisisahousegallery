@@ -64,6 +64,8 @@ class MenuAnimationController {
   }
 
   openMenu() {
+    console.log('poop');
+
     // Toggle active class on menu button
     this.menuButton.classList.add('active');
 
@@ -88,25 +90,22 @@ class MenuAnimationController {
     });
 
     // Menu container animation
-    openAnimation.add({
-      targets: this.mainMenu,
-      translateX: ['100%', '0%'],
+    openAnimation.add(this.mainMenu, {
+      x: ['100px', '0'],
       opacity: [0, 1],
       duration: 600
     });
 
     // Overlay animation
     if (this.overlay) {
-      openAnimation.add({
-        targets: this.overlay,
+      openAnimation.add(this.overlay, {
         opacity: [0, 1],
         duration: 500
       }, '-=500');
     }
 
     // Menu items animation
-    openAnimation.add({
-      targets: this.menuItems,
+    openAnimation.add(this.menuItems, {
       translateY: [20, 0],
       opacity: [0, 1],
       delay: stagger(80),
@@ -115,14 +114,16 @@ class MenuAnimationController {
 
     // CTA buttons animation
     if (this.ctaButtons.length > 0) {
-      openAnimation.add({
-        targets: this.ctaButtons,
+      openAnimation.add(this.ctaButtons, {
         translateY: [20, 0],
         opacity: [0, 1],
         delay: stagger(100),
         duration: 800
       }, '-=600');
     }
+
+    // Play the animation
+    openAnimation.restart();
   }
 
   closeMenu() {
@@ -133,8 +134,7 @@ class MenuAnimationController {
     });
 
     // Animate menu items out first
-    closeAnimation.add({
-      targets: this.menuItems,
+    closeAnimation.add(this.menuItems, {
       translateY: [0, 10],
       opacity: [1, 0],
       delay: stagger(50, {from: 'last'}),
@@ -143,8 +143,7 @@ class MenuAnimationController {
 
     // Animate CTA buttons out
     if (this.ctaButtons.length > 0) {
-      closeAnimation.add({
-        targets: this.ctaButtons,
+      closeAnimation.add(this.ctaButtons, {
         translateY: [0, 10],
         opacity: [0],
         delay: stagger(50, {from: 'last'}),
@@ -153,9 +152,8 @@ class MenuAnimationController {
     }
 
     // Animate container out
-    closeAnimation.add({
-      targets: this.mainMenu,
-      translateX: ['0%', '100%'],
+    closeAnimation.add(this.mainMenu, {
+      translateX: ['0', '100%'],
       opacity: [1, 0],
       duration: 500,
       complete: () => {
@@ -169,8 +167,7 @@ class MenuAnimationController {
 
     // Animate overlay out
     if (this.overlay) {
-      closeAnimation.add({
-        targets: this.overlay,
+      closeAnimation.add(this.overlay, {
         opacity: [1, 0],
         duration: 300,
         complete: () => {
@@ -178,6 +175,9 @@ class MenuAnimationController {
         }
       }, '-=400');
     }
+
+    // Play the animation
+    closeAnimation.restart();
   }
 }
 
