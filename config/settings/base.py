@@ -88,9 +88,19 @@ DATABASES["default"]["NAME"] = f'housegallery-{BUILD_TYPE}'
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 if os.environ.get("DJANGO_SETTINGS_MODULE") == "config.settings.local":
-    # locally in docker-compose
-    DATABASES["default"]["HOST"] = "housegallery-sql-proxy"
-    DATABASES["default"]["PORT"] = 5432
+    # Check if we should use local Postgres app instead of SQL proxy
+    if os.environ.get("USE_CLOUD_DB", "true").lower() == "true":
+        # Use SQL proxy in docker-compose (default)
+        DATABASES["default"]["HOST"] = "housegallery-sql-proxy"
+        DATABASES["default"]["PORT"] = 5432
+    else:
+        # Connect to local Postgres container
+        DATABASES["default"]["HOST"] = "postgres" 
+        DATABASES["default"]["PORT"] = 5432
+        # These can be overridden in local.py if needed
+        DATABASES["default"]["NAME"] = "housegallery-dev" 
+        DATABASES["default"]["USER"] = "admin"
+        DATABASES["default"]["PASSWORD"] = "password"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -130,17 +140,18 @@ DJANGO_APPS = [
 ]
 
 WAGTAIL_APPS = [
-  'wagtail.contrib.forms',
-  'wagtail.contrib.redirects',
-  'wagtail.embeds',
-  'wagtail.sites',
-  'wagtail.users',
-  'wagtail.snippets',
-  'wagtail.documents',
-  'wagtail.images',
-  'wagtail.search',
-  'wagtail.admin',
-  'wagtail',
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.contrib.settings',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail',
 ]
 
 THIRD_PARTY_APPS = [
@@ -160,6 +171,11 @@ GOOGLE_APPS = [
 ]
 
 LOCAL_APPS = [
+    "housegallery.artists",
+    "housegallery.artworks",
+    "housegallery.core",
+    "housegallery.exhibitions",
+    "housegallery.home",
     "housegallery.images",
 ]
 
@@ -319,11 +335,13 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                'wagtail.contrib.settings.context_processors.settings',
             ],
         },
     },
 ]
 
+# TODO: Check if I can get rid of these three vars
 # https://docs.djangoproject.com/en/dev/ref/settings/#form-renderer
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 

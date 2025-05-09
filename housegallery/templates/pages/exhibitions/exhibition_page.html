@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<article class="exhibition">
+		<header class="exhibition-header">
+				<h1 class="exhibition-title">{{ page.title }}</h1>
+				
+				<div class="exhibition-dates">
+						{% if page.start_date %}
+								<span class="start-date">{{ page.start_date|date:"F j, Y" }}</span>
+								{% if page.end_date %} - <span class="end-date">{{ page.end_date|date:"F j, Y" }}</span>{% endif %}
+						{% endif %}
+				</div>
+				
+				{% if page.artists %}
+				<div class="exhibition-artists">
+						<h2>Featured Artists</h2>
+						<ul>
+								{% for artist in page.artists %}
+										<li><a href="{{ artist.url }}">{{ artist.name }}</a></li>
+								{% endfor %}
+						</ul>
+				</div>
+				{% endif %}
+		</header>
+
+		<div class="exhibition-content">
+				{% if page.featured_image %}
+						<div class="featured-image">
+								{% image page.featured_image width-800 as img %}
+								<img src="{{ img.url }}" alt="{{ img.alt }}" width="{{ img.width }}" height="{{ img.height }}">
+						</div>
+				{% endif %}
+				
+				{% if page.description %}
+				<div class="exhibition-description">
+						{{ page.description|richtext }}
+				</div>
+				{% endif %}
+		</div>
+</article>
+{% endblock %}

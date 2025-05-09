@@ -1,0 +1,11 @@
+{% load wagtailcore_tags %}
+
+<section class="hero-section">
+  <h1 class="hero-section__intro">{{ value.intro }}</h1>
+
+  <section class="hero-section__links">
+    {% for link in value.ctas %}
+      {% include_block link with id=link.id %}
+    {% endfor %}
+  </section>
+</section>

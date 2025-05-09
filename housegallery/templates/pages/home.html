@@ -1,5 +1,11 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% load wagtailcore_tags %}
 
 {% block content %}
-<p>Bar Foo</p>
+
+  <section class="home__body" id="home-body">
+      {% include_block page.body %}
+  </section>
+
 {% endblock content %}

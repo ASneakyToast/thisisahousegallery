@@ -1,0 +1,14 @@
+.hero-section {
+  background: var(--color-white, #fefefe);
+  margin: var(--size-layout-heading-spacing) 0;
+  padding: 0 var(--size-layout-gutter);
+}
+
+.hero-section__intro {
+  font-size: var(--font-size-intro);
+  font-family: var(--font-family-intro);
+  line-height: var(--line-height-intro);
+  font-weight: var(--font-weight-intro);
+
+  width: 74%;
+}

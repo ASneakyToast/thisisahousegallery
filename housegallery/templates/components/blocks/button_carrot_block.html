@@ -1,0 +1,9 @@
+{% comment %}Duplicate code as markup/button_link_block.html{% endcomment %}
+
+{% if value.link_url %}
+    <a href="{{ value.link_url }}"
+       class="button-carrot"
+       {% if value.link_type == 'external' or value.link_type == 'document' %} target="_blank" rel="noopener noreferrer"{% endif %}>
+        {{ value.link_text }}
+    </a>
+{% endif %}

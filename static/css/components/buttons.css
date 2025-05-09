@@ -1,0 +1,23 @@
+.button-link {
+  display: inline-block;
+  text-decoration: none;
+  width: fit-content;
+
+  background: var(--color-white);
+  color: var(--color-black);
+
+  border: 1px solid var(--color-black);
+  padding: 8px 24px;
+
+  font-size: var(--font-size-label);
+  font-family: var(--font-family-label);
+  line-height: var(--line-height-label);
+  font-weight: var(--font-weight-label);
+
+  transition: all 120ms ease;
+}
+
+.button-link:hover {
+  background: var(--color-black);
+  color: var(--color-white);
+}

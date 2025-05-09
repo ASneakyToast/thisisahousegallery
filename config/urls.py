@@ -21,7 +21,6 @@ ignore_cache_urlpatterns = [
 # Public URLs that are meant to be cached.
 public_urlpatterns = [
     path('sitemap.xml', sitemap),
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
 ]
 
 if settings.DEBUG:

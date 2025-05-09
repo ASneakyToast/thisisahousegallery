@@ -1,4 +1,3 @@
-
 {% load static i18n %}
     {% load render_bundle from webpack_loader %}
 
@@ -19,63 +18,26 @@
   <meta name="author"
         content="Joel Lithgow" />
   <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+  </style>
   {% block css %}
-<!-- Your stuff: Third-party CSS libraries go here -->
-<!-- This file stores project-specific CSS -->
+    {% render_bundle 'styles' 'css' %}
+  {% endblock css %}
 
-
-{% render_bundle 'project' 'css' %}
-
-
-{% endblock css %}
-<!-- Le javascript
-    ================================================== -->
-{# Placed at the top of the document so pages load faster with defer #}
-{% block javascript %}
-
-
-<!-- Vendor dependencies bundled as one file -->
-{% render_bundle 'vendors' 'js' attrs='defer' %}
-
-
-<!-- place project specific Javascript in this file -->
-
-
-{% render_bundle 'project' 'js' attrs='defer' %}
-
-
-{% endblock javascript %}
+  {% block javascript %}
+    {% render_bundle 'vendors' 'js' attrs='defer' %}
+    {% render_bundle 'project' 'js' attrs='defer' %}
+  {% endblock javascript %}
 </head>
+
 <body class="{% block bodyclass %}{% endblock bodyclass %}">
+  {% include "components/header.html" %}
+
   {% block body %}
-  <div class="mb-1">
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-      <div class="container-fluid">
-        <button class="navbar-toggler navbar-toggler-right"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <a class="navbar-brand" href="{% url 'home' %}">thisisahousegallery</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="{% url 'home' %}">Home <span class="visually-hidden">(current)</span></a>
-            </li>
-            {% comment %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'about' %}">About</a>
-            </li>
-            {% endcomment %}
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </div>
+
+  <!-- wtf are these -->
   <div class="container">
     {% if messages %}
       {% for message in messages %}
@@ -93,12 +55,15 @@
         <p>Use this document as a way to quick start any new project.</p>
       {% endblock content %}
     {% endblock main %}
-
   </div>
+
   {% endblock body %}
-  <!-- /container -->
+
+  {% include "components/footer.html" %}
+
   {% block modal %}
   {% endblock modal %}
+
   {% block inline_javascript %}
     {% comment %}
     Script tags with only code, no src (defer by default). To run

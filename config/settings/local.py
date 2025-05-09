@@ -4,6 +4,7 @@ from .base import INSTALLED_APPS
 from .base import MIDDLEWARE
 from .base import WEBPACK_LOADER
 from .base import env
+import os
 
 
 # GENERAL
@@ -23,6 +24,23 @@ ALLOWED_HOSTS = [
  ]  # noqa: S104
 
 INTERNAL_IPS = ['127.0.0.1', ]
+
+
+# DATABASES
+# ------------------------------------------------------------------------------
+# Override the database configuration for local development
+if os.environ.get("USE_CLOUD_DB", "true").lower() != "true":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "housegallery-dev",
+            "USER": "admin",
+            "PASSWORD": "password",
+            "HOST": "postgres",
+            "PORT": "5432",
+            "ATOMIC_REQUESTS": True,
+        }
+    }
 
 
 # TEMPLATES

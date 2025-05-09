@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}exhibitions-index{% endblock %}
+
+{% block content %}
+<div class="exhibitions-container">
+		<h1>{{ page.title }}</h1>
+		
+		{% if page.body %}
+		<div class="intro">
+				{% include_block page.body %}
+		</div>
+		{% endif %}
+		
+		<div class="exhibitions-list">
+				{% if exhibitions %}
+						{% for exhibition in exhibitions %}
+								<div class="exhibition-item">
+										<a href="{% pageurl exhibition %}">
+												{% if exhibition.featured_image %}
+														{% image exhibition.featured_image fill-300x200 class="exhibition-thumbnail" %}
+												{% endif %}
+												<h2>{{ exhibition.title }}</h2>
+												<div class="exhibition-dates">
+														{% if exhibition.start_date %}
+																{{ exhibition.start_date|date:"F j, Y" }}
+																{% if exhibition.end_date %} - {{ exhibition.end_date|date:"F j, Y" }}{% endif %}
+														{% endif %}
+												</div>
+												
+												{% if exhibition.artists %}
+												<div class="exhibition-artists">
+														Artists: 
+														{% for artist in exhibition.artists %}
+																{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
+																{{ artist.name }}
+														{% endfor %}
+												</div>
+												{% endif %}
+												
+												{% if exhibition.description %}
+												<div class="exhibition-excerpt">
+														{{ exhibition.description|richtext|truncatewords_html:30 }}
+												</div>
+												{% endif %}
+										</a>
+								</div>
+						{% endfor %}
+						
+						{% if exhibitions.paginator.num_pages > 1 %}
+						<div class="pagination">
+								<ul>
+										{% if exhibitions.has_previous %}
+												<li class="previous">
+														<a href="?page={{ exhibitions.previous_page_number }}">&laquo; Previous</a>
+												</li>
+										{% endif %}
+										
+										{% for page_num in exhibitions.paginator.page_range %}
+												<li{% if page_num == exhibitions.number %} class="active"{% endif %}>
+														<a href="?page={{ page_num }}">{{ page_num }}</a>
+												</li>
+										{% endfor %}
+										
+										{% if exhibitions.has_next %}
+												<li class="next">
+														<a href="?page={{ exhibitions.next_page_number }}">Next &raquo;</a>
+												</li>
+										{% endif %}
+								</ul>
+						</div>
+						{% endif %}
+						
+				{% else %}
+						<p>No exhibitions currently available.</p>
+				{% endif %}
+		</div>
+</div>
+{% endblock %}

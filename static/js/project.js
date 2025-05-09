@@ -1,3 +1,6 @@
-import '../sass/project.scss';
+// Project.js - Main JavaScript entry point
 
-/* Project specific Javascript goes here. */
+// Import menu functionality
+import './menu.js';
+
+// Any other project-wide JavaScript functionality goes here

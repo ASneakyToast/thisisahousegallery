@@ -8,6 +8,7 @@ module.exports = {
   entry: {
     project: path.resolve(__dirname, '../housegallery/static/js/project'),
     vendors: path.resolve(__dirname, '../housegallery/static/js/vendors'),
+    styles: path.resolve(__dirname, '../housegallery/static/css/index.js'),
   },
   output: {
     path: path.resolve(
@@ -47,6 +48,13 @@ module.exports = {
           },
           'sass-loader',
         ],
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name][ext]'
+        }
       },
     ],
   },
