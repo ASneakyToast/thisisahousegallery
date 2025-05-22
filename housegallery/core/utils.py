@@ -57,6 +57,11 @@ class LinkBlock(blocks.StructBlock):
     document links, and email links. Uses a dropdown to select the link type
     for a cleaner UI experience.
     """
+    link_text = blocks.CharBlock(
+        required=False,
+        help_text="Link text to display. Leave blank to use the page/document title or URL as fallback"
+    )
+
     link_type = blocks.ChoiceBlock(
         choices=[
             ('page', 'Page'),
@@ -67,11 +72,6 @@ class LinkBlock(blocks.StructBlock):
         default='page',
         required=True,
         help_text='Select the type of link you want to create'
-    )
-
-    link_text = blocks.CharBlock(
-        required=False,
-        help_text="Optional custom link text. Leave blank to use the page/document title or URL"
     )
 
     # Link destination fields - only one will be used based on link_type
