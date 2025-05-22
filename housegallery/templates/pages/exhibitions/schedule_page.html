@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="body normal">
-    <h1 class="title">{{ page.title }}</h1>
+    <h1 class="title" style="font-size: var(--font-size-16); letter-spacing: normal; font-family: 'SourceCodePro'; color: #f2a6b5;">{{ page.title }}</h1>
 
     {% if page.intro %}
     <div class="schedule-intro rich-text">
@@ -13,45 +13,87 @@
     </div>
     {% endif %}
 
-    {% if events %}
-    <div class="schedule-events">
-        {% for event in events %}
-            <div class="schedule-event">
-                <div class="schedule-event__header">
-                    <div class="schedule-event__type-month">
-                        {% if event.event_type %}
-                        <h3 class="schedule-event__type">{{ event.event_type }}</h3>
+    {% if featured_events %}
+    <section class="schedule-section featured-events">
+        <h2 class="section-heading">Upcoming Events</h2>
+        <div class="schedule-grid">
+            {% for event in featured_events %}
+                <div id="{{ event.title|slugify }}" class="schedule-listing-item event-item">
+                    <section class="event-header">
+                        <section>
+                            <h2 style="font-family: var(--font-family-main); font-weight: 700;">{{ event.title }}</h2>
+                            {% comment %}
+                            {% if event.event_type %}
+                            <section class="event-header__type">
+                                <p style="font-weight: var(--font-weight-light); font-family: var(--font-family-heading); font-size: var(--font-size-detail, 12px);">{{ event.event_type }}</p>
+                            </section>
+                            {% endif %}
+                            {% endcomment %}
+                        </section>
+                        <h3>{{ event.month }}{% if event.year %} {{ event.year }}{% endif %}</h3>
+                        {% if event.link %}
+                        <a href="{{ event.link }}" class="view-event">More Information</a>
                         {% endif %}
-                        <h3 class="schedule-event__month">{{ event.month }}</h3>
+                    </section>
+
+                    {% if event.featured_image %}
+                    <div class="event-gallery">
+                        {% image event.featured_image width-300 as thumb %}
+                        <div class="gallery-thumb">
+                            <img src="{{ thumb.url }}" alt="{{ event.title }}" loading="lazy">
+                        </div>
                     </div>
-                    <h2 class="schedule-event__title">{{ event.title }}</h2>
+                    {% endif %}
                 </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
 
-                {% if event.description %}
-                <div class="schedule-event__description rich-text">
-                    {{ event.description|richtext }}
-                </div>
-                {% endif %}
+    {% if events %}
+    <section class="schedule-section legacy-events">
+        <h2 class="section-heading">Schedule Events</h2>
+        <div class="schedule-grid">
+            {% for event in events %}
+                <div id="{{ event.title|slugify }}" class="schedule-listing-item event-item">
+                    <section class="event-header">
+                        <section>
+                            <h2 style="font-family: var(--font-family-main); font-weight: 700;">{{ event.title }}</h2>
+                            {% if event.event_type %}
+                            <section class="event-header__type">
+                                <p style="font-weight: var(--font-weight-light); font-family: var(--font-family-heading); font-size: var(--font-size-detail, 12px);">{{ event.event_type }}</p>
+                            </section>
+                            {% endif %}
+                        </section>
+                        <h3>{{ event.month }}</h3>
+                        {% if event.link %}
+                        <a href="{{ event.link }}" class="view-event">More Information</a>
+                        {% endif %}
+                    </section>
 
-                {% if event.featured_image %}
-                <div class="schedule-event__image">
-                    {% image event.featured_image fill-800x450 class="schedule-event__img" %}
+                    {% if event.featured_image %}
+                    <div class="event-gallery">
+                        {% image event.featured_image width-300 as thumb %}
+                        <div class="gallery-thumb">
+                            <img src="{{ thumb.url }}" alt="{{ event.title }}" loading="lazy">
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
-                {% endif %}
-
-                {% if event.link %}
-                <div class="schedule-event__link">
-                    <a href="{{ event.link }}" class="button">More Information</a>
-                </div>
-                {% endif %}
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+    </section>
     {% endif %}
 
     {% if page.body %}
     <div class="schedule-content">
         {% include_block page.body %}
+    </div>
+    {% endif %}
+
+    {% if not featured_events and not events %}
+    <div class="empty-state">
+        <p>No events currently scheduled.</p>
     </div>
     {% endif %}
 

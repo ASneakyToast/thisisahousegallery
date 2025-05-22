@@ -13,6 +13,7 @@ from wagtail.models import Orderable
 from wagtail.search import index
 from wagtail.blocks import StructBlock, CharBlock
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.snippets.models import register_snippet
 
 
 from housegallery.core.mixins import Page, ListingFields
@@ -343,6 +344,88 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         return start_str
 
 
+@register_snippet
+class Event(models.Model):
+    """
+    Reusable event snippet that can be used across multiple pages.
+    Events can be managed independently and referenced from schedule pages.
+    """
+    title = models.CharField(
+        max_length=255,
+        help_text="Event title"
+    )
+    event_type = models.CharField(
+        max_length=255,
+        help_text="Type of event (e.g., Exhibition, Residency, Opening)",
+        blank=True
+    )
+    month = models.CharField(
+        max_length=20,
+        help_text="Month of the event (e.g., January, February)"
+    )
+    year = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text="Year of the event (optional)"
+    )
+    description = RichTextField(
+        blank=True,
+        help_text="Brief description of the event"
+    )
+    featured_image = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text="Optional image for this event"
+    )
+    link = models.URLField(
+        blank=True,
+        help_text="Optional link to more information"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this event from listings"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-year', 'month', 'title']
+        verbose_name = "Event"
+        verbose_name_plural = "Events"
+
+    def __str__(self):
+        if self.year:
+            return f"{self.title} ({self.month} {self.year})"
+        return f"{self.title} ({self.month})"
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('title'),
+            FieldPanel('event_type'),
+        ], heading="Basic Information"),
+        MultiFieldPanel([
+            FieldPanel('month'),
+            FieldPanel('year'),
+        ], heading="Date Information"),
+        FieldPanel('description'),
+        FieldPanel('featured_image'),
+        FieldPanel('link'),
+        FieldPanel('is_active'),
+    ]
+
+    search_fields = [
+        index.SearchField('title'),
+        index.SearchField('event_type'),
+        index.SearchField('description'),
+        index.FilterField('month'),
+        index.FilterField('year'),
+        index.FilterField('is_active'),
+    ]
+
+
 class ScheduleEvent(Orderable):
     """An event on the schedule."""
     page = ParentalKey(
@@ -407,6 +490,12 @@ class SchedulePage(Page, ListingFields):
         help_text="Additional content for the schedule page",
         use_json_field=True
     )
+    # New field to select events from snippets
+    featured_events = ParentalManyToManyField(
+        'exhibitions.Event',
+        blank=True,
+        help_text="Select events to display on this schedule page"
+    )
     contact_email = models.EmailField(
         blank=True,
         null=True,
@@ -433,7 +522,8 @@ class SchedulePage(Page, ListingFields):
 
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
-        InlinePanel('schedule_events', label="Schedule Events"),
+        FieldPanel('featured_events', widget=forms.CheckboxSelectMultiple),
+        InlinePanel('schedule_events', label="Legacy Schedule Events (use Event Snippets instead)"),
         FieldPanel('body'),
         MultiFieldPanel([
             FieldPanel('contact_email'),
@@ -449,5 +539,16 @@ class SchedulePage(Page, ListingFields):
     def get_context(self, request):
         """Add events to the context."""
         context = super().get_context(request)
-        context['events'] = self.schedule_events.all().order_by('sort_order')
+        
+        # Get featured events from snippets (active only)
+        featured_events = self.featured_events.filter(is_active=True)
+        
+        # Get legacy inline events
+        legacy_events = self.schedule_events.all().order_by('sort_order')
+        
+        # Combine both event types for the template
+        context['featured_events'] = featured_events
+        context['legacy_events'] = legacy_events
+        context['events'] = legacy_events  # Keep backward compatibility
+        
         return context
