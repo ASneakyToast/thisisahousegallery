@@ -11,5 +11,8 @@ require('./components/main-menu.css');
 require('./components/social-media-links.css');
 require('./components/rich-text.css');
 require('./components/list_of_links.css');
+require('./components/gallery.css');
 
 require('./components/home/hero_block.css');
+require('./components/exhibitions/exhibitions.css');
+require('./components/exhibitions/schedule.css');

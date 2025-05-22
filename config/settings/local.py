@@ -88,3 +88,11 @@ INSTALLED_APPS += ["django_extensions"]
 # ------------------------------------------------------------------------------
 WEBPACK_LOADER["DEFAULT"]["CACHE"] = not DEBUG
 
+# Static files
+# ------------------------------------------------------------------------------
+# This fixes the issue with webpack static files in development
+STATIC_ROOT = str(BASE_DIR / "static")
+
+# Fix Wagtail warning about GS_FILE_OVERWRITE
+GS_FILE_OVERWRITE = False
+

@@ -45,8 +45,8 @@
   /* --- FONT FAMILY --- */
 
   /* global */
-  /* --font-main: "SourceCodePro", Sans-serif; */
   --font-main: "SourceCodePro";
+  --font-montserrat: "Montserrat", sans-serif;
 
   /* alias */
   --font-family-title: var(--font-main);
@@ -57,6 +57,7 @@
   --font-family-label: var(--font-main);
   --font-family-body: var(--font-main);
   --font-family-detail: var(--font-main);
+  --font-family-main: var(--font-montserrat);
 
   /* --- FONT SIZE --- */
 
@@ -80,7 +81,7 @@
   --font-size-intro: var(--font-size-24);
   --font-size-quote: var(--font-size-24);
   --font-size-subheading: var(--font-size-20);
-  --font-size-label: var(--font-size-16);
+  --font-size-label: var(--font-size-14);
   --font-size-body: var(--font-size-16);
   --font-size-detail: var(--font-size-10);
 
@@ -133,7 +134,7 @@
         --font-size-intro: var(--font-size-32);
         --font-size-quote: var(--font-size-32);
         --font-size-subheading: var(--font-size-24);
-        --font-size-label: var(--font-size-18);
+        --font-size-label: var(--font-size-16);
         --font-size-detail: var(--font-size-12);
         --line-height-title: var(--line-height-120);
         --line-height-quote: var(--line-height-170);

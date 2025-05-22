@@ -152,6 +152,7 @@ docker-compose -f compose/compose.yml up
    - Create models in the appropriate app
    - Run migrations
    - Register models with Wagtail admin if needed
+   - When using StreamField, don't use the `use_json_field=True` parameter as it's already the default in Wagtail 6.x
 
 ## Libraries and Dependencies
 

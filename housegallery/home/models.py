@@ -17,6 +17,7 @@ class HomePage(Page, ListingFields):
 
     subpage_types = [
         'exhibitions.ExhibitionsIndexPage',
+        'exhibitions.SchedulePage',
         'core.BlankPage'
     ] 
 

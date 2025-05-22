@@ -1,3 +1,5 @@
+/* Block wrapper styling is now in block-wrapper.css */
+
 .button-link {
   display: inline-block;
   text-decoration: none;
@@ -20,4 +22,48 @@
 .button-link:hover {
   background: var(--color-black);
   color: var(--color-white);
+}
+
+.button-carrot {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  width: fit-content;
+  position: relative;
+
+  color: var(--color-black);
+  padding: 6px 0;
+
+  font-size: var(--font-size-label);
+  font-family: var(--font-family-label);
+  line-height: var(--line-height-label);
+  font-weight: var(--font-weight-label);
+
+  transition: all 120ms ease;
+}
+
+.button-carrot::after {
+  content: "→";
+  display: inline-block;
+  margin-left: 8px;
+  transition: transform 120ms ease;
+}
+
+.button-carrot:hover::after {
+  transform: translateX(4px);
+}
+
+.button-carrot::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--color-black);
+  transition: width 120ms ease;
+}
+
+.button-carrot:hover::before {
+  width: 100%;
 }

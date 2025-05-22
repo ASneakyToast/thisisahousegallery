@@ -13,6 +13,10 @@
   margin-bottom: var(--size-layout-section-spacing);
 }
 
+h1.hero-section__intro b {
+  font-weight: 700;
+}
+
 .hero-section__links {
   margin-top: var(--size-layout-element-spacing);
 }

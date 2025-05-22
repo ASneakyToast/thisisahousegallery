@@ -2,42 +2,58 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-<article class="exhibition">
-		<header class="exhibition-header">
-				<h1 class="exhibition-title">{{ page.title }}</h1>
-				
-				<div class="exhibition-dates">
-						{% if page.start_date %}
-								<span class="start-date">{{ page.start_date|date:"F j, Y" }}</span>
-								{% if page.end_date %} - <span class="end-date">{{ page.end_date|date:"F j, Y" }}</span>{% endif %}
-						{% endif %}
-				</div>
-				
-				{% if page.artists %}
-				<div class="exhibition-artists">
-						<h2>Featured Artists</h2>
-						<ul>
-								{% for artist in page.artists %}
-										<li><a href="{{ artist.url }}">{{ artist.name }}</a></li>
-								{% endfor %}
-						</ul>
-				</div>
-				{% endif %}
-		</header>
+<div class="body normal">
+    <h1 class="title">{{ page.title }}</h1>
 
-		<div class="exhibition-content">
-				{% if page.featured_image %}
-						<div class="featured-image">
-								{% image page.featured_image width-800 as img %}
-								<img src="{{ img.url }}" alt="{{ img.alt }}" width="{{ img.width }}" height="{{ img.height }}">
-						</div>
-				{% endif %}
-				
-				{% if page.description %}
-				<div class="exhibition-description">
-						{{ page.description|richtext }}
-				</div>
-				{% endif %}
-		</div>
-</article>
+    <div id="{{ page.title|slugify }}" class="exhibition-listing-item exhibition-title">
+        <section class="exhibition-header">
+            <section>
+                <h2>{{ page.title }}</h2>
+                <section class="exhibition-header__artists">
+                    {% for artist in page.artists %}
+                        <a href="{{ artist.url }}">
+                            <p>{{ artist.name }}</p>
+                        </a>
+                    {% endfor %}
+                </section>
+            </section>
+            <h3>{{ page.get_formatted_date_short }}</h3>
+        </section>
+
+        {% if page.body %}
+            {% include_block page.body %}
+        {% else %}
+            <section class="exhibition-media">
+                <section class="exhibition-card">
+                    {% if page.featured_image %}
+                        {% image page.featured_image width-1440 as img %}
+                        <img src="{{ img.url }}" alt="The promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery."
+                            class="quickview-item" width="{{ img.width }}" height="{{ img.height }}">
+                    {% endif %}
+                </section>
+
+                <section class="exhibition-images">
+                    {% if page.artworks %}
+                        {% for artwork in page.artworks %}
+                            <a href="{{ artwork.url }}" class="artwork-link">
+                                {% if artwork.featured_image %}
+                                    {% image artwork.featured_image width-1440 format-webp as img %}
+                                    <img src="{{ img.url }}" alt="{{ artwork.title }}"
+                                        role="img" width="{{ img.width }}" height="{{ img.height }}"
+                                        loading="lazy" decoding="async">
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                </section>
+            </section>
+        {% endif %}
+
+        {% if page.description %}
+        <div class="exhibition-description rich-text-block">
+            {{ page.description|richtext }}
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -2,6 +2,8 @@ from django.db import models
 
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
+from modelcluster.contrib.taggit import ClusterTaggableManager
+from taggit.models import TaggedItemBase
 
 from wagtail.models import Orderable
 from wagtail.admin.panels import FieldPanel, InlinePanel
@@ -12,6 +14,10 @@ from wagtail.fields import StreamField
 from wagtail.blocks import StructBlock, CharBlock, RichTextBlock, ListBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.documents.blocks import DocumentChooserBlock
+
+
+class ArtworkTag(TaggedItemBase):
+    content_object = ParentalKey('Artwork', related_name='tagged_items', on_delete=models.CASCADE)
 
 
 class ArtworkTextBlock(StructBlock):
@@ -74,10 +80,7 @@ class Artwork(ClusterableModel):
         blank=True,
         max_length=255
     )
-    materials = models.TextField(
-        blank=True,
-        max_length=255
-    )
+    materials = ClusterTaggableManager(through=ArtworkTag, blank=True)
     size = models.CharField(
         blank=True,
         max_length=255,
@@ -97,6 +100,8 @@ class Artwork(ClusterableModel):
         FieldPanel('title'),
         FieldPanel('artist'),
         FieldPanel('date'),
+        FieldPanel('size'),
+        FieldPanel('materials'),
         FieldPanel('description'),
         FieldPanel('artifacts'),
     ]

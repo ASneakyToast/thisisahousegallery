@@ -9,6 +9,37 @@
   font-family: var(--font-family-intro);
   line-height: var(--line-height-intro);
   font-weight: var(--font-weight-intro);
-
   width: 74%;
+  margin-bottom: var(--size-layout-section-spacing);
+}
+
+.hero-section__links {
+  margin-top: var(--size-layout-element-spacing);
+}
+
+.hero-links {
+  margin-top: var(--size-layout-item-gap);
+}
+
+.hero-links__title {
+  font-size: var(--font-size-subheading);
+  margin-bottom: var(--size-layout-heading-spacing);
+  font-weight: var(--font-weight-subheading);
+}
+
+.hero-links__items {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: var(--size-layout-element-spacing);
+}
+
+@media (max-width: 768px) {
+  .hero-section__intro {
+    width: 100%;
+  }
+
+  .hero-links__items {
+    flex-direction: column;
+  }
 }

@@ -2,6 +2,7 @@ from wagtail import blocks
 
 from housegallery.core.rich_text import MINIMAL_RICHTEXT
 from housegallery.core.blocks.links import ButtonLinkBlock, CarrotLinkBlock, ListOfLinksBlock
+from housegallery.core.blocks import GalleryBlock
 
 # Create a subclass of ListOfLinksBlock that hides the title field in the admin
 class HeroLinksBlock(ListOfLinksBlock):
@@ -44,3 +45,4 @@ class HomeStreamBlock(blocks.StreamBlock):
         template = 'components/streamfields/generic_stream_block.html'
 
     hero = HeroSection()
+    gallery = GalleryBlock()

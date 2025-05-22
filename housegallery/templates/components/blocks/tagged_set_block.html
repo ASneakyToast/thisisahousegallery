@@ -1,0 +1,42 @@
+{% load wagtailimages_tags %}
+
+<div class="gallery-tagged-set">
+    {% if display_style == 'scattered' %}
+        {% now "U" as current_timestamp %}
+        {% for image in images %}
+            {% with current_timestamp|add:image.id|add:forloop.counter0 as seed %}
+                {% if seed|divisibleby:3 %}
+                    <div class="gallery-image gallery-item--small">
+                        {% image image width-1440 format-webp as img %}
+                        <img src="{{ img.url }}" alt="{{ image.title }}" class="quickview-item" loading="lazy">
+                    </div>
+                {% else %}
+                    {% if seed|divisibleby:2 %}
+                        <div class="gallery-image gallery-item--medium">
+                            {% image image width-1440 format-webp as img %}
+                            <img src="{{ img.url }}" alt="{{ image.title }}" class="quickview-item" loading="lazy">
+                        </div>
+                    {% else %}
+                        <div class="gallery-image gallery-item--large">
+                            {% image image width-1440 format-webp as img %}
+                            <img src="{{ img.url }}" alt="{{ image.title }}" class="quickview-item" loading="lazy">
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endwith %}
+        {% empty %}
+            <p class="gallery-empty">No images found with tag "{{ value.tag }}"</p>
+        {% endfor %}
+    {% else %}
+        <div class="gallery-images">
+            {% for image in images %}
+                <div class="gallery-image">
+                    {% image image width-1440 format-webp as img %}
+                    <img src="{{ img.url }}" alt="{{ image.title }}" class="quickview-item" loading="lazy">
+                </div>
+            {% empty %}
+                <p class="gallery-empty">No images found with tag "{{ value.tag }}"</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
