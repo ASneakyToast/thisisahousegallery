@@ -50,40 +50,6 @@
     </section>
     {% endif %}
 
-    {% if events %}
-    <section class="schedule-section legacy-events">
-        <h2 class="section-heading">Schedule Events</h2>
-        <div class="schedule-grid">
-            {% for event in events %}
-                <div id="{{ event.title|slugify }}" class="schedule-listing-item event-item">
-                    <section class="event-header">
-                        <section>
-                            <h2 style="font-family: var(--font-family-main); font-weight: 700;">{{ event.title }}</h2>
-                            {% if event.event_type %}
-                            <section class="event-header__type">
-                                <p style="font-weight: var(--font-weight-light); font-family: var(--font-family-heading); font-size: var(--font-size-detail, 12px);">{{ event.event_type }}</p>
-                            </section>
-                            {% endif %}
-                        </section>
-                        <h3>{{ event.month }}</h3>
-                        {% if event.link %}
-                        <a href="{{ event.link }}" class="view-event">More Information</a>
-                        {% endif %}
-                    </section>
-
-                    {% if event.featured_image %}
-                    <div class="event-gallery">
-                        {% image event.featured_image width-300 as thumb %}
-                        <div class="gallery-thumb">
-                            <img src="{{ thumb.url }}" alt="{{ event.title }}" loading="lazy">
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
 
     {% if page.body %}
     <div class="schedule-content">
@@ -91,7 +57,7 @@
     </div>
     {% endif %}
 
-    {% if not featured_events and not events %}
+    {% if not featured_events %}
     <div class="empty-state">
         <p>No events currently scheduled.</p>
     </div>

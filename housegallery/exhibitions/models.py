@@ -426,55 +426,6 @@ class Event(models.Model):
     ]
 
 
-class ScheduleEvent(Orderable):
-    """An event on the schedule."""
-    page = ParentalKey(
-        'SchedulePage',
-        on_delete=models.CASCADE,
-        related_name='schedule_events'
-    )
-    title = models.CharField(
-        max_length=255,
-        help_text="Event title"
-    )
-    event_type = models.CharField(
-        max_length=255,
-        help_text="Type of event (e.g., Exhibition, Residency, Opening)",
-        blank=True,
-        null=True
-    )
-    month = models.CharField(
-        max_length=20,
-        help_text="Month of the event (e.g., January, February)"
-    )
-    description = RichTextField(
-        blank=True,
-        null=True,
-        help_text="Brief description of the event"
-    )
-    featured_image = models.ForeignKey(
-        get_image_model_string(),
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text="Optional image for this event"
-    )
-    link = models.URLField(
-        blank=True,
-        null=True,
-        help_text="Optional link to more information"
-    )
-
-    panels = [
-        FieldPanel('title'),
-        FieldPanel('event_type'),
-        FieldPanel('month'),
-        FieldPanel('description'),
-        FieldPanel('featured_image'),
-        FieldPanel('link'),
-    ]
-
 
 class SchedulePage(Page, ListingFields):
     """A page showing upcoming schedule/events."""
@@ -523,7 +474,6 @@ class SchedulePage(Page, ListingFields):
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
         FieldPanel('featured_events', widget=forms.CheckboxSelectMultiple),
-        InlinePanel('schedule_events', label="Legacy Schedule Events (use Event Snippets instead)"),
         FieldPanel('body'),
         MultiFieldPanel([
             FieldPanel('contact_email'),
@@ -542,13 +492,6 @@ class SchedulePage(Page, ListingFields):
         
         # Get featured events from snippets (active only)
         featured_events = self.featured_events.filter(is_active=True)
-        
-        # Get legacy inline events
-        legacy_events = self.schedule_events.all().order_by('sort_order')
-        
-        # Combine both event types for the template
         context['featured_events'] = featured_events
-        context['legacy_events'] = legacy_events
-        context['events'] = legacy_events  # Keep backward compatibility
         
         return context
