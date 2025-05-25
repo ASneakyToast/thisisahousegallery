@@ -96,7 +96,7 @@
 .header__menu-button p {
   font-weight: 500;
   margin: 0;
-  font-family: 'SourceCodePro';
+  font-family: var(--font-secondary);
   font-size: var(--font-size-detail);
   font-weight: var(--font-weight-detail);
   line-height: var(--line-height-detail);

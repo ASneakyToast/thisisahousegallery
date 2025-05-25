@@ -258,6 +258,7 @@ STATIC_URL = "/static/"
 # [START cloudrun_django_static_config]
 # Define static storage via django-storages[google]
 GS_DEFAULT_ACL = "publicRead"
+BUILD_TYPE = env('BUILD_TYPE', default='dev')
 GS_BUCKET_NAME = f"housegallery-{BUILD_TYPE}"
 
 STORAGES = {
