@@ -81,7 +81,7 @@ substitutions:
   _MGMT_CMD_INSTAGRAM: ccaedu-${_BUILD_TYPE}-mgmt-cmd-fetch-instagram-media
   _MGMT_CMD_PUBLISH: ccaedu-${_BUILD_TYPE}-mgmt-cmd-publish-scheduled-pages
   _MGMT_CMD_UPDATEINDEX: ccaedu-${_BUILD_TYPE}-mgmt-cmd-update-index
-  _REGION: us-west1
+  _REGION: us-west2
   _SERVICE_ACCOUNT_EMAIL: ${PROJECT_NUMBER}-compute@developer.gserviceaccount.com
 
 options:

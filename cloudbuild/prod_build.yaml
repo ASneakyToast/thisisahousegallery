@@ -58,7 +58,7 @@ substitutions:
   _DB_INSTANCE_NAME: web-instance
   _DB_NAME: ccaedu-${_BUILD_TYPE}
   _DJANGO_SETTINGS: cca.settings.production
-  _REGION: us-west1
+  _REGION: us-west2
   _SERVICE_NAME: ccaedu-${_BUILD_TYPE}-service
   _STORAGE_BUCKET: ccaedu-${_BUILD_TYPE}
   _ARTIFACT_REGISTRY: ccaweb

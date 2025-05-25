@@ -97,7 +97,7 @@ substitutions:
   _BUILD_TYPE: prod
   _DB_INSTANCE_NAME: web-instance
   _DJANGO_SETTINGS: cca.settings.production
-  _REGION: us-west1
+  _REGION: us-west2
   _SERVICE_ACCOUNT: ccaedu-sa
   _SERVICE_NAME: ccaedu-${_BUILD_TYPE}-service
   _MGMT_CMD_PUBLISH: ccaedu-${_BUILD_TYPE}-mgmt-cmd-publish-scheduled-pages

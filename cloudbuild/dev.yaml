@@ -135,7 +135,7 @@ substitutions:
   _MGMT_CMD_MIGRATE: housegallery-${_BUILD_TYPE}-mgmt-cmd-migrate
   _MGMT_CMD_PUBLISH: ccaedu-${_BUILD_TYPE}-mgmt-cmd-publish-scheduled-pages
   _MGMT_CMD_UPDATEINDEX: housegallery-${_BUILD_TYPE}-mgmt-cmd-update-index
-  _REGION: us-west1
+  _REGION: us-west2
   _SERVICE_ACCOUNT: housegallerybutler
   _SERVICE_NAME: housegallery-${_BUILD_TYPE}-service
 
