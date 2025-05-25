@@ -6,14 +6,14 @@ module.exports = {
   target: 'web',
   context: path.join(__dirname, '../'),
   entry: {
-    project: path.resolve(__dirname, '../housegallery/static/js/project'),
-    vendors: path.resolve(__dirname, '../housegallery/static/js/vendors'),
-    styles: path.resolve(__dirname, '../housegallery/static/css/index.js'),
+    project: path.resolve(__dirname, '../housegallery/static_src/js/project'),
+    vendors: path.resolve(__dirname, '../housegallery/static_src/js/vendors'),
+    styles: path.resolve(__dirname, '../housegallery/static_src/css/index.js'),
   },
   output: {
     path: path.resolve(
       __dirname,
-      '../housegallery/static/webpack_bundles/',
+      '../housegallery/static_src/webpack_bundles/',
     ),
     publicPath: '/static/webpack_bundles/',
     filename: 'js/[name]-[fullhash].js',

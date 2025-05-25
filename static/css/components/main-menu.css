@@ -96,19 +96,23 @@
 .header__menu-button p {
   font-weight: 500;
   margin: 0;
+  font-family: 'SourceCodePro';
+  font-size: var(--font-size-detail);
+  font-weight: var(--font-weight-detail);
+  line-height: var(--line-height-detail);
 }
 
 .header__hamburger-icon {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 24px;
-  height: 18px;
+  height: 12px;
+  width: 16px;
 }
 
 .header__hamburger-icon span {
   display: block;
-  height: 2px;
+  height: 1px;
   width: 100%;
   background-color: var(--color-text);
   transition: all 0.3s ease;

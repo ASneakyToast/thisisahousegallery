@@ -45,10 +45,13 @@
   /* --- FONT FAMILY --- */
 
   /* global */
-  /* --font-main: "SourceCodePro", Sans-serif; */
-  --font-main: "SourceCodePro";
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-sourcecodepro: "SourceCodePro", serif;
 
   /* alias */
+  --font-main: var(--font-sourcecodepro);
+  --font-secondary: var(--font-montserrat);
+
   --font-family-title: var(--font-main);
   --font-family-heading: var(--font-main);
   --font-family-intro: var(--font-main);
@@ -57,6 +60,7 @@
   --font-family-label: var(--font-main);
   --font-family-body: var(--font-main);
   --font-family-detail: var(--font-main);
+  --font-family-main: var(--font-secondary);
 
   /* --- FONT SIZE --- */
 
@@ -75,24 +79,24 @@
   --font-size-80: 80px;
 
   /* alias */
-  --font-size-title: var(--font-size-50);
+  --font-size-title: var(--font-size-24);
   --font-size-heading: var(--font-size-40);
   --font-size-intro: var(--font-size-24);
   --font-size-quote: var(--font-size-24);
   --font-size-subheading: var(--font-size-20);
-  --font-size-label: var(--font-size-16);
+  --font-size-label: var(--font-size-14);
   --font-size-body: var(--font-size-16);
   --font-size-detail: var(--font-size-10);
 
   /* --- FONT WEIGHT --- */
 
   /* global */
-  --font-weight-light: 300;
+  --font-weight-light: 100;
   --font-weight-normal: 400;
   --font-weight-heavy: 700;
 
   /* alias */
-  --font-weight-title: var(--font-weight-heavy);
+  --font-weight-title: var(--font-weight-light);
   --font-weight-heading: var(--font-weight-normal);
   --font-weight-intro: var(--font-weight-light);
   --font-weight-quote: var(--font-weight-normal);
@@ -128,12 +132,12 @@
     :root {
         --size-layout-gutter: var(--size-80);
         --size-layout-heading-spacing: var(--size-layout-large-spacing);
-        --font-size-title: var(--font-size-70);
+        --font-size-title: var(--font-size-32);
         --font-size-heading: var(--font-size-50);
         --font-size-intro: var(--font-size-32);
         --font-size-quote: var(--font-size-32);
         --font-size-subheading: var(--font-size-24);
-        --font-size-label: var(--font-size-18);
+        --font-size-label: var(--font-size-16);
         --font-size-detail: var(--font-size-12);
         --line-height-title: var(--line-height-120);
         --line-height-quote: var(--line-height-170);
@@ -143,7 +147,7 @@
 @media screen and (min-width: 1024px) { /* laptop */
     :root {
         --size-layout-gutter: var(--size-130);
-        --font-size-title: var(--font-size-80);
+        --font-size-title: var(--font-size-40);
     }
 }
 

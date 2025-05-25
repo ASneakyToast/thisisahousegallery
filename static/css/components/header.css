@@ -5,8 +5,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  position: sticky;
-  top: 0;
   background-color: var(--color-surface);
   z-index: 900;
 }
@@ -23,6 +21,8 @@
 .header__logo img {
   height: 36px;
   width: auto;
+  position: fixed;
+  z-index: 1000;
 }
 
 .header__logo p {
@@ -32,6 +32,7 @@
   font-size: var(--font-size-14);
   transition: all 0.2s ease;
   position: relative;
+  padding-left: 52px;
 }
 
 .header__logo p::after {
@@ -67,10 +68,14 @@
 
   .header__logo img {
     height: 28px;
+    top: 12px;
+    left: 16px;
   }
 
   .header__logo p {
     font-size: var(--font-size-12);
+    padding-left: 35px;
+    padding-top: 7px;
   }
 }
 
