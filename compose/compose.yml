@@ -4,7 +4,7 @@ services:
     image: housegallery_local_django
     platform: linux/amd64
     depends_on:
-      - postgres
+      - cloud-sql-proxy
     build:
       context: ../.
       dockerfile: ./compose/django/Dockerfile
@@ -20,23 +20,22 @@ services:
       - ../.envs/.local/.postgres
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/credentials.json
+      - USE_CLOUD_DB=true
     ports:
       - '8000:8000'
     command: /start
 
-  postgres:
-    container_name: housegallery_local_postgres
-    image: postgres:14
+  cloud-sql-proxy:
+    container_name: housegallery_cloud_sql_proxy
+    image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
+    platform: linux/amd64
     volumes:
       - ~/.config/gcloud/application_default_credentials.json:/credentials.json
-      - housegallery_postgres_data:/var/lib/postgresql/data
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/credentials.json
-      - POSTGRES_DB=housegallery-dev
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=password
     ports:
       - '5432:5432'
+    command: --address 0.0.0.0 housegallery:us-west2:housegallery
 
   node:
     container_name: housegallery_local_node
@@ -56,4 +55,3 @@ services:
 
 volumes:
   housegallery_local_node_modules:
-  housegallery_postgres_data:

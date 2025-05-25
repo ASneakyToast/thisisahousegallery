@@ -94,7 +94,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": "housegallery-dev",
+            "NAME": "housegallery",
             "USER": "admin",
             "PASSWORD": "password",
             "HOST": "postgres",
