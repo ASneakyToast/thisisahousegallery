@@ -18,15 +18,36 @@ The project follows a standard Django/Wagtail architecture with models for artis
 
 ### Local Development Setup
 
-Start the local development environment:
+The project supports two database configurations for local development:
+
+#### Option 1: Local Postgres (Default)
+Uses a local PostgreSQL container - recommended for most development work:
 
 ```bash
-# Start the local development environment with Docker
+# Start with local Postgres (default)
 docker-compose -f compose/compose.yml up
 
 # Create a superuser to access the admin
 docker-compose -f compose/compose.yml exec django python manage.py createsuperuser
 ```
+
+#### Option 2: Google Cloud SQL via Proxy
+To connect to Google Cloud SQL during local development:
+
+```bash
+# Set environment variable to use Cloud SQL
+export USE_CLOUD_DB=true
+
+# Start the development environment
+docker-compose -f compose/compose.yml up
+
+# You'll need to add a Cloud SQL proxy service to your docker-compose.yml
+# and configure the DATABASE_URL environment variable
+```
+
+The database configuration is controlled by the `USE_CLOUD_DB` environment variable:
+- `USE_CLOUD_DB=false` (default): Uses local Postgres container
+- `USE_CLOUD_DB=true`: Connects to Cloud SQL via proxy
 
 ### Django Commands
 

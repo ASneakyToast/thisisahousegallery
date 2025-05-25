@@ -56,51 +56,52 @@ if env('PREPEND_WWW', default='false').lower().strip() == 'true':
 
 # SECRETS & GCP
 # ------------------------------------------------------------------------------
-if 'SECRET_KEY' in env:
-    SECRET_KEY = env('SECRET_KEY')
+# Only load GCP secrets for production/staging environments
+if os.environ.get("DJANGO_SETTINGS_MODULE") != "config.settings.local":
+    if 'SECRET_KEY' in env:
+        SECRET_KEY = env('SECRET_KEY')
 
-# Attempt to load the Project ID or Build Type from env
-PROJECT_ID = os.environ.get("GCP_PROJECT")
-BUILD_TYPE = os.environ.get("BUILD_TYPE")
-if not PROJECT_ID or not BUILD_TYPE:
-    raise Exception("No GCP_PROJECT or BUILD_TYPE. Exit")
+    # Attempt to load the Project ID or Build Type from env
+    PROJECT_ID = os.environ.get("GCP_PROJECT")
+    BUILD_TYPE = os.environ.get("BUILD_TYPE")
+    if not PROJECT_ID or not BUILD_TYPE:
+        raise Exception("No GCP_PROJECT or BUILD_TYPE. Exit")
 
+    # [START cloudrun_django_secret_config]
+    def get_secret(project_id, client, secret_name):
+        secret = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
+        payload = client.access_secret_version(name=secret).payload.data.decode("UTF-8")
+        return io.StringIO(payload)
 
-# [START cloudrun_django_secret_config]
-def get_secret(project_id, client, secret_name):
-    secret = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
-    payload = client.access_secret_version(name=secret).payload.data.decode("UTF-8")
-    return io.StringIO(payload)
-
-# Pull conf from Secret Manager
-client = secretmanager.SecretManagerServiceClient()
-env.read_env(get_secret(PROJECT_ID, client, 'housegallery-settings'))
-
-# [END cloudrun_django_secret_config]
+    # Pull conf from Secret Manager
+    client = secretmanager.SecretManagerServiceClient()
+    env.read_env(get_secret(PROJECT_ID, client, 'housegallery-settings'))
+    # [END cloudrun_django_secret_config]
 
 
 # DATABASES
 # ------------------------------------------------------------------------------
-DATABASES = {
-    "default": env.db(),    # Raises ImproperlyConfigured expection if DATABASE_URL not in os.env
-}
-DATABASES["default"]["NAME"] = f'housegallery-{BUILD_TYPE}'
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
-
-if os.environ.get("DJANGO_SETTINGS_MODULE") == "config.settings.local":
-    # Check if we should use local Postgres app instead of SQL proxy
-    if os.environ.get("USE_CLOUD_DB", "true").lower() == "true":
-        # Use SQL proxy in docker-compose (default)
-        DATABASES["default"]["HOST"] = "housegallery-sql-proxy"
-        DATABASES["default"]["PORT"] = 5432
-    else:
-        # Connect to local Postgres container
-        DATABASES["default"]["HOST"] = "postgres" 
-        DATABASES["default"]["PORT"] = 5432
-        # These can be overridden in local.py if needed
-        DATABASES["default"]["NAME"] = "housegallery-dev" 
-        DATABASES["default"]["USER"] = "admin"
-        DATABASES["default"]["PASSWORD"] = "password"
+# For production/staging environments
+if os.environ.get("DJANGO_SETTINGS_MODULE") != "config.settings.local":
+    DATABASES = {
+        "default": env.db(),    # Raises ImproperlyConfigured expection if DATABASE_URL not in os.env
+    }
+    DATABASES["default"]["NAME"] = f'housegallery-{BUILD_TYPE}'
+    DATABASES["default"]["ATOMIC_REQUESTS"] = True
+else:
+    # Local development database configuration
+    # This will be overridden in local.py for local Postgres
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "housegallery-dev",
+            "USER": "admin",
+            "PASSWORD": "password",
+            "HOST": "postgres",
+            "PORT": "5432",
+            "ATOMIC_REQUESTS": True,
+        }
+    }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

@@ -28,19 +28,15 @@ INTERNAL_IPS = ['127.0.0.1', ]
 
 # DATABASES
 # ------------------------------------------------------------------------------
-# Override the database configuration for local development
-if os.environ.get("USE_CLOUD_DB", "true").lower() != "true":
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": "housegallery-dev",
-            "USER": "admin",
-            "PASSWORD": "password",
-            "HOST": "postgres",
-            "PORT": "5432",
-            "ATOMIC_REQUESTS": True,
-        }
-    }
+# Override the database configuration for Cloud SQL proxy if requested
+if os.environ.get("USE_CLOUD_DB", "false").lower() == "true":
+    # Connect to Cloud SQL via proxy instead of local Postgres
+    DATABASES["default"]["HOST"] = "housegallery-sql-proxy"
+    DATABASES["default"]["PORT"] = 5432
+    # You'll need to set these via environment variables or override here
+    # DATABASES["default"]["NAME"] = "your-cloud-db-name"
+    # DATABASES["default"]["USER"] = "your-cloud-db-user"
+    # DATABASES["default"]["PASSWORD"] = "your-cloud-db-password"
 
 
 # TEMPLATES
