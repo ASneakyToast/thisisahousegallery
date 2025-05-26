@@ -6,7 +6,7 @@ set -o nounset
 
 
 python /app/manage.py migrate
-python /app/manage.py collectstatic --noinput --clear
+python /app/manage.py collectstatic --noinput --clear --verbosity=0
 
 echo "Static files collected successfully."
 
