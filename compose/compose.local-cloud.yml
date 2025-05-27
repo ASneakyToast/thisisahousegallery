@@ -1,0 +1,36 @@
+services:
+  cloud-sql-proxy:
+    container_name: housegallery_cloud_sql_proxy
+    image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
+    platform: linux/amd64
+    volumes:
+      - ~/.config/gcloud/application_default_credentials.json:/credentials.json
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/credentials.json
+    ports:
+      - '5432:5432'
+    command: --address 0.0.0.0 housegallery:us-west2:housegallery
+
+  django:
+    extends:
+      file: docker-compose.yml
+      service: django-base
+    container_name: housegallery_local_cloud_django
+    depends_on:
+      - cloud-sql-proxy
+    env_file:
+      - ../.envs/.local-cloud
+    volumes:
+      - ~/.config/gcloud/application_default_credentials.json:/credentials.json
+    command: /start
+
+  node:
+    extends:
+      file: docker-compose.yml
+      service: node
+    container_name: housegallery_local_cloud_node
+    depends_on:
+      - django
+
+volumes:
+  node_modules:

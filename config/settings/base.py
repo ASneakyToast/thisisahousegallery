@@ -289,7 +289,7 @@ WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 
 # Allows to change the max size of the image that user can upload. Defaults to 6MB
-WAGTAILIMAGES_MAX_UPLOAD_SIZE = env('WAGTAILIMAGES_MAX_UPLOAD_SIZE', default=6 * 1024 * 1024)
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 6 * 1024 * 1024
 
 WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg"]
 

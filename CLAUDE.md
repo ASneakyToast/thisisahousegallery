@@ -16,83 +16,90 @@ The project follows a standard Django/Wagtail architecture with models for artis
 
 ## Common Commands
 
-### Local Development Setup
+### Database Development Modes
 
-The project supports two database configurations for local development:
+The project supports two distinct development modes with clear separation:
 
-#### Option 1: Local Postgres (Default)
-Uses a local PostgreSQL container - recommended for most development work:
-
-```bash
-# Start with local Postgres (default)
-docker-compose -f compose/compose.yml up
-
-# Create a superuser to access the admin
-docker-compose -f compose/compose.yml exec django python manage.py createsuperuser
-```
-
-#### Option 2: Google Cloud SQL via Proxy
-To connect to Google Cloud SQL during local development:
+#### Mode 1: Local Offline Development
+Pure local development with PostgreSQL container - no GCP dependencies.
+Perfect for offline work and most development tasks.
 
 ```bash
-# Set environment variable to use Cloud SQL
-export USE_CLOUD_DB=true
+# Start local offline environment
+docker-compose -f compose/compose.local-offline.yml up
 
-# Start the development environment
-docker-compose -f compose/compose.yml up
+# Create a superuser
+docker-compose -f compose/compose.local-offline.yml exec django python manage.py createsuperuser
 
-# You'll need to add a Cloud SQL proxy service to your docker-compose.yml
-# and configure the DATABASE_URL environment variable
+# Run migrations
+docker-compose -f compose/compose.local-offline.yml exec django python manage.py migrate
 ```
 
-The database configuration is controlled by the `USE_CLOUD_DB` environment variable:
-- `USE_CLOUD_DB=false` (default): Uses local Postgres container
-- `USE_CLOUD_DB=true`: Connects to Cloud SQL via proxy
+#### Mode 2: Local Cloud Development
+Connect to Cloud SQL via proxy for testing cloud features and data.
+Requires GCP authentication and internet connection.
+
+```bash
+# Ensure gcloud authentication
+gcloud auth application-default login
+
+# Start local cloud environment
+docker-compose -f compose/compose.local-cloud.yml up
+
+# Run migrations against cloud database
+docker-compose -f compose/compose.local-cloud.yml exec django python manage.py migrate
+
+# Create superuser (if needed)
+docker-compose -f compose/compose.local-cloud.yml exec django python manage.py createsuperuser
+```
+
+#### Mode 3: Production (GCP Secret Manager)
+Production deployment uses GCP Secret Manager for all configuration - no local env files needed.
 
 ### Django Commands
 
-Run these commands inside the Django container:
+Run these commands inside the Django container. Replace `<compose-file>` with either `compose.local-offline.yml` or `compose.local-cloud.yml`:
 
 ```bash
 # Django management commands
-docker-compose -f compose/compose.yml exec django python manage.py <command>
+docker-compose -f compose/<compose-file> exec django python manage.py <command>
 
 # Make and apply migrations
-docker-compose -f compose/compose.yml exec django python manage.py makemigrations
-docker-compose -f compose/compose.yml exec django python manage.py migrate
+docker-compose -f compose/<compose-file> exec django python manage.py makemigrations
+docker-compose -f compose/<compose-file> exec django python manage.py migrate
 
 # Create a superuser
-docker-compose -f compose/compose.yml exec django python manage.py createsuperuser
+docker-compose -f compose/<compose-file> exec django python manage.py createsuperuser
 
 # Shell access
-docker-compose -f compose/compose.yml exec django python manage.py shell
+docker-compose -f compose/<compose-file> exec django python manage.py shell
 ```
 
 ### Testing
 
 ```bash
-# Run all tests
-docker-compose -f compose/compose.yml exec django pytest
+# Run all tests (use local-offline for most testing)
+docker-compose -f compose/compose.local-offline.yml exec django pytest
 
 # Run specific tests
-docker-compose -f compose/compose.yml exec django pytest path/to/test.py
+docker-compose -f compose/<compose-file> exec django pytest path/to/test.py
 
 # Run tests with coverage
-docker-compose -f compose/compose.yml exec django coverage run -m pytest
-docker-compose -f compose/compose.yml exec django coverage html
+docker-compose -f compose/<compose-file> exec django coverage run -m pytest
+docker-compose -f compose/<compose-file> exec django coverage html
 ```
 
 ### Linting and Type Checking
 
 ```bash
 # Run ruff linting
-docker-compose -f compose/compose.yml exec django ruff check .
+docker-compose -f compose/<compose-file> exec django ruff check .
 
 # Run mypy type checking
-docker-compose -f compose/compose.yml exec django mypy housegallery
+docker-compose -f compose/<compose-file> exec django mypy housegallery
 
 # Run djlint for template linting
-docker-compose -f compose/compose.yml exec django djlint --check housegallery/templates
+docker-compose -f compose/<compose-file> exec django djlint --check housegallery/templates
 ```
 
 ### Frontend Development
