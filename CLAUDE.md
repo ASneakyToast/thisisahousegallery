@@ -242,3 +242,17 @@ timeline.add({
 ```
 
 This is a significant change from anime.js v3, where the targets were specified as a property in the configuration object.
+
+## Claude Code Behavioral Patterns
+
+### Solution Drift Prevention
+**Pattern**: Continuing to troubleshoot or suggest additional fixes after a viable solution has already been identified and implemented.
+
+**Recognition**: When the user and Claude have:
+1. Identified a specific problem
+2. Found and implemented a targeted solution
+3. Verified the solution addresses the root cause
+
+**Prevention**: After implementing a solution, explicitly check if the problem is resolved before suggesting additional fixes. Ask the user to test the implemented solution first.
+
+**Example**: If we fix a database authentication error by correcting the service account configuration, don't immediately suggest password resets or other unrelated fixes without first confirming the auth issue persists.
