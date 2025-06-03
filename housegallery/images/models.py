@@ -13,11 +13,12 @@ from wagtail.images.models import AbstractImage, AbstractRendition, Image
 class CustomImage(AbstractImage):
     alt = models.CharField(max_length=510, help_text="Max length: 510 characters", blank=True)
     credit = models.CharField(max_length=255, blank=True)
-
+    
     admin_form_fields = Image.admin_form_fields + (
         'alt',
         'credit',
     )
+    
 
     # When you save the image, check if alt text has been set. If not, set it as the title.
     def save(self, *args, **kwargs):

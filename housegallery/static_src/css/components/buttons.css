@@ -42,18 +42,18 @@
   transition: all 120ms ease;
 }
 
-.button-carrot::after {
+.button-carrot::before {
   content: "→";
   display: inline-block;
-  margin-left: 8px;
-  transition: transform 120ms ease;
+  margin-right: 8px;
+  transition: transform 800ms ease;
 }
 
-.button-carrot:hover::after {
-  transform: translateX(4px);
+.button-carrot:hover::before {
+  transform: rotateX(360deg);
 }
 
-.button-carrot::before {
+.button-carrot::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -64,6 +64,6 @@
   transition: width 120ms ease;
 }
 
-.button-carrot:hover::before {
+.button-carrot:hover::after {
   width: 100%;
 }

@@ -1,6 +1,16 @@
 {% load wagtailimages_tags %}
 
 <div class="gallery-tagged-set">
+    {% if value.title %}
+        <h3 class="gallery-set-title">{{ value.title }}</h3>
+    {% endif %}
+    
+    {% if value.tag %}
+        <p class="gallery-tag-info">
+            Showing images tagged: <span class="tag-list">{{ value.tag }}</span>
+        </p>
+    {% endif %}
+    
     {% if display_style == 'scattered' %}
         {% now "U" as current_timestamp %}
         {% for image in images %}

@@ -22,14 +22,17 @@
   height: 36px;
   width: auto;
   position: fixed;
+  top: 16px;
+  left: 24px;
   z-index: 1000;
 }
 
 .header__logo p {
   margin: 0;
-  font-family: var(--font-family-main);
-  font-weight: var(--font-weight-normal);
-  font-size: var(--font-size-14);
+  font-size: var(--font-size-label);
+  font-family: var(--font-family-label);
+  line-height: var(--line-height-label);
+  font-weight: var(--font-weight-label);
   transition: all 0.2s ease;
   position: relative;
   padding-left: 52px;
@@ -41,7 +44,7 @@
   width: 0;
   height: 1px;
   bottom: -2px;
-  left: 0;
+  left: 52px;
   background-color: var(--color-text);
   transition: width 0.2s ease;
 }
@@ -51,7 +54,7 @@
 }
 
 .header__logo:hover p::after {
-  width: 100%;
+  width: calc(100% - 52px);
 }
 
 .header__navigation {
@@ -73,7 +76,7 @@
   }
 
   .header__logo p {
-    font-size: var(--font-size-12);
+    font-size: var(--font-size-label);
     padding-left: 35px;
     padding-top: 7px;
   }

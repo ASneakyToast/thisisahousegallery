@@ -18,7 +18,7 @@ from wagtail.snippets.models import register_snippet
 
 from housegallery.core.mixins import Page, ListingFields
 from housegallery.exhibitions.blocks import ExhibitionStreamBlock
-from housegallery.core.blocks import BlankStreamBlock
+from housegallery.core.blocks import BlankStreamBlock, TaggedSetBlock
 
 
 class SelectImageBlock(StructBlock):
@@ -36,44 +36,6 @@ class SelectImageBlock(StructBlock):
         label = 'Select Image'
 
 
-class TaggedSetBlock(StructBlock):
-    """Block for selecting images by tag"""
-    tag = CharBlock(
-        required=True,
-        max_length=100,
-        help_text="Enter a tag to display all images with this tag"
-    )
-    title = CharBlock(
-        required=False,
-        max_length=255,
-        help_text="Optional title for this set of images"
-    )
-
-    class Meta:
-        template = 'components/exhibitions/tagged_set_block.html'
-        icon = 'tag'
-        label = 'Tagged Image Set'
-
-    def get_images_by_tag(self, tag_name):
-        """Get all images that have the specified tag"""
-        from housegallery.images.models import CustomImage
-        try:
-            # Get images that have the specified tag
-            return CustomImage.objects.filter(tags__name__iexact=tag_name)
-        except:
-            # Fallback to default image model if custom doesn't exist
-            from wagtail.images import get_image_model
-            ImageModel = get_image_model()
-            return ImageModel.objects.filter(tags__name__iexact=tag_name)
-
-    def get_context(self, value, parent_context=None):
-        """Add images to the template context"""
-        context = super().get_context(value, parent_context)
-        if value and value.get('tag'):
-            context['images'] = self.get_images_by_tag(value['tag'])
-        else:
-            context['images'] = []
-        return context
 
 
 class ExhibitionsIndexPage(Page, ListingFields):
@@ -282,10 +244,10 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                         'type': 'exhibition'
                     })
             elif block.block_type == 'tagged_set':
-                tag_name = block.value.get('tag')
-                if tag_name:
+                tag = block.value.get('tag', '')
+                if tag:
                     # Get images by tag
-                    tagged_images = self._get_images_by_tag(tag_name)
+                    tagged_images = self._get_images_by_tag(tag)
                     for img in tagged_images:
                         images.append({
                             'image': img,
@@ -303,10 +265,10 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                         'type': 'opening'
                     })
             elif block.block_type == 'tagged_set':
-                tag_name = block.value.get('tag')
-                if tag_name:
+                tag = block.value.get('tag', '')
+                if tag:
                     # Get images by tag
-                    tagged_images = self._get_images_by_tag(tag_name)
+                    tagged_images = self._get_images_by_tag(tag)
                     for img in tagged_images:
                         images.append({
                             'image': img,
@@ -316,14 +278,16 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         
         return images
     
-    def _get_images_by_tag(self, tag_name):
+    def _get_images_by_tag(self, tag):
         """Helper method to get images by tag"""
         try:
+            from housegallery.images.models import CustomImage
+            return CustomImage.objects.filter(tags__name__iexact=tag).distinct()
+        except:
+            # Fallback to default image model if custom doesn't exist
             from wagtail.images import get_image_model
             ImageModel = get_image_model()
-            return ImageModel.objects.filter(tags__name__iexact=tag_name)
-        except:
-            return []
+            return ImageModel.objects.filter(tags__name__iexact=tag).distinct()
         
     def get_current_date(self):
         """Return the current date for date comparisons."""

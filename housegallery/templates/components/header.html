@@ -8,21 +8,20 @@
   </a>
 
   {% if settings.core.NavigationSettings.main_menu %}
+    <!-- Always visible CTAs -->
+    <div class="header__ctas">
+      {% for item in settings.core.NavigationSettings.main_menu.links %}
+        {% if item.value.is_cta %}
+          <a href="{{ item.value.link.link_url }}"
+             class="button-carrot"
+             {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+             {{ item.value.link.link_text }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
     <nav class="header__navigation">
-
-      <!-- Always visible CTAs -->
-      <div class="header__ctas">
-        {% for item in settings.core.NavigationSettings.main_menu.links %}
-          {% if item.value.is_cta %}
-            <a href="{{ item.value.link.link_url }}"
-               class="cta-button primary"
-               {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
-               {{ item.value.link.link_text }}
-            </a>
-          {% endif %}
-        {% endfor %}
-      </div>
-
       <!-- Hamburger menu button -->
       <button class="header__menu-button" aria-expanded="false" aria-controls="main-menu" aria-label="Toggle menu">
         <p>Menu</p>
@@ -48,29 +47,14 @@
 
     <ul class="main-menu__items">
       {% for item in settings.core.NavigationSettings.main_menu.links %}
-        {% if not item.value.is_cta %}
-          <li>
-            <a class="main-menu__item{% if request.path == item.value.link.link_url %} active{% endif %}"
-               href="{{ item.value.link.link_url }}"
-               {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
-               {{ item.value.link.link_text }}
-            </a>
-          </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-
-    <!-- Mobile-only CTAs -->
-    <div class="header__ctas">
-      {% for item in settings.core.NavigationSettings.main_menu.links %}
-        {% if item.value.is_cta %}
-          <a href="{{ item.value.link.link_url }}"
-             class="cta-button primary"
+        <li>
+          <a class="main-menu__item{% if request.path == item.value.link.link_url %} active{% endif %}"
+             href="{{ item.value.link.link_url }}"
              {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
              {{ item.value.link.link_text }}
           </a>
-        {% endif %}
+        </li>
       {% endfor %}
-    </div>
+    </ul>
   </div>
 {% endif %}

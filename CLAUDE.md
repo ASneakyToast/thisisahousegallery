@@ -114,9 +114,9 @@ npm run build
 # When installing new npm packages
 # Remove only the node_modules volume to allow Docker to download new packages
 # This preserves the database volume
-docker-compose -f compose/compose.yml down
-docker volume rm housegallery_node_modules
-docker-compose -f compose/compose.yml up
+docker-compose -f compose/compose.local-offline.yml down
+docker volume rm housegallery_local_node_modules
+docker-compose -f compose/compose.local-offline.yml up
 ```
 
 ## Architecture

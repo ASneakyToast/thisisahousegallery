@@ -3,6 +3,7 @@ from wagtail.images.blocks import ImageChooserBlock
 
 from housegallery.core.blocks.links import ButtonLinkBlock, CarrotLinkBlock, ListOfLinksBlock
 
+
 class RichTextBlock(blocks.RichTextBlock):
     """
     Rich text block with standard features.
@@ -30,7 +31,16 @@ class TaggedSetBlock(blocks.StructBlock):
     """
     Block that displays all images with a specific tag.
     """
-    tag = blocks.CharBlock(required=True, max_length=100, help_text="Enter a tag to display all images with this tag")
+    tag = blocks.CharBlock(
+        required=True,
+        max_length=100,
+        help_text="Enter tag name to display all images with this tag"
+    )
+    title = blocks.CharBlock(
+        required=False,
+        max_length=255,
+        help_text="Optional title for this set of images"
+    )
     
     class Meta:
         template = 'components/blocks/tagged_set_block.html'
@@ -40,11 +50,10 @@ class TaggedSetBlock(blocks.StructBlock):
     def get_context(self, value, parent_context=None):
         """Add images with the specified tag to the template context."""
         context = super().get_context(value, parent_context)
-        tag_name = value.get('tag')
-        if tag_name:
+        tag = value.get('tag', '')
+        if tag:
             from housegallery.images.models import CustomImage
-            images = CustomImage.objects.filter(tags__name__iexact=tag_name)
-            context['images'] = images
+            context['images'] = CustomImage.objects.filter(tags__name__iexact=tag).distinct()
         else:
             context['images'] = []
         return context
@@ -150,3 +159,13 @@ class BlankStreamBlock(blocks.StreamBlock):
         label='List of Links',
         icon='list-ul'
     )
+
+
+__all__ = [
+    'RichTextBlock',
+    'SingleImageBlock', 
+    'TaggedSetBlock',
+    'AllImagesBlock',
+    'GalleryBlock',
+    'BlankStreamBlock'
+]
