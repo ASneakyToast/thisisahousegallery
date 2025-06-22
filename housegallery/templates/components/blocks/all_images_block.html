@@ -7,19 +7,22 @@
             {% with current_timestamp|add:image.id|add:forloop.counter0 as seed %}
                 {% if seed|divisibleby:3 %}
                     <div class="gallery-image gallery-item--small">
-                        {% image image width-1440 format-webp as img %}
-                        <img src="{{ img.url }}" alt="{{ image.title }}" class="quickview-item" loading="lazy">
+                        {% with image.get_web_optimized as img %}
+                        <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}" class="quickview-item" loading="lazy">
+                        {% endwith %}
                     </div>
                 {% else %}
                     {% if seed|divisibleby:2 %}
                         <div class="gallery-image gallery-item--medium">
-                            {% image image width-1440 format-webp as img %}
-                            <img src="{{ img.url }}" alt="{{ image.title }}" class="quickview-item" loading="lazy">
+                            {% with image.get_web_optimized as img %}
+                            <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}" class="quickview-item" loading="lazy">
+                            {% endwith %}
                         </div>
                     {% else %}
                         <div class="gallery-image gallery-item--large">
-                            {% image image width-1440 format-webp as img %}
-                            <img src="{{ img.url }}" alt="{{ image.title }}" class="quickview-item" loading="lazy">
+                            {% with image.get_display_optimized as img %}
+                            <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}" class="quickview-item" loading="lazy">
+                            {% endwith %}
                         </div>
                     {% endif %}
                 {% endif %}
@@ -31,8 +34,9 @@
         <div class="gallery-images">
             {% for image in images %}
                 <div class="gallery-image">
-                    {% image image width-1440 format-webp as img %}
-                    <img src="{{ img.url }}" alt="{{ image.title }}" class="quickview-item" loading="lazy">
+                    {% with image.get_display_optimized as img %}
+                    <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}" class="quickview-item" loading="lazy">
+                    {% endwith %}
                 </div>
             {% empty %}
                 <p class="gallery-empty">No images found in the gallery</p>

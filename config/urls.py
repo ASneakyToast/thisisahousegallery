@@ -13,6 +13,8 @@ from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.utils.urlpatterns import decorate_urlpatterns
 
 ignore_cache_urlpatterns = [
+    # Custom images URLs (must come before wagtailadmin_urls to override)
+    path('admin/images/', include('housegallery.images.urls')),
     path('admin/', include(wagtailadmin_urls)),
     path('djadmin/', admin.site.urls),
     path('documents/', include(wagtaildocs_urls)),

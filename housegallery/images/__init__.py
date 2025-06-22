@@ -1,1 +1,1 @@
-default_app_config = 'housegallery.images.apps.ImagesConfig'
+default_app_config = "housegallery.images.apps.ImagesConfig"

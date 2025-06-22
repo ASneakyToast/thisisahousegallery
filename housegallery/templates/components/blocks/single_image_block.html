@@ -5,8 +5,9 @@
     {% with current_timestamp|add:value.image.id as seed %}
         {% if seed|divisibleby:3 %}
             <div class="gallery-single-image gallery-item--small">
-                {% image value.image width-1440 format-webp as img %}
-                <img src="{{ img.url }}" alt="{{ value.caption|default:value.image.title }}" class="quickview-item" loading="lazy">
+                {% with value.image.get_web_optimized as img %}
+                <img src="{{ img.url }}" alt="{{ value.caption|default:value.image.alt|default:value.image.title }}" class="quickview-item" loading="lazy">
+                {% endwith %}
                 {% if value.caption %}
                     <div class="gallery-caption">{{ value.caption }}</div>
                 {% endif %}
@@ -14,16 +15,18 @@
         {% else %}
             {% if seed|divisibleby:2 %}
                 <div class="gallery-single-image gallery-item--medium">
-                    {% image value.image width-1440 format-webp as img %}
-                    <img src="{{ img.url }}" alt="{{ value.caption|default:value.image.title }}" class="quickview-item" loading="lazy">
+                    {% with value.image.get_web_optimized as img %}
+                    <img src="{{ img.url }}" alt="{{ value.caption|default:value.image.alt|default:value.image.title }}" class="quickview-item" loading="lazy">
+                    {% endwith %}
                     {% if value.caption %}
                         <div class="gallery-caption">{{ value.caption }}</div>
                     {% endif %}
                 </div>
             {% else %}
                 <div class="gallery-single-image gallery-item--large">
-                    {% image value.image width-1440 format-webp as img %}
-                    <img src="{{ img.url }}" alt="{{ value.caption|default:value.image.title }}" class="quickview-item" loading="lazy">
+                    {% with value.image.get_display_optimized as img %}
+                    <img src="{{ img.url }}" alt="{{ value.caption|default:value.image.alt|default:value.image.title }}" class="quickview-item" loading="lazy">
+                    {% endwith %}
                     {% if value.caption %}
                         <div class="gallery-caption">{{ value.caption }}</div>
                     {% endif %}
@@ -33,8 +36,9 @@
     {% endwith %}
 {% else %}
     <div class="gallery-single-image">
-        {% image value.image width-1440 format-webp as img %}
-        <img src="{{ img.url }}" alt="{{ value.caption|default:value.image.title }}" class="quickview-item" loading="lazy">
+        {% with value.image.get_display_optimized as img %}
+        <img src="{{ img.url }}" alt="{{ value.caption|default:value.image.alt|default:value.image.title }}" class="quickview-item" loading="lazy">
+        {% endwith %}
         {% if value.caption %}
             <div class="gallery-caption">{{ value.caption }}</div>
         {% endif %}
