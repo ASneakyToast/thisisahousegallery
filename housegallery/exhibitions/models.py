@@ -5,35 +5,20 @@ from django import forms
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, MultipleChooserPanel
 from wagtail.fields import StreamField, RichTextField
 from wagtail.images.models import Image
 from wagtail.images import get_image_model_string
 from wagtail.models import Orderable
 from wagtail.search import index
-from wagtail.blocks import StructBlock, CharBlock
-from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.models import register_snippet
 
 
 from housegallery.core.mixins import Page, ListingFields
 from housegallery.exhibitions.blocks import ExhibitionStreamBlock
-from housegallery.core.blocks import BlankStreamBlock, TaggedSetBlock
+from housegallery.core.blocks import BlankStreamBlock
 
 
-class SelectImageBlock(StructBlock):
-    """Block for selecting a single image"""
-    image = ImageChooserBlock(required=True)
-    caption = CharBlock(
-        required=False,
-        max_length=255,
-        help_text="Optional caption for this image"
-    )
-
-    class Meta:
-        template = 'components/exhibitions/select_image_block.html'
-        icon = 'image'
-        label = 'Select Image'
 
 
 
@@ -148,6 +133,62 @@ class ExhibitionArtwork(Orderable):
     ]
 
 
+class ExhibitionGalleryImage(Orderable):
+    """Through model for exhibition gallery images with MultipleChooserPanel"""
+    page = ParentalKey(
+        'ExhibitionPage',
+        on_delete=models.CASCADE,
+        related_name='exhibition_gallery_images'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Optional caption for this image"
+    )
+
+    panels = [
+        FieldPanel('image'),
+        FieldPanel('caption'),
+    ]
+
+    class Meta:
+        verbose_name = "Exhibition Gallery Image"
+        verbose_name_plural = "Exhibition Gallery Images"
+
+
+class OpeningGalleryImage(Orderable):
+    """Through model for opening gallery images with MultipleChooserPanel"""
+    page = ParentalKey(
+        'ExhibitionPage',
+        on_delete=models.CASCADE,
+        related_name='opening_gallery_images'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Optional caption for this image"
+    )
+
+    panels = [
+        FieldPanel('image'),
+        FieldPanel('caption'),
+    ]
+
+    class Meta:
+        verbose_name = "Opening Gallery Image"
+        verbose_name_plural = "Opening Gallery Images"
+
+
 class ExhibitionPage(Page, ListingFields, ClusterableModel):
     """Individual exhibition page."""
 
@@ -175,15 +216,6 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         use_json_field=True,
         help_text="Gallery images, showcards, and other content for this exhibition"
     )
-    exhibition_images = StreamField([
-        ('select_image', SelectImageBlock()),
-        ('tagged_set', TaggedSetBlock()),
-    ], blank=True, help_text="Images from the exhibition - use 'Select Image' for individual images or 'Tagged Set' for groups of images by tag")
-    
-    opening_images = StreamField([
-        ('select_image', SelectImageBlock()),
-        ('tagged_set', TaggedSetBlock()),
-    ], blank=True, help_text="Images from the opening event - use 'Select Image' for individual images or 'Tagged Set' for groups of images by tag")
 
     template = 'pages/exhibitions/exhibition_page.html'
     
@@ -211,8 +243,16 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 	    InlinePanel('exhibition_artworks', label="Artworks"),
         FieldPanel('body'),
         MultiFieldPanel([
-            FieldPanel('exhibition_images'),
-            FieldPanel('opening_images'),
+            MultipleChooserPanel(
+                'exhibition_gallery_images',
+                label="Exhibition Gallery Images",
+                chooser_field_name="image"
+            ),
+            MultipleChooserPanel(
+                'opening_gallery_images', 
+                label="Opening Gallery Images",
+                chooser_field_name="image"
+            ),
         ], heading="Image Galleries"),
     ]
     
@@ -231,63 +271,26 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         return [ea.artwork for ea in self.exhibition_artworks.all()]
     
     def get_all_gallery_images(self):
-        """Get all images from both exhibition_images and opening_images StreamFields"""
+        """Get all images from MultipleChooserPanel fields"""
         images = []
         
-        # Process exhibition_images
-        for block in self.exhibition_images:
-            if block.block_type == 'select_image':
-                if block.value.get('image'):
-                    images.append({
-                        'image': block.value['image'],
-                        'caption': block.value.get('caption', ''),
-                        'type': 'exhibition'
-                    })
-            elif block.block_type == 'tagged_set':
-                tag = block.value.get('tag', '')
-                if tag:
-                    # Get images by tag
-                    tagged_images = self._get_images_by_tag(tag)
-                    for img in tagged_images:
-                        images.append({
-                            'image': img,
-                            'caption': block.value.get('title', ''),
-                            'type': 'exhibition'
-                        })
+        # Process exhibition_gallery_images (MultipleChooserPanel)
+        for gallery_image in self.exhibition_gallery_images.all():
+            images.append({
+                'image': gallery_image.image,
+                'caption': gallery_image.caption,
+                'type': 'exhibition'
+            })
         
-        # Process opening_images
-        for block in self.opening_images:
-            if block.block_type == 'select_image':
-                if block.value.get('image'):
-                    images.append({
-                        'image': block.value['image'],
-                        'caption': block.value.get('caption', ''),
-                        'type': 'opening'
-                    })
-            elif block.block_type == 'tagged_set':
-                tag = block.value.get('tag', '')
-                if tag:
-                    # Get images by tag
-                    tagged_images = self._get_images_by_tag(tag)
-                    for img in tagged_images:
-                        images.append({
-                            'image': img,
-                            'caption': block.value.get('title', ''),
-                            'type': 'opening'
-                        })
+        # Process opening_gallery_images (MultipleChooserPanel)
+        for gallery_image in self.opening_gallery_images.all():
+            images.append({
+                'image': gallery_image.image,
+                'caption': gallery_image.caption,
+                'type': 'opening'
+            })
         
         return images
-    
-    def _get_images_by_tag(self, tag):
-        """Helper method to get images by tag"""
-        try:
-            from housegallery.images.models import CustomImage
-            return CustomImage.objects.filter(tags__name__iexact=tag).distinct()
-        except:
-            # Fallback to default image model if custom doesn't exist
-            from wagtail.images import get_image_model
-            ImageModel = get_image_model()
-            return ImageModel.objects.filter(tags__name__iexact=tag).distinct()
         
     def get_current_date(self):
         """Return the current date for date comparisons."""
