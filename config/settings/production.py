@@ -22,10 +22,6 @@ SECRET_KEY = env(
 # ------------------------------------------------------------------------------
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=300)
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
-DATABASES["default"]["OPTIONS"] = {
-    "MAX_CONNS": 20,
-    "MIN_CONNS": 1,
-}
 
 
 # STATIC & MEDIA
