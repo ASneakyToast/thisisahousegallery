@@ -43,12 +43,39 @@
                 {% endrawformattedfield %}
             {% endif %}
             
+            {# Title input #}
+            {% trans "Title for all images:" as title_label_text %}
+            {% rawformattedfield label_text=title_label_text id_for_label="id_title" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+                <input type="text" id="id_title" name="title" maxlength="255" class="w-full">
+                <p class="help w-text-sm w-text-gray-600 w-mt-1">
+                    {% trans "Optional: Title will be applied to all uploaded images. Individual filenames will be used if left blank." %}
+                </p>
+            {% endrawformattedfield %}
+            
             {# Alt text input #}
             {% trans "Alt text for all images:" as alt_label_text %}
             {% rawformattedfield label_text=alt_label_text id_for_label="id_alt_text" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
                 <input type="text" id="id_alt_text" name="alt_text" maxlength="510" class="w-full">
                 <p class="help w-text-sm w-text-gray-600 w-mt-1">
                     {% trans "Optional: Alt text will be applied to all uploaded images (max 510 characters). Can be edited individually later." %}
+                </p>
+            {% endrawformattedfield %}
+            
+            {# Credit input #}
+            {% trans "Credit for all images:" as credit_label_text %}
+            {% rawformattedfield label_text=credit_label_text id_for_label="id_credit" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+                <input type="text" id="id_credit" name="credit" maxlength="255" class="w-full">
+                <p class="help w-text-sm w-text-gray-600 w-mt-1">
+                    {% trans "Optional: Credit/attribution will be applied to all uploaded images. Can be edited individually later." %}
+                </p>
+            {% endrawformattedfield %}
+            
+            {# Description textarea #}
+            {% trans "Description for all images:" as description_label_text %}
+            {% rawformattedfield label_text=description_label_text id_for_label="id_description" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+                <textarea id="id_description" name="description" rows="3" class="w-full"></textarea>
+                <p class="help w-text-sm w-text-gray-600 w-mt-1">
+                    {% trans "Optional: Description or additional information to apply to all uploaded images. Can be edited individually later." %}
                 </p>
             {% endrawformattedfield %}
             

@@ -32,6 +32,10 @@ class CustomImage(ClusterableModel, AbstractImage):
         max_length=510, help_text="Max length: 510 characters", blank=True,
     )
     credit = models.CharField(max_length=255, blank=True)
+    description = models.TextField(
+        blank=True,
+        help_text="Optional description or additional information about the image"
+    )
     preserve_original = models.BooleanField(
         default=False,
         help_text=(
@@ -41,7 +45,7 @@ class CustomImage(ClusterableModel, AbstractImage):
     )
     tags = ClusterTaggableManager(through=CustomImageTag, blank=True)
 
-    admin_form_fields = (*Image.admin_form_fields, "alt", "credit", "preserve_original", "tags")
+    admin_form_fields = (*Image.admin_form_fields, "alt", "credit", "description", "preserve_original", "tags")
 
 
     # When you save the image, check if alt text has been set.
