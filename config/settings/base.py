@@ -92,7 +92,7 @@ if django_settings not in ["config.settings.local", "config.settings.local_offli
     # Cloud SQL optimization settings
     DATABASES["default"]["OPTIONS"] = {
         "connect_timeout": 10,
-        "options": "-c default_transaction_isolation='read committed'"
+        "options": "-c default_transaction_isolation=\"read committed\""
     }
 else:
     # Local development database configuration
