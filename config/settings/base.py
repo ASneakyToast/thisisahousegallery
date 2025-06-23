@@ -57,7 +57,8 @@ if env('PREPEND_WWW', default='false').lower().strip() == 'true':
 # SECRETS & GCP
 # ------------------------------------------------------------------------------
 # Only load GCP secrets for production/staging environments
-if os.environ.get("DJANGO_SETTINGS_MODULE") != "config.settings.local":
+django_settings = os.environ.get("DJANGO_SETTINGS_MODULE", "")
+if django_settings not in ["config.settings.local", "config.settings.local_offline"]:
     if 'SECRET_KEY' in env:
         SECRET_KEY = env('SECRET_KEY')
 
@@ -82,7 +83,7 @@ if os.environ.get("DJANGO_SETTINGS_MODULE") != "config.settings.local":
 # DATABASES
 # ------------------------------------------------------------------------------
 # For production/staging environments
-if os.environ.get("DJANGO_SETTINGS_MODULE") != "config.settings.local":
+if django_settings not in ["config.settings.local", "config.settings.local_offline"]:
     DATABASES = {
         "default": env.db(),    # Raises ImproperlyConfigured expection if DATABASE_URL not in os.env
     }

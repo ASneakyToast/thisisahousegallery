@@ -43,6 +43,24 @@
                 {% endrawformattedfield %}
             {% endif %}
             
+            {# Alt text input #}
+            {% trans "Alt text for all images:" as alt_label_text %}
+            {% rawformattedfield label_text=alt_label_text id_for_label="id_alt_text" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+                <input type="text" id="id_alt_text" name="alt_text" maxlength="510" class="w-full">
+                <p class="help w-text-sm w-text-gray-600 w-mt-1">
+                    {% trans "Optional: Alt text will be applied to all uploaded images (max 510 characters). Can be edited individually later." %}
+                </p>
+            {% endrawformattedfield %}
+            
+            {# Tags input #}
+            {% trans "Tags for all images:" as tags_label_text %}
+            {% rawformattedfield label_text=tags_label_text id_for_label="id_tags" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+                <input type="text" id="id_tags" name="tags" class="w-full">
+                <p class="help w-text-sm w-text-gray-600 w-mt-1">
+                    {% trans "Optional: Comma-separated tags to apply to all uploaded images. Can be edited individually later." %}
+                </p>
+            {% endrawformattedfield %}
+            
             {# Preserve original toggle #}
             {% trans "Image processing:" as preserve_label_text %}
             {% rawformattedfield label_text=preserve_label_text id_for_label="id_preserve_original" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
@@ -111,4 +129,17 @@
 
     <!-- Main script -->
     <script src="{% versioned_static 'wagtailimages/js/add-multiple.js' %}"></script>
+    
+    <!-- Initialize tag-it widget for tags input -->
+    <script>
+        $(document).ready(function() {
+            $('#id_tags').tagit({
+                caseSensitive: false,
+                allowSpaces: true,
+                removeConfirmation: true,
+                allowDuplicates: false,
+                tagLimit: 20
+            });
+        });
+    </script>
 {% endblock %}

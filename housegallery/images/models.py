@@ -9,6 +9,11 @@ from wagtail.images.models import AbstractImage
 from wagtail.images.models import AbstractRendition
 from wagtail.images.models import Image
 
+from modelcluster.contrib.taggit import ClusterTaggableManager
+from taggit.models import TaggedItemBase
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+
 logger = logging.getLogger(__name__)
 
 # Image size constants
@@ -16,9 +21,13 @@ MAX_HIGH_QUALITY_DIMENSION = 2560
 MAX_WEB_DIMENSION = 1440
 
 
+class CustomImageTag(TaggedItemBase):
+    content_object = ParentalKey('CustomImage', related_name='tagged_items', on_delete=models.CASCADE)
+
+
 # We define our own custom image class to replace wagtailimages.Image,
 # providing various additional data fields
-class CustomImage(AbstractImage):
+class CustomImage(ClusterableModel, AbstractImage):
     alt = models.CharField(
         max_length=510, help_text="Max length: 510 characters", blank=True,
     )
@@ -30,8 +39,9 @@ class CustomImage(AbstractImage):
             "(recommended for most uploads). Uses more storage when checked."
         ),
     )
+    tags = ClusterTaggableManager(through=CustomImageTag, blank=True)
 
-    admin_form_fields = (*Image.admin_form_fields, "alt", "credit", "preserve_original")
+    admin_form_fields = (*Image.admin_form_fields, "alt", "credit", "preserve_original", "tags")
 
 
     # When you save the image, check if alt text has been set.
