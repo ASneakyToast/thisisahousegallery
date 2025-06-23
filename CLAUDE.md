@@ -161,6 +161,25 @@ docker-compose -f compose/compose.local-offline.yml up
 - Google Cloud Storage for media and static files
 - Continuous deployment via Cloud Build
 
+### Google Cloud CLI (gcloud) Usage
+
+**Important:** When working with GCP resources, always specify the region `us-west2` for accurate results:
+
+```bash
+# Cloud Build triggers - MUST use region flag
+gcloud builds triggers list --region=us-west2
+
+# Cloud Build history - region flag often required for complete results  
+gcloud builds list --region=us-west2
+gcloud builds describe [BUILD_ID] --region=us-west2
+
+# Cloud Run services and jobs (region usually required)
+gcloud run services list --region=us-west2
+gcloud run jobs list --region=us-west2
+```
+
+**Why this matters:** Without the `--region=us-west2` flag, gcloud commands may return incomplete results or show "0 items" even when resources exist. This project's infrastructure is deployed in the `us-west2` region.
+
 ## Working with the Codebase
 
 ### Adding New Features
