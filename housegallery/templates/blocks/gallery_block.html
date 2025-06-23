@@ -1,0 +1,60 @@
+{% load wagtailimages_tags %}
+
+<section class="gallery-block gallery-{{ display_style }}{% if full_width %} gallery-full-width{% endif %}">
+    {% if gallery.title %}
+        <h2 class="gallery-title">{{ gallery.title }}</h2>
+    {% endif %}
+    
+    {% if gallery.description %}
+        <div class="gallery-description">{{ gallery.description|linebreaks }}</div>
+    {% endif %}
+    
+    <div class="gallery-container gallery-{{ display_style }}-container">
+        {% for gallery_image in gallery.gallery_images.all %}
+            {% if display_style == 'scattered' %}
+                {% now "U" as current_timestamp %}
+                {% with current_timestamp|add:gallery_image.image.id as seed %}
+                    {% if seed|divisibleby:3 %}
+                        <div class="gallery-single-image gallery-item--small">
+                            {% with gallery_image.image.get_web_optimized as img %}
+                            <img src="{{ img.url }}" alt="{{ gallery_image.caption|default:gallery_image.image.alt|default:gallery_image.image.title }}" class="quickview-item" loading="lazy">
+                            {% endwith %}
+                            {% if gallery_image.caption %}
+                                <div class="gallery-caption">{{ gallery_image.caption }}</div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        {% if seed|divisibleby:2 %}
+                            <div class="gallery-single-image gallery-item--medium">
+                                {% with gallery_image.image.get_web_optimized as img %}
+                                <img src="{{ img.url }}" alt="{{ gallery_image.caption|default:gallery_image.image.alt|default:gallery_image.image.title }}" class="quickview-item" loading="lazy">
+                                {% endwith %}
+                                {% if gallery_image.caption %}
+                                    <div class="gallery-caption">{{ gallery_image.caption }}</div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="gallery-single-image gallery-item--large">
+                                {% with gallery_image.image.get_display_optimized as img %}
+                                <img src="{{ img.url }}" alt="{{ gallery_image.caption|default:gallery_image.image.alt|default:gallery_image.image.title }}" class="quickview-item" loading="lazy">
+                                {% endwith %}
+                                {% if gallery_image.caption %}
+                                    <div class="gallery-caption">{{ gallery_image.caption }}</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endwith %}
+            {% else %}
+                <div class="gallery-single-image">
+                    {% with gallery_image.image.get_display_optimized as img %}
+                    <img src="{{ img.url }}" alt="{{ gallery_image.caption|default:gallery_image.image.alt|default:gallery_image.image.title }}" class="quickview-item" loading="lazy">
+                    {% endwith %}
+                    {% if gallery_image.caption %}
+                        <div class="gallery-caption">{{ gallery_image.caption }}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
