@@ -180,6 +180,29 @@ gcloud run jobs list --region=us-west2
 
 **Why this matters:** Without the `--region=us-west2` flag, gcloud commands may return incomplete results or show "0 items" even when resources exist. This project's infrastructure is deployed in the `us-west2` region.
 
+### Production Deployment
+
+**Cloud Build Triggers:**
+- `housegallery-dev-jrl`: Auto-deploys dev environment on `jrl/*` branch pushes
+- `housegallery-prod`: Auto-builds production on `main` branch pushes (includes database backup)
+- `housegallery-prod-deploy-manual`: Manual production deployment trigger
+
+**Production Workflow:**
+1. **Merge to main** → Triggers `housegallery-prod` build (backup + build image)
+2. **Manual deployment** → Run `housegallery-prod-deploy-manual` trigger when ready
+3. **Services created:** `housegallery-prod-service` and associated management jobs
+
+**Production Services:**
+- Main service: `housegallery-prod-service`
+- Database: `housegallery-prod` (on same Cloud SQL instance)
+- Jobs: `housegallery-prod-mgmt-cmd-*` (migrate, clearsessions, update-index, publish-scheduled-pages)
+
+**Manual Production Deployment:**
+```bash
+# Trigger production deployment manually
+gcloud builds triggers run housegallery-prod-deploy-manual --region=us-west2 --branch=main
+```
+
 ## Working with the Codebase
 
 ### Adding New Features
