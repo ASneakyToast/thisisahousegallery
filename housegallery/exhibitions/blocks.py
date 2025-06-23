@@ -3,6 +3,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from housegallery.core.blocks.links import ButtonLinkBlock, CarrotLinkBlock, ListOfLinksBlock
+from housegallery.core.blocks import SnippetGalleryBlock
 
 
 class ExhibitionImageBlock(blocks.StructBlock):
@@ -40,9 +41,12 @@ class ExhibitionGalleryBlock(blocks.StreamBlock):
         label = 'Exhibition Gallery'
 
 
+
+
 class ExhibitionStreamBlock(blocks.StreamBlock):
     """Stream block specifically for exhibition pages."""
     gallery = ExhibitionGalleryBlock(label='Image Gallery')
+    snippet_gallery = SnippetGalleryBlock(label='Gallery (Snippet)')
     rich_text = blocks.RichTextBlock(label='Rich Text')
     button_link = ButtonLinkBlock(label='Button Link')
     list_of_links = ListOfLinksBlock(label='List of Links')

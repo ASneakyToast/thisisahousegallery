@@ -5,13 +5,17 @@ from django import forms
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, MultipleChooserPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
+
+from .widgets import ExhibitionImageChooserPanel
 from wagtail.fields import StreamField, RichTextField
 from wagtail.images.models import Image
 from wagtail.images import get_image_model_string
 from wagtail.models import Orderable
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
+from wagtail import blocks
+from wagtail.images.blocks import ImageChooserBlock
 
 
 from housegallery.core.mixins import Page, ListingFields
@@ -21,6 +25,19 @@ from housegallery.core.blocks import BlankStreamBlock
 
 
 
+
+
+# Temporary block for migration compatibility - simple pass-through
+class MultipleImagesBlock(blocks.Block):
+    """Temporary block to support existing migrations."""
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    
+    class Meta:
+        template = 'components/exhibitions/multiple_images_block.html'
+        icon = 'image'
+        label = 'Multiple Images'
 
 
 class ExhibitionsIndexPage(Page, ListingFields):
@@ -133,60 +150,6 @@ class ExhibitionArtwork(Orderable):
     ]
 
 
-class ExhibitionGalleryImage(Orderable):
-    """Through model for exhibition gallery images with MultipleChooserPanel"""
-    page = ParentalKey(
-        'ExhibitionPage',
-        on_delete=models.CASCADE,
-        related_name='exhibition_gallery_images'
-    )
-    image = models.ForeignKey(
-        get_image_model_string(),
-        on_delete=models.CASCADE,
-        related_name='+'
-    )
-    caption = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text="Optional caption for this image"
-    )
-
-    panels = [
-        FieldPanel('image'),
-        FieldPanel('caption'),
-    ]
-
-    class Meta:
-        verbose_name = "Exhibition Gallery Image"
-        verbose_name_plural = "Exhibition Gallery Images"
-
-
-class OpeningGalleryImage(Orderable):
-    """Through model for opening gallery images with MultipleChooserPanel"""
-    page = ParentalKey(
-        'ExhibitionPage',
-        on_delete=models.CASCADE,
-        related_name='opening_gallery_images'
-    )
-    image = models.ForeignKey(
-        get_image_model_string(),
-        on_delete=models.CASCADE,
-        related_name='+'
-    )
-    caption = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text="Optional caption for this image"
-    )
-
-    panels = [
-        FieldPanel('image'),
-        FieldPanel('caption'),
-    ]
-
-    class Meta:
-        verbose_name = "Opening Gallery Image"
-        verbose_name_plural = "Opening Gallery Images"
 
 
 class ExhibitionPage(Page, ListingFields, ClusterableModel):
@@ -216,6 +179,22 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         use_json_field=True,
         help_text="Gallery images, showcards, and other content for this exhibition"
     )
+    exhibition_gallery = models.ForeignKey(
+        'artworks.Gallery',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='exhibition_pages',
+        help_text="Select a gallery for exhibition images"
+    )
+    opening_gallery = models.ForeignKey(
+        'artworks.Gallery',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='opening_pages',
+        help_text="Select a gallery for opening event images"
+    )
 
     template = 'pages/exhibitions/exhibition_page.html'
     
@@ -243,17 +222,9 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 	    InlinePanel('exhibition_artworks', label="Artworks"),
         FieldPanel('body'),
         MultiFieldPanel([
-            MultipleChooserPanel(
-                'exhibition_gallery_images',
-                label="Exhibition Gallery Images",
-                chooser_field_name="image"
-            ),
-            MultipleChooserPanel(
-                'opening_gallery_images', 
-                label="Opening Gallery Images",
-                chooser_field_name="image"
-            ),
-        ], heading="Image Galleries"),
+            FieldPanel('exhibition_gallery'),
+            FieldPanel('opening_gallery'),
+        ], heading="Gallery Selection"),
     ]
     
     promote_panels = (
@@ -270,27 +241,6 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
     def artworks(self):
         return [ea.artwork for ea in self.exhibition_artworks.all()]
     
-    def get_all_gallery_images(self):
-        """Get all images from MultipleChooserPanel fields"""
-        images = []
-        
-        # Process exhibition_gallery_images (MultipleChooserPanel)
-        for gallery_image in self.exhibition_gallery_images.all():
-            images.append({
-                'image': gallery_image.image,
-                'caption': gallery_image.caption,
-                'type': 'exhibition'
-            })
-        
-        # Process opening_gallery_images (MultipleChooserPanel)
-        for gallery_image in self.opening_gallery_images.all():
-            images.append({
-                'image': gallery_image.image,
-                'caption': gallery_image.caption,
-                'type': 'opening'
-            })
-        
-        return images
         
     def get_current_date(self):
         """Return the current date for date comparisons."""

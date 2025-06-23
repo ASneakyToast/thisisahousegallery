@@ -54,6 +54,20 @@
             {{ page.description|richtext }}
         </div>
         {% endif %}
+
+        {% if page.exhibition_gallery %}
+            <div class="exhibition-gallery-section">
+                <h3>Exhibition Gallery</h3>
+                {% include page.exhibition_gallery.get_template with gallery=page.exhibition_gallery %}
+            </div>
+        {% endif %}
+
+        {% if page.opening_gallery %}
+            <div class="opening-gallery-section">
+                <h3>Opening Gallery</h3>
+                {% include page.opening_gallery.get_template with gallery=page.opening_gallery %}
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
