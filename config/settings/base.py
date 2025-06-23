@@ -89,6 +89,11 @@ if django_settings not in ["config.settings.local", "config.settings.local_offli
     }
     DATABASES["default"]["NAME"] = f'housegallery-{BUILD_TYPE}'
     DATABASES["default"]["ATOMIC_REQUESTS"] = True
+    # Cloud SQL optimization settings
+    DATABASES["default"]["OPTIONS"] = {
+        "connect_timeout": 10,
+        "options": "-c default_transaction_isolation=read_committed"
+    }
 else:
     # Local development database configuration
     # This will be overridden in local.py for local Postgres
