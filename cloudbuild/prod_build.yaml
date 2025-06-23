@@ -47,7 +47,7 @@ steps:
     entrypoint: 'bash'
     args:
       - '-c'
-      - gcloud storage rsync "gs://${_STORAGE_BUCKET}" "gs://${_STORAGE_BUCKET}-backup" --recursive --delete-unmatched-destination-objects
+      - gcloud storage rsync "gs://${_STORAGE_BUCKET}" "gs://${_STORAGE_BUCKET}-backup" --recursive --delete-unmatched-destination-objects --storage-class=STANDARD
     waitFor: ['-']
     
 
