@@ -7,6 +7,22 @@
     {{ block.super }}
 
     {{ form_media.css }}
+    
+    <style>
+        /* Left-align form field labels in multi-upload interface */
+        .drop-zone .w-grid label,
+        .drop-zone .w-grid > label,
+        .drop-zone .w-grid .field-content > label {
+            text-align: left !important;
+            display: block;
+            width: 100%;
+        }
+        
+        /* Ensure the entire field container is left-aligned */
+        .drop-zone .w-grid {
+            text-align: left !important;
+        }
+    </style>
 {% endblock %}
 
 {% block main_content %}
@@ -32,7 +48,7 @@
             {% csrf_token %}
             {% if collections %}
                 {% trans "Add to collection:" as label_text %}
-                {% rawformattedfield label_text=label_text id_for_label="id_addimage_collection" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+                {% rawformattedfield label_text=label_text id_for_label="id_addimage_collection" classname="w-mt-4 w-grid" %}
                     <select id="id_addimage_collection" name="collection">
                         {% for pk, display_name in collections.get_indented_choices %}
                             <option value="{{ pk|unlocalize }}"{% if pk|unlocalize == selected_collection_id %} selected{% endif %} >
@@ -45,7 +61,7 @@
             
             {# Title input #}
             {% trans "Title for all images:" as title_label_text %}
-            {% rawformattedfield label_text=title_label_text id_for_label="id_title" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+            {% rawformattedfield label_text=title_label_text id_for_label="id_title" classname="w-mt-4 w-grid" %}
                 <input type="text" id="id_title" name="title" maxlength="255" class="w-full">
                 <p class="help w-text-sm w-text-gray-600 w-mt-1">
                     {% trans "Optional: Title will be applied to all uploaded images. Individual filenames will be used if left blank." %}
@@ -54,7 +70,7 @@
             
             {# Alt text input #}
             {% trans "Alt text for all images:" as alt_label_text %}
-            {% rawformattedfield label_text=alt_label_text id_for_label="id_alt_text" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+            {% rawformattedfield label_text=alt_label_text id_for_label="id_alt_text" classname="w-mt-4 w-grid" %}
                 <input type="text" id="id_alt_text" name="alt_text" maxlength="510" class="w-full">
                 <p class="help w-text-sm w-text-gray-600 w-mt-1">
                     {% trans "Optional: Alt text will be applied to all uploaded images (max 510 characters). Can be edited individually later." %}
@@ -63,7 +79,7 @@
             
             {# Credit input #}
             {% trans "Credit for all images:" as credit_label_text %}
-            {% rawformattedfield label_text=credit_label_text id_for_label="id_credit" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+            {% rawformattedfield label_text=credit_label_text id_for_label="id_credit" classname="w-mt-4 w-grid" %}
                 <input type="text" id="id_credit" name="credit" maxlength="255" class="w-full">
                 <p class="help w-text-sm w-text-gray-600 w-mt-1">
                     {% trans "Optional: Credit/attribution will be applied to all uploaded images. Can be edited individually later." %}
@@ -72,7 +88,7 @@
             
             {# Description textarea #}
             {% trans "Description for all images:" as description_label_text %}
-            {% rawformattedfield label_text=description_label_text id_for_label="id_description" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+            {% rawformattedfield label_text=description_label_text id_for_label="id_description" classname="w-mt-4 w-grid" %}
                 <textarea id="id_description" name="description" rows="3" class="w-full"></textarea>
                 <p class="help w-text-sm w-text-gray-600 w-mt-1">
                     {% trans "Optional: Description or additional information to apply to all uploaded images. Can be edited individually later." %}
@@ -81,7 +97,7 @@
             
             {# Tags input #}
             {% trans "Tags for all images:" as tags_label_text %}
-            {% rawformattedfield label_text=tags_label_text id_for_label="id_tags" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+            {% rawformattedfield label_text=tags_label_text id_for_label="id_tags" classname="w-mt-4 w-grid" %}
                 <input type="text" id="id_tags" name="tags" class="w-full">
                 <p class="help w-text-sm w-text-gray-600 w-mt-1">
                     {% trans "Optional: Comma-separated tags to apply to all uploaded images. Can be edited individually later." %}
@@ -90,7 +106,7 @@
             
             {# Preserve original toggle #}
             {% trans "Image processing:" as preserve_label_text %}
-            {% rawformattedfield label_text=preserve_label_text id_for_label="id_preserve_original" classname="w-mx-auto w-mt-4 w-grid w-justify-center" %}
+            {% rawformattedfield label_text=preserve_label_text id_for_label="id_preserve_original" classname="w-mt-4 w-grid" %}
                 <label class="w-flex w-items-center w-gap-2">
                     <input type="checkbox" id="id_preserve_original" name="preserve_original" value="1">
                     <span>{% trans "Preserve original" %}</span>
