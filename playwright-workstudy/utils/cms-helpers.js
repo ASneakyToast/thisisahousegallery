@@ -16,7 +16,7 @@ export class CMSHelpers {
     await page.goto(url, { waitUntil: 'networkidle' });
     
     // Wait for admin interface to load
-    await page.waitForSelector('.wagtail-logo, .header-logo, h1', { timeout: 10000 });
+    await page.waitForSelector('form, h2, [role="main"]', { timeout: 10000 });
   }
 
   /**

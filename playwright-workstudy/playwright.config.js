@@ -8,7 +8,8 @@ dotenv.config();
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: './',
+  testMatch: ['tests/**/*.spec.js', 'projects/**/*.spec.js'],
   
   /* Global setup to run before all tests */
   globalSetup: './config/global-setup.js',
@@ -74,14 +75,18 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup'],
     },
-    // Future projects for specific test suites will be added here
-    // {
-    //   name: 'artist-processing',
-    //   testDir: './tests/artists',
-    //   use: { ...devices['Desktop Chrome'] },
-    //   dependencies: ['setup'],
-    //   retries: 2,
-    // },
+    {
+      name: 'artist-management',
+      testDir: './projects/artist-management',
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: './auth/auth.json',
+        headless: false,
+        slowMo: 1000,
+      },
+      dependencies: ['setup'],
+      retries: 0,
+    },
     // {
     //   name: 'artwork-processing',
     //   testDir: './tests/artworks',

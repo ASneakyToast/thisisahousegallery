@@ -9,7 +9,7 @@
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
-    "test:artists": "playwright test --project=artist-processing",
+    "test:artists": "playwright test --project=artist-management",
     "test:artworks": "playwright test --project=artwork-processing",
     "install:browsers": "playwright install",
     "report": "playwright show-report"
