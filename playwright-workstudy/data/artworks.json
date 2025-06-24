@@ -1,0 +1,138 @@
+[
+  {
+    "id": "artwork_001",
+    "title": "The Starry Night",
+    "artist_id": "artist_001",
+    "description": "A masterpiece depicting a swirling night sky over a village, painted during van Gogh's stay at the asylum of Saint-Paul-de-Mausole.",
+    "materials": ["Oil", "Canvas"],
+    "size": "73.7 cm × 92.1 cm",
+    "date": "1889-06-01T00:00:00Z",
+    "artifacts": [
+      {
+        "type": "text",
+        "value": {
+          "text": "One of the most recognizable paintings in the history of Western culture."
+        }
+      }
+    ]
+  },
+  {
+    "id": "artwork_002",
+    "title": "Self-Portrait with Thorn Necklace and Hummingbird",
+    "artist_id": "artist_002",
+    "description": "A self-portrait depicting Kahlo with a thorn necklace and a dead hummingbird pendant, symbolizing resurrection.",
+    "materials": ["Oil", "Canvas"],
+    "size": "47 cm × 61 cm",
+    "date": "1940-01-01T00:00:00Z",
+    "artifacts": [
+      {
+        "type": "text",
+        "value": {
+          "text": "The hummingbird symbolizes resurrection in Mexican folk tradition."
+        }
+      }
+    ]
+  },
+  {
+    "id": "artwork_003",
+    "title": "Les Demoiselles d'Avignon",
+    "artist_id": "artist_003",
+    "description": "A revolutionary painting that marked the beginning of Cubism, showing five nude female figures composed of flat, splintered planes.",
+    "materials": ["Oil", "Canvas"],
+    "size": "243.9 cm × 233.7 cm",
+    "date": "1907-01-01T00:00:00Z",
+    "artifacts": [
+      {
+        "type": "text",
+        "value": {
+          "text": "Considered a seminal work in the development of modern art and Cubism."
+        }
+      }
+    ]
+  },
+  {
+    "id": "artwork_004",
+    "title": "Black Iris III",
+    "artist_id": "artist_004",
+    "description": "A close-up painting of an iris flower, showing O'Keeffe's characteristic style of magnifying natural forms.",
+    "materials": ["Oil", "Canvas"],
+    "size": "91.4 cm × 76.2 cm",
+    "date": "1926-01-01T00:00:00Z",
+    "artifacts": [
+      {
+        "type": "text",
+        "value": {
+          "text": "Part of O'Keeffe's famous series of enlarged flower paintings."
+        }
+      }
+    ]
+  },
+  {
+    "id": "artwork_005",
+    "title": "Mona Lisa",
+    "artist_id": "artist_005",
+    "description": "A half-length portrait painting depicting Lisa Gherardini, wife of a Florentine merchant. Famous for the subject's enigmatic smile.",
+    "materials": ["Oil", "Poplar Panel"],
+    "size": "77 cm × 53 cm",
+    "date": "1503-01-01T00:00:00Z",
+    "artifacts": [
+      {
+        "type": "text",
+        "value": {
+          "text": "The most famous painting in the world, housed in the Louvre Museum."
+        }
+      }
+    ]
+  },
+  {
+    "id": "artwork_006",
+    "title": "Guernica",
+    "artist_id": "artist_003",
+    "description": "A large oil painting showing the tragedies of war and the suffering it inflicts upon individuals, particularly innocent civilians.",
+    "materials": ["Oil", "Canvas"],
+    "size": "349.3 cm × 776.6 cm",
+    "date": "1937-01-01T00:00:00Z",
+    "artifacts": [
+      {
+        "type": "text",
+        "value": {
+          "text": "Created in response to the bombing of Guernica during the Spanish Civil War."
+        }
+      }
+    ]
+  },
+  {
+    "id": "artwork_007",
+    "title": "The Two Fridas",
+    "artist_id": "artist_002",
+    "description": "A double self-portrait showing two versions of Frida Kahlo sitting side by side, representing her dual heritage and emotional state.",
+    "materials": ["Oil", "Canvas"],
+    "size": "173 cm × 173 cm",
+    "date": "1939-01-01T00:00:00Z",
+    "artifacts": [
+      {
+        "type": "text",
+        "value": {
+          "text": "Painted during Kahlo's divorce from Diego Rivera, showing her emotional turmoil."
+        }
+      }
+    ]
+  },
+  {
+    "id": "artwork_008",
+    "title": "The Potato Eaters",
+    "artist_id": "artist_001",
+    "description": "A painting of a peasant family eating potatoes, intended to show the harsh reality of rural life.",
+    "materials": ["Oil", "Canvas"],
+    "size": "82 cm × 114 cm",
+    "date": "1885-04-01T00:00:00Z",
+    "artifacts": [
+      {
+        "type": "text",
+        "value": {
+          "text": "Van Gogh considered this painting to be his first great work."
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "name": "playwright-cms-automation",
+  "version": "1.0.0",
+  "description": "Playwright Test automation for Wagtail CMS content management",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:artists": "playwright test --project=artist-processing",
+    "test:artworks": "playwright test --project=artwork-processing",
+    "install:browsers": "playwright install",
+    "report": "playwright show-report"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "wagtail",
+    "cms",
+    "testing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "dotenv": "^16.3.1"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

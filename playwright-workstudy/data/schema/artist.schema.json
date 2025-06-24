@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Artist Schema",
+  "description": "Schema for artist data matching the Wagtail Artist model",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the artist"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 255,
+      "description": "Artist's full name"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Artist's biography (can be empty)"
+    },
+    "website": {
+      "type": "string",
+      "format": "uri",
+      "description": "Artist's website URL (optional)"
+    },
+    "birth_year": {
+      "type": ["integer", "null"],
+      "minimum": 1000,
+      "maximum": 2100,
+      "description": "Artist's birth year (optional)"
+    },
+    "profile_image_path": {
+      "type": ["string", "null"],
+      "description": "Path to profile image file (optional)"
+    },
+    "social_media_links": {
+      "type": "array",
+      "description": "Array of social media links",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": ["instagram", "facebook", "twitter", "linkedin", "youtube", "tiktok", "pinterest", "vimeo", "other"]
+          },
+          "platform_name": {
+            "type": ["string", "null"],
+            "maxLength": 50,
+            "description": "Custom platform name if 'other' is selected"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Full URL to the social media profile"
+          },
+          "handle": {
+            "type": ["string", "null"],
+            "maxLength": 100,
+            "description": "Username/handle without @ symbol"
+          }
+        },
+        "required": ["platform", "url"]
+      }
+    }
+  },
+  "required": ["id", "name"]
+}

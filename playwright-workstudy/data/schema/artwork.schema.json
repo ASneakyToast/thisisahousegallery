@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Artwork Schema",
+  "description": "Schema for artwork data matching the Wagtail Artwork model",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the artwork"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 255,
+      "description": "Artwork title"
+    },
+    "artist_id": {
+      "type": ["string", "null"],
+      "description": "Reference to the artist who created this artwork"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 255,
+      "description": "Artwork description (can be empty)"
+    },
+    "materials": {
+      "type": "array",
+      "description": "Array of material tags",
+      "items": {
+        "type": "string"
+      }
+    },
+    "size": {
+      "type": "string",
+      "maxLength": 255,
+      "description": "Dimensions (Height x Width x Depth)"
+    },
+    "date": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Creation date (ISO format)"
+    },
+    "artifacts": {
+      "type": "array",
+      "description": "StreamField artifacts (images, documents, text, galleries)",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "image"
+              },
+              "value": {
+                "type": "object",
+                "properties": {
+                  "image_path": {
+                    "type": "string",
+                    "description": "Path to the image file"
+                  },
+                  "caption": {
+                    "type": ["string", "null"],
+                    "maxLength": 255,
+                    "description": "Image caption"
+                  }
+                },
+                "required": ["image_path"]
+              }
+            },
+            "required": ["type", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "text"
+              },
+              "value": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "description": "Rich text content"
+                  }
+                },
+                "required": ["text"]
+              }
+            },
+            "required": ["type", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "document"
+              },
+              "value": {
+                "type": "object",
+                "properties": {
+                  "document_path": {
+                    "type": "string",
+                    "description": "Path to the document file"
+                  },
+                  "title": {
+                    "type": ["string", "null"],
+                    "maxLength": 255,
+                    "description": "Document title"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "maxLength": 255,
+                    "description": "Document description"
+                  }
+                },
+                "required": ["document_path"]
+              }
+            },
+            "required": ["type", "value"]
+          }
+        ]
+      }
+    }
+  },
+  "required": ["id", "title"]
+}

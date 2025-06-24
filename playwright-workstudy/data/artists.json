@@ -1,0 +1,64 @@
+[
+  {
+    "id": "artist_001",
+    "name": "Vincent van Gogh",
+    "bio": "Vincent Willem van Gogh was a Dutch Post-Impressionist painter who posthumously became one of the most famous and influential figures in Western art history. In a decade, he created about 2,100 artworks, including around 860 oil paintings, most of which date from the last two years of his life.",
+    "website": "https://www.vangoghmuseum.nl",
+    "birth_year": 1853,
+    "social_media_links": [
+      {
+        "platform": "instagram",
+        "url": "https://instagram.com/vangoghmuseum",
+        "handle": "vangoghmuseum"
+      }
+    ]
+  },
+  {
+    "id": "artist_002",
+    "name": "Frida Kahlo",
+    "bio": "Frida Kahlo was a Mexican painter known for her many portraits, self-portraits, and works inspired by the nature and artifacts of Mexico. Inspired by the country's popular culture, she employed a naïve folk art style to explore questions of identity, postcolonialism, gender, class, and race in Mexican society.",
+    "website": "https://www.fridakahlo.org",
+    "birth_year": 1907,
+    "social_media_links": [
+      {
+        "platform": "facebook",
+        "url": "https://facebook.com/FridaKahloOfficial",
+        "handle": "FridaKahloOfficial"
+      }
+    ]
+  },
+  {
+    "id": "artist_003",
+    "name": "Pablo Picasso",
+    "bio": "Pablo Ruiz Picasso was a Spanish painter, sculptor, printmaker, ceramicist and theatre designer who spent most of his adult life in France. Regarded as one of the most influential artists of the 20th century, he is known for co-founding the Cubist movement, the invention of constructed sculpture, the co-invention of collage, and for the wide variety of styles that he helped develop and explore.",
+    "website": "https://www.pablopicasso.org",
+    "birth_year": 1881,
+    "social_media_links": []
+  },
+  {
+    "id": "artist_004",
+    "name": "Georgia O'Keeffe",
+    "bio": "Georgia Totto O'Keeffe was an American modernist artist. She was known for her paintings of enlarged flowers, New York skyscrapers, and New Mexico landscapes. O'Keeffe has been called the 'Mother of American modernism.'",
+    "website": "https://www.okeeffemuseum.org",
+    "birth_year": 1887,
+    "social_media_links": [
+      {
+        "platform": "instagram",
+        "url": "https://instagram.com/georgiaokeeffe",
+        "handle": "georgiaokeeffe"
+      },
+      {
+        "platform": "twitter",
+        "url": "https://twitter.com/okeeffemuseum",
+        "handle": "okeeffemuseum"
+      }
+    ]
+  },
+  {
+    "id": "artist_005",
+    "name": "Leonardo da Vinci",
+    "bio": "Leonardo di ser Piero da Vinci was an Italian polymath of the High Renaissance who was active as a painter, draughtsman, engineer, scientist, theorist, sculptor and architect. While his fame initially rested on his achievements as a painter, he also became known for his notebooks, in which he made drawings and notes on a variety of subjects, including anatomy, astronomy, botany, cartography, painting, and paleontology.",
+    "birth_year": 1452,
+    "social_media_links": []
+  }
+]

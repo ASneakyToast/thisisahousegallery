@@ -287,6 +287,14 @@ This is a significant change from anime.js v3, where the targets were specified 
 
 ## Claude Code Behavioral Patterns
 
+### MCP Server Configuration
+**Important**: Claude Code MCP servers are configured **per repository**, unlike Claude Desktop which has global MCP configuration.
+
+- Use `claude mcp list` to see MCP servers configured for the current repository
+- Use `claude mcp add <server-command>` to add MCP servers to the current repository
+- MCP servers configured in one repository are not available in other repositories
+- This is different from Claude Desktop where MCP servers are configured globally
+
 ### Solution Drift Prevention
 **Pattern**: Continuing to troubleshoot or suggest additional fixes after a viable solution has already been identified and implemented.
 
