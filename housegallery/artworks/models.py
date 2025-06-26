@@ -14,11 +14,10 @@ from wagtail.fields import StreamField
 from wagtail.blocks import StructBlock, CharBlock, RichTextBlock, ListBlock, ChoiceBlock, BooleanBlock, StreamBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.documents.blocks import DocumentChooserBlock
-from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.images import get_image_model_string
 
 from housegallery.exhibitions.widgets import ExhibitionImageChooserPanel
-from housegallery.core.blocks import SnippetGalleryBlock
+
 
 
 class ArtworkTag(TaggedItemBase):
@@ -70,12 +69,12 @@ class ArtworkDocumentBlock(StructBlock):
 
 
 
-class GalleryImage(Orderable):
-    """Through model for gallery images with MultipleChooserPanel"""
-    gallery = ParentalKey(
-        'Gallery',
+class ArtworkImage(Orderable):
+    """Through model for artwork gallery images with MultipleChooserPanel"""
+    artwork = ParentalKey(
+        'Artwork',
         on_delete=models.CASCADE,
-        related_name='gallery_images'
+        related_name='artwork_images'
     )
     image = models.ForeignKey(
         get_image_model_string(),
@@ -94,58 +93,8 @@ class GalleryImage(Orderable):
     ]
 
     class Meta:
-        verbose_name = "Gallery Image"
-        verbose_name_plural = "Gallery Images"
-
-
-@register_snippet
-class Gallery(ClusterableModel):
-    """
-    Reusable gallery snippet for artwork artifacts with multiple images and display options.
-    """
-    title = models.CharField(
-        max_length=255,
-        help_text="Title for the gallery"
-    )
-    description = models.TextField(
-        blank=True,
-        help_text="Optional description for the gallery"
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    panels = [
-        MultiFieldPanel([
-            FieldPanel('title'),
-            FieldPanel('description'),
-        ], heading="Gallery Information"),
-        MultipleChooserPanel(
-            'gallery_images',
-            label="Gallery Images",
-            chooser_field_name="image"
-        ),
-    ]
-
-    def __str__(self):
-        return self.title
-    
-    def get_template(self, request=None):
-        return 'artworks/gallery.html'
-
-    def get_context(self, parent_context=None):
-        """Provide gallery context for template rendering."""
-        context = {
-            'gallery': self
-        }
-        return context
-    
-    def image_count(self):
-        """Return the number of images in this gallery."""
-        return self.gallery_images.count()
-
-    class Meta:
-        verbose_name = "Gallery"
-        verbose_name_plural = "Galleries"
+        verbose_name = "Artwork Image"
+        verbose_name_plural = "Artwork Images"
 
 
 @register_snippet
@@ -179,8 +128,15 @@ class Artwork(ClusterableModel):
         ('image', ArtworkImageBlock()),
         ('document', ArtworkDocumentBlock()),
         ('text', ArtworkTextBlock()),
-        ('gallery', SnippetGalleryBlock()),
     ], blank=True)
+    cover_image = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text="Main cover image for this artwork"
+    )
 
     panels = [
         FieldPanel('title'),
@@ -189,6 +145,14 @@ class Artwork(ClusterableModel):
         FieldPanel('size'),
         FieldPanel('materials'),
         FieldPanel('description'),
+        FieldPanel('cover_image'),
+        MultiFieldPanel([
+            MultipleChooserPanel(
+                'artwork_images',
+                label="Images",
+                chooser_field_name="image"
+            ),
+        ], heading="Gallery Images"),
         FieldPanel('artifacts'),
     ]
 

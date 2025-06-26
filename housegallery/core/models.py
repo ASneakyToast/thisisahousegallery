@@ -41,7 +41,14 @@ class NavigationMenu(ClusterableModel):
                     default=False,
                     help_text="Want this link to open in a new tab?"
                 )),
-            ], icon='link'))
+            ], icon='link')),
+            ('divider', blocks.StructBlock([
+                ('label', blocks.CharBlock(
+                    required=False,
+                    max_length=50,
+                    help_text="Optional text label for this menu section (leave blank for just a line)"
+                )),
+            ], icon='grip'))
         ], required=False,
     ), blank=True)
     

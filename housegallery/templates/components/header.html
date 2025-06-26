@@ -47,13 +47,22 @@
 
     <ul class="main-menu__items">
       {% for item in settings.core.NavigationSettings.main_menu.links %}
-        <li>
-          <a class="main-menu__item{% if request.path == item.value.link.link_url %} active{% endif %}"
-             href="{{ item.value.link.link_url }}"
-             {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
-             {{ item.value.link.link_text }}
-          </a>
-        </li>
+        {% if item.block_type == 'normal_link' %}
+          <li>
+            <a class="main-menu__item{% if request.path == item.value.link.link_url %} active{% endif %}"
+               href="{{ item.value.link.link_url }}"
+               {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+               {{ item.value.link.link_text }}
+            </a>
+          </li>
+        {% elif item.block_type == 'divider' %}
+          <li class="main-menu__divider">
+            {% if item.value.label %}
+              <span class="main-menu__divider-label">{{ item.value.label }}</span>
+            {% endif %}
+            <hr class="main-menu__divider-line">
+          </li>
+        {% endif %}
       {% endfor %}
     </ul>
   </div>

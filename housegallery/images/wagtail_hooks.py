@@ -18,8 +18,15 @@ def hide_snippets_menu(request, menu_items):
 
 
 @hooks.register('construct_main_menu')
-def add_photos_menu(request, menu_items):
-    """Add custom Photos menu with Images and Galleries submenus."""
+def hide_default_documents_menu(request, menu_items):
+    """Hide the default Documents menu item since we're reorganizing it under Assets."""
+    # Remove the default documents menu item
+    menu_items[:] = [item for item in menu_items if getattr(item, 'name', None) != 'documents']
+
+
+@hooks.register('construct_main_menu')
+def add_assets_menu(request, menu_items):
+    """Add custom Assets menu with Images and Documents submenus."""
     
     # Create submenu items
     images_menu_item = MenuItem(
@@ -29,25 +36,25 @@ def add_photos_menu(request, menu_items):
         order=100
     )
     
-    galleries_menu_item = MenuItem(
-        'Galleries', 
-        reverse('wagtailsnippets_artworks_gallery:list'),  # Use specific gallery snippet URL
-        icon_name='image',
+    documents_menu_item = MenuItem(
+        'Documents',
+        reverse('wagtaildocs:index'),  # Use default Wagtail documents URL
+        icon_name='doc-full',
         order=200
     )
     
     # Create Menu object containing the menu items
-    photos_submenu = Menu(items=[images_menu_item, galleries_menu_item])
+    assets_submenu = Menu(items=[images_menu_item, documents_menu_item])
     
-    # Create the main Photos menu with submenus
-    photos_menu = SubmenuMenuItem(
-        'Photos',
-        photos_submenu,
-        icon_name='image',
+    # Create the main Assets menu with submenus
+    assets_menu = SubmenuMenuItem(
+        'Assets',
+        assets_submenu,
+        icon_name='folder-open-inverse',
         order=300  # Position in main menu
     )
     
-    # Insert the Photos menu at the appropriate position
+    # Insert the Assets menu at the appropriate position
     # Find a good spot after "Pages" but before "Settings"
     insert_position = 1  # After "Pages"
     for i, item in enumerate(menu_items):
@@ -55,7 +62,7 @@ def add_photos_menu(request, menu_items):
             insert_position = i
             break
     
-    menu_items.insert(insert_position, photos_menu)
+    menu_items.insert(insert_position, assets_menu)
 
 
 @hooks.register('construct_main_menu')
@@ -72,7 +79,7 @@ def add_art_menu(request, menu_items):
         if exhibitions_page:
             exhibitions_menu_item = MenuItem(
                 'Exhibitions',
-                reverse('wagtailadmin_pages:edit', args=[exhibitions_page.id]),
+                reverse('wagtailadmin_explore', args=[exhibitions_page.id]),
                 icon_name='folder-open-inverse',
                 order=50
             )
@@ -104,11 +111,11 @@ def add_art_menu(request, menu_items):
         'Art',
         art_submenu,
         icon_name='image',
-        order=400  # Position in main menu after Photos
+        order=400  # Position in main menu after Assets
     )
     
     # Insert the Art menu at the appropriate position
-    insert_position = 2  # After "Pages" and "Photos"
+    insert_position = 2  # After "Pages" and "Assets"
     for i, item in enumerate(menu_items):
         if hasattr(item, 'name') and item.name == 'settings':
             insert_position = i
@@ -118,24 +125,67 @@ def add_art_menu(request, menu_items):
 
 
 @hooks.register('construct_main_menu')
-def add_menu_lists_item(request, menu_items):
-    """Add direct Menu Lists menu item for navigation management."""
+def add_menu_management_menu(request, menu_items):
+    """Add hierarchical Menu management with Menu Lists, Header, Navigation Settings, and Footer submenus."""
     
+    # Create submenu items for menu management
     menu_lists_item = MenuItem(
         'Menu Lists',
         reverse('wagtailsnippets_core_navigationmenu:list'),
         icon_name='list-ul',
-        order=500
+        order=100
+    )
+    
+    header_menu_item = MenuItem(
+        'Header',
+        reverse('wagtailsettings:edit', args=['core', 'navigationsettings']),
+        icon_name='arrow-up',
+        order=200
+    )
+    
+    navigation_settings_item = MenuItem(
+        'Hamburger',
+        reverse('wagtailsettings:edit', args=['core', 'navigationsettings']),
+        icon_name='cogs',
+        order=250
+    )
+    
+    footer_menu_item = MenuItem(
+        'Footer',
+        '#',  # Placeholder URL for future footer menu settings
+        icon_name='arrow-down',
+        order=300
+    )
+    
+    # Create Menu object containing the menu management items
+    menu_submenu = Menu(items=[menu_lists_item, header_menu_item, navigation_settings_item, footer_menu_item])
+    
+    # Create the main Menu management menu with submenus
+    menu_management_menu = SubmenuMenuItem(
+        'Menus',
+        menu_submenu,
+        icon_name='list-ul',
+        order=500  # Position in main menu
     )
     
     # Insert after Art menu
-    insert_position = 3  # After "Pages", "Photos", and "Art"
+    insert_position = 3  # After "Pages", "Assets", and "Art"
     for i, item in enumerate(menu_items):
         if hasattr(item, 'name') and item.name == 'settings':
             insert_position = i
             break
     
-    menu_items.insert(insert_position, menu_lists_item)
+    menu_items.insert(insert_position, menu_management_menu)
+
+
+@hooks.register('construct_settings_menu')
+def hide_navigation_settings_from_main_settings(request, menu_items):
+    """Hide Navigation Settings from the main Settings menu since it's now under Menus."""
+    # Remove NavigationSettings from the main settings menu
+    menu_items[:] = [
+        item for item in menu_items 
+        if not (hasattr(item, 'url') and 'navigationsettings' in str(item.url))
+    ]
 
 
 @hooks.register('construct_main_menu')
@@ -180,7 +230,7 @@ def add_events_menu(request, menu_items):
     )
     
     # Insert after Menu Lists
-    insert_position = 4  # After "Pages", "Photos", "Art", and "Menu Lists"
+    insert_position = 4  # After "Pages", "Assets", "Art", and "Menu Lists"
     for i, item in enumerate(menu_items):
         if hasattr(item, 'name') and item.name == 'settings':
             insert_position = i
