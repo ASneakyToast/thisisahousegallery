@@ -1,0 +1,29 @@
+{
+  "homepage": {
+    "title": "This is a House Gallery",
+    "slug": "home",
+    "hero": {
+      "intro": "serves as a project and exhibition place for close friends, local artists, writers, and curators",
+      "cta_links": [
+        {
+          "type": "button",
+          "text": "When's the next show?",
+          "url": "https://www.thisisahousegallery.com/exhibitions",
+          "link_type": "external"
+        },
+        {
+          "type": "carrot",
+          "text": "Find out who lives here",
+          "url": "https://www.thisisahousegallery.com/about",
+          "link_type": "external"
+        }
+      ]
+    }
+  },
+  "default_pages_to_delete": [
+    {
+      "title": "Welcome to your new Wagtail site!",
+      "expected_types": ["wagtailcore.Page", "home.HomePage"]
+    }
+  ]
+}

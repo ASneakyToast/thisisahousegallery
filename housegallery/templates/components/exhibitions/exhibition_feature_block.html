@@ -1,0 +1,39 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% with exhibition=value.exhibition.specific %}
+    <div id="{{ exhibition.title|slugify }}" class="exhibition-listing-item exhibition-title">
+        <section class="exhibition-header">
+            <section>
+                <h2>{{ exhibition.title }}</h2>
+                <section class="exhibition-header__artists">
+                    {% for artist in exhibition.artists %}
+                        <a href="{{ artist.url }}">
+                            <p>{{ artist.name }}</p>
+                        </a>
+                    {% endfor %}
+                </section>
+            </section>
+            <h3>{{ exhibition.get_formatted_date_short }}</h3>
+            <a href="{% pageurl exhibition %}" class="view-exhibition">View Exhibition Details</a>
+        </section>
+
+        {% with gallery_images=exhibition.get_all_gallery_images %}
+            {% if gallery_images %}
+                <div class="exhibition-gallery">
+                    {% for image_data in gallery_images|slice:":6" %}
+                        {% image image_data.image width-300 as thumb %}
+                        <div class="gallery-thumb" data-type="{{ image_data.type }}">
+                            <img src="{{ thumb.url }}" alt="{{ image_data.caption|default:exhibition.title }}" loading="lazy">
+                            {% if image_data.caption %}
+                                <span class="thumb-caption">{{ image_data.caption }}</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    {% if gallery_images|length > 6 %}
+                        <div class="gallery-more">+{{ gallery_images|length|add:"-6" }} more</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+{% endwith %}

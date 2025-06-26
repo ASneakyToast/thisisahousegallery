@@ -1,7 +1,7 @@
 from wagtail import blocks
 
 from housegallery.core.blocks.links import ButtonLinkBlock, ListOfLinksBlock
-from housegallery.core.blocks.images import SnippetGalleryBlock
+from housegallery.core.blocks.images import GalleryBlock
 
 
 class RichTextBlock(blocks.RichTextBlock):
@@ -23,7 +23,7 @@ class BlankStreamBlock(blocks.StreamBlock):
         icon='doc-full'
     )
 
-    gallery = SnippetGalleryBlock(
+    gallery = GalleryBlock(
         label='Gallery',
         icon='image'
     )

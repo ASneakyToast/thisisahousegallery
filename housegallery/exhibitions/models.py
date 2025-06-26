@@ -5,7 +5,7 @@ from django import forms
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, MultipleChooserPanel
 
 from .widgets import ExhibitionImageChooserPanel
 from wagtail.fields import StreamField, RichTextField
@@ -152,6 +152,45 @@ class ExhibitionArtwork(Orderable):
 
 
 
+class ExhibitionImage(Orderable):
+    """Through model for exhibition images with image type categorization"""
+    page = ParentalKey(
+        'ExhibitionPage',
+        on_delete=models.CASCADE,
+        related_name='exhibition_images'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Optional caption for this image"
+    )
+    image_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('exhibition', 'Exhibition'),
+            ('opening', 'Opening'),
+            ('showcards', 'Showcards'),
+        ],
+        default='exhibition',
+        help_text="Type of image - exhibition, opening event, or showcards"
+    )
+
+    panels = [
+        ExhibitionImageChooserPanel('image'),
+        FieldPanel('caption'),
+        FieldPanel('image_type'),
+    ]
+
+    class Meta:
+        verbose_name = "Exhibition Image"
+        verbose_name_plural = "Exhibition Images"
+
+
 class ExhibitionPage(Page, ListingFields, ClusterableModel):
     """Individual exhibition page."""
 
@@ -178,22 +217,6 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         blank=True,
         use_json_field=True,
         help_text="Gallery images, showcards, and other content for this exhibition"
-    )
-    exhibition_gallery = models.ForeignKey(
-        'artworks.Gallery',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='exhibition_pages',
-        help_text="Select a gallery for exhibition images"
-    )
-    opening_gallery = models.ForeignKey(
-        'artworks.Gallery',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='opening_pages',
-        help_text="Select a gallery for opening event images"
     )
 
     template = 'pages/exhibitions/exhibition_page.html'
@@ -222,9 +245,12 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 	    InlinePanel('exhibition_artworks', label="Artworks"),
         FieldPanel('body'),
         MultiFieldPanel([
-            FieldPanel('exhibition_gallery'),
-            FieldPanel('opening_gallery'),
-        ], heading="Gallery Selection"),
+            MultipleChooserPanel(
+                'exhibition_images',
+                label="Exhibition Images",
+                chooser_field_name="image"
+            ),
+        ], heading="Image Gallery"),
     ]
     
     promote_panels = (
@@ -241,6 +267,31 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
     def artworks(self):
         return [ea.artwork for ea in self.exhibition_artworks.all()]
     
+    def get_exhibition_images(self):
+        """Get all images of type 'exhibition'"""
+        return self.exhibition_images.filter(image_type='exhibition')
+    
+    def get_opening_images(self):
+        """Get all images of type 'opening'"""
+        return self.exhibition_images.filter(image_type='opening')
+    
+    def get_showcards_images(self):
+        """Get all images of type 'showcards'"""
+        return self.exhibition_images.filter(image_type='showcards')
+    
+    def get_all_gallery_images(self):
+        """Get all images from MultipleChooserPanel field"""
+        images = []
+        
+        # Process all exhibition_images
+        for gallery_image in self.exhibition_images.all():
+            images.append({
+                'image': gallery_image.image,
+                'caption': gallery_image.caption,
+                'type': gallery_image.image_type
+            })
+        
+        return images
         
     def get_current_date(self):
         """Return the current date for date comparisons."""

@@ -55,19 +55,45 @@
         </div>
         {% endif %}
 
-        {% if page.exhibition_gallery %}
-            <div class="exhibition-gallery-section">
-                <h3>Exhibition Gallery</h3>
-                {% include page.exhibition_gallery.get_template with gallery=page.exhibition_gallery %}
-            </div>
-        {% endif %}
+        {% with exhibition_images=page.get_exhibition_images opening_images=page.get_opening_images %}
+            {% if exhibition_images %}
+                <div class="exhibition-gallery-section">
+                    <h3>Exhibition Gallery</h3>
+                    <div class="gallery-container columns">
+                        {% for gallery_image in exhibition_images %}
+                            <div class="gallery-item">
+                                {% image gallery_image.image width-800 as img %}
+                                <img src="{{ img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
+                                     width="{{ img.width }}" height="{{ img.height }}"
+                                     loading="lazy" decoding="async">
+                                {% if gallery_image.caption %}
+                                    <p class="gallery-caption">{{ gallery_image.caption }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
 
-        {% if page.opening_gallery %}
-            <div class="opening-gallery-section">
-                <h3>Opening Gallery</h3>
-                {% include page.opening_gallery.get_template with gallery=page.opening_gallery %}
-            </div>
-        {% endif %}
+            {% if opening_images %}
+                <div class="opening-gallery-section">
+                    <h3>Opening Gallery</h3>
+                    <div class="gallery-container columns">
+                        {% for gallery_image in opening_images %}
+                            <div class="gallery-item">
+                                {% image gallery_image.image width-800 as img %}
+                                <img src="{{ img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
+                                     width="{{ img.width }}" height="{{ img.height }}"
+                                     loading="lazy" decoding="async">
+                                {% if gallery_image.caption %}
+                                    <p class="gallery-caption">{{ gallery_image.caption }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
     </div>
 </div>
 {% endblock %}

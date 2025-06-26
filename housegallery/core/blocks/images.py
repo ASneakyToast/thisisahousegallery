@@ -1,6 +1,5 @@
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.snippets.blocks import SnippetChooserBlock
 
 
 class SingleImageBlock(blocks.StructBlock):
@@ -73,12 +72,11 @@ class AllImagesBlock(blocks.StructBlock):
 
 
 
-class SnippetGalleryBlock(blocks.StructBlock):
+class GalleryBlock(blocks.StructBlock):
     """
-    Gallery block that references Gallery snippets with display options.
-    Handles presentation while Gallery snippet manages data.
+    Gallery block with title, display style, and gallery items.
     """
-    gallery = SnippetChooserBlock('artworks.Gallery', required=True)
+    title = blocks.CharBlock(required=False, max_length=255, help_text="Optional title for the gallery")
     display_style = blocks.ChoiceBlock(
         choices=[
             ('columns', 'Columns'),
@@ -88,11 +86,12 @@ class SnippetGalleryBlock(blocks.StructBlock):
         default='columns',
         help_text="Choose how to display the gallery images"
     )
-    full_width = blocks.BooleanBlock(
-        required=False, 
-        default=False, 
-        help_text="Enable full-width layout using layout gutter spacing"
-    )
+    full_width = blocks.BooleanBlock(required=False, default=False, help_text="Enable full-width layout using layout gutter spacing")
+    gallery_items = blocks.StreamBlock([
+        ('single_image', SingleImageBlock()),
+        ('tagged_set', TaggedSetBlock()),
+        ('all_images', AllImagesBlock()),
+    ], help_text="Add gallery items")
     
     def get_context(self, value, parent_context=None):
         """Add display style context and random size classes for scattered layout."""
@@ -102,7 +101,6 @@ class SnippetGalleryBlock(blocks.StructBlock):
         # Add display style and full_width to context
         context['display_style'] = value.get('display_style', 'columns')
         context['full_width'] = value.get('full_width', False)
-        context['gallery'] = value.get('gallery')
         
         # For scattered layout, generate random size classes
         if context['display_style'] == 'scattered':
@@ -126,8 +124,8 @@ class SnippetGalleryBlock(blocks.StructBlock):
             context['random_sizes'] = random_sizes
         
         return context
-
+    
     class Meta:
-        template = 'blocks/gallery_block.html'
+        template = 'components/blocks/gallery_block.html'
         icon = 'image'
-        label = 'Gallery (Snippet)'
+        label = 'Gallery'

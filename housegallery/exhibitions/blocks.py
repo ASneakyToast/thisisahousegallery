@@ -1,9 +1,10 @@
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
+from wagtail.blocks import PageChooserBlock
 
 from housegallery.core.blocks.links import ButtonLinkBlock, CarrotLinkBlock, ListOfLinksBlock
-from housegallery.core.blocks import SnippetGalleryBlock
+from housegallery.core.blocks import GalleryBlock
 
 
 class ExhibitionImageBlock(blocks.StructBlock):
@@ -41,12 +42,25 @@ class ExhibitionGalleryBlock(blocks.StreamBlock):
         label = 'Exhibition Gallery'
 
 
+class ExhibitionFeatureBlock(blocks.StructBlock):
+    """Block for featuring/highlighting a specific exhibition page."""
+    exhibition = PageChooserBlock(
+        'exhibitions.ExhibitionPage',
+        required=True,
+        help_text="Select an exhibition page to feature"
+    )
+    
+    class Meta:
+        template = 'components/exhibitions/exhibition_feature_block.html'
+        icon = 'folder-open-inverse'
+        label = 'Exhibition Feature'
 
 
 class ExhibitionStreamBlock(blocks.StreamBlock):
     """Stream block specifically for exhibition pages."""
     gallery = ExhibitionGalleryBlock(label='Image Gallery')
-    snippet_gallery = SnippetGalleryBlock(label='Gallery (Snippet)')
+    gallery_block = GalleryBlock(label='Gallery')
+    exhibition_feature = ExhibitionFeatureBlock(label='Exhibition Feature')
     rich_text = blocks.RichTextBlock(label='Rich Text')
     button_link = ButtonLinkBlock(label='Button Link')
     list_of_links = ListOfLinksBlock(label='List of Links')

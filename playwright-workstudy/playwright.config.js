@@ -87,6 +87,18 @@ export default defineConfig({
       dependencies: ['setup'],
       retries: 0,
     },
+    {
+      name: 'homepage-initialization',
+      testDir: './projects/homepage-initialization',
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: './auth/auth.json',
+        headless: false,
+        slowMo: 1000,
+      },
+      dependencies: ['setup'],
+      retries: 0,
+    },
     // {
     //   name: 'artwork-processing',
     //   testDir: './tests/artworks',
