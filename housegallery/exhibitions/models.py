@@ -179,6 +179,14 @@ class ExhibitionImage(Orderable):
         default='exhibition',
         help_text="Type of image - exhibition, opening event, or showcards"
     )
+    related_artwork = models.ForeignKey(
+        'artworks.Artwork',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='exhibition_images',
+        help_text="Automatically detected artwork relationship based on image usage"
+    )
 
     panels = [
         ExhibitionImageChooserPanel('image'),
@@ -189,6 +197,51 @@ class ExhibitionImage(Orderable):
     class Meta:
         verbose_name = "Exhibition Image"
         verbose_name_plural = "Exhibition Images"
+
+    def detect_related_artwork(self):
+        """
+        Automatically detect artwork relationship based on image usage.
+        Uses priority-based detection:
+        1. Image is artwork's cover_image
+        2. Image in artwork's artwork_images
+        3. Image in artwork's StreamField artifacts
+        """
+        if not self.page or not self.image:
+            return None
+            
+        # Get all artworks in this exhibition
+        exhibition_artworks = self.page.artworks
+        
+        for artwork in exhibition_artworks:
+            # Priority 1: Cover image match
+            if artwork.cover_image == self.image:
+                return artwork
+                
+            # Priority 2: Gallery images match
+            if hasattr(artwork, 'artwork_images') and artwork.artwork_images.filter(image=self.image).exists():
+                return artwork
+                
+            # Priority 3: StreamField artifacts (more complex)
+            if hasattr(artwork, 'artifacts') and artwork.artifacts:
+                for block in artwork.artifacts:
+                    if hasattr(block, 'value') and hasattr(block.value, 'get') and block.value.get('image') == self.image:
+                        return artwork
+        
+        return None
+
+    def update_related_artwork(self):
+        """Update the cached related_artwork field with detected relationship."""
+        detected_artwork = self.detect_related_artwork()
+        if self.related_artwork != detected_artwork:
+            self.related_artwork = detected_artwork
+            # Save without triggering the save hooks to avoid recursion
+            super().save(update_fields=['related_artwork'])
+
+    def save(self, *args, **kwargs):
+        """Override save to automatically detect artwork relationships."""
+        super().save(*args, **kwargs)
+        # Update related artwork after saving (to ensure we have an ID)
+        self.update_related_artwork()
 
 
 class ExhibitionPage(Page, ListingFields, ClusterableModel):
@@ -284,16 +337,30 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         return self.exhibition_images.filter(image_type='showcards')
     
     def get_all_gallery_images(self):
-        """Get all images from MultipleChooserPanel field"""
+        """Get all images from MultipleChooserPanel field with artwork data"""
         images = []
         
         # Process all exhibition_images
         for gallery_image in self.exhibition_images.all():
-            images.append({
+            image_data = {
                 'image': gallery_image.image,
                 'caption': gallery_image.caption,
-                'type': gallery_image.image_type
-            })
+                'type': gallery_image.image_type,
+                'related_artwork': gallery_image.related_artwork,
+            }
+            
+            # Add artwork metadata if available
+            if gallery_image.related_artwork:
+                artwork = gallery_image.related_artwork
+                image_data.update({
+                    'artwork_title': artwork.title,
+                    'artwork_artist': artwork.artist.name if artwork.artist else None,
+                    'artwork_date': artwork.date.year if artwork.date else None,
+                    'artwork_materials': ', '.join([tag.name for tag in artwork.materials.all()]) if hasattr(artwork, 'materials') else None,
+                    'artwork_size': artwork.size if hasattr(artwork, 'size') else None,
+                })
+            
+            images.append(image_data)
         
         return images
         

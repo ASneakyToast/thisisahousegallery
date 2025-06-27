@@ -16,18 +16,76 @@
 
         {% with gallery_images=exhibition.get_all_gallery_images %}
             {% if gallery_images %}
-                <div class="gallery-container gallery-columns-container masonry">
-                    <div class="gallery-images">
-                        {% for image_data in gallery_images|slice:":30" %}
-                            {% image image_data.image width-400 as img %}
-                            <img src="{{ img.url }}" alt="{{ image_data.caption|default:exhibition.title }}" loading="lazy" class="gallery-single-image" data-type="{{ image_data.type }}">
-                        {% endfor %}
-                        {% if gallery_images|length > 30 %}
-                            <div class="gallery-more">+{{ gallery_images|length|add:"-30" }} more</div>
-                        {% endif %}
+                <div class="exhibition-feature-gallery" data-gallery-id="{{ exhibition.title|slugify }}">
+                    <div class="gallery-container gallery-columns-container masonry">
+                        <div class="gallery-images">
+                            {% for image_data in gallery_images|slice:":30" %}
+                                {% image image_data.image width-400 as img_thumb %}
+                                {% image image_data.image width-1200 as img_full %}
+                                <button class="gallery-lightbox-item" 
+                                        data-media-type="image"
+                                        data-media-src="{{ img_full.url }}"
+                                        data-thumbnail-src="{{ img_thumb.url }}"
+                                        data-caption="{{ image_data.caption|default:exhibition.title }}"
+                                        data-index="{{ forloop.counter0 }}"
+                                        data-image-type="{{ image_data.type }}"
+                                        data-exhibition-title="{{ exhibition.title }}"
+                                        data-exhibition-date="{{ exhibition.get_formatted_date_short }}"
+                                        {% if image_data.related_artwork %}
+                                        data-artwork-title="{{ image_data.artwork_title }}"
+                                        data-artwork-artist="{{ image_data.artwork_artist|default:'' }}"
+                                        data-artwork-date="{{ image_data.artwork_date|default:'' }}"
+                                        data-artwork-materials="{{ image_data.artwork_materials|default:'' }}"
+                                        data-artwork-size="{{ image_data.artwork_size|default:'' }}"
+                                        {% endif %}
+                                        aria-label="View {{ image_data.caption|default:exhibition.title }} in lightbox">
+                                    <img src="{{ img_thumb.url }}" 
+                                         alt="{{ image_data.caption|default:exhibition.title }}" 
+                                         loading="lazy" 
+                                         class="gallery-single-image" 
+                                         data-type="{{ image_data.type }}">
+                                </button>
+                            {% endfor %}
+                            {% if gallery_images|length > 30 %}
+                                <div class="gallery-more">+{{ gallery_images|length|add:"-30" }} more</div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             {% endif %}
         {% endwith %}
     </div>
 {% endwith %}
+
+<!-- Lightbox Modal -->
+<div id="exhibition-lightbox" 
+     class="exhibition-lightbox" 
+     role="dialog" 
+     aria-modal="true" 
+     aria-hidden="true">
+  
+  <div class="exhibition-lightbox__backdrop"></div>
+  
+  <div class="exhibition-lightbox__content">
+    <div class="exhibition-lightbox__media-container">
+      <!-- Dynamic content inserted here -->
+    </div>
+    
+    <div class="exhibition-lightbox__controls">
+      <div class="exhibition-lightbox__controls-header">
+        <div class="exhibition-lightbox__header-top">
+          <h2 class="exhibition-lightbox__title"></h2>
+          <button class="exhibition-lightbox__close" aria-label="Close lightbox">×</button>
+        </div>
+        <!-- Artwork metadata will be inserted here by JavaScript -->
+      </div>
+      <div class="exhibition-lightbox__navigation">
+        <button class="exhibition-lightbox__nav exhibition-lightbox__prev" aria-label="Previous image">‹</button>
+        <div class="exhibition-lightbox__counter">
+          <span class="exhibition-lightbox__current">1</span> / <span class="exhibition-lightbox__total">1</span>
+        </div>
+        <button class="exhibition-lightbox__nav exhibition-lightbox__next" aria-label="Next image">›</button>
+      </div>
+    </div>
+  </div>
+</div>
