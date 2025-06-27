@@ -345,6 +345,7 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             image_data = {
                 'image': gallery_image.image,
                 'caption': gallery_image.caption,
+                'credit': gallery_image.image.credit,
                 'type': gallery_image.image_type,
                 'related_artwork': gallery_image.related_artwork,
             }
@@ -381,6 +382,13 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             return f"{start_str} - {end_str}"
 
         return start_str
+    
+    def get_formatted_date_month_year(self):
+        """Return start date in MM.YYYY format for exhibition context."""
+        if not self.start_date:
+            return ""
+        
+        return self.start_date.strftime("%m.%Y")
 
 
 @register_snippet

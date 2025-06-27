@@ -30,7 +30,8 @@
                                         data-index="{{ forloop.counter0 }}"
                                         data-image-type="{{ image_data.type }}"
                                         data-exhibition-title="{{ exhibition.title }}"
-                                        data-exhibition-date="{{ exhibition.get_formatted_date_short }}"
+                                        data-exhibition-date="{{ exhibition.get_formatted_date_month_year }}"
+                                        data-image-credit="{{ image_data.credit|default:'' }}"
                                         {% if image_data.related_artwork %}
                                         data-artwork-title="{{ image_data.artwork_title }}"
                                         data-artwork-artist="{{ image_data.artwork_artist|default:'' }}"

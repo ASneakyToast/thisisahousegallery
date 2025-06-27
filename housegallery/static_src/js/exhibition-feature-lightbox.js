@@ -77,11 +77,12 @@ class ExhibitionFeatureLightbox {
     // Setup close functionality
     const closeBtn = this.lightbox.querySelector('.exhibition-lightbox__close');
     const backdrop = this.lightbox.querySelector('.exhibition-lightbox__backdrop');
+    const mediaContainer = this.lightbox.querySelector('.exhibition-lightbox__media-container');
     const prevBtn = this.lightbox.querySelector('.exhibition-lightbox__prev');
     const nextBtn = this.lightbox.querySelector('.exhibition-lightbox__next');
     
     // Close events
-    [closeBtn, backdrop].forEach(element => {
+    [closeBtn, backdrop, mediaContainer].forEach(element => {
       if (element) {
         element.addEventListener('click', () => this.closeLightbox());
       }
@@ -165,7 +166,9 @@ class ExhibitionFeatureLightbox {
     this.updateNavigation();
     this.updateCounter();
     
-    // Show modal
+    // Show modal - force reflow to ensure backdrop-filter is calculated
+    this.lightbox.style.display = 'flex';
+    this.lightbox.offsetHeight; // Force reflow
     this.lightbox.setAttribute('aria-hidden', 'false');
     this.lightbox.classList.add('exhibition-lightbox--active');
     
@@ -180,6 +183,7 @@ class ExhibitionFeatureLightbox {
   getArtworkData(item) {
     const imageType = item.dataset.imageType;
     const hasArtworkData = !!(item.dataset.artworkTitle);
+    const imageCredit = item.dataset.imageCredit || null;
     
     // Priority 1: If we have artwork data, always show it regardless of image type
     if (hasArtworkData) {
@@ -191,6 +195,7 @@ class ExhibitionFeatureLightbox {
         date: item.dataset.artworkDate || null,
         materials: item.dataset.artworkMaterials || null,
         size: item.dataset.artworkSize || null,
+        credit: imageCredit,
         hasArtwork: true
       };
     }
@@ -202,6 +207,7 @@ class ExhibitionFeatureLightbox {
         isOpeningPhoto: false,
         exhibitionTitle: item.dataset.exhibitionTitle || null,
         exhibitionDate: item.dataset.exhibitionDate || null,
+        credit: imageCredit,
         hasArtwork: false
       };
     }
@@ -213,6 +219,7 @@ class ExhibitionFeatureLightbox {
         isOpeningPhoto: true,
         exhibitionTitle: item.dataset.exhibitionTitle || null,
         exhibitionDate: item.dataset.exhibitionDate || null,
+        credit: imageCredit,
         hasArtwork: false
       };
     }
@@ -221,6 +228,7 @@ class ExhibitionFeatureLightbox {
     return {
       isExhibitionPhoto: false,
       isOpeningPhoto: false,
+      credit: imageCredit,
       hasArtwork: false
     };
   }
@@ -351,11 +359,13 @@ class ExhibitionFeatureLightbox {
     
     if (!metadataContainer) {
       // Create metadata container if it doesn't exist
-      const controlsHeader = this.lightbox.querySelector('.exhibition-lightbox__controls-header');
-      if (controlsHeader) {
+      const controlsPanel = this.lightbox.querySelector('.exhibition-lightbox__controls');
+      const navigationPanel = this.lightbox.querySelector('.exhibition-lightbox__navigation');
+      if (controlsPanel && navigationPanel) {
         metadataContainer = document.createElement('div');
         metadataContainer.className = 'exhibition-lightbox__artwork-metadata';
-        controlsHeader.appendChild(metadataContainer);
+        // Insert before navigation panel to maintain order: header, metadata, navigation
+        controlsPanel.insertBefore(metadataContainer, navigationPanel);
       }
     }
     
@@ -420,6 +430,14 @@ class ExhibitionFeatureLightbox {
         metadataContainer.appendChild(detailsElement);
       }
     }
+    
+    // Add image credit if available (for all image types)
+    if (artworkData && artworkData.credit) {
+      const creditElement = document.createElement('div');
+      creditElement.className = 'exhibition-lightbox__image-credit';
+      creditElement.textContent = artworkData.credit;
+      metadataContainer.appendChild(creditElement);
+    }
   }
 
   preloadNearbyImages() {
@@ -481,6 +499,11 @@ class ExhibitionFeatureLightbox {
   closeLightbox() {
     this.lightbox.setAttribute('aria-hidden', 'true');
     this.lightbox.classList.remove('exhibition-lightbox--active');
+    
+    // Reset display after transition
+    setTimeout(() => {
+      this.lightbox.style.display = '';
+    }, 200);
     
     // Clear content to free memory
     const mediaContainer = this.lightbox.querySelector('.exhibition-lightbox__media-container');
