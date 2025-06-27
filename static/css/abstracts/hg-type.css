@@ -6,6 +6,7 @@
   font-weight: var(--font-weight-title);
   line-height: var(--line-height-title);
   color: var(--color-text);
+  margin-bottom: var(--size-layout-heading-spacing);
 }
 
 .type-heading {
@@ -14,6 +15,7 @@
   font-weight: var(--font-weight-heading);
   line-height: var(--line-height-heading);
   color: var(--color-text);
+  margin-bottom: var(--size-layout-heading-spacing);
 }
 
 .type-intro {

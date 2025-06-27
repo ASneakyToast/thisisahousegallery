@@ -33,7 +33,7 @@
   --size-640: 640px;
 
   /* alias */
-  --size-layout-gutter: var(--size-20);
+  --size-layout-gutter: var(--size-15);
   --size-layout-item-gap: var(--size-15);
   --size-layout-element-spacing: var(--size-25);
   --size-layout-section-spacing: var(--size-40);
@@ -130,7 +130,7 @@
 
 @media screen and (min-width: 768px) { /* tablet */
     :root {
-        --size-layout-gutter: var(--size-80);
+        --size-layout-gutter: var(--size-30);
         --size-layout-heading-spacing: var(--size-layout-large-spacing);
         --font-size-title: var(--font-size-32);
         --font-size-heading: var(--font-size-50);
@@ -146,19 +146,19 @@
 
 @media screen and (min-width: 1024px) { /* laptop */
     :root {
-        --size-layout-gutter: var(--size-130);
+        --size-layout-gutter: var(--size-40);
         --font-size-title: var(--font-size-40);
     }
 }
 
 @media screen and (min-width: 1280px) { /* desktop */
     :root {
-        --size-layout-gutter: var(--size-140);
+        --size-layout-gutter: var(--size-40);
     }
 }
 
 @media screen and (min-width: 1500px) { /* desktop-wide */
     :root {
-        --size-layout-gutter: var(--size-200);
+        --size-layout-gutter: var(--size-40);
     }
 }
