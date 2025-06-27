@@ -242,7 +242,11 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             FieldPanel('featured_image'),
 	    ], heading="Exhibition Information"),
 	    InlinePanel('exhibition_artists', label="Artists"),
-	    InlinePanel('exhibition_artworks', label="Artworks"),
+	    MultipleChooserPanel(
+        'exhibition_artworks',
+        label="Artworks",
+        chooser_field_name="artwork"
+    ),
         FieldPanel('body'),
         MultiFieldPanel([
             MultipleChooserPanel(
