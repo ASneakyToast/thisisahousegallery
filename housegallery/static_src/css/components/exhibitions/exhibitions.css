@@ -17,6 +17,10 @@
   display: block;
   margin-bottom: 0;
   border-bottom: none;
+  flex: 1;
+  position: sticky;
+  top: 2rem;
+  align-self: flex-start;
 }
 
 .exhibition-header h2,
@@ -26,13 +30,17 @@
 }
 
 .exhibition-header h2 {
-  font-size: var(--font-size-large);
+  font-size: var(--font-size-jumbo, 3.5rem);
+  font-weight: var(--font-weight-bold, 700);
   margin-bottom: var(--size-layout-item-gap);
   margin-top: 0;
+  line-height: 1.1;
 }
 
 .exhibition-header h3 {
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-detail, 0.875rem);
+  font-weight: var(--font-weight-light, 300);
+  opacity: 0.7;
 }
 
 .exhibition-header__artists {
@@ -45,8 +53,8 @@
 
 .exhibition-header__artists p {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-body, 1rem);
+  font-weight: var(--font-weight-medium, 500);
 }
 
 .exhibition-header__artists a {
@@ -125,11 +133,15 @@
   }
 
   .exhibition-header h2 {
-    font-size: var(--font-size-heading);
+    font-size: var(--font-size-huge, 2.5rem);
   }
 
   .exhibition-header h3 {
-    font-size: var(--font-size-subheading);
+    font-size: var(--font-size-small, 0.8rem);
+  }
+  
+  .exhibition-header__artists p {
+    font-size: var(--font-size-body, 1rem);
   }
 }
 
@@ -161,44 +173,6 @@
   margin-bottom: var(--size-layout-section-spacing);
 }
 
-/* New gallery components */
-.exhibition-gallery {
-  margin-top: var(--size-layout-element-spacing);
-  flex: 1;
-  column-count: 4;
-  column-gap: var(--size-layout-item-gap);
-  margin-top: 0;
-  width: 100%;
-}
-
-@media (max-width: 1200px) {
-  .exhibition-gallery {
-    column-count: 3;
-  }
-}
-
-@media (max-width: 900px) {
-  .exhibition-gallery {
-    column-count: 2;
-  }
-}
-
-@media (max-width: 600px) {
-  .exhibition-gallery {
-    column-count: 1;
-  }
-}
-
-.gallery-thumb {
-  width: 100%;
-  padding-bottom: var(--size-layout-item-gap, 15px);
-
-  filter: drop-shadow(3px 4px 0px black);
-
-  img {
-    width: 100%;
-  }
-}
 
 .exhibition-showcard {
   margin-bottom: var(--size-layout-item-gap);

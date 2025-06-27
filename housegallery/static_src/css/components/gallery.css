@@ -17,10 +17,7 @@
 
 /* Default Gallery Container */
 .gallery-container {
-    width: 100%;
-    padding: 0 var(--size-layout-gutter);
-    margin-top: var(--size-layout-element-spacing);
-    box-sizing: border-box;
+    flex: 3;
 }
 
 /* Full-width gallery modifications */
@@ -38,19 +35,45 @@
     margin-bottom: 2rem;
 }
 
-/* COLUMNS Layout - CSS Column Count */
+/* COLUMNS Layout - CSS-only Masonry using Flexbox */
 .gallery-columns-container .gallery-images {
-    column-count: 3;
-    column-gap: 1rem;
-    column-fill: balance;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 1rem;
+    height: 100vh; /* Set a height to enable wrapping */
+    max-height: 2000px; /* Adjust based on your needs */
 }
 
 .gallery-columns-container .gallery-image,
 .gallery-columns-container .gallery-single-image {
+    width: calc(25% - 0.75rem); /* 4 columns with gap */
     break-inside: avoid;
     margin-bottom: 1rem;
-    display: inline-block;
+}
+
+/* Alternative CSS-only masonry using CSS columns */
+.gallery-columns-container.masonry .gallery-images {
+    display: block;
+    columns: 5;
+    column-gap: var(--size-layout-item-gap, 15px);
+    height: auto;
+    max-height: none;
+}
+
+.gallery-columns-container.masonry .gallery-image,
+.gallery-columns-container.masonry .gallery-single-image {
     width: 100%;
+    break-inside: avoid;
+    margin-bottom: var(--size-layout-item-gap, 15px);
+    display: inline-block;
+}
+
+.gallery-columns-container.masonry .gallery-single-image img {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    display: block;
 }
 
 /* ROWS Layout - Flexbox with wrap */
@@ -178,7 +201,31 @@
     font-style: italic;
 }
 
+.gallery-more {
+    width: 100%;
+    padding: var(--size-layout-item-gap);
+    text-align: center;
+    font-size: var(--font-size-detail);
+    color: var(--color-black);
+    opacity: 0.7;
+    font-weight: var(--font-weight-normal);
+    break-inside: avoid;
+    margin-bottom: var(--size-layout-item-gap);
+}
+
 /* Responsive adjustments */
+@media (max-width: 1024px) {
+    /* Columns layout tablet - 3 columns */
+    .gallery-columns-container .gallery-image,
+    .gallery-columns-container .gallery-single-image {
+        width: calc(33.333% - 0.67rem);
+    }
+    
+    .gallery-columns-container.masonry .gallery-images {
+        columns: 3;
+    }
+}
+
 @media (max-width: 768px) {
     .gallery-images {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -189,9 +236,14 @@
         font-size: 1.5rem;
     }
     
-    /* Columns layout responsive */
-    .gallery-columns-container .gallery-images {
-        column-count: 2;
+    /* Columns layout responsive - 2 columns */
+    .gallery-columns-container .gallery-image,
+    .gallery-columns-container .gallery-single-image {
+        width: calc(50% - 0.5rem);
+    }
+    
+    .gallery-columns-container.masonry .gallery-images {
+        columns: 2;
     }
     
     /* Rows layout responsive */
@@ -225,9 +277,14 @@
         gap: 0.5rem;
     }
     
-    /* Columns layout mobile */
-    .gallery-columns-container .gallery-images {
-        column-count: 1;
+    /* Columns layout mobile - single column */
+    .gallery-columns-container .gallery-image,
+    .gallery-columns-container .gallery-single-image {
+        width: 100%;
+    }
+    
+    .gallery-columns-container.masonry .gallery-images {
+        columns: 1;
     }
     
     /* Rows layout mobile */
