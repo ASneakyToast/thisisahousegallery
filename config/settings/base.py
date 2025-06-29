@@ -294,7 +294,11 @@ WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 
 # Allows to change the max size of the image that user can upload. Defaults to 6MB
-WAGTAILIMAGES_MAX_UPLOAD_SIZE = 6 * 1024 * 1024
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 10 * 1024 * 1024
+
+# Django file upload size limits - set to match Wagtail image upload limit
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
 
 WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg"]
 
@@ -317,7 +321,7 @@ WAGTAIL_MODERATION_ENABLED = False
 
 WAGTAIL_PASSWORD_REQUIRED_TEMPLATE = 'password_required.html'
 
-DEFAULT_PER_PAGE = 20
+DEFAULT_PER_PAGE = 40
 
 
 # TEMPLATES
