@@ -5,6 +5,7 @@ from django.apps import apps
 from django.conf import settings
 from django.db import models
 from django.db.models import Q, F
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.forms.choosers import BaseFilterForm, LocaleFilterMixin
 from wagtail.admin.ui.tables import TitleColumn, Column
@@ -136,11 +137,12 @@ class ExhibitionImageSearchFilterMixin(forms.Form):
             self.is_searching = True
             self.search_query = search_query
             
-        # Tag filtering with multi-select
+        # Tag filtering with multi-select (AND logic - must have ALL selected tags)
         tags_filter = self.cleaned_data.get("tags")
         if tags_filter:
-            # tags_filter is now a list of selected tag names
-            objects = objects.filter(tags__name__in=tags_filter).distinct()
+            # Apply each tag filter sequentially to ensure ALL tags are present
+            for tag_name in tags_filter:
+                objects = objects.filter(tags__name=tag_name)
             
         # Credit filtering
         credit_filter = self.cleaned_data.get("credit")
@@ -191,6 +193,10 @@ class BaseExhibitionImageChooseView(BaseChooseView):
     """Base chooser view for CustomImage model with exhibition-focused columns."""
     ordering = ["-created_at"]
     
+    def get_queryset(self):
+        """Optimize queryset to avoid N+1 queries"""
+        return super().get_queryset().prefetch_related('tags')
+    
     @property
     def columns(self):
         return [
@@ -203,7 +209,11 @@ class BaseExhibitionImageChooseView(BaseChooseView):
             Column(
                 name="preview",
                 label=_("Preview"),
-                accessor=lambda obj: obj.get_rendition('fill-100x100').url if obj else '',
+                accessor=lambda obj: format_html(
+                    '<img src="{}" alt="{}" class="chooser-preview-thumbnail" loading="lazy">', 
+                    obj.get_rendition('fill-100x100').url, 
+                    obj.title or 'Image preview'
+                ) if obj else '',
             ),
             Column(
                 name="credit",
@@ -263,6 +273,7 @@ class ExhibitionImageChooserViewSet(ChooserViewSet):
     icon = "image"
     choose_one_text = _("Choose an image")
     choose_another_text = _("Choose another image")
+    paginate_by = getattr(settings, 'DEFAULT_PER_PAGE', 20)
     
     # Enable multi-select for use with MultipleChooserPanel
     # This allows the chooser to work with existing MultipleChooserPanel implementations
