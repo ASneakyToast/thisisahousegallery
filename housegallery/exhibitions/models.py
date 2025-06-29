@@ -1,6 +1,8 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django import forms
+import random
+import datetime
 
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
@@ -8,6 +10,8 @@ from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, MultipleChooserPanel
 
 from .widgets import ExhibitionImageChooserPanel
+from housegallery.artworks.widgets import ArtworkChooserPanel
+from housegallery.artists.widgets import ArtistChooserPanel
 from wagtail.fields import StreamField, RichTextField
 from wagtail.images.models import Image
 from wagtail.images import get_image_model_string
@@ -128,7 +132,7 @@ class ExhibitionArtist(Orderable):
     )
 
     panels = [
-        FieldPanel('artist'),
+        ArtistChooserPanel('artist'),
     ]
 
 
@@ -146,7 +150,7 @@ class ExhibitionArtwork(Orderable):
     )
 
     panels = [
-        FieldPanel('artwork'),
+        ArtworkChooserPanel('artwork'),
     ]
 
 
@@ -213,15 +217,12 @@ class ExhibitionImage(Orderable):
         exhibition_artworks = self.page.artworks
         
         for artwork in exhibition_artworks:
-            # Priority 1: Cover image match
-            if artwork.cover_image == self.image:
-                return artwork
                 
-            # Priority 2: Gallery images match
+            # Priority 1: Gallery images match
             if hasattr(artwork, 'artwork_images') and artwork.artwork_images.filter(image=self.image).exists():
                 return artwork
                 
-            # Priority 3: StreamField artifacts (more complex)
+            # Priority 2: StreamField artifacts (more complex)
             if hasattr(artwork, 'artifacts') and artwork.artifacts:
                 for block in artwork.artifacts:
                     if hasattr(block, 'value') and hasattr(block.value, 'get') and block.value.get('image') == self.image:
@@ -311,7 +312,7 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 label="Exhibition Images",
                 chooser_field_name="image"
             ),
-        ], heading="Image Gallery"),
+        ], heading="Images"),
     ]
     
     promote_panels = (
@@ -359,7 +360,7 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 artwork = gallery_image.related_artwork
                 image_data.update({
                     'artwork_title': artwork.title,
-                    'artwork_artist': artwork.artist.name if artwork.artist else None,
+                    'artwork_artist': artwork.artist_names if artwork.artist_names else None,
                     'artwork_date': artwork.date.year if artwork.date else None,
                     'artwork_materials': ', '.join([tag.name for tag in artwork.materials.all()]) if hasattr(artwork, 'materials') else None,
                     'artwork_size': artwork.size if hasattr(artwork, 'size') else None,
@@ -368,6 +369,22 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             images.append(image_data)
         
         return images
+    
+    def get_randomized_gallery_images(self, seed=None):
+        """Get all gallery images in randomized order using date-based seed for daily consistency"""
+        if seed is None:
+            # Use current date as seed for consistent daily randomization
+            seed = datetime.date.today().isoformat()
+        
+        # Get all images first
+        images = self.get_all_gallery_images()
+        
+        # Create a copy and shuffle it
+        randomized_images = images.copy()
+        random.seed(seed)
+        random.shuffle(randomized_images)
+        
+        return randomized_images
         
     def get_current_date(self):
         """Return the current date for date comparisons."""

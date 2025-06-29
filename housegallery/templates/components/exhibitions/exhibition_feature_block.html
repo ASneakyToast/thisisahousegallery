@@ -14,47 +14,85 @@
             </section>
         </section>
 
-        {% with gallery_images=exhibition.get_all_gallery_images %}
-            {% if gallery_images %}
-                <div class="exhibition-feature-gallery" data-gallery-id="{{ exhibition.title|slugify }}">
-                    <div class="gallery-container gallery-columns-container masonry">
-                        <div class="gallery-images">
-                            {% for image_data in gallery_images|slice:":30" %}
-                                {% image image_data.image width-400 as img_thumb %}
-                                {% image image_data.image width-1200 as img_full %}
-                                <button class="gallery-lightbox-item" 
-                                        data-media-type="image"
-                                        data-media-src="{{ img_full.url }}"
-                                        data-thumbnail-src="{{ img_thumb.url }}"
-                                        data-caption="{{ image_data.caption|default:exhibition.title }}"
-                                        data-index="{{ forloop.counter0 }}"
-                                        data-image-type="{{ image_data.type }}"
-                                        data-exhibition-title="{{ exhibition.title }}"
-                                        data-exhibition-date="{{ exhibition.get_formatted_date_month_year }}"
-                                        data-image-credit="{{ image_data.credit|default:'' }}"
-                                        {% if image_data.related_artwork %}
-                                        data-artwork-title="{{ image_data.artwork_title }}"
-                                        data-artwork-artist="{{ image_data.artwork_artist|default:'' }}"
-                                        data-artwork-date="{{ image_data.artwork_date|default:'' }}"
-                                        data-artwork-materials="{{ image_data.artwork_materials|default:'' }}"
-                                        data-artwork-size="{{ image_data.artwork_size|default:'' }}"
-                                        {% endif %}
-                                        aria-label="View {{ image_data.caption|default:exhibition.title }} in lightbox">
-                                    <img src="{{ img_thumb.url }}" 
-                                         alt="{{ image_data.caption|default:exhibition.title }}" 
-                                         loading="lazy" 
-                                         class="gallery-single-image" 
-                                         data-type="{{ image_data.type }}">
-                                </button>
-                            {% endfor %}
-                            {% if gallery_images|length > 30 %}
-                                <div class="gallery-more">+{{ gallery_images|length|add:"-30" }} more</div>
-                            {% endif %}
+        {% if value.randomize_gallery %}
+            {% with gallery_images=exhibition.get_randomized_gallery_images %}
+                {% if gallery_images %}
+                    <div class="exhibition-feature-gallery" data-gallery-id="{{ exhibition.title|slugify }}">
+                        <div class="gallery-container gallery-columns-container masonry">
+                            <div class="gallery-images">
+                                {% for image_data in gallery_images %}
+                                    {% image image_data.image width-400 as img_thumb %}
+                                    {% image image_data.image width-1200 as img_full %}
+                                    <button class="gallery-lightbox-item" 
+                                            data-media-type="image"
+                                            data-media-src="{{ img_full.url }}"
+                                            data-thumbnail-src="{{ img_thumb.url }}"
+                                            data-caption="{{ image_data.caption|default:exhibition.title }}"
+                                            data-index="{{ forloop.counter0 }}"
+                                            data-image-type="{{ image_data.type }}"
+                                            data-exhibition-title="{{ exhibition.title }}"
+                                            data-exhibition-date="{{ exhibition.get_formatted_date_month_year }}"
+                                            data-image-credit="{{ image_data.credit|default:'' }}"
+                                            {% if image_data.related_artwork %}
+                                            data-artwork-title="{{ image_data.artwork_title }}"
+                                            data-artwork-artist="{{ image_data.artwork_artist|default:'' }}"
+                                            data-artwork-date="{{ image_data.artwork_date|default:'' }}"
+                                            data-artwork-materials="{{ image_data.artwork_materials|default:'' }}"
+                                            data-artwork-size="{{ image_data.artwork_size|default:'' }}"
+                                            {% endif %}
+                                            aria-label="View {{ image_data.caption|default:exhibition.title }} in lightbox">
+                                        <img src="{{ img_thumb.url }}" 
+                                             alt="{{ image_data.caption|default:exhibition.title }}" 
+                                             loading="lazy" 
+                                             class="gallery-single-image" 
+                                             data-type="{{ image_data.type }}">
+                                    </button>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
-        {% endwith %}
+                {% endif %}
+            {% endwith %}
+        {% else %}
+            {% with gallery_images=exhibition.get_all_gallery_images %}
+                {% if gallery_images %}
+                    <div class="exhibition-feature-gallery" data-gallery-id="{{ exhibition.title|slugify }}">
+                        <div class="gallery-container gallery-columns-container masonry">
+                            <div class="gallery-images">
+                                {% for image_data in gallery_images %}
+                                    {% image image_data.image width-400 as img_thumb %}
+                                    {% image image_data.image width-1200 as img_full %}
+                                    <button class="gallery-lightbox-item" 
+                                            data-media-type="image"
+                                            data-media-src="{{ img_full.url }}"
+                                            data-thumbnail-src="{{ img_thumb.url }}"
+                                            data-caption="{{ image_data.caption|default:exhibition.title }}"
+                                            data-index="{{ forloop.counter0 }}"
+                                            data-image-type="{{ image_data.type }}"
+                                            data-exhibition-title="{{ exhibition.title }}"
+                                            data-exhibition-date="{{ exhibition.get_formatted_date_month_year }}"
+                                            data-image-credit="{{ image_data.credit|default:'' }}"
+                                            {% if image_data.related_artwork %}
+                                            data-artwork-title="{{ image_data.artwork_title }}"
+                                            data-artwork-artist="{{ image_data.artwork_artist|default:'' }}"
+                                            data-artwork-date="{{ image_data.artwork_date|default:'' }}"
+                                            data-artwork-materials="{{ image_data.artwork_materials|default:'' }}"
+                                            data-artwork-size="{{ image_data.artwork_size|default:'' }}"
+                                            {% endif %}
+                                            aria-label="View {{ image_data.caption|default:exhibition.title }} in lightbox">
+                                        <img src="{{ img_thumb.url }}" 
+                                             alt="{{ image_data.caption|default:exhibition.title }}" 
+                                             loading="lazy" 
+                                             class="gallery-single-image" 
+                                             data-type="{{ image_data.type }}">
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
     </div>
 {% endwith %}
 

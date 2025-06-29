@@ -49,6 +49,11 @@ class ExhibitionFeatureBlock(blocks.StructBlock):
         required=True,
         help_text="Select an exhibition page to feature"
     )
+    randomize_gallery = blocks.BooleanBlock(
+        required=False,
+        default=False,
+        help_text="Randomize the gallery image order daily (uses current date as seed for consistent daily ordering)"
+    )
     
     class Meta:
         template = 'components/exhibitions/exhibition_feature_block.html'
@@ -58,7 +63,7 @@ class ExhibitionFeatureBlock(blocks.StructBlock):
 
 class ExhibitionStreamBlock(blocks.StreamBlock):
     """Stream block specifically for exhibition pages."""
-    gallery = ExhibitionGalleryBlock(label='Image Gallery')
+    gallery = ExhibitionGalleryBlock(label='Images')
     gallery_block = GalleryBlock(label='Gallery')
     exhibition_feature = ExhibitionFeatureBlock(label='Exhibition Feature')
     rich_text = blocks.RichTextBlock(label='Rich Text')
