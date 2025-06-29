@@ -77,11 +77,12 @@ class ExhibitionFeatureLightbox {
     // Setup close functionality
     const closeBtn = this.lightbox.querySelector('.exhibition-lightbox__close');
     const backdrop = this.lightbox.querySelector('.exhibition-lightbox__backdrop');
+    const mediaContainer = this.lightbox.querySelector('.exhibition-lightbox__media-container');
     const prevBtn = this.lightbox.querySelector('.exhibition-lightbox__prev');
     const nextBtn = this.lightbox.querySelector('.exhibition-lightbox__next');
     
     // Close events
-    [closeBtn, backdrop].forEach(element => {
+    [closeBtn, backdrop, mediaContainer].forEach(element => {
       if (element) {
         element.addEventListener('click', () => this.closeLightbox());
       }
@@ -157,12 +158,17 @@ class ExhibitionFeatureLightbox {
     const thumbnailSrc = item.dataset.thumbnailSrc;
     const caption = item.dataset.caption;
     
+    // Get artwork metadata if available
+    const artworkData = this.getArtworkData(item);
+    
     // Update lightbox content
-    this.updateLightboxContent(mediaType, mediaSrc, thumbnailSrc, caption);
+    this.updateLightboxContent(mediaType, mediaSrc, thumbnailSrc, caption, artworkData);
     this.updateNavigation();
     this.updateCounter();
     
-    // Show modal
+    // Show modal - force reflow to ensure backdrop-filter is calculated
+    this.lightbox.style.display = 'flex';
+    this.lightbox.offsetHeight; // Force reflow
     this.lightbox.setAttribute('aria-hidden', 'false');
     this.lightbox.classList.add('exhibition-lightbox--active');
     
@@ -174,14 +180,70 @@ class ExhibitionFeatureLightbox {
     if (closeBtn) closeBtn.focus();
   }
 
-  updateLightboxContent(mediaType, mediaSrc, thumbnailSrc, caption) {
+  getArtworkData(item) {
+    const imageType = item.dataset.imageType;
+    const hasArtworkData = !!(item.dataset.artworkTitle);
+    const imageCredit = item.dataset.imageCredit || null;
+    
+    // Priority 1: If we have artwork data, always show it regardless of image type
+    if (hasArtworkData) {
+      return {
+        isExhibitionPhoto: false,
+        isOpeningPhoto: false,
+        title: item.dataset.artworkTitle || null,
+        artist: item.dataset.artworkArtist || null,
+        date: item.dataset.artworkDate || null,
+        materials: item.dataset.artworkMaterials || null,
+        size: item.dataset.artworkSize || null,
+        credit: imageCredit,
+        hasArtwork: true
+      };
+    }
+    
+    // Priority 2: Exhibition install photos
+    if (imageType === 'exhibition') {
+      return {
+        isExhibitionPhoto: true,
+        isOpeningPhoto: false,
+        exhibitionTitle: item.dataset.exhibitionTitle || null,
+        exhibitionDate: item.dataset.exhibitionDate || null,
+        credit: imageCredit,
+        hasArtwork: false
+      };
+    }
+    
+    // Priority 3: Opening photos
+    if (imageType === 'opening') {
+      return {
+        isExhibitionPhoto: false,
+        isOpeningPhoto: true,
+        exhibitionTitle: item.dataset.exhibitionTitle || null,
+        exhibitionDate: item.dataset.exhibitionDate || null,
+        credit: imageCredit,
+        hasArtwork: false
+      };
+    }
+    
+    // Default: No special metadata
+    return {
+      isExhibitionPhoto: false,
+      isOpeningPhoto: false,
+      credit: imageCredit,
+      hasArtwork: false
+    };
+  }
+
+  updateLightboxContent(mediaType, mediaSrc, thumbnailSrc, caption, artworkData) {
     const mediaContainer = this.lightbox.querySelector('.exhibition-lightbox__media-container');
     const titleContainer = this.lightbox.querySelector('.exhibition-lightbox__title');
     
-    // Update title
+    // Always use exhibition title at the top
     if (titleContainer && this.currentGallery) {
       titleContainer.textContent = this.currentGallery.id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     }
+    
+    // Update artwork metadata display
+    this.updateArtworkMetadata(artworkData);
     
     // Create or update the image element
     this.initializeImage(mediaContainer);
@@ -267,19 +329,114 @@ class ExhibitionFeatureLightbox {
       this.loadCurrentImage();
     }, 75);
     
-    // Update navigation, counter, and title
+    // Update navigation, counter, title, and artwork metadata
     this.updateNavigation();
     this.updateCounter();
-    this.updateTitle();
+    this.updateCurrentArtworkInfo();
     
     // Preload nearby images for smooth future transitions
     this.preloadNearbyImages();
   }
   
-  updateTitle() {
+  updateCurrentArtworkInfo() {
+    if (!this.currentGallery || !this.currentGallery.items[this.currentIndex]) return;
+    
+    const currentItem = this.currentGallery.items[this.currentIndex];
+    const artworkData = this.getArtworkData(currentItem);
+    
+    // Always keep exhibition title at the top
     const titleContainer = this.lightbox.querySelector('.exhibition-lightbox__title');
     if (titleContainer && this.currentGallery) {
       titleContainer.textContent = this.currentGallery.id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+    
+    this.updateArtworkMetadata(artworkData);
+  }
+  
+  updateArtworkMetadata(artworkData) {
+    // Find or create artwork metadata container
+    let metadataContainer = this.lightbox.querySelector('.exhibition-lightbox__artwork-metadata');
+    
+    if (!metadataContainer) {
+      // Create metadata container if it doesn't exist
+      const controlsPanel = this.lightbox.querySelector('.exhibition-lightbox__controls');
+      const navigationPanel = this.lightbox.querySelector('.exhibition-lightbox__navigation');
+      if (controlsPanel && navigationPanel) {
+        metadataContainer = document.createElement('div');
+        metadataContainer.className = 'exhibition-lightbox__artwork-metadata';
+        // Insert before navigation panel to maintain order: header, metadata, navigation
+        controlsPanel.insertBefore(metadataContainer, navigationPanel);
+      }
+    }
+    
+    if (!metadataContainer) return;
+    
+    // Clear existing content
+    metadataContainer.innerHTML = '';
+    
+    // Add metadata based on image type
+    if (artworkData && artworkData.isExhibitionPhoto) {
+      // Display exhibition context for install photos
+      const contextParts = [];
+      if (artworkData.exhibitionTitle) contextParts.push(artworkData.exhibitionTitle);
+      if (artworkData.exhibitionDate) contextParts.push(artworkData.exhibitionDate);
+      contextParts.push('Exhibition Photo');
+      
+      const contextElement = document.createElement('div');
+      contextElement.className = 'exhibition-lightbox__exhibition-context';
+      contextElement.textContent = contextParts.join(', ');
+      metadataContainer.appendChild(contextElement);
+      
+    } else if (artworkData && artworkData.isOpeningPhoto) {
+      // Display exhibition context for opening photos
+      const contextParts = [];
+      if (artworkData.exhibitionTitle) contextParts.push(artworkData.exhibitionTitle);
+      if (artworkData.exhibitionDate) contextParts.push(artworkData.exhibitionDate);
+      contextParts.push('Opening Photo');
+      
+      const contextElement = document.createElement('div');
+      contextElement.className = 'exhibition-lightbox__exhibition-context';
+      contextElement.textContent = contextParts.join(', ');
+      metadataContainer.appendChild(contextElement);
+      
+    } else if (artworkData && artworkData.hasArtwork) {
+      // Display artwork metadata for artwork photos
+      // Add artwork title first
+      if (artworkData.title) {
+        const titleElement = document.createElement('div');
+        titleElement.className = 'exhibition-lightbox__artwork-title';
+        titleElement.textContent = artworkData.title;
+        metadataContainer.appendChild(titleElement);
+      }
+      
+      // Then add artist name
+      if (artworkData.artist) {
+        const artistElement = document.createElement('div');
+        artistElement.className = 'exhibition-lightbox__artwork-artist';
+        artistElement.textContent = artworkData.artist;
+        metadataContainer.appendChild(artistElement);
+      }
+      
+      // Finally add other details
+      const details = [];
+      if (artworkData.date) details.push(artworkData.date);
+      if (artworkData.materials) details.push(artworkData.materials);
+      if (artworkData.size) details.push(artworkData.size);
+      
+      if (details.length > 0) {
+        const detailsElement = document.createElement('div');
+        detailsElement.className = 'exhibition-lightbox__artwork-details';
+        detailsElement.textContent = details.join(' • ');
+        metadataContainer.appendChild(detailsElement);
+      }
+    }
+    
+    // Add image credit if available (for all image types)
+    if (artworkData && artworkData.credit) {
+      const creditElement = document.createElement('div');
+      creditElement.className = 'exhibition-lightbox__image-credit';
+      creditElement.textContent = artworkData.credit;
+      metadataContainer.appendChild(creditElement);
     }
   }
 
@@ -342,6 +499,11 @@ class ExhibitionFeatureLightbox {
   closeLightbox() {
     this.lightbox.setAttribute('aria-hidden', 'true');
     this.lightbox.classList.remove('exhibition-lightbox--active');
+    
+    // Reset display after transition
+    setTimeout(() => {
+      this.lightbox.style.display = '';
+    }, 200);
     
     // Clear content to free memory
     const mediaContainer = this.lightbox.querySelector('.exhibition-lightbox__media-container');

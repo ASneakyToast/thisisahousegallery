@@ -21,6 +21,6 @@
     {% if value.caption %}
         <div class="caption">{{ value.caption }}</div>
     {% elif value.artwork %}
-        <div class="caption">{{ value.artwork.title }}{% if value.artwork.artist %} by {{ value.artwork.artist.name }}{% endif %}</div>
+        <div class="caption">{{ value.artwork.title }}{% if value.artwork.artist_names %} by {{ value.artwork.artist_names }}{% endif %}</div>
     {% endif %}
 </div>
