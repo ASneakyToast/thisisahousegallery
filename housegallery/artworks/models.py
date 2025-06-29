@@ -1,6 +1,7 @@
 from django.db import models
+from django.utils.html import strip_tags
 
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from taggit.models import TaggedItemBase
@@ -10,13 +11,14 @@ from wagtail.admin.panels import FieldPanel, InlinePanel, MultipleChooserPanel, 
 from wagtail.images.models import Image
 from wagtail.documents.models import Document
 from wagtail.snippets.models import register_snippet
-from wagtail.fields import StreamField
+from wagtail.fields import StreamField, RichTextField
 from wagtail.blocks import StructBlock, CharBlock, RichTextBlock, ListBlock, ChoiceBlock, BooleanBlock, StreamBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.images import get_image_model_string
 
-from housegallery.exhibitions.widgets import ExhibitionImageChooserPanel
+from housegallery.exhibitions.widgets import ExhibitionImageChooserPanel, ExhibitionImageChooserWidget
+from housegallery.artists.widgets import ArtistChooserPanel
 
 
 
@@ -69,6 +71,29 @@ class ArtworkDocumentBlock(StructBlock):
 
 
 
+class ArtworkArtist(Orderable):
+    """Through model for artwork-artist many-to-many relationship"""
+    artwork = ParentalKey(
+        'Artwork',
+        on_delete=models.CASCADE,
+        related_name='artwork_artists'
+    )
+    artist = models.ForeignKey(
+        'artists.Artist',
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+
+    panels = [
+        ArtistChooserPanel('artist'),
+    ]
+
+    class Meta:
+        verbose_name = "Artwork Artist"
+        verbose_name_plural = "Artwork Artists"
+        unique_together = ['artwork', 'artist']  # Prevent duplicate artist assignments
+
+
 class ArtworkImage(Orderable):
     """Through model for artwork gallery images with MultipleChooserPanel"""
     artwork = ParentalKey(
@@ -88,7 +113,7 @@ class ArtworkImage(Orderable):
     )
 
     panels = [
-        ExhibitionImageChooserPanel('image'),
+        FieldPanel('image', widget=ExhibitionImageChooserWidget()),
         FieldPanel('caption'),
     ]
 
@@ -99,16 +124,15 @@ class ArtworkImage(Orderable):
 
 @register_snippet
 class Artwork(ClusterableModel):
-    title = models.CharField(
-        blank=False,
-        max_length=255
+    title = RichTextField(
+        blank=True
     )
-    artist = models.ForeignKey(
+    # Many-to-many field for multiple artists
+    artists = ParentalManyToManyField(
         'artists.Artist',
-        null=True,
+        through='ArtworkArtist',
         blank=True,
-        on_delete=models.PROTECT,  # Using PROTECT to prevent deletion of an artist with artworks
-        related_name='artworks'
+        related_name='artwork_list'
     )
     description = models.TextField(
         blank=True,
@@ -129,23 +153,15 @@ class Artwork(ClusterableModel):
         ('document', ArtworkDocumentBlock()),
         ('text', ArtworkTextBlock()),
     ], blank=True)
-    cover_image = models.ForeignKey(
-        get_image_model_string(),
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text="Main cover image for this artwork"
-    )
 
     panels = [
         FieldPanel('title'),
-        FieldPanel('artist'),
+        # Artist management panel
+        InlinePanel('artwork_artists', label="Artists"),
         FieldPanel('date'),
         FieldPanel('size'),
         FieldPanel('materials'),
         FieldPanel('description'),
-        FieldPanel('cover_image'),
         MultiFieldPanel([
             MultipleChooserPanel(
                 'artwork_images',
@@ -157,7 +173,26 @@ class Artwork(ClusterableModel):
     ]
 
     def __str__(self):
-        return self.title
+        if self.title:
+            return strip_tags(self.title)
+        
+        # Format for untitled artworks: _untitled_ (artist name #id)
+        artist_name = self.artist_names if self.artist_names else "Unknown Artist"
+        return f"_untitled_ ({artist_name} #{self.id})"
+    
+    @property
+    def artist_names(self):
+        """Return comma-separated list of artist names"""
+        return ", ".join([artist.name for artist in self.artists.all()])
+    
+    @property
+    def first_artist(self):
+        """Return first artist for backward compatibility"""
+        return self.artists.first()
+    
+    def get_artists(self):
+        """Return all artists for this artwork"""
+        return self.artists.all()
 
     class Meta:
         verbose_name = "Artwork"

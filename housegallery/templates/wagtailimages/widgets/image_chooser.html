@@ -1,0 +1,85 @@
+{% extends "wagtailadmin/widgets/chooser.html" %}
+{% load l10n %}
+
+{% comment %}
+Enhanced image chooser that shows larger previews with metadata
+while maintaining all Wagtail chooser functionality.
+DEBUG: This template is loading successfully!
+{% endcomment %}
+
+{% block chosen_icon %}
+    {% comment %}
+    Enhanced preview with larger thumbnail and image metadata.
+    Uses the 'preview' context variable provided by AdminImageChooser.
+    {% endcomment %}
+    <div class="enhanced-image-preview-container">
+        <img class="chooser__image show-transparency enhanced-image-preview" 
+             data-chooser-image 
+             alt="" 
+             decoding="async" 
+             height="{{ preview.height|unlocalize }}" 
+             src="{{ preview.url }}" 
+             width="{{ preview.width|unlocalize }}">
+    </div>
+{% endblock chosen_icon %}
+
+<style>
+/* Enhanced image preview styles - inline to ensure immediate loading */
+.enhanced-image-preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.enhanced-image-preview {
+    width: 120px !important;
+    height: 120px !important;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid #ddd;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.enhanced-image-preview:hover {
+    border-color: #007cba;
+    box-shadow: 0 6px 20px rgba(0, 124, 186, 0.25);
+    transform: scale(1.03);
+}
+
+/* Metadata styles removed - using default Wagtail title display */
+
+/* Ensure enhanced preview works in inline panels */
+.inline-panel .enhanced-image-preview-container {
+    margin: 4px 0;
+}
+
+.inline-panel .enhanced-image-preview {
+    width: 100px !important;
+    height: 100px !important;
+}
+
+/* Inline panel title styles removed */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .enhanced-image-preview {
+        width: 80px !important;
+        height: 80px !important;
+    }
+    
+    /* Mobile title styles removed */
+}
+
+/* Ensure compatibility with Wagtail's show-transparency class */
+.enhanced-image-preview.show-transparency {
+    background: 
+        linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+    background-size: 10px 10px;
+    background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+}
+</style>

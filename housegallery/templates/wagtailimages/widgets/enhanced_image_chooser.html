@@ -1,0 +1,166 @@
+<div class="enhanced-image-chooser-container">
+    {% if image %}
+        <div class="enhanced-image-preview">
+            <div class="enhanced-image-thumbnail">
+                {% comment %}
+                    Create a thumbnail rendition for preview
+                {% endcomment %}
+                {% if image %}
+                    {% if image.file %}
+                        <img src="{{ image.file.url }}" 
+                             alt="{{ image.title|default:'Image preview' }}" 
+                             class="enhanced-image-preview-img"
+                             loading="lazy"
+                             width="100"
+                             height="100">
+                    {% else %}
+                        <div class="enhanced-image-placeholder">
+                            <span class="icon icon-image"></span>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="enhanced-image-placeholder">
+                        <span class="icon icon-image"></span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="enhanced-image-info">
+                <div class="enhanced-image-title">{{ image.title|default:"Untitled Image" }}</div>
+                {% if image.file %}
+                    <div class="enhanced-image-filename">{{ image.file.name|default:"" }}</div>
+                {% endif %}
+                {% if image.width and image.height %}
+                    <div class="enhanced-image-dimensions">{{ image.width }}×{{ image.height }}px</div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    
+    <div class="enhanced-image-controls">
+        {{ original_field_html|safe }}
+    </div>
+</div>
+
+<style>
+/* Inline styles to ensure they load immediately */
+.enhanced-image-chooser-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.enhanced-image-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+}
+
+.enhanced-image-thumbnail {
+    flex-shrink: 0;
+}
+
+.enhanced-image-preview-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 2px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.enhanced-image-preview-img:hover {
+    border-color: #007cba;
+    box-shadow: 0 4px 12px rgba(0, 124, 186, 0.2);
+    transform: scale(1.02);
+}
+
+.enhanced-image-placeholder {
+    width: 100px;
+    height: 100px;
+    background: #e5e5e5;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    border: 2px solid #ddd;
+}
+
+.enhanced-image-placeholder .icon {
+    font-size: 32px;
+}
+
+.enhanced-image-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.enhanced-image-title {
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.enhanced-image-filename {
+    font-size: 11px;
+    color: #666;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    word-break: break-all;
+    line-height: 1.2;
+}
+
+.enhanced-image-dimensions {
+    font-size: 12px;
+    color: #888;
+    font-weight: 400;
+}
+
+.enhanced-image-controls {
+    /* Container for the original chooser controls */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .enhanced-image-preview {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+    
+    .enhanced-image-preview-img,
+    .enhanced-image-placeholder {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .enhanced-image-info {
+        align-items: center;
+    }
+}
+
+/* Integration with inline panels */
+.inline-panel .enhanced-image-chooser-container {
+    margin-bottom: 15px;
+}
+
+.inline-panel .enhanced-image-preview {
+    background: #fff;
+    border-color: #ccc;
+}
+
+/* Table cell adjustments */
+td .enhanced-image-chooser-container {
+    min-width: 200px;
+}
+</style>

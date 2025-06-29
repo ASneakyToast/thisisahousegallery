@@ -1,20 +1,54 @@
+import logging
+from django.forms import Media
 from wagtail.admin.panels import FieldPanel
+from wagtail.admin.staticfiles import versioned_static
 from wagtail.images.widgets import AdminImageChooser
+
+logger = logging.getLogger(__name__)
 
 
 class ExhibitionImageChooserWidget(AdminImageChooser):
     """
-    Custom image chooser widget that uses the exhibition image chooser viewset
-    with advanced filtering capabilities.
+    Enhanced image chooser widget that uses the exhibition image chooser viewset
+    with advanced filtering capabilities and larger inline image previews.
     """
     
     # Override the chooser URL name to use our custom chooser
     chooser_url_name = 'exhibition_image_chooser:choose'
     
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    # Explicitly specify our custom template
+    template_name = 'wagtailimages/widgets/image_chooser.html'
     
-    # Media will be inherited automatically from parent widget
+    
+    def render(self, name, value, attrs=None, renderer=None):
+        """Override render to add debug logging."""
+        print(f"🔥 ENHANCED CHOOSER WIDGET CALLED: {name} = {value}")
+        logger.error(f"🔥 ExhibitionImageChooserWidget.render called with value: {value}")
+        logger.error(f"🔥 Template name: {self.template_name}")
+        logger.error(f"🔥 Widget class: {self.__class__.__name__}")
+        result = super().render(name, value, attrs, renderer)
+        logger.error(f"🔥 Rendered HTML length: {len(result)}")
+        print(f"🔥 RENDERED HTML PREVIEW: {result[:200]}...")
+        
+        return result
+    
+    @property
+    def media(self):
+        """
+        Include required CSS and JavaScript for the enhanced chooser.
+        """
+        return Media(
+            css={
+                'all': [
+                    'css/components/admin-chooser.css',
+                ]
+            },
+            js=[
+                versioned_static('wagtailadmin/js/modal-workflow.js'),
+                versioned_static('wagtailimages/js/image-chooser-modal.js'),
+                versioned_static('wagtailimages/js/image-chooser.js'),
+            ]
+        )
 
 
 class ExhibitionImageChooserPanel(FieldPanel):
