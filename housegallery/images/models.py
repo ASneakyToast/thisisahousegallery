@@ -132,12 +132,12 @@ class CustomImage(AbstractImage):
     def _validate_uploaded_image(self):
         """
         Validate uploaded images without modifying the original:
-        - Check file size (max 10MB input)
+        - Check file size (max 20MB input)
         - Verify it's a valid image format
         - Log info about the uploaded image
         """
-        # Validate file size (10MB limit)
-        max_upload_size = 10 * 1024 * 1024  # 10MB
+        # Validate file size (20MB limit)
+        max_upload_size = 20 * 1024 * 1024  # 20MB
         if self.file.size > max_upload_size:
             max_size_mb = max_upload_size / (1024 * 1024)
             msg = f"Image file too large. Maximum size is {max_size_mb:.0f}MB"
