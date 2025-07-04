@@ -67,10 +67,22 @@ def add_assets_menu(request, menu_items):
 
 @hooks.register('construct_main_menu')
 def add_art_menu(request, menu_items):
-    """Add custom Art menu with Exhibitions page link, Artworks and Artists submenus."""
+    """Add custom Art menu with Places, Exhibitions, Artworks and Artists submenus."""
     
     # Create submenu items for art-related content
     art_menu_items = []
+    
+    # Add Places menu item
+    try:
+        places_menu_item = MenuItem(
+            'Places',
+            reverse('wagtailsnippets_places_place:list'),
+            icon_name='home',
+            order=25
+        )
+        art_menu_items.append(places_menu_item)
+    except:
+        pass  # Skip if URL doesn't exist or there's an import error
     
     # Try to find and link to Exhibitions index page edit view
     try:

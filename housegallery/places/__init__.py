@@ -1,0 +1,1 @@
+# Places app for managing art spaces and venues

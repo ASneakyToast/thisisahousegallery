@@ -183,6 +183,7 @@ LOCAL_APPS = [
     "housegallery.exhibitions",
     "housegallery.home",
     "housegallery.images",
+    "housegallery.places",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + WAGTAIL_APPS + THIRD_PARTY_APPS + LOCAL_APPS + GOOGLE_APPS
@@ -322,6 +323,14 @@ WAGTAIL_MODERATION_ENABLED = False
 WAGTAIL_PASSWORD_REQUIRED_TEMPLATE = 'password_required.html'
 
 DEFAULT_PER_PAGE = 40
+
+# Wagtail image chooser pagination
+WAGTAILIMAGES_CHOOSER_PAGE_SIZE = 50
+
+# Taggit settings
+# ------------------------------------------------------------------------------
+# Make tags case-insensitive by default
+TAGGIT_CASE_INSENSITIVE = True
 
 
 # TEMPLATES

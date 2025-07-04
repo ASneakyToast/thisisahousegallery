@@ -1,0 +1,43 @@
+{% load wagtailimages_tags wagtailcore_tags %}
+
+<div class="place-card">
+    {% if place.get_first_image %}
+        {% image place.get_first_image width-400 as place_image %}
+        <div class="place-card__image">
+            <img src="{{ place_image.url }}" alt="{{ place.title }}">
+        </div>
+    {% endif %}
+    
+    <div class="place-card__content">
+        <h3 class="place-card__title">{{ place.title }}</h3>
+        
+        <div class="place-card__meta">
+            <div class="place-card__period">{{ place.operating_period }}</div>
+            <div class="place-card__status {% if place.is_currently_operating %}status--active{% else %}status--closed{% endif %}">
+                {% if place.is_currently_operating %}Currently Operating{% else %}Closed{% endif %}
+            </div>
+        </div>
+        
+        {% if place.maintainer_names %}
+        <div class="place-card__maintainers">
+            <strong>Maintained by:</strong> {{ place.maintainer_names }}
+        </div>
+        {% endif %}
+        
+        {% if place.address %}
+        <div class="place-card__address">{{ place.address|truncatechars:100 }}</div>
+        {% endif %}
+        
+        {% if place.description %}
+        <div class="place-card__description">
+            {{ place.description|richtext|striptags|truncatechars:150 }}
+        </div>
+        {% endif %}
+        
+        {% if place.links %}
+        <div class="place-card__links">
+            {% include_block place.links %}
+        </div>
+        {% endif %}
+    </div>
+</div>
