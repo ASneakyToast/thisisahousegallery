@@ -1,0 +1,86 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<div class="horizontal-features-block" 
+     {% if auto_scroll %}data-auto-scroll="true" data-scroll-speed="{{ scroll_speed }}"{% endif %}>
+    
+    {% if value.title %}
+        <div class="horizontal-features-block__header">
+            <h2 class="horizontal-features-block__title">{{ value.title }}</h2>
+        </div>
+    {% endif %}
+    
+    {% if exhibition_data %}
+        <div class="horizontal-features-block__container">
+            <div class="horizontal-features-block__scroll-container" 
+                 role="region" 
+                 aria-label="{% if value.title %}{{ value.title }}{% else %}Exhibition showcase{% endif %}">
+                
+                <div class="horizontal-features-block__track">
+                    {% for exhibition in exhibition_data %}
+                        <div class="horizontal-features-card" 
+                             data-exhibition-id="{{ exhibition.page.id }}">
+                            <a href="{{ exhibition.url }}" 
+                               class="horizontal-features-card__link"
+                               aria-label="View {{ exhibition.title }} exhibition">
+                                
+                                <div class="horizontal-features-card__image-container">
+                                    {% if exhibition.showcase_image %}
+                                        {% image exhibition.showcase_image width-400 as showcase_img %}
+                                        <img src="{{ showcase_img.url }}" 
+                                             alt="{{ exhibition.title }}"
+                                             class="horizontal-features-card__image"
+                                             loading="lazy">
+                                    {% else %}
+                                        <div class="horizontal-features-card__placeholder">
+                                            <span>{{ exhibition.title }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="horizontal-features-card__content">
+                                    <div class="horizontal-features-card__date">
+                                        {{ exhibition.date }}
+                                    </div>
+                                    <h3 class="horizontal-features-card__title">
+                                        {{ exhibition.title }}
+                                    </h3>
+                                    {% if exhibition.artists %}
+                                        <div class="horizontal-features-card__artists">
+                                            {% for artist in exhibition.artists %}
+                                                <span class="horizontal-features-card__artist">{{ artist.name }}</span>
+                                                {% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Navigation Controls -->
+            <div class="horizontal-features-block__controls">
+                <button class="horizontal-features-block__nav horizontal-features-block__nav--prev" 
+                        aria-label="Previous exhibitions"
+                        type="button">
+                    <span class="horizontal-features-block__nav-icon">‹</span>
+                </button>
+                <button class="horizontal-features-block__nav horizontal-features-block__nav--next" 
+                        aria-label="Next exhibitions"
+                        type="button">
+                    <span class="horizontal-features-block__nav-icon">›</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Progress indicator -->
+        <div class="horizontal-features-block__progress" aria-hidden="true">
+            <div class="horizontal-features-block__progress-bar"></div>
+        </div>
+    {% else %}
+        <div class="horizontal-features-block__empty">
+            <p>No exhibitions selected for display.</p>
+        </div>
+    {% endif %}
+</div>

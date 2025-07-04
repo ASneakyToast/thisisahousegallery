@@ -392,17 +392,11 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         return timezone.now().date()
 
     def get_formatted_date_short(self):
-        """Return a concise formatted date range (MM.DD format)."""
+        """Return start date in MM.DD.YYYY format."""
         if not self.start_date:
             return ""
 
-        start_str = self.start_date.strftime("%m.%d")
-
-        if self.end_date:
-            end_str = self.end_date.strftime("%m.%d")
-            return f"{start_str} - {end_str}"
-
-        return start_str
+        return self.start_date.strftime("%m.%d.%Y")
     
     def get_formatted_date_month_year(self):
         """Return start date in MM.YYYY format for exhibition context."""
@@ -410,6 +404,20 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             return ""
         
         return self.start_date.strftime("%m.%Y")
+    
+    def get_first_showcard_image(self):
+        """Get the first showcard image for this exhibition."""
+        showcard_images = self.get_showcards_images()
+        if showcard_images.exists():
+            return showcard_images.first().image
+        return None
+    
+    def get_first_gallery_image(self):
+        """Get the first gallery image for this exhibition."""
+        gallery_images = self.get_all_gallery_images()
+        if gallery_images:
+            return gallery_images[0]
+        return None
 
 
 @register_snippet

@@ -12,8 +12,10 @@ require('./components/social-media-links.css');
 require('./components/list_of_links.css');
 require('./components/gallery.css');
 require('./components/exhibition-lightbox.css');
+require('./components/horizontal-features.css');
 require('./components/admin-chooser.css');
 
 require('./components/home/hero_block.css');
 require('./components/exhibitions/exhibitions.css');
 require('./components/exhibitions/schedule.css');
+require('./components/places/places.css');
