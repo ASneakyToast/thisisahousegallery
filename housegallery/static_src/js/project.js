@@ -12,4 +12,7 @@ import './exhibition-feature-lightbox.js';
 // Import horizontal features carousel functionality
 import './horizontal-features.js';
 
+// Import places feature functionality
+import './places-feature.js';
+
 // Any other project-wide JavaScript functionality goes here

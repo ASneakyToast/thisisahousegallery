@@ -20,10 +20,45 @@
     {% endif %}
 
     {% if places %}
-    <div class="places-grid">
-        {% for place in places %}
-            {% include "components/places/place_card.html" with place=place %}
-        {% endfor %}
+    <div class="places-feature-layout">
+        <!-- Left Panel: Place Information -->
+        <section class="places-info-panel">
+            <div class="places-info-list">
+                {% for place in places %}
+                    {% include "components/places/place_info_card.html" with place=place %}
+                {% endfor %}
+            </div>
+        </section>
+        
+        <!-- Right Panel: Image Pool Gallery -->
+        <section class="places-gallery-panel">
+            {% if all_place_images %}
+            <div class="places-image-pool">
+                <div class="gallery-container gallery-columns-container masonry">
+                    {% for image_data in all_place_images %}
+                        {% if image_data.image %}
+                            {% image image_data.image width-400 as gallery_image %}
+                            <div class="gallery-item" data-place-id="{{ image_data.place_id }}">
+                                <img src="{{ gallery_image.url }}" 
+                                     alt="{% if image_data.caption %}{{ image_data.caption }}{% else %}{{ image_data.place.title }}{% endif %}"
+                                     loading="lazy"
+                                     width="{{ gallery_image.width }}" 
+                                     height="{{ gallery_image.height }}">
+                                {% if image_data.caption %}
+                                <div class="gallery-item__caption">{{ image_data.caption }}</div>
+                                {% endif %}
+                                <div class="gallery-item__place">{{ image_data.place.title }}</div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="places-no-images">
+                <p>No images available for the selected places.</p>
+            </div>
+            {% endif %}
+        </section>
     </div>
     {% endif %}
     

@@ -270,12 +270,32 @@ class PlacesIndexPage(Page, ListingFields, ClusterableModel):
     
     def get_places(self):
         """Return all active places, ordered by start date (most recent first)."""
-        return Place.objects.filter(is_active=True).order_by('-start_date', 'title')
+        return Place.objects.filter(is_active=True).prefetch_related('place_images__image').order_by('-start_date', 'title')
     
     def get_featured_places(self):
         """Return featured places in the order specified by the editor."""
-        return [fp.place for fp in self.featured_places.all()]
+        return [fp.place for fp in self.featured_places.select_related('place').prefetch_related('place__place_images__image').all()]
     
+    def get_all_featured_place_images(self):
+        """Return all images from featured places for the image pool gallery."""
+        featured_places = self.get_featured_places()
+        if not featured_places:
+            return []
+        
+        images = []
+        for place in featured_places:
+            # Use select_related to optimize image queries
+            place_images = place.place_images.select_related('image').all()
+            for place_image in place_images:
+                if place_image.image:  # Ensure image exists
+                    images.append({
+                        'image': place_image.image,
+                        'caption': place_image.caption,
+                        'place': place,
+                        'place_id': place.id,
+                    })
+        return images
+
     def get_context(self, request):
         """Add places to the context."""
         context = super().get_context(request)
@@ -285,8 +305,22 @@ class PlacesIndexPage(Page, ListingFields, ClusterableModel):
         if featured_places:
             context['places'] = featured_places
             context['showing_featured'] = True
+            context['all_place_images'] = self.get_all_featured_place_images()
         else:
             context['places'] = self.get_places()
             context['showing_featured'] = False
+            # For non-featured view, collect images from all active places
+            images = []
+            for place in context['places']:
+                place_images = place.place_images.select_related('image').all()
+                for place_image in place_images:
+                    if place_image.image:  # Ensure image exists
+                        images.append({
+                            'image': place_image.image,
+                            'caption': place_image.caption,
+                            'place': place,
+                            'place_id': place.id,
+                        })
+            context['all_place_images'] = images
             
         return context

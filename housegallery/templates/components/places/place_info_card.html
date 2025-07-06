@@ -1,0 +1,49 @@
+{% load wagtailcore_tags %}
+
+<div class="place-info-card" data-place-id="{{ place.id }}">
+    <!-- Accordion Header (Always Visible) -->
+    <div class="place-info-card__header" data-action="toggle-accordion">
+        <div class="place-info-card__header-content">
+            <h3 class="place-info-card__title">{{ place.title }}</h3>
+        </div>
+        <div class="place-info-card__expand-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4.646 7.646a.5.5 0 0 1 .708 0L8 10.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
+            </svg>
+        </div>
+    </div>
+    
+    <!-- Accordion Content (Collapsible) -->
+    <div class="place-info-card__content">
+        <div class="place-info-card__meta">
+            <div class="place-info-card__status-row">
+                <div class="place-info-card__period">{{ place.operating_period }}</div>
+                <div class="place-info-card__status {% if place.is_currently_operating %}status--active{% else %}status--closed{% endif %}">
+                    {% if place.is_currently_operating %}Currently Operating{% else %}Closed{% endif %}
+                </div>
+            </div>
+            
+            {% if place.maintainer_names %}
+            <div class="place-info-card__maintainers">
+                <strong>Maintained by:</strong> {{ place.maintainer_names }}
+            </div>
+            {% endif %}
+            
+            {% if place.address %}
+            <div class="place-info-card__address">{{ place.address|truncatechars:80 }}</div>
+            {% endif %}
+        </div>
+        
+        {% if place.description %}
+        <div class="place-info-card__description">
+            {{ place.description|richtext|striptags|truncatechars:120 }}
+        </div>
+        {% endif %}
+        
+        {% if place.links %}
+        <div class="place-info-card__links">
+            {% include_block place.links %}
+        </div>
+        {% endif %}
+    </div>
+</div>

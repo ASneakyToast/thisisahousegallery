@@ -9,4 +9,10 @@ import './exhibition-gallery.js';
 // Import exhibition feature lightbox functionality
 import './exhibition-feature-lightbox.js';
 
+// Import horizontal features carousel functionality
+import './horizontal-features.js';
+
+// Import places feature functionality
+import './places-feature.js';
+
 // Any other project-wide JavaScript functionality goes here

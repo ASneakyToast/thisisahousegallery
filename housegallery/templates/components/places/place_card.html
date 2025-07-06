@@ -4,7 +4,11 @@
     {% if place.get_first_image %}
         {% image place.get_first_image width-400 as place_image %}
         <div class="place-card__image">
-            <img src="{{ place_image.url }}" alt="{{ place.title }}">
+            <img src="{{ place_image.url }}" 
+                 alt="{{ place.title }}"
+                 loading="lazy"
+                 width="{{ place_image.width }}" 
+                 height="{{ place_image.height }}">
         </div>
     {% endif %}
     
