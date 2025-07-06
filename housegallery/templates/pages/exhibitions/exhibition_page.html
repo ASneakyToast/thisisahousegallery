@@ -3,7 +3,15 @@
 
 {% block content %}
 <div class="body normal">
-    <h1 class="title">{{ page.title }}</h1>
+    <div class="exhibition-page-header">
+        <h1 class="title">{{ page.title }}</h1>
+        
+        {% if page.description %}
+        <div class="exhibition-description rich-text-block">
+            {{ page.description|richtext }}
+        </div>
+        {% endif %}
+    </div>
 
     <div id="{{ page.title|slugify }}" class="exhibition-listing-item exhibition-title">
         <section class="exhibition-header">
@@ -38,7 +46,7 @@
                             <a href="{{ artwork.url }}" class="artwork-link">
                                 {% if artwork.featured_image %}
                                     {% image artwork.featured_image width-1440 format-webp as img %}
-                                    <img src="{{ img.url }}" alt="{{ artwork.title }}"
+                                    <img src="{{ img.url }}" alt="{{ artwork.title|striptags }}"
                                         role="img" width="{{ img.width }}" height="{{ img.height }}"
                                         loading="lazy" decoding="async">
                                 {% endif %}
@@ -47,12 +55,6 @@
                     {% endif %}
                 </section>
             </section>
-        {% endif %}
-
-        {% if page.description %}
-        <div class="exhibition-description rich-text-block">
-            {{ page.description|richtext }}
-        </div>
         {% endif %}
 
         {% with exhibition_images=page.get_exhibition_images opening_images=page.get_opening_images %}
@@ -94,6 +96,7 @@
                 </div>
             {% endif %}
         {% endwith %}
+    </div>
     </div>
 </div>
 {% endblock %}

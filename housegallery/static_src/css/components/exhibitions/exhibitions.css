@@ -5,6 +5,48 @@
   padding: 0 var(--size-layout-gutter);
 }
 
+.exhibition-page-header {
+  margin-bottom: var(--size-layout-section-spacing);
+}
+
+.exhibition-page-header .title {
+  margin-bottom: var(--size-15);
+}
+
+.exhibition-page-header .exhibition-description {
+  margin-bottom: 0;
+}
+
+.exhibition-page-header .exhibition-content {
+  margin-bottom: 0;
+}
+
+.exhibition-page-header .places-intro {
+  margin-bottom: 0;
+}
+
+.exhibition-page-header .places-content {
+  margin-bottom: 0;
+}
+
+/* Style intro text paragraphs with proper intro typography */
+.exhibition-page-header p {
+  font-family: var(--font-family-intro);
+  font-size: var(--font-size-intro);
+  font-weight: var(--font-weight-intro);
+  line-height: var(--line-height-intro);
+  color: var(--color-text);
+  margin-bottom: var(--size-layout-item-gap);
+}
+
+.exhibition-page-header p:last-child {
+  margin-bottom: 0;
+}
+
+.exhibition-page-header .exhibition-listing-item {
+  margin-top: 0;
+}
+
 .exhibition-listing-item {
   margin-bottom: var(--size-layout-section-spacing);
   display: flex;
