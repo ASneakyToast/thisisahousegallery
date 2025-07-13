@@ -47,6 +47,7 @@ class ExhibitionImageChooserWidget(AdminImageChooser):
                 versioned_static('wagtailadmin/js/modal-workflow.js'),
                 versioned_static('wagtailimages/js/image-chooser-modal.js'),
                 versioned_static('wagtailimages/js/image-chooser.js'),
+                versioned_static('js/admin/image-chooser-persistence.js'),
             ]
         )
 

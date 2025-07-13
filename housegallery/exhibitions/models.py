@@ -7,7 +7,7 @@ import datetime
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, MultipleChooserPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, MultipleChooserPanel, HelpPanel
 
 from .widgets import ExhibitionImageChooserPanel
 from housegallery.artworks.widgets import ArtworkChooserPanel
@@ -25,6 +25,56 @@ from wagtail.images.blocks import ImageChooserBlock
 from housegallery.core.mixins import Page, ListingFields
 from housegallery.exhibitions.blocks import ExhibitionStreamBlock
 from housegallery.core.blocks import BlankStreamBlock
+
+# Event type choices for EventPage
+EVENT_TYPE_CHOICES = [
+    # Exhibition Related
+    ('exhibition_opening', 'Exhibition Opening'),
+    ('exhibition_closing', 'Exhibition Closing'),
+    ('gallery_tour', 'Gallery Tour'),
+    
+    # Educational
+    ('artist_talk', 'Artist Talk'),
+    ('workshop', 'Workshop'),
+    ('lecture', 'Lecture'),
+    ('critique', 'Critique Session'),
+    
+    # Performance & Social
+    ('performance', 'Performance'),
+    ('reception', 'Reception'),
+    ('networking', 'Networking Event'),
+    
+    # Sales & Markets
+    ('art_sale', 'Art Sale'),
+    ('art_fair', 'Art Fair'),
+    ('studio_sale', 'Studio Sale'),
+    
+    # Residency & Community
+    ('open_studio', 'Open Studio'),
+    ('residency_presentation', 'Residency Presentation'),
+    ('community_event', 'Community Event'),
+    
+    # Fundraising
+    ('fundraiser', 'Fundraiser'),
+    ('benefit', 'Benefit Event'),
+    
+    # Other
+    ('other', 'Other'),
+]
+
+# Artist role choices for EventArtist relationship
+ARTIST_ROLE_CHOICES = [
+    ('organizer', 'Event Organizer'),
+    ('performer', 'Performer'),
+    ('speaker', 'Speaker'),
+    ('teacher', 'Workshop Teacher'),
+    ('participant', 'Participant'),
+    ('featured', 'Featured Artist'),
+    ('curator', 'Curator'),
+    ('host', 'Host'),
+    ('moderator', 'Moderator'),
+    ('other', 'Other'),
+]
 
 
 
@@ -420,87 +470,321 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         return None
 
 
-@register_snippet
-class Event(models.Model):
+
+class EventArtist(Orderable):
     """
-    Reusable event snippet that can be used across multiple pages.
-    Events can be managed independently and referenced from schedule pages.
+    Through model linking Events to Artists with roles.
+    Allows multiple artists per event with different responsibilities.
     """
-    title = models.CharField(
-        max_length=255,
-        help_text="Event title"
+    event = ParentalKey(
+        'EventPage',
+        related_name='event_artists',
+        on_delete=models.CASCADE
     )
+    artist = models.ForeignKey(
+        'artists.Artist',
+        on_delete=models.CASCADE,
+        help_text="Select artist from existing list"
+    )
+    role = models.CharField(
+        max_length=50,
+        choices=ARTIST_ROLE_CHOICES,
+        default='participant',
+        help_text="Artist's role in this event"
+    )
+    bio_override = models.TextField(
+        blank=True,
+        help_text="Custom bio for this event (optional, uses artist bio if blank)"
+    )
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Feature this artist prominently for this event"
+    )
+    
+    panels = [
+        ArtistChooserPanel('artist'),
+        FieldPanel('role'),
+        FieldPanel('bio_override'),
+        FieldPanel('is_featured'),
+    ]
+    
+    class Meta:
+        unique_together = ['event', 'artist', 'role']
+        verbose_name = "Event Artist"
+        verbose_name_plural = "Event Artists"
+    
+    def __str__(self):
+        return f"{self.artist.name} - {self.get_role_display()}"
+
+
+class EventPage(Page, ListingFields, ClusterableModel):
+    """
+    Individual event pages as children of SchedulePage.
+    Replaces Event snippets with full page functionality.
+    """
+    
+    # Event Classification
     event_type = models.CharField(
-        max_length=255,
-        help_text="Type of event (e.g., Exhibition, Residency, Opening)",
-        blank=True
+        max_length=50,
+        choices=EVENT_TYPE_CHOICES,
+        help_text="Type of event (opening, talk, workshop, etc.)"
     )
-    month = models.CharField(
-        max_length=20,
-        help_text="Month of the event (e.g., January, February)"
+    tagline = models.CharField(
+        max_length=255, 
+        blank=True,
+        help_text="Short promotional tagline for listings"
     )
-    year = models.IntegerField(
+    
+    # Date & Time Fields (Enhanced from month/year strings)
+    start_date = models.DateField(help_text="Event start date")
+    end_date = models.DateField(
+        blank=True, 
+        null=True,
+        help_text="End date if multi-day event"
+    )
+    start_time = models.TimeField(
+        blank=True, 
+        null=True,
+        help_text="Start time (optional for all-day events)"
+    )
+    end_time = models.TimeField(
+        blank=True, 
+        null=True,
+        help_text="End time (optional)"
+    )
+    all_day = models.BooleanField(
+        default=False,
+        help_text="Check if this is an all-day event"
+    )
+    
+    # Location System (Place integration + custom fallback)
+    venue_place = models.ForeignKey(
+        'places.Place',
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        help_text="Year of the event (optional)"
+        help_text="Select from existing gallery/art spaces"
     )
-    description = RichTextField(
+    custom_venue_name = models.CharField(
+        max_length=255,
         blank=True,
-        help_text="Brief description of the event"
+        help_text="Venue name if not using a Place"
     )
+    custom_address = models.TextField(
+        blank=True,
+        help_text="Full address if not using a Place"
+    )
+    location_details = models.TextField(
+        blank=True,
+        help_text="Additional location info (room number, directions, etc.)"
+    )
+    
+    # Content Fields
+    description = RichTextField(
+        help_text="Event description for listings and social sharing"
+    )
+    body = StreamField([
+        ('paragraph', blocks.RichTextBlock()),
+        ('image', ImageChooserBlock()),
+        ('quote', blocks.BlockQuoteBlock()),
+        ('html', blocks.RawHTMLBlock()),
+    ], blank=True, help_text="Detailed event content")
+    
+    # Visual Assets
     featured_image = models.ForeignKey(
         get_image_model_string(),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text="Optional image for this event"
+        help_text="Main event image for listings and social sharing"
     )
-    link = models.URLField(
+    gallery_images = StreamField([
+        ('image', ImageChooserBlock()),
+    ], blank=True, help_text="Additional event images")
+    
+    # Event Management
+    capacity = models.PositiveIntegerField(
         blank=True,
-        help_text="Optional link to more information"
+        null=True,
+        help_text="Maximum attendees (optional)"
     )
-    is_active = models.BooleanField(
+    registration_required = models.BooleanField(
+        default=False,
+        help_text="Does this event require registration?"
+    )
+    registration_link = models.URLField(
+        blank=True,
+        help_text="Link to registration/tickets"
+    )
+    ticket_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text="Ticket price (leave blank for free events)"
+    )
+    contact_email = models.EmailField(
+        blank=True,
+        help_text="Contact for event inquiries"
+    )
+    
+    # External Integration
+    external_link = models.URLField(
+        blank=True,
+        help_text="Link to external event page, social media, etc."
+    )
+    
+    # Admin Fields
+    featured_on_schedule = models.BooleanField(
         default=True,
-        help_text="Uncheck to hide this event from listings"
+        help_text="Feature this event prominently on schedule page"
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
+    
+    template = 'pages/exhibitions/event_page.html'
+    
+    parent_page_types = ['exhibitions.SchedulePage']
+    subpage_types = []
+    
+    search_fields = Page.search_fields + ListingFields.search_fields + [
+        index.SearchField('description'),
+        index.SearchField('tagline'),
+        index.SearchField('body'),
+        index.FilterField('event_type'),
+        index.FilterField('start_date'),
+    ]
+    
+    # Wagtail Configuration
+    content_panels = Page.content_panels + [
+        # Basic Event Info
+        MultiFieldPanel([
+            FieldPanel('event_type'),
+            FieldPanel('tagline'),
+        ], heading="Event Classification"),
+        
+        # Scheduling
+        MultiFieldPanel([
+            FieldPanel('start_date'),
+            FieldPanel('end_date'),
+            FieldPanel('start_time'),
+            FieldPanel('end_time'),
+            FieldPanel('all_day'),
+        ], heading="Date & Time", classname="collapsible"),
+        
+        # Location with conditional fields
+        MultiFieldPanel([
+            FieldPanel('venue_place'),
+            HelpPanel("OR if venue not listed:"),
+            FieldPanel('custom_venue_name'),
+            FieldPanel('custom_address'),
+            FieldPanel('location_details'),
+        ], heading="Location & Venue", classname="collapsible"),
+        
+        # Content
+        FieldPanel('description'),
+        FieldPanel('body'),
+        
+        # Media
+        MultiFieldPanel([
+            FieldPanel('featured_image'),
+            FieldPanel('gallery_images'),
+        ], heading="Images", classname="collapsible"),
+        
+        # Related People
+        InlinePanel(
+            'event_artists',
+            label="Related Artists",
+            help_text="Add artists involved in this event",
+        ),
+        
+        # Event Management
+        MultiFieldPanel([
+            FieldPanel('capacity'),
+            FieldPanel('registration_required'),
+            FieldPanel('registration_link'),
+            FieldPanel('ticket_price'),
+            FieldPanel('contact_email'),
+        ], heading="Registration & Pricing", classname="collapsible"),
+        
+        # External Links
+        FieldPanel('external_link'),
+        
+        # Display Options
+        MultiFieldPanel([
+            FieldPanel('featured_on_schedule'),
+        ], heading="Display Options", classname="collapsible"),
+    ]
+    
+    promote_panels = (
+        Page.promote_panels
+        + ListingFields.promote_panels
+    )
+    
     class Meta:
-        ordering = ['-year', 'month', 'title']
         verbose_name = "Event"
         verbose_name_plural = "Events"
-
-    def __str__(self):
-        if self.year:
-            return f"{self.title} ({self.month} {self.year})"
-        return f"{self.title} ({self.month})"
-
-    panels = [
-        MultiFieldPanel([
-            FieldPanel('title'),
-            FieldPanel('event_type'),
-        ], heading="Basic Information"),
-        MultiFieldPanel([
-            FieldPanel('month'),
-            FieldPanel('year'),
-        ], heading="Date Information"),
-        FieldPanel('description'),
-        FieldPanel('featured_image'),
-        FieldPanel('link'),
-        FieldPanel('is_active'),
-    ]
-
-    search_fields = [
-        index.SearchField('title'),
-        index.SearchField('event_type'),
-        index.SearchField('description'),
-        index.FilterField('month'),
-        index.FilterField('year'),
-        index.FilterField('is_active'),
-    ]
-
+    
+    @property
+    def venue_name(self):
+        """Returns the venue name, prioritizing Place over custom name"""
+        if self.venue_place:
+            return self.venue_place.title
+        return self.custom_venue_name or "TBA"
+    
+    @property
+    def venue_address(self):
+        """Returns formatted address, prioritizing Place over custom address"""
+        if self.venue_place:
+            return self.venue_place.address
+        return self.custom_address or ""
+    
+    @property
+    def full_location_display(self):
+        """Returns complete location string for display"""
+        parts = []
+        
+        # Venue name
+        if self.venue_name and self.venue_name != "TBA":
+            parts.append(self.venue_name)
+        
+        # Address
+        if self.venue_address:
+            parts.append(self.venue_address)
+        
+        # Additional details
+        if self.location_details:
+            parts.append(self.location_details)
+        
+        return " • ".join(parts) if parts else "Location TBA"
+    
+    @property
+    def is_at_gallery_space(self):
+        """Returns True if event is at a tracked gallery/art space"""
+        return bool(self.venue_place)
+    
+    def get_venue_maintainers(self):
+        """Returns artists who maintain the venue (if Place)"""
+        if self.venue_place:
+            return self.venue_place.maintainers.all()
+        return []
+    
+    def get_featured_artists(self):
+        """Returns artists marked as featured for this event"""
+        return self.event_artists.filter(is_featured=True).select_related('artist')
+    
+    def get_organizers(self):
+        """Returns event organizers"""
+        return self.event_artists.filter(role='organizer').select_related('artist')
+    
+    def get_performers(self):
+        """Returns performers/speakers"""
+        return self.event_artists.filter(
+            role__in=['performer', 'speaker', 'teacher']
+        ).select_related('artist')
+    
+    def get_all_related_artists(self):
+        """Returns all artists associated with this event"""
+        return self.event_artists.all().select_related('artist').order_by('sort_order')
 
 
 class SchedulePage(Page, ListingFields):
@@ -516,12 +800,6 @@ class SchedulePage(Page, ListingFields):
         blank=True,
         help_text="Additional content for the schedule page",
         use_json_field=True
-    )
-    # New field to select events from snippets
-    featured_events = ParentalManyToManyField(
-        'exhibitions.Event',
-        blank=True,
-        help_text="Select events to display on this schedule page"
     )
     contact_email = models.EmailField(
         blank=True,
@@ -540,7 +818,7 @@ class SchedulePage(Page, ListingFields):
         'home.HomePage',
         'core.BlankPage'
     ]
-    subpage_types = ['core.BlankPage']
+    subpage_types = ['core.BlankPage', 'exhibitions.EventPage']
 
     search_fields = Page.search_fields + ListingFields.search_fields + [
         index.SearchField('intro'),
@@ -549,7 +827,6 @@ class SchedulePage(Page, ListingFields):
 
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
-        FieldPanel('featured_events', widget=forms.CheckboxSelectMultiple),
         FieldPanel('body'),
         MultiFieldPanel([
             FieldPanel('contact_email'),
@@ -566,8 +843,61 @@ class SchedulePage(Page, ListingFields):
         """Add events to the context."""
         context = super().get_context(request)
         
-        # Get featured events from snippets (active only)
-        featured_events = self.featured_events.filter(is_active=True)
-        context['featured_events'] = featured_events
+        # Get child EventPage instances
+        context['upcoming_events'] = self.get_upcoming_events()
+        context['current_events'] = self.get_current_events()
+        context['past_events'] = self.get_past_events()
+        context['featured_child_events'] = self.get_featured_events()
         
         return context
+    
+    # Event Query Methods for child EventPage instances
+    def get_upcoming_events(self):
+        """Returns upcoming events, ordered by start date"""
+        from django.utils import timezone
+        return self.get_children().live().type(EventPage).filter(
+            eventpage__start_date__gte=timezone.now().date()
+        ).order_by('eventpage__start_date')
+    
+    def get_current_events(self):
+        """Returns currently happening events"""
+        from django.utils import timezone
+        today = timezone.now().date()
+        return self.get_children().live().type(EventPage).filter(
+            eventpage__start_date__lte=today,
+            eventpage__end_date__gte=today
+        ).order_by('eventpage__start_date')
+    
+    def get_past_events(self):
+        """Returns past events, ordered by most recent first"""
+        from django.utils import timezone
+        from django.db.models import Q
+        return self.get_children().live().type(EventPage).filter(
+            Q(eventpage__end_date__lt=timezone.now().date()) |
+            Q(eventpage__end_date__isnull=True, eventpage__start_date__lt=timezone.now().date())
+        ).order_by('-eventpage__start_date')
+    
+    def get_featured_events(self):
+        """Returns events marked as featured"""
+        return self.get_children().live().type(EventPage).filter(
+            eventpage__featured_on_schedule=True
+        ).order_by('eventpage__start_date')
+    
+    def get_events_by_type(self, event_type):
+        """Returns events filtered by type"""
+        return self.get_children().live().type(EventPage).filter(
+            eventpage__event_type=event_type
+        ).order_by('eventpage__start_date')
+    
+    def get_events_by_venue(self, place):
+        """Returns events at a specific venue"""
+        return self.get_children().live().type(EventPage).filter(
+            eventpage__venue_place=place
+        ).order_by('eventpage__start_date')
+    
+    def get_events_by_month(self, year, month):
+        """Returns events for a specific month"""
+        return self.get_children().live().type(EventPage).filter(
+            eventpage__start_date__year=year,
+            eventpage__start_date__month=month
+        ).order_by('eventpage__start_date')
