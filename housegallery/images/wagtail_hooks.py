@@ -222,13 +222,18 @@ def add_events_menu(request, menu_items):
     except:
         pass  # Skip if page doesn't exist or there's an import error
     
-    events_snippet_item = MenuItem(
-        'Events',
-        reverse('wagtailsnippets_exhibitions_event:list'),
-        icon_name='snippet',
-        order=100
-    )
-    events_menu_items.append(events_snippet_item)
+    # Add link to Schedule page explorer (where EventPage children are managed)
+    try:
+        if schedule_page:
+            schedule_explorer_item = MenuItem(
+                'Events',
+                reverse('wagtailadmin_explore', args=[schedule_page.id]),
+                icon_name='list-ul',
+                order=100
+            )
+            events_menu_items.append(schedule_explorer_item)
+    except:
+        pass
     
     # Create Menu object containing the events menu items
     events_submenu = Menu(items=events_menu_items)
