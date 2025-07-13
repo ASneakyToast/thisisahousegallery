@@ -1,0 +1,94 @@
+{% load wagtailcore_tags %}
+
+<section class="event-details">
+    <div class="event-details-grid">
+        <!-- Registration & Pricing -->
+        {% if event.registration_required or event.ticket_price or event.capacity %}
+        <div class="event-details-section event-registration">
+            <h3>Registration & Pricing</h3>
+            <div class="event-details-content">
+                {% if event.ticket_price %}
+                    <div class="event-price-info">
+                        <span class="price-label">Cost:</span>
+                        <span class="price-amount">${{ event.ticket_price }}</span>
+                    </div>
+                {% else %}
+                    <div class="event-price-info">
+                        <span class="price-label">Cost:</span>
+                        <span class="price-amount free">Free</span>
+                    </div>
+                {% endif %}
+                
+                {% if event.registration_required %}
+                    <div class="event-registration-info">
+                        <p class="registration-required">Registration Required</p>
+                        {% if event.registration_link %}
+                            <a href="{{ event.registration_link }}" class="btn btn-primary registration-btn" target="_blank">
+                                Register Now
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                
+                {% if event.capacity %}
+                    <div class="event-capacity-info">
+                        <span class="capacity-label">Limited to:</span>
+                        <span class="capacity-number">{{ event.capacity }} attendees</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Contact Information -->
+        {% if event.contact_email %}
+        <div class="event-details-section event-contact">
+            <h3>Contact</h3>
+            <div class="event-details-content">
+                <p>For questions about this event:</p>
+                <a href="mailto:{{ event.contact_email }}" class="contact-email">{{ event.contact_email }}</a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- External Links -->
+        {% if event.external_link %}
+        <div class="event-details-section event-links">
+            <h3>Additional Information</h3>
+            <div class="event-details-content">
+                <a href="{{ event.external_link }}" class="external-link" target="_blank">
+                    View Event Details
+                    <span class="external-icon">↗</span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Event Status -->
+        <div class="event-details-section event-status">
+            <h3>Event Status</h3>
+            <div class="event-details-content">
+                {% now "Y-m-d" as today %}
+                {% if event.start_date > today %}
+                    <span class="status-badge status-upcoming">Upcoming Event</span>
+                    <p class="status-description">This event is scheduled for the future.</p>
+                {% elif event.end_date and event.end_date >= today and event.start_date <= today %}
+                    <span class="status-badge status-current">Happening Now</span>
+                    <p class="status-description">This event is currently taking place.</p>
+                {% elif event.start_date <= today %}
+                    <span class="status-badge status-past">Past Event</span>
+                    <p class="status-description">This event has already taken place.</p>
+                {% endif %}
+                
+                {% if event.registration_required and event.start_date > today %}
+                    <p class="registration-reminder">
+                        <strong>Don't forget to register!</strong>
+                        {% if event.capacity %}
+                            Space is limited to {{ event.capacity }} attendees.
+                        {% endif %}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>

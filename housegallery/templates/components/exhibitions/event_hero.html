@@ -1,0 +1,76 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="event-hero">
+    <div class="event-hero-content">
+        <div class="event-hero-info">
+            <h1 class="event-hero-title">{{ event.title }}</h1>
+            
+            {% if event.tagline %}
+                <p class="event-hero-tagline">{{ event.tagline }}</p>
+            {% endif %}
+            
+            <div class="event-hero-meta">
+                <span class="event-type-badge">{{ event.get_event_type_display }}</span>
+                
+                <div class="event-hero-date">
+                    <time datetime="{{ event.start_date|date:'Y-m-d' }}">
+                        {{ event.start_date|date:"l, F j, Y" }}
+                    </time>
+                    {% if event.start_time %}
+                        <span class="event-hero-time">
+                            {{ event.start_time|date:"g:i A" }}{% if event.end_time %} - {{ event.end_time|date:"g:i A" }}{% endif %}
+                        </span>
+                    {% endif %}
+                </div>
+                
+                {% if event.venue_name != "TBA" %}
+                    <div class="event-hero-venue">
+                        <span class="venue-name">{{ event.venue_name }}</span>
+                        {% if event.venue_address %}
+                            <span class="venue-address">{{ event.venue_address }}</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% with featured_artists=event.get_featured_artists %}
+                {% if featured_artists %}
+                    <div class="event-hero-artists">
+                        <span class="artists-label">Featuring:</span>
+                        {% for event_artist in featured_artists %}
+                            <a href="{{ event_artist.artist.get_url }}" class="event-hero-artist">
+                                {{ event_artist.artist.name }}
+                            </a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Quick Actions -->
+            {% if event.registration_link or event.external_link or event.contact_email %}
+                <div class="event-hero-actions">
+                    {% if event.registration_link %}
+                        <a href="{{ event.registration_link }}" class="btn btn-primary event-hero-btn" target="_blank">
+                            {% if event.ticket_price %}Register - ${{ event.ticket_price }}{% else %}Register{% endif %}
+                        </a>
+                    {% endif %}
+                    {% if event.external_link %}
+                        <a href="{{ event.external_link }}" class="btn btn-secondary event-hero-btn" target="_blank">More Info</a>
+                    {% endif %}
+                    {% if event.contact_email %}
+                        <a href="mailto:{{ event.contact_email }}" class="btn btn-outline event-hero-btn">Contact</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        
+        {% if event.featured_image %}
+            <div class="event-hero-image">
+                {% image event.featured_image width-800 as hero_img %}
+                <img src="{{ hero_img.url }}" alt="{{ event.title }}"
+                     width="{{ hero_img.width }}" height="{{ hero_img.height }}"
+                     class="event-hero-img">
+            </div>
+        {% endif %}
+    </div>
+</section>

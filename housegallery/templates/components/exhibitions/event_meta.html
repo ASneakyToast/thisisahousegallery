@@ -1,0 +1,101 @@
+{% load wagtailcore_tags %}
+
+<div class="event-meta">
+    <div class="event-meta-grid">
+        <!-- Date & Time -->
+        <div class="event-meta-item event-meta--when">
+            <h4 class="event-meta-label">When</h4>
+            <div class="event-meta-content">
+                <time class="event-date" datetime="{{ event.start_date|date:'Y-m-d' }}">
+                    {{ event.start_date|date:"l, F j, Y" }}
+                </time>
+                
+                {% if event.end_date and event.end_date != event.start_date %}
+                    <span class="event-meta-separator">to</span>
+                    <time class="event-end-date" datetime="{{ event.end_date|date:'Y-m-d' }}">
+                        {{ event.end_date|date:"l, F j, Y" }}
+                    </time>
+                {% endif %}
+                
+                {% if not event.all_day %}
+                    <div class="event-time">
+                        {% if event.start_time %}
+                            {{ event.start_time|date:"g:i A" }}
+                            {% if event.end_time %}
+                                - {{ event.end_time|date:"g:i A" }}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="event-time">All Day</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Location -->
+        {% if event.venue_name != "TBA" %}
+        <div class="event-meta-item event-meta--where">
+            <h4 class="event-meta-label">Where</h4>
+            <div class="event-meta-content">
+                <div class="event-venue">{{ event.venue_name }}</div>
+                {% if event.venue_address %}
+                    <div class="event-address">{{ event.venue_address }}</div>
+                {% endif %}
+                {% if event.location_details %}
+                    <div class="event-location-details">{{ event.location_details }}</div>
+                {% endif %}
+                {% if event.venue_place %}
+                    <div class="event-venue-link">
+                        <a href="{{ event.venue_place.get_url }}">More about this venue</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Cost & Registration -->
+        {% if event.ticket_price or event.registration_required %}
+        <div class="event-meta-item event-meta--cost">
+            <h4 class="event-meta-label">Cost</h4>
+            <div class="event-meta-content">
+                {% if event.ticket_price %}
+                    <div class="event-price">${{ event.ticket_price }}</div>
+                {% else %}
+                    <div class="event-price">Free</div>
+                {% endif %}
+                
+                {% if event.registration_required %}
+                    <div class="event-registration">Registration Required</div>
+                    {% if event.registration_link %}
+                        <div class="event-registration-link">
+                            <a href="{{ event.registration_link }}" target="_blank">Register Here</a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Capacity -->
+        {% if event.capacity %}
+        <div class="event-meta-item event-meta--capacity">
+            <h4 class="event-meta-label">Capacity</h4>
+            <div class="event-meta-content">
+                <div class="event-capacity">{{ event.capacity }} attendees</div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Contact -->
+        {% if event.contact_email %}
+        <div class="event-meta-item event-meta--contact">
+            <h4 class="event-meta-label">Contact</h4>
+            <div class="event-meta-content">
+                <div class="event-contact">
+                    <a href="mailto:{{ event.contact_email }}">{{ event.contact_email }}</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>

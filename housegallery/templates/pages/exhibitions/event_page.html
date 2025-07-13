@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}event-page{% endblock %}
+
+{% block content %}
+<div class="body normal">
+    <!-- Event Hero Section -->
+    <header class="event-hero">
+        <div class="event-hero__content">
+            <div class="event-hero__meta">
+                <span class="event-type-badge">{{ page.get_event_type_display }}</span>
+                <time class="event-date-hero" datetime="{{ page.start_date|date:'Y-m-d' }}">
+                    <span class="event-date-hero__main">{{ page.start_date|date:"F j, Y" }}</span>
+                    {% if page.start_time %}
+                        <span class="event-time-hero">{{ page.start_time|date:"g:i A" }}{% if page.end_time %} - {{ page.end_time|date:"g:i A" }}{% endif %}</span>
+                    {% endif %}
+                </time>
+            </div>
+            
+            <h1 class="event-title-hero">{{ page.title }}</h1>
+            
+            {% if page.tagline %}
+            <p class="event-tagline-hero">{{ page.tagline }}</p>
+            {% endif %}
+            
+            {% with featured_artists=page.get_featured_artists %}
+                {% if featured_artists %}
+                <div class="event-artists-hero">
+                    <span class="event-artists-label">Featuring:</span>
+                    {% for event_artist in featured_artists %}
+                        <a href="{{ event_artist.artist.get_url }}" class="event-artist-link">{{ event_artist.artist.name }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- Placeholder Showcard Image -->
+        <div class="event-hero__image">
+            <img src="https://picsum.photos/800/600?random=showcard" alt="{{ page.title }} Showcard" class="event-hero-img showcard-placeholder">
+            <div class="showcard-label">Placeholder Showcard</div>
+        </div>
+    </header>
+
+
+
+    <!-- Event Body Content -->
+    {% if page.body %}
+    <section class="event-content-section">
+        <div class="event-content">
+            {% include_block page.body %}
+        </div>
+    </section>
+    {% endif %}
+
+
+    <!-- Event Gallery -->
+    {% if page.gallery_images %}
+    <section class="event-gallery-section">
+        <div class="event-section-header">
+            <h2 class="event-section-title">Event Gallery</h2>
+        </div>
+        <div class="event-gallery-grid">
+            {% for block in page.gallery_images %}
+                {% if block.block_type == 'image' %}
+                    <div class="gallery-item">
+                        {% image block.value width-600 height-400 as gallery_img %}
+                        <img src="{{ gallery_img.url }}" alt="Gallery image for {{ page.title }}"
+                             width="{{ gallery_img.width }}" height="{{ gallery_img.height }}"
+                             loading="lazy" class="gallery-image">
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}
