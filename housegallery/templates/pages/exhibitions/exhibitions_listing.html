@@ -14,5 +14,32 @@
         </div>
         {% endif %}
     </div>
+    
+    <div class="exhibitions-listing">
+        {% if current_exhibitions %}
+        <section class="exhibitions-section">
+            <h2 class="exhibitions-section__title">Current Exhibitions</h2>
+            <div class="exhibitions-grid">
+                {% for exhibition in current_exhibitions %}
+                <a href="{% pageurl exhibition %}" class="exhibition-card">
+                    <div class="exhibition-card__header">
+                        <div class="exhibition-card__date">{{ exhibition.get_formatted_date_short }}</div>
+                        <h3 class="exhibition-card__title">{{ exhibition.title }}</h3>
+                        {% if exhibition.artists %}
+                        <div class="exhibition-card__artists">
+                            {% for artist in exhibition.artists %}
+                                {{ artist.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+        
+        
+    </div>
 </div>
 {% endblock %}

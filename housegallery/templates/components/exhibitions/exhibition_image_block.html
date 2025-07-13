@@ -1,4 +1,5 @@
 {% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
 
 <div class="exhibition-image{% if value.is_installation_shot %} installation-shot{% endif %}">
     {% if value.artwork %}
@@ -21,6 +22,6 @@
     {% if value.caption %}
         <div class="caption">{{ value.caption }}</div>
     {% elif value.artwork %}
-        <div class="caption">{{ value.artwork.title }}{% if value.artwork.artist_names %} by {{ value.artwork.artist_names }}{% endif %}</div>
+        <div class="caption">{{ value.artwork.title|richtext }}{% if value.artwork.artist_names %} by {{ value.artwork.artist_names }}{% endif %}</div>
     {% endif %}
 </div>

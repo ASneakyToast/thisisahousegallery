@@ -2,17 +2,19 @@
 
 {% with exhibition=value.exhibition.specific %}
     <div id="{{ exhibition.title|slugify }}" class="exhibition-listing-item exhibition-title">
-        <section class="exhibition-header">
-            <h3>{{ exhibition.get_formatted_date_short }}</h3>
-            <section>
-                <h2>{{ exhibition.title }}</h2>
-                <section class="exhibition-header__artists">
-                    {% for artist in exhibition.artists %}
-                        <p>{{ artist.name }}</p>
-                    {% endfor %}
+        <a href="{% pageurl exhibition %}" class="exhibition-header-link">
+            <section class="exhibition-header">
+                <h3>{{ exhibition.get_formatted_date_short }}</h3>
+                <section>
+                    <h2>{{ exhibition.title }}</h2>
+                    <section class="exhibition-header__artists">
+                        {% for artist in exhibition.artists %}
+                            <p>{{ artist.name }}</p>
+                        {% endfor %}
+                    </section>
                 </section>
             </section>
-        </section>
+        </a>
 
         {% if value.randomize_gallery %}
             {% with gallery_images=exhibition.get_randomized_gallery_images %}

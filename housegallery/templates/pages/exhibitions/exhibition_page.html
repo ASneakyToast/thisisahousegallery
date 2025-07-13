@@ -1,102 +1,133 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
+{% block body_class %}exhibition-page{% endblock %}
+
 {% block content %}
 <div class="body normal">
-    <div class="exhibition-page-header">
-        <h1 class="title">{{ page.title }}</h1>
+    <!-- Exhibition Hero Section -->
+    <header class="exhibition-hero">
+        <div class="exhibition-hero__content">
+            <div class="exhibition-hero__meta">
+                <time class="exhibition-date-hero" datetime="{{ page.start_date|date:'Y-m-d' }}">
+                    {% if page.start_date %}
+                        <span class="exhibition-date-hero__main">{{ page.start_date|date:"F j, Y" }}</span>
+                        {% if page.end_date and page.end_date != page.start_date %}
+                            <span class="exhibition-date-hero__end">{{ page.end_date|date:"F j, Y" }}</span>
+                        {% endif %}
+                    {% endif %}
+                </time>
+            </div>
+            
+            <h1 class="exhibition-title-hero">{{ page.title }}</h1>
+            
+            {% if page.artists %}
+            <div class="exhibition-artists-hero">
+                <span class="exhibition-artists-label">Artists:</span>
+                <div class="exhibition-artists-list">
+                    {% for artist in page.artists %}
+                        <span class="exhibition-artist-name">{{ artist.name }}</span>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
         
-        {% if page.description %}
-        <div class="exhibition-description rich-text-block">
-            {{ page.description|richtext }}
+        {% if page.featured_image %}
+        <div class="exhibition-hero__image">
+            {% image page.featured_image width-800 height-600 as hero_img %}
+            <img src="{{ hero_img.url }}" alt="{{ page.title }}" class="exhibition-hero-img">
         </div>
         {% endif %}
-    </div>
+    </header>
 
-    <div id="{{ page.title|slugify }}" class="exhibition-listing-item exhibition-title">
-        <section class="exhibition-header">
-            <section>
-                <h2>{{ page.title }}</h2>
-                <section class="exhibition-header__artists">
-                    {% for artist in page.artists %}
-                        <a href="{{ artist.url }}">
-                            <p>{{ artist.name }}</p>
-                        </a>
-                    {% endfor %}
-                </section>
-            </section>
-            <h3>{{ page.get_formatted_date_short }}</h3>
-        </section>
+    <!-- Exhibition Description -->
+    {% if page.description %}
+    <section class="exhibition-description-section">
+        <div class="exhibition-description-content">
+            {{ page.description|richtext }}
+        </div>
+    </section>
+    {% endif %}
 
-        {% if page.body %}
+    <!-- Exhibition Content -->
+    {% if page.body %}
+    <section class="exhibition-content-section">
+        <div class="exhibition-content">
             {% include_block page.body %}
-        {% else %}
-            <section class="exhibition-media">
-                <section class="exhibition-card">
-                    {% if page.featured_image %}
-                        {% image page.featured_image width-1440 as img %}
-                        <img src="{{ img.url }}" alt="The promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery."
-                            class="quickview-item" width="{{ img.width }}" height="{{ img.height }}">
-                    {% endif %}
-                </section>
+        </div>
+    </section>
+    {% endif %}
 
-                <section class="exhibition-images">
-                    {% if page.artworks %}
-                        {% for artwork in page.artworks %}
-                            <a href="{{ artwork.url }}" class="artwork-link">
-                                {% if artwork.featured_image %}
-                                    {% image artwork.featured_image width-1440 format-webp as img %}
-                                    <img src="{{ img.url }}" alt="{{ artwork.title|striptags }}"
-                                        role="img" width="{{ img.width }}" height="{{ img.height }}"
-                                        loading="lazy" decoding="async">
-                                {% endif %}
-                            </a>
-                        {% endfor %}
+    <!-- Featured Artworks Section -->
+    {% if page.artworks %}
+    <section class="exhibition-artworks-section">
+        <div class="exhibition-section-header">
+            <h2 class="exhibition-section-title">Artworks</h2>
+        </div>
+        <div class="exhibition-artworks-grid">
+            {% for artwork in page.artworks %}
+                <article class="exhibition-artwork-card">
+                    {% if artwork.featured_image %}
+                        {% image artwork.featured_image width-500 height-400 as artwork_img %}
+                        <div class="exhibition-artwork-image">
+                            <img src="{{ artwork_img.url }}" alt="{{ artwork.title|striptags }}"
+                                 width="{{ artwork_img.width }}" height="{{ artwork_img.height }}"
+                                 loading="lazy" class="exhibition-artwork-img">
+                        </div>
                     {% endif %}
-                </section>
-            </section>
+                    <div class="exhibition-artwork-content">
+                        <h3 class="exhibition-artwork-title">{{ artwork.title|striptags }}</h3>
+                        {% if artwork.artist %}
+                            <p class="exhibition-artwork-artist">{{ artwork.artist.name }}</p>
+                        {% endif %}
+                        {% if artwork.medium %}
+                            <p class="exhibition-artwork-medium">{{ artwork.medium }}</p>
+                        {% endif %}
+                        {% if artwork.year %}
+                            <p class="exhibition-artwork-year">{{ artwork.year }}</p>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Exhibition Gallery Section -->
+    {% with exhibition_images=page.get_exhibition_images opening_images=page.get_opening_images %}
+        {% if exhibition_images %}
+        <section class="exhibition-gallery-section">
+            <div class="exhibition-section-header">
+                <h2 class="exhibition-section-title">Installation Photos</h2>
+            </div>
+            <div class="exhibition-images">
+                {% for gallery_image in exhibition_images %}
+                    {% image gallery_image.image width-800 as gallery_img %}
+                    <img src="{{ gallery_img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
+                         width="{{ gallery_img.width }}" height="{{ gallery_img.height }}"
+                         loading="lazy" decoding="async">
+                {% endfor %}
+            </div>
+        </section>
         {% endif %}
 
-        {% with exhibition_images=page.get_exhibition_images opening_images=page.get_opening_images %}
-            {% if exhibition_images %}
-                <div class="exhibition-gallery-section">
-                    <h3>Exhibition Gallery</h3>
-                    <div class="gallery-container columns">
-                        {% for gallery_image in exhibition_images %}
-                            <div class="gallery-item">
-                                {% image gallery_image.image width-800 as img %}
-                                <img src="{{ img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
-                                     width="{{ img.width }}" height="{{ img.height }}"
-                                     loading="lazy" decoding="async">
-                                {% if gallery_image.caption %}
-                                    <p class="gallery-caption">{{ gallery_image.caption }}</p>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-
-            {% if opening_images %}
-                <div class="opening-gallery-section">
-                    <h3>Opening Gallery</h3>
-                    <div class="gallery-container columns">
-                        {% for gallery_image in opening_images %}
-                            <div class="gallery-item">
-                                {% image gallery_image.image width-800 as img %}
-                                <img src="{{ img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
-                                     width="{{ img.width }}" height="{{ img.height }}"
-                                     loading="lazy" decoding="async">
-                                {% if gallery_image.caption %}
-                                    <p class="gallery-caption">{{ gallery_image.caption }}</p>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-        {% endwith %}
-    </div>
-    </div>
+        <!-- Opening Gallery Section -->
+        {% if opening_images %}
+        <section class="opening-gallery-section">
+            <div class="exhibition-section-header">
+                <h2 class="exhibition-section-title">Opening Reception</h2>
+            </div>
+            <div class="exhibition-images">
+                {% for gallery_image in opening_images %}
+                    {% image gallery_image.image width-800 as opening_img %}
+                    <img src="{{ opening_img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
+                         width="{{ opening_img.width }}" height="{{ opening_img.height }}"
+                         loading="lazy" decoding="async">
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    {% endwith %}
 </div>
 {% endblock %}

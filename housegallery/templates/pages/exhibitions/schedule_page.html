@@ -5,76 +5,164 @@
 
 {% block content %}
 <div class="body normal">
-    <h1 class="title type-title">{{ page.title }}</h1>
-
-    {% if page.intro %}
-    <div class="schedule-intro rich-text">
-        {{ page.intro|richtext }}
-    </div>
-    {% endif %}
-
-    {% if featured_events %}
-    <section class="schedule-section featured-events">
-        <h2 class="section-heading">Upcoming Events</h2>
-        <div class="schedule-grid">
-            {% for event in featured_events %}
-                <div id="{{ event.title|slugify }}" class="schedule-listing-item event-item">
-                    <section class="event-header">
-                        <section>
-                            <h2 style="font-family: var(--font-family-main); font-weight: 700;">{{ event.title }}</h2>
-                            {% comment %}
-                            {% if event.event_type %}
-                            <section class="event-header__type">
-                                <p style="font-weight: var(--font-weight-light); font-family: var(--font-family-heading); font-size: var(--font-size-detail, 12px);">{{ event.event_type }}</p>
-                            </section>
-                            {% endif %}
-                            {% endcomment %}
-                        </section>
-                        <h3>{{ event.month }}{% if event.year %} {{ event.year }}{% endif %}</h3>
-                        {% if event.link %}
-                        <a href="{{ event.link }}" class="view-event">More Information</a>
-                        {% endif %}
-                    </section>
-
-                    {% if event.featured_image %}
-                    <div class="event-gallery">
-                        {% image event.featured_image width-300 as thumb %}
-                        <div class="gallery-thumb">
-                            <img src="{{ thumb.url }}" alt="{{ event.title }}" loading="lazy">
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
+    <!-- Schedule Header -->
+    <header class="schedule-header">
+        <h1 class="title type-title">{{ page.title }}</h1>
+        
+        {% if page.intro %}
+        <div class="schedule-intro rich-text">
+            {{ page.intro|richtext }}
         </div>
-    </section>
-    {% endif %}
+        {% endif %}
+        
+    </header>
 
+    <!-- Schedule Timeline (for timeline view) -->
+    <div class="schedule-timeline" id="schedule-timeline" style="display: none;">
+        <div class="timeline-container">
+            {% now "Y-m-d" as today %}
+            
+            <!-- Current/Happening Now Section -->
+            {% if current_events %}
+            <div class="timeline-section timeline-current">
+                <div class="timeline-marker"></div>
+                <h3 class="timeline-heading">Happening Now</h3>
+                <div class="timeline-events">
+                    {% for event in current_events %}
+                        <div class="timeline-event" data-category="current">
+                            {% include "components/exhibitions/event_card.html" with event=event today=today layout="timeline" %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Upcoming Events Timeline -->
+            {% if upcoming_events %}
+            <div class="timeline-section timeline-upcoming">
+                <div class="timeline-marker"></div>
+                <h3 class="timeline-heading">Coming Up</h3>
+                <div class="timeline-events">
+                    {% for event in upcoming_events %}
+                        <div class="timeline-event" data-category="upcoming">
+                            {% include "components/exhibitions/event_card.html" with event=event today=today layout="timeline" %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 
+    <!-- Schedule Grid (default view) -->
+    <div class="schedule-grid-container" id="schedule-grid">
+        {% now "Y-m-d" as today %}
+        
+        <!-- Featured Events -->
+        {% if featured_child_events %}
+        <section class="schedule-section featured-events" data-category="featured">
+            <h2 class="section-heading">
+                Featured
+            </h2>
+            <div class="schedule-card-grid featured-grid">
+                {% for event in featured_child_events %}
+                    <div class="grid-item featured-item" data-category="featured">
+                        {% include "components/exhibitions/event_card.html" with event=event today=today layout="featured" %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Current Events -->
+        {% if current_events %}
+        <section class="schedule-section current-events" data-category="current">
+            <h2 class="section-heading">
+                <span class="section-icon">🔴</span>
+                Happening Now
+            </h2>
+            <div class="schedule-card-grid current-grid">
+                {% for event in current_events %}
+                    <div class="grid-item current-item" data-category="current">
+                        {% include "components/exhibitions/event_card.html" with event=event today=today layout="current" %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Upcoming Events -->
+        {% if upcoming_events %}
+        <section class="schedule-section upcoming-events" data-category="upcoming">
+            <h2 class="section-heading">
+                Upcoming
+            </h2>
+            <div class="schedule-card-grid upcoming-grid">
+                {% for event in upcoming_events %}
+                    <div class="grid-item upcoming-item" data-category="upcoming">
+                        {% include "components/exhibitions/event_card.html" with event=event today=today layout="grid" %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        
+        <!-- Past Events (limited display) -->
+        {% if past_events %}
+        <section class="schedule-section past-events" data-category="past">
+            <h2 class="section-heading">
+                <span class="section-icon">🕐</span>
+                Recent Past Events
+            </h2>
+            <div class="schedule-card-grid past-grid">
+                {% for event in past_events|slice:":6" %}
+                    <div class="grid-item past-item" data-category="past">
+                        {% include "components/exhibitions/event_card.html" with event=event today=today layout="grid" %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+
+    <!-- Additional Page Content -->
     {% if page.body %}
     <div class="schedule-content">
         {% include_block page.body %}
     </div>
     {% endif %}
 
-    {% if not featured_events %}
+    <!-- Empty State -->
+    {% if not featured_child_events and not current_events and not upcoming_events %}
     <div class="empty-state">
-        <p>No events currently scheduled.</p>
+        <div class="empty-state-content">
+            <span class="empty-state-icon">📅</span>
+            <h3>No Events Scheduled</h3>
+            <p>Check back soon for upcoming events and activities.</p>
+            {% if request.user.is_staff %}
+                <a href="{{ page.get_url }}add/" class="add-event-btn">Add Your First Event</a>
+            {% endif %}
+        </div>
     </div>
     {% endif %}
 
-    <div class="schedule-contact">
+    <!-- Contact and Submission Information -->
+    <footer class="schedule-footer">
         {% if page.submission_info %}
         <div class="schedule-submission-info rich-text">
+            <h3>Submit an Event</h3>
             {{ page.submission_info|richtext }}
         </div>
         {% endif %}
 
         {% if page.contact_email %}
         <div class="schedule-contact-email">
-            <a href="mailto:{{ page.contact_email }}" class="email-link">{{ page.contact_email }}</a>
+            <p>For event inquiries: <a href="mailto:{{ page.contact_email }}" class="email-link">{{ page.contact_email }}</a></p>
         </div>
         {% endif %}
-    </div>
+    </footer>
 </div>
+
+
 {% endblock %}

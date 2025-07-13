@@ -69,6 +69,15 @@ class ArtworkSearchFilterMixin(forms.Form):
         widget=forms.Select(attrs={"class": "form-select"})
     )
     
+    submit = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "type": "submit",
+            "value": _("Filter"),
+            "class": "button",
+            "style": "margin-top: 10px;"
+        })
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -169,9 +178,10 @@ class BaseArtworkChooseView(BaseChooseView):
     @property
     def columns(self):
         return [
-            TitleColumn(
+            Column(
                 name="title",
                 label=_("Title"),
+                accessor=lambda obj: str(obj),
                 url_name=self.chosen_url_name,
                 link_attrs={"data-chooser-modal-choice": True},
             ),

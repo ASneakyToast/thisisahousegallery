@@ -1,0 +1,328 @@
+/* Individual Exhibition Page Styles */
+
+.exhibition-page .body.normal {
+  margin: var(--size-layout-heading-spacing) 0;
+  padding: 0 var(--size-layout-gutter);
+}
+
+/* Exhibition Hero Section */
+.exhibition-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--size-layout-section-spacing);
+  margin-bottom: var(--size-layout-heading-spacing);
+}
+
+.exhibition-hero__content {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.exhibition-hero__image {
+  order: 2;
+}
+
+.exhibition-hero__meta {
+  margin-bottom: var(--size-layout-element-spacing);
+}
+
+.exhibition-date-hero {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-light);
+}
+
+.exhibition-date-hero__main {
+  display: block;
+  font-size: var(--font-size-large);
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+
+.exhibition-date-hero__end {
+  display: block;
+  font-size: var(--font-size-body);
+  opacity: 0.8;
+}
+
+.exhibition-date-hero__end:before {
+  content: "through ";
+  font-style: italic;
+  opacity: 0.6;
+}
+
+.exhibition-title-hero {
+  font-size: var(--font-size-title);
+  font-family: var(--font-family-intro);
+  line-height: var(--line-height-intro);
+  font-weight: 700;
+  margin: 0 0 var(--size-layout-element-spacing) 0;
+}
+
+.exhibition-artists-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.exhibition-artists-label {
+  font-size: var(--font-size-small);
+  color: var(--color-text, #666);
+  font-family: var(--font-family-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.exhibition-artists-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.exhibition-artist-name {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-black);
+}
+
+.exhibition-hero__image {
+  position: relative;
+  overflow: hidden;
+}
+
+.exhibition-hero-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(4px 4px 0px var(--color-black));
+}
+
+/* Exhibition Description Section */
+.exhibition-description-section {
+  margin-bottom: var(--size-layout-section-spacing);
+}
+
+.exhibition-description-content {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.exhibition-description-content p {
+  font-family: var(--font-family-intro);
+  font-size: var(--font-size-intro);
+  font-weight: var(--font-weight-intro);
+  line-height: var(--line-height-intro);
+  color: var(--color-text);
+  margin-bottom: var(--size-layout-item-gap);
+}
+
+/* Exhibition Content Section */
+.exhibition-content-section {
+  margin-bottom: var(--size-layout-section-spacing);
+}
+
+.exhibition-page .exhibition-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.exhibition-page .exhibition-content p {
+  font-size: var(--font-size-body);
+  line-height: 1.6;
+  margin-bottom: var(--size-layout-item-gap);
+}
+
+/* Exhibition Section Headers */
+.exhibition-section-header {
+  text-align: left;
+  margin-bottom: var(--size-layout-element-spacing);
+}
+
+.exhibition-section-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-heading);
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-black);
+  text-align: left;
+}
+
+/* Featured Artworks Section */
+.exhibition-artworks-section {
+  margin-bottom: var(--size-layout-section-spacing);
+  padding: var(--size-layout-section-spacing) 0;
+  border-top: 1px solid var(--color-black);
+}
+
+.exhibition-artworks-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 0 auto;
+}
+
+.exhibition-artwork-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-black);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem;
+  gap: 0.75rem;
+  max-width: 280px;
+  margin: -1px;
+}
+
+.exhibition-artwork-card:hover {
+  box-shadow: 2px 2px 0px var(--color-black);
+  transform: translate(-1px, -1px);
+}
+
+
+.exhibition-artwork-image {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--color-black);
+}
+
+.exhibition-artwork-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.exhibition-artwork-card:hover .exhibition-artwork-img {
+  transform: scale(1.05);
+}
+
+.exhibition-artwork-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.exhibition-artwork-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-normal);
+  margin: 0 0 0.25rem 0;
+  color: var(--color-black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exhibition-artwork-artist {
+  font-size: var(--font-size-detail);
+  color: var(--color-text, #666);
+  margin: 0 0 0.125rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exhibition-artwork-medium {
+  font-size: var(--font-size-detail);
+  color: var(--color-text, #666);
+  font-style: italic;
+  margin: 0 0 0.125rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exhibition-artwork-year {
+  font-size: var(--font-size-detail);
+  color: var(--color-text, #666);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Use the same gallery style as exhibitions index page */
+.exhibition-images {
+  display: flex;
+  gap: var(--size-5);
+  flex-wrap: wrap;
+}
+
+.exhibition-images img {
+  max-height: 35vh;
+  width: auto;
+}
+
+.artwork-link {
+  text-decoration: none;
+}
+
+@media (max-width: 675px) {
+  .exhibition-images img {
+    max-height: 20vh;
+  }
+}
+
+/* Exhibition Gallery Section */
+.exhibition-gallery-section,
+.opening-gallery-section {
+  margin-bottom: var(--size-layout-section-spacing);
+  padding: var(--size-layout-section-spacing) 0;
+  border-top: 1px solid var(--color-black);
+}
+
+/* Gallery sections also use the same exhibition-images style */
+
+/* Opening Gallery Specific Styles */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .exhibition-hero {
+    grid-template-columns: 1fr;
+    gap: var(--size-layout-element-spacing);
+  }
+  
+  .exhibition-hero__content {
+    order: 2;
+  }
+  
+  .exhibition-hero__image {
+    order: 1;
+  }
+  
+  .exhibition-title-hero {
+    font-size: var(--font-size-title);
+  }
+  
+  .exhibition-artists-list {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .exhibition-title-hero {
+    font-size: var(--font-size-title);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .exhibition-hero {
+    grid-template-columns: 1fr;
+    break-inside: avoid;
+  }
+  
+  .exhibition-images {
+    display: block;
+  }
+  
+  .exhibition-images img {
+    max-height: none;
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+}
