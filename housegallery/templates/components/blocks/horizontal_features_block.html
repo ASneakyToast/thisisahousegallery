@@ -4,9 +4,7 @@
      {% if auto_scroll %}data-auto-scroll="true" data-scroll-speed="{{ scroll_speed }}"{% endif %}>
     
     {% if value.title %}
-        <div class="horizontal-features-block__header">
-            <h2 class="horizontal-features-block__title">{{ value.title }}</h2>
-        </div>
+        <h2 class="horizontal-features-block__title">{{ value.title }}</h2>
     {% endif %}
     
     {% if exhibition_data %}
@@ -21,7 +19,7 @@
                              data-exhibition-id="{{ exhibition.page.id }}">
                             <a href="{{ exhibition.url }}" 
                                class="horizontal-features-card__link"
-                               aria-label="View {{ exhibition.title }} exhibition">
+                               aria-label="View exhibition">
                                 
                                 <div class="horizontal-features-card__image-container">
                                     {% if exhibition.showcase_image %}
@@ -36,47 +34,11 @@
                                         </div>
                                     {% endif %}
                                 </div>
-                                
-                                <div class="horizontal-features-card__content">
-                                    <div class="horizontal-features-card__date">
-                                        {{ exhibition.date }}
-                                    </div>
-                                    <h3 class="horizontal-features-card__title">
-                                        {{ exhibition.title }}
-                                    </h3>
-                                    {% if exhibition.artists %}
-                                        <div class="horizontal-features-card__artists">
-                                            {% for artist in exhibition.artists %}
-                                                <span class="horizontal-features-card__artist">{{ artist.name }}</span>
-                                                {% if not forloop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
                             </a>
                         </div>
                     {% endfor %}
                 </div>
             </div>
-            
-            <!-- Navigation Controls -->
-            <div class="horizontal-features-block__controls">
-                <button class="horizontal-features-block__nav horizontal-features-block__nav--prev" 
-                        aria-label="Previous exhibitions"
-                        type="button">
-                    <span class="horizontal-features-block__nav-icon">‹</span>
-                </button>
-                <button class="horizontal-features-block__nav horizontal-features-block__nav--next" 
-                        aria-label="Next exhibitions"
-                        type="button">
-                    <span class="horizontal-features-block__nav-icon">›</span>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Progress indicator -->
-        <div class="horizontal-features-block__progress" aria-hidden="true">
-            <div class="horizontal-features-block__progress-bar"></div>
         </div>
     {% else %}
         <div class="horizontal-features-block__empty">
