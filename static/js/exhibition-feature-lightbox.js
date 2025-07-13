@@ -405,7 +405,7 @@ class ExhibitionFeatureLightbox {
       if (artworkData.title) {
         const titleElement = document.createElement('div');
         titleElement.className = 'exhibition-lightbox__artwork-title';
-        titleElement.textContent = artworkData.title;
+        titleElement.innerHTML = artworkData.title;
         metadataContainer.appendChild(titleElement);
       }
       

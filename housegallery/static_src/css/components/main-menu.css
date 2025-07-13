@@ -11,16 +11,23 @@
   background-color: var(--color-surface);
   z-index: 1000;
   overflow-y: auto;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-  padding: 80px 24px 24px;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
+  padding: 80px 32px 32px;
+  
+  /* Initial hidden state */
+  transform: translateX(100%);
+  opacity: 0;
   visibility: hidden;
-  /* opacity: 0; */
-  /* transform: translateX(100%); */
+  
+  /* CSS transition for smooth animation */
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
   will-change: transform, opacity, visibility;
 }
 
-/* Open state - Used as a hook for JS animations */
+/* Open state - CSS handles the animation */
 .main-menu--open {
+  transform: translateX(0);
+  opacity: 1;
   visibility: visible;
 }
 
@@ -31,68 +38,65 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
 }
 
 /* For animation purposes */
-.main-menu__item,
+.main-menu__items .button-carrot,
 .main-menu__container .cta-button {
   opacity: 1;
   /* transform: translateY(0); */
   will-change: transform, opacity;
 }
 
-/* Menu item */
-.main-menu__item {
+/* Menu items using button-carrot styling */
+.main-menu__items .button-carrot {
   display: block;
-  font-size: 24px;
-  font-weight: 500;
-  color: var(--color-text);
-  text-decoration: none;
-  transition: color 0.2s ease;
-  position: relative;
+  margin-bottom: 16px;
+  
+  /* Initial state for animation */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.main-menu__item:hover {
+/* Reduce spacing between arrow and text in menu */
+.main-menu__items .button-carrot::before {
+  margin-right: 4px;
+}
+
+/* Animation states for menu items */
+.menu-item--animate-in {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.menu-item--animate-out {
+  opacity: 0 !important;
+  transform: translateY(10px) !important;
+  transition: opacity 0.2s ease, transform 0.2s ease !important;
+}
+
+/* Active state for button-carrot in menu */
+.main-menu__items .button-carrot.active {
   color: var(--color-primary);
 }
 
-.main-menu__item:after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--color-primary);
-  transition: width 0.2s ease;
-}
-
-.main-menu__item:hover:after {
-  width: 100%;
-}
-
-/* Active item */
-.main-menu__item.active {
-  color: var(--color-primary);
-}
-
-.main-menu__item.active:after {
-  width: 100%;
+.main-menu__items .button-carrot.active:hover {
+  color: var(--color-white);
 }
 
 /* Menu dividers */
 .main-menu__divider {
-  margin: 12px 0;
+  margin: 16px 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .main-menu__divider-label {
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-text-secondary, #666);
+  color: var(--color-black);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 4px;
@@ -101,9 +105,10 @@
 .main-menu__divider-line {
   border: none;
   height: 1px;
-  background-color: var(--color-border, #e0e0e0);
-  margin: 0;
-  opacity: 0.5;
+  background-color: var(--color-black);
+  margin: 0 auto;
+  opacity: 0.6;
+  max-width: 60px;
 }
 
 /* Adjust spacing around dividers */
@@ -121,27 +126,37 @@
   cursor: pointer;
   padding: 8px;
   margin-right: 0;
+  transition: color 120ms ease;
   position: relative;
-  transition: all 120ms ease;
+  z-index: 1;
 }
 
-.header__menu-button::after {
-  content: "";
+.header__menu-button::before {
+  content: '';
   position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   bottom: 0;
-  left: 8px;
-  width: 0;
-  height: 1px;
-  background-color: var(--color-text);
-  transition: width 120ms ease;
-}
-
-.header__menu-button:hover::after {
-  width: calc(100% - 16px);
+  background-color: var(--color-black);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
 }
 
 .header__menu-button:hover {
-  color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.header__menu-button:hover::before {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.header__menu-button:hover .header__hamburger-icon span {
+  background-color: var(--color-white);
 }
 
 .header__menu-button p {
@@ -153,9 +168,6 @@
   transition: color 120ms ease;
 }
 
-.header__menu-button:hover p {
-  color: var(--color-primary);
-}
 
 .header__hamburger-icon {
   display: flex;
@@ -167,7 +179,7 @@
 }
 
 .header__menu-button:hover .header__hamburger-icon {
-  transform: rotateX(360deg);
+  transform: rotateX(720deg);
 }
 
 .header__hamburger-icon span {
@@ -178,9 +190,6 @@
   transition: all 0.3s ease;
 }
 
-.header__menu-button:hover .header__hamburger-icon span {
-  background-color: var(--color-primary);
-}
 
 /* Active hamburger icon */
 .header__menu-button.active .header__hamburger-icon span:nth-child(1) {
@@ -238,7 +247,8 @@
 }
 
 .cta-button.secondary:hover {
-  background-color: rgba(0, 0, 0, 0.05); /* Very light gray */
+  background-color: var(--color-black);
+  color: var(--color-white);
 }
 
 /* Prevent body scroll when menu is open */
@@ -262,12 +272,34 @@ body.menu-open {
   align-items: center;
   justify-content: center;
   z-index: 1010;
-  transition: all 0.2s ease;
+  transition: transform 800ms ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+.main-menu__close-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-black);
+  transform: scale(0);
+  transform-origin: center;
+  opacity: 0;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+  border-radius: 50%;
 }
 
 .main-menu__close-button:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  transform: rotate(90deg);
+  transform: rotateX(720deg);
+  border-color: var(--color-black);
+}
+
+.main-menu__close-button:hover::before {
+  transform: scale(1);
+  opacity: 1;
 }
 
 .main-menu__close-icon {
@@ -298,7 +330,7 @@ body.menu-open {
 
 .main-menu__close-button:hover .main-menu__close-icon:before,
 .main-menu__close-button:hover .main-menu__close-icon:after {
-  background-color: var(--color-primary);
+  background-color: var(--color-white);
 }
 
 /* Responsive adjustments */

@@ -1,5 +1,5 @@
-// menu.js - Main Menu Animations with anime.js
-import { animate, createTimeline, stagger } from 'animejs'
+// menu.js - Main Menu Animations
+// Now using CSS-based animations similar to exhibition lightbox pattern
 
 // Menu Animation Controller
 class MenuAnimationController {
@@ -10,7 +10,7 @@ class MenuAnimationController {
     this.mainMenu = document.getElementById('main-menu');
     this.body = document.body;
     this.overlay = document.querySelector('.header__overlay');
-    this.menuItems = document.querySelectorAll('.main-menu__item');
+    this.menuItems = document.querySelectorAll('.main-menu__items .button-carrot');
     this.ctaButtons = document.querySelectorAll('.main-menu__container .cta-button');
 
     // Initialize
@@ -64,15 +64,13 @@ class MenuAnimationController {
   }
 
   openMenu() {
-    console.log('poop');
-
     // Toggle active class on menu button
     this.menuButton.classList.add('active');
 
-    // Toggle menu visibility class for CSS hook
+    // Toggle menu visibility class - CSS handles animation
     this.mainMenu.classList.add('main-menu--open');
 
-    // Add overlay visible class
+    // Add overlay visible class - CSS handles animation
     if (this.overlay) {
       this.overlay.classList.add('header__overlay--visible');
     }
@@ -83,101 +81,59 @@ class MenuAnimationController {
     // Prevent body scrolling
     this.body.classList.add('menu-open');
 
-    // Create and play opening animation
-    const openAnimation = createTimeline({
-      easing: 'easeOutExpo',
-      duration: 700
-    });
-
-    // Menu container animation
-    openAnimation.add(this.mainMenu, {
-      x: ['100px', '0'],
-      opacity: [0, 1],
-      duration: 600
-    });
-
-    // Overlay animation
-    if (this.overlay) {
-      openAnimation.add(this.overlay, {
-        opacity: [0, 1],
-        duration: 500
-      }, '-=500');
-    }
-
-    // Menu items animation
-    openAnimation.add(this.menuItems, {
-      translateY: [20, 0],
-      opacity: [0, 1],
-      delay: stagger(80),
-      duration: 800
-    }, '-=400');
-
-    // CTA buttons animation
-    if (this.ctaButtons.length > 0) {
-      openAnimation.add(this.ctaButtons, {
-        translateY: [20, 0],
-        opacity: [0, 1],
-        delay: stagger(100),
-        duration: 800
-      }, '-=600');
-    }
-
-    // Play the animation
-    openAnimation.restart();
+    // Optional: Add staggered menu item animation with CSS classes
+    this.animateMenuItems(true);
   }
 
   closeMenu() {
-    // Create closing animation
-    const closeAnimation = createTimeline({
-      easing: 'easeInOutQuad',
-      duration: 500
-    });
-
-    // Animate menu items out first
-    closeAnimation.add(this.menuItems, {
-      translateY: [0, 10],
-      opacity: [1, 0],
-      delay: stagger(50, {from: 'last'}),
-      duration: 300
-    });
-
-    // Animate CTA buttons out
-    if (this.ctaButtons.length > 0) {
-      closeAnimation.add(this.ctaButtons, {
-        translateY: [0, 10],
-        opacity: [0],
-        delay: stagger(50, {from: 'last'}),
-        duration: 300
-      }, '-=200');
-    }
-
-    // Animate container out
-    closeAnimation.add(this.mainMenu, {
-      translateX: ['0', '100%'],
-      opacity: [1, 0],
-      duration: 500,
-      complete: () => {
-        // Remove classes once animation completes
-        this.mainMenu.classList.remove('main-menu--open');
-        this.menuButton.classList.remove('active');
-        this.menuButton.setAttribute('aria-expanded', 'false');
-        this.body.classList.remove('menu-open');
-      }
-    }, '-=200');
-
-    // Animate overlay out
+    // Remove menu items animation classes first
+    this.animateMenuItems(false);
+    
+    // Remove overlay visible class - CSS handles animation
     if (this.overlay) {
-      closeAnimation.add(this.overlay, {
-        opacity: [1, 0],
-        duration: 300,
-        complete: () => {
-          this.overlay.classList.remove('header__overlay--visible');
-        }
-      }, '-=400');
+      this.overlay.classList.remove('header__overlay--visible');
     }
 
-    // Play the animation
-    closeAnimation.restart();
+    // Remove menu visibility class - CSS handles animation  
+    this.mainMenu.classList.remove('main-menu--open');
+
+    // Wait for CSS transition to complete before cleanup
+    setTimeout(() => {
+      // Remove button active state and attributes
+      this.menuButton.classList.remove('active');
+      this.menuButton.setAttribute('aria-expanded', 'false');
+      
+      // Restore body scrolling
+      this.body.classList.remove('menu-open');
+    }, 300); // Match CSS transition duration
+  }
+
+  animateMenuItems(isOpening) {
+    // Add/remove animation classes for menu items with stagger
+    this.menuItems.forEach((item, index) => {
+      const delay = index * 50; // 50ms stagger
+      
+      if (isOpening) {
+        setTimeout(() => {
+          item.classList.add('menu-item--animate-in');
+        }, delay);
+      } else {
+        const reverseDelay = (this.menuItems.length - 1 - index) * 30; // Reverse stagger
+        setTimeout(() => {
+          item.classList.remove('menu-item--animate-in');
+          item.classList.add('menu-item--animate-out');
+        }, reverseDelay);
+      }
+    });
+
+    // Clean up animation classes after closing
+    if (!isOpening) {
+      setTimeout(() => {
+        this.menuItems.forEach(item => {
+          item.classList.remove('menu-item--animate-out');
+        });
+      }, 300);
+    }
   }
 }
 

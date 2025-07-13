@@ -50,26 +50,33 @@
   color: var(--color-text);
   text-decoration: none;
   transition: color 0.2s ease;
+  padding: 0 12px;
   position: relative;
+  z-index: 1;
+}
+
+.main-menu__item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-black);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
 }
 
 .main-menu__item:hover {
-  color: var(--color-primary);
+  color: var(--color-white);
 }
 
-.main-menu__item:after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--color-primary);
-  transition: width 0.2s ease;
-}
-
-.main-menu__item:hover:after {
-  width: 100%;
+.main-menu__item:hover::before {
+  transform: scaleX(1);
+  opacity: 1;
 }
 
 /* Active item */
@@ -121,27 +128,37 @@
   cursor: pointer;
   padding: 8px;
   margin-right: 0;
+  transition: color 120ms ease;
   position: relative;
-  transition: all 120ms ease;
+  z-index: 1;
 }
 
-.header__menu-button::after {
-  content: "";
+.header__menu-button::before {
+  content: '';
   position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   bottom: 0;
-  left: 8px;
-  width: 0;
-  height: 1px;
-  background-color: var(--color-text);
-  transition: width 120ms ease;
-}
-
-.header__menu-button:hover::after {
-  width: calc(100% - 16px);
+  background-color: var(--color-black);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
 }
 
 .header__menu-button:hover {
-  color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.header__menu-button:hover::before {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.header__menu-button:hover .header__hamburger-icon span {
+  background-color: var(--color-white);
 }
 
 .header__menu-button p {
@@ -153,9 +170,6 @@
   transition: color 120ms ease;
 }
 
-.header__menu-button:hover p {
-  color: var(--color-primary);
-}
 
 .header__hamburger-icon {
   display: flex;
@@ -167,7 +181,7 @@
 }
 
 .header__menu-button:hover .header__hamburger-icon {
-  transform: rotateX(360deg);
+  transform: rotateX(720deg);
 }
 
 .header__hamburger-icon span {
@@ -178,9 +192,6 @@
   transition: all 0.3s ease;
 }
 
-.header__menu-button:hover .header__hamburger-icon span {
-  background-color: var(--color-primary);
-}
 
 /* Active hamburger icon */
 .header__menu-button.active .header__hamburger-icon span:nth-child(1) {
@@ -238,7 +249,8 @@
 }
 
 .cta-button.secondary:hover {
-  background-color: rgba(0, 0, 0, 0.05); /* Very light gray */
+  background-color: var(--color-black);
+  color: var(--color-white);
 }
 
 /* Prevent body scroll when menu is open */

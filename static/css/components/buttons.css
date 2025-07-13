@@ -32,38 +32,51 @@
   position: relative;
 
   color: var(--color-black);
-  padding: 6px 0;
+  padding: 6px 8px;
 
   font-size: var(--font-size-label);
   font-family: var(--font-family-label);
   line-height: var(--line-height-label);
   font-weight: var(--font-weight-label);
 
-  transition: all 120ms ease;
+  transition: color 120ms ease;
+  z-index: 1;
 }
 
 .button-carrot::before {
   content: "→";
   display: inline-block;
   margin-right: 8px;
-  transition: transform 800ms ease;
-}
-
-.button-carrot:hover::before {
-  transform: rotateX(360deg);
+  transition: transform 800ms ease, color 120ms ease;
+  position: relative;
+  z-index: 1;
 }
 
 .button-carrot::after {
-  content: "";
+  content: '';
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
-  width: 0;
-  height: 1px;
+  right: 0;
+  bottom: 0;
   background-color: var(--color-black);
-  transition: width 120ms ease;
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+
+.button-carrot:hover {
+  color: var(--color-white);
+}
+
+.button-carrot:hover::before {
+  color: var(--color-white);
+  transform: rotateX(720deg);
 }
 
 .button-carrot:hover::after {
-  width: 100%;
+  transform: scaleX(1);
+  opacity: 1;
 }

@@ -49,7 +49,7 @@
       {% for item in settings.core.NavigationSettings.main_menu.links %}
         {% if item.block_type == 'normal_link' %}
           <li>
-            <a class="main-menu__item{% if request.path == item.value.link.link_url %} active{% endif %}"
+            <a class="button-carrot{% if request.path == item.value.link.link_url %} active{% endif %}"
                href="{{ item.value.link.link_url }}"
                {% if item.value.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
                {{ item.value.link.link_text }}

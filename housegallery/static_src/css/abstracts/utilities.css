@@ -1,0 +1,129 @@
+/* 
+ * AI-Friendly Utility Classes for Common Patterns
+ * 
+ * This file provides reusable utility classes designed for AI-assisted development.
+ * All utilities use semantic design tokens and follow consistent naming patterns.
+ * 
+ * Usage Patterns:
+ * - .hover-invert: Primary interaction state (black bg, white text)
+ * - .hover-lift: Card/element elevation on hover
+ * - .hover-secondary: Secondary interaction state (white bg, black text)
+ * - .interactive: Base interactive element styling
+ * 
+ * Data Attributes:
+ * - data-state="active|inactive|expanded|collapsed": Element state
+ * - data-variant="primary|secondary|featured": Visual variant
+ * - data-motion="reduce|enhance": Animation preference override
+ */
+
+/* --- HOVER UTILITIES --- */
+
+/* Primary invert hover - black background, white text */
+.hover-invert {
+  transition: all var(--transition-duration-normal) var(--transition-easing-standard);
+}
+
+.hover-invert:hover,
+.hover-invert:focus {
+  background: var(--color-hover-background);
+  color: var(--color-hover-text);
+  border-color: var(--color-hover-border);
+  outline: none;
+}
+
+.hover-invert:hover *,
+.hover-invert:focus * {
+  color: var(--color-hover-text);
+}
+
+.hover-invert:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+}
+
+/* Card hover - subtle lift effect with shadow */
+.hover-lift {
+  transition: all var(--transition-duration-normal) var(--transition-easing-decelerate);
+}
+
+.hover-lift:hover,
+.hover-lift:focus-within {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px var(--color-hover-border);
+}
+
+.hover-lift:focus-within {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+}
+
+/* Secondary hover - maintains white background, adds border emphasis */
+.hover-secondary {
+  transition: all var(--transition-duration-normal) var(--transition-easing-standard);
+}
+
+.hover-secondary:hover,
+.hover-secondary:focus {
+  background: var(--color-interactive-secondary);
+  color: var(--color-interactive-secondary-text);
+  border-color: var(--color-hover-border);
+  outline: none;
+}
+
+.hover-secondary:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+}
+
+/* --- INTERACTION UTILITIES --- */
+
+/* Button-like interaction states */
+.interactive {
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-duration-fast) var(--transition-easing-standard);
+}
+
+.interactive:focus {
+  outline: none;
+}
+
+.interactive:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+}
+
+/* --- ACCESSIBILITY UTILITIES --- */
+
+/* Enhanced reduced motion support with token-based control */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animation-reduce-motion: 0;
+    --transition-duration-fast: 0s;
+    --transition-duration-normal: 0s;
+    --transition-duration-slow: 0s;
+  }
+  
+  .hover-invert,
+  .hover-lift,
+  .hover-secondary,
+  .interactive {
+    transition: none;
+  }
+  
+  .hover-lift:hover,
+  .hover-lift:focus-within {
+    transform: none;
+    box-shadow: 0 0 0 1px var(--color-hover-border);
+  }
+}
+
+/* AI-friendly configuration classes */
+.reduce-motion {
+  transition: none !important;
+  animation: none !important;
+}
+
+.enhance-motion {
+  transition: all var(--transition-duration-slow) var(--transition-easing-decelerate);
+}
