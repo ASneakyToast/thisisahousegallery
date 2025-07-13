@@ -50,7 +50,6 @@
 /* Place card component */
 .place-card {
   border: 1px solid var(--color-border, #e1e5e9);
-  border-radius: 4px;
   overflow: hidden;
   background: var(--color-background, #fff);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -100,7 +99,6 @@
 
 .place-card__status {
   padding: 0.25rem 0.5rem;
-  border-radius: 3px;
   font-size: 0.8rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -211,7 +209,6 @@
 
 .place-info-card__status {
   padding: 0.2rem 0.4rem;
-  border-radius: 3px;
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -327,7 +324,6 @@
 .place-info-card--active {
   background-color: var(--color-background-highlight, #f0f8ff);
   border-left: 3px solid var(--color-primary, #007cba);
-  padding-left: calc(1.5rem - 3px);
 }
 
 .place-info-card--active .place-info-card__title {
@@ -345,15 +341,34 @@
   column-gap: var(--size-layout-item-gap, 15px);
 }
 
+/* Adaptive layout classes based on content density */
+.gallery-container--minimal {
+  columns: var(--adaptive-columns, 1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.gallery-container--sparse {
+  columns: var(--adaptive-columns, 3);
+}
+
+.gallery-container--compact {
+  columns: var(--adaptive-columns, 4);
+}
+
+.gallery-container--full {
+  columns: var(--adaptive-columns, 5);
+}
+
 .places-image-pool .gallery-item {
   display: inline-block;
   width: 100%;
   margin-bottom: var(--size-layout-item-gap, 15px);
   break-inside: avoid;
   position: relative;
-  border-radius: 4px;
   overflow: hidden;
-  transition: transform 0.2s ease;
+  transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.3s ease;
+  transform-origin: center center;
 }
 
 .places-image-pool .gallery-item:hover {
@@ -385,9 +400,82 @@
   background: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 0.25rem 0.5rem;
-  border-radius: 3px;
   font-size: 0.7rem;
   font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.places-image-pool .gallery-item:hover .gallery-item__place {
+  opacity: 1;
+}
+
+/* Gallery filtering animation states */
+.gallery-item--filtering-out {
+  transform: scale(0.85);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.gallery-item--filtering-in {
+  transform: scale(1);
+  opacity: 1;
+  will-change: transform, opacity;
+}
+
+.gallery-item--visible {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.gallery-item--hidden {
+  transform: scale(0.85);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Adaptive animation styles based on content density */
+.gallery-animation--simple .gallery-item--filtering-out,
+.gallery-animation--simple .gallery-item--hidden {
+  transform: scale(1);
+  opacity: 0;
+}
+
+.gallery-animation--simple .gallery-item--filtering-in,
+.gallery-animation--simple .gallery-item--visible {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.gallery-animation--subtle .gallery-item--filtering-out,
+.gallery-animation--subtle .gallery-item--hidden {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.gallery-animation--subtle .gallery-item--filtering-in,
+.gallery-animation--subtle .gallery-item--visible {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Accessibility: Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .places-image-pool .gallery-item {
+    transition: opacity 0.2s ease;
+  }
+  
+  .gallery-item--filtering-out,
+  .gallery-item--hidden {
+    transform: scale(1);
+    opacity: 0;
+  }
+  
+  .gallery-item--filtering-in,
+  .gallery-item--visible {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* Gallery filtering states */
@@ -413,6 +501,22 @@
   .places-image-pool .gallery-container {
     columns: 3;
   }
+  
+  .gallery-container--minimal {
+    columns: var(--adaptive-columns, 1);
+  }
+  
+  .gallery-container--sparse {
+    columns: var(--adaptive-columns, 2);
+  }
+  
+  .gallery-container--compact {
+    columns: var(--adaptive-columns, 3);
+  }
+  
+  .gallery-container--full {
+    columns: var(--adaptive-columns, 3);
+  }
 }
 
 @media (max-width: 768px) {
@@ -432,6 +536,22 @@
     columns: 2;
   }
   
+  .gallery-container--minimal {
+    columns: var(--adaptive-columns, 1);
+  }
+  
+  .gallery-container--sparse {
+    columns: var(--adaptive-columns, 2);
+  }
+  
+  .gallery-container--compact {
+    columns: var(--adaptive-columns, 2);
+  }
+  
+  .gallery-container--full {
+    columns: var(--adaptive-columns, 2);
+  }
+  
   .place-info-card__header {
     padding: 0.75rem 1rem;
   }
@@ -440,9 +560,6 @@
     padding: 0 1rem 1rem;
   }
   
-  .place-info-card--active {
-    padding-left: calc(1rem - 3px);
-  }
   
   .place-info-card__header-content {
     flex-direction: column;
@@ -474,6 +591,13 @@
     columns: 1;
   }
   
+  .gallery-container--minimal,
+  .gallery-container--sparse,
+  .gallery-container--compact,
+  .gallery-container--full {
+    columns: var(--adaptive-columns, 1);
+  }
+  
   .place-info-card__header {
     padding: 0.75rem;
   }
@@ -482,9 +606,6 @@
     padding: 0 0.75rem 0.75rem;
   }
   
-  .place-info-card--active {
-    padding-left: calc(0.75rem - 3px);
-  }
   
   .places-feature-layout {
     gap: 1.5rem;

@@ -5,21 +5,23 @@
 
 {% block content %}
 <div class="body normal">
-    <div class="exhibition-page-header">
-        <h1 class="title type-title">{{ page.title }}</h1>
-
-        {% if page.intro %}
-        <div class="places-intro">
-            {{ page.intro|richtext }}
+    <header class="places-hero">
+        <div class="places-hero__content">
+            <h1 class="places-title-hero">{{ page.title }}</h1>
+            
+            {% if page.intro %}
+            <div class="places-intro">
+                {{ page.intro|richtext }}
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-
+        
         {% if page.body %}
         <div class="places-content">
             {% include_block page.body %}
         </div>
         {% endif %}
-    </div>
+    </header>
 
     {% if places %}
     <div class="places-feature-layout">

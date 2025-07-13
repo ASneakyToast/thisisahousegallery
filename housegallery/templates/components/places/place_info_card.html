@@ -1,8 +1,8 @@
 {% load wagtailcore_tags %}
 
-<div class="place-info-card" data-place-id="{{ place.id }}">
+<div class="place-info-card" data-place-id="{{ place.id }}" data-state="inactive" data-variant="default">
     <!-- Accordion Header (Always Visible) -->
-    <div class="place-info-card__header" data-action="toggle-accordion">
+    <div class="place-info-card__header" data-action="toggle-accordion" tabindex="0" role="button" aria-expanded="false">
         <div class="place-info-card__header-content">
             <h3 class="place-info-card__title">{{ place.title }}</h3>
         </div>
