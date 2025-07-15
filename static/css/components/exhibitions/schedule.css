@@ -8,7 +8,7 @@
 /* Schedule Header */
 .schedule-header {
   margin-bottom: var(--size-layout-section-spacing);
-  text-align: center;
+  text-align: left;
 }
 
 .schedule-intro {
@@ -16,54 +16,6 @@
   max-width: 600px;
 }
 
-/* Interactive Controls */
-.schedule-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--size-layout-section-spacing);
-  margin: var(--size-layout-section-spacing) 0;
-  flex-wrap: wrap;
-}
-
-.schedule-filters,
-.schedule-view-toggle {
-  display: flex;
-  gap: 0.5rem;
-  background: var(--color-white);
-  border: 1px solid var(--color-black);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.filter-btn,
-.view-toggle-btn {
-  background: transparent;
-  border: none;
-  padding: 0.75rem 1rem;
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-small);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-right: 1px solid var(--color-black);
-}
-
-.filter-btn:last-child,
-.view-toggle-btn:last-child {
-  border-right: none;
-}
-
-.filter-btn:hover,
-.view-toggle-btn:hover {
-  background: var(--color-black);
-  color: var(--color-white);
-}
-
-.filter-btn.active,
-.view-toggle-btn.active {
-  background: var(--color-black);
-  color: var(--color-white);
-}
 
 /* Schedule Sections */
 .schedule-section {
@@ -71,11 +23,12 @@
 }
 
 .section-heading {
-  font-size: var(--font-size-large);
-  font-weight: var(--font-weight-light);
   font-family: var(--font-family-heading);
-  margin-bottom: var(--size-layout-element-spacing);
+  font-size: var(--font-size-heading);
+  font-weight: 700;
+  margin: 0 0 var(--size-layout-element-spacing) 0;
   color: var(--color-black);
+  text-align: left;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -142,9 +95,35 @@
 /* Event Card Image */
 .event-card__image {
   position: relative;
-  overflow: hidden;
-  background: var(--color-black);
 }
+
+/* Placeholder Image Styles */
+.event-placeholder {
+  filter: grayscale(100%) opacity(0.6);
+}
+
+.event-placeholder-label {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  border-radius: 2px;
+  font-family: var(--font-family-body);
+}
+
+/* Text-only event cards (upcoming/grid/timeline) */
+.event-card:not(.event-card--featured) .event-card__content {
+  padding: 1.5rem;
+}
+
+/* Featured cards with images */
+.event-card--featured .event-card__content {
+  padding: 1rem;
+}
+
 
 .event-image {
   width: 100%;

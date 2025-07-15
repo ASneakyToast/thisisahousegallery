@@ -12,7 +12,6 @@
   gap: var(--size-layout-section-spacing);
   margin-bottom: var(--size-layout-section-spacing);
   padding-bottom: var(--size-layout-section-spacing);
-  border-bottom: 1px solid var(--color-black);
 }
 
 .event-hero__content {
@@ -287,13 +286,13 @@
   margin-bottom: var(--size-layout-item-gap);
 }
 
-/* Section Headers */
-.section-header {
+/* Event Section Headers */
+.event-section-header {
   text-align: center;
   margin-bottom: var(--size-layout-element-spacing);
 }
 
-.section-title {
+.event-section-title {
   font-family: var(--font-family-heading);
   font-size: var(--font-size-large);
   font-weight: var(--font-weight-light);

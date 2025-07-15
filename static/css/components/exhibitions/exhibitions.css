@@ -7,7 +7,6 @@
 
 .exhibition-page-header {
   margin-bottom: var(--size-layout-section-spacing);
-  border-bottom: 1px solid var(--color-black, #121212);
 }
 
 .exhibition-page-header .title {
@@ -75,16 +74,20 @@
   transition: all 0.3s ease;
 }
 
-.exhibition-header-link:hover .exhibition-header {
-  background: var(--color-black, #121212);
-  color: var(--color-white, #fefefe);
+.exhibition-header-link:hover .exhibition-header,
+.exhibition-header-link:focus .exhibition-header {
+  background: var(--color-hover-background);
+  color: var(--color-hover-text);
 }
 
-.exhibition-header-link:hover .exhibition-header h2,
-.exhibition-header-link:hover .exhibition-header h3,
-.exhibition-header-link:hover .exhibition-header__artists p,
-.exhibition-header-link:hover .exhibition-header__artists a {
-  color: var(--color-white, #fefefe) !important;
+.exhibition-header-link:hover .exhibition-header *,
+.exhibition-header-link:focus .exhibition-header * {
+  color: var(--color-hover-text);
+}
+
+.exhibition-header-link:focus-visible {
+  outline: 2px solid var(--color-hover-border);
+  outline-offset: 2px;
 }
 
 .exhibition-header h2,
@@ -123,12 +126,19 @@
 
 .exhibition-header__artists a {
   text-decoration: none;
-  color: var(--color-black);
+  color: var(--color-interactive-secondary-text);
   transition: opacity 0.2s ease;
 }
 
-.exhibition-header__artists a:hover {
+.exhibition-header__artists a:hover,
+.exhibition-header__artists a:focus {
   opacity: 0.7;
+  outline: none;
+}
+
+.exhibition-header__artists a:focus-visible {
+  outline: 2px solid var(--color-hover-border);
+  outline-offset: 2px;
 }
 
 .exhibition-media {
@@ -302,9 +312,20 @@
   transition: all 0.3s ease;
 }
 
-.exhibition-card:hover .exhibition-card__header {
-  background: var(--color-black, #121212);
-  color: var(--color-white, #fefefe);
+.exhibition-card:hover .exhibition-card__header,
+.exhibition-card:focus-within .exhibition-card__header {
+  background: var(--color-hover-background);
+  color: var(--color-hover-text);
+}
+
+.exhibition-card:hover .exhibition-card__header *,
+.exhibition-card:focus-within .exhibition-card__header * {
+  color: var(--color-hover-text);
+}
+
+.exhibition-card:focus-within {
+  outline: 2px solid var(--color-hover-border);
+  outline-offset: 2px;
 }
 
 .exhibition-card__date {
@@ -345,9 +366,16 @@
   transition: all 0.3s ease;
 }
 
-.pagination__link:hover {
-  background: var(--color-black, #121212);
-  color: var(--color-white, #fefefe);
+.pagination__link:hover,
+.pagination__link:focus {
+  background: var(--color-hover-background);
+  color: var(--color-hover-text);
+  outline: none;
+}
+
+.pagination__link:focus-visible {
+  outline: 2px solid var(--color-hover-border);
+  outline-offset: 2px;
 }
 
 .pagination__info {
