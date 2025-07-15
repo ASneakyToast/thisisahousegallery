@@ -1,0 +1,34 @@
+{% load static i18n %}
+{% load render_bundle from webpack_loader %}
+
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>{{ gallery_title }} - Kiosk Display</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+    </style>
+
+    {% block css %}
+        {% render_bundle 'styles' 'css' %}
+    {% endblock css %}
+</head>
+
+<body class="kiosk-body kiosk-fallback">
+    <main class="kiosk-container">
+        <div class="fallback-content">
+            <h1 class="kiosk-title">{{ gallery_title }}</h1>
+            <div class="fallback-message">
+                <p>{{ message }}</p>
+                <a href="/admin/" class="admin-link">Go to Admin</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

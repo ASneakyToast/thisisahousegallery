@@ -1,0 +1,140 @@
+{% load static i18n %}
+{% load render_bundle from webpack_loader %}
+{% load wagtailcore_tags %}
+
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>{{ page.gallery_title }} - Kiosk Display</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+    </style>
+
+    {% block css %}
+        {% render_bundle 'styles' 'css' %}
+    {% endblock css %}
+
+    {% block javascript %}
+        {% render_bundle 'vendors' 'js' attrs='defer' %}
+        {% render_bundle 'project' 'js' attrs='defer' %}
+    {% endblock javascript %}
+</head>
+
+<body class="kiosk-body">
+    <main class="kiosk-container" id="kiosk-main">
+        <!-- Gallery Title -->
+        <header class="kiosk-header">
+            <h1 class="kiosk-title">{{ page.gallery_title }}</h1>
+        </header>
+
+        <!-- Animated Gallery Display -->
+        <section class="kiosk-gallery" 
+                 id="kiosk-gallery"
+                 data-auto-advance="{{ page.auto_advance_seconds }}"
+                 data-image-count="{{ page.show_image_count }}">
+            
+            <!-- Gallery content will be populated from StreamField -->
+            <div class="kiosk-gallery-container">
+                {% include_block page.body %}
+            </div>
+            
+            <!-- Loading state -->
+            <div class="kiosk-loading" id="kiosk-loading">
+                <div class="loading-spinner"></div>
+                <p>Loading gallery...</p>
+            </div>
+        </section>
+
+        <!-- Mailing List Subscription -->
+        {% if page.enable_mailing_list %}
+        <aside class="kiosk-subscription" id="kiosk-subscription">
+            <div class="subscription-content">
+                <h2 class="subscription-title">{{ page.mailing_list_prompt }}</h2>
+                <form class="subscription-form" id="subscription-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="email" class="sr-only">Email address</label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               placeholder="Enter your email address"
+                               required
+                               class="form-input">
+                        <button type="submit" class="form-submit">
+                            Subscribe
+                        </button>
+                    </div>
+                    <div class="form-messages" id="form-messages"></div>
+                </form>
+            </div>
+        </aside>
+        {% endif %}
+
+        <!-- Touch/click areas for navigation -->
+        <div class="kiosk-nav">
+            <button class="nav-prev" id="nav-prev" aria-label="Previous images">
+                <span class="nav-arrow">‹</span>
+            </button>
+            <button class="nav-next" id="nav-next" aria-label="Next images">
+                <span class="nav-arrow">›</span>
+            </button>
+        </div>
+
+        <!-- Gallery progress indicator -->
+        <div class="kiosk-progress">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </main>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Initialize kiosk gallery
+            if (window.KioskGallery) {
+                window.kioskGallery = new KioskGallery('#kiosk-gallery');
+            }
+
+            // Handle mailing list subscription
+            const form = document.getElementById('subscription-form');
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const messages = document.getElementById('form-messages');
+                    const submitBtn = form.querySelector('.form-submit');
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Subscribing...';
+                    
+                    try {
+                        const response = await fetch('{% url "mailing_list_subscribe" %}', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            messages.innerHTML = '<div class="message success">' + data.message + '</div>';
+                            form.reset();
+                        } else {
+                            messages.innerHTML = '<div class="message error">' + data.error + '</div>';
+                        }
+                    } catch (error) {
+                        messages.innerHTML = '<div class="message error">Connection error. Please try again.</div>';
+                    }
+                    
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Subscribe';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

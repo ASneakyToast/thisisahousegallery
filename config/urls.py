@@ -12,6 +12,8 @@ from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.utils.urlpatterns import decorate_urlpatterns
 
+from housegallery.home.views import kiosk_display, mailing_list_subscribe
+
 ignore_cache_urlpatterns = [
     # Custom images URLs (must come before wagtailadmin_urls to override)
     path('admin/images/', include('housegallery.images.urls')),
@@ -23,6 +25,10 @@ ignore_cache_urlpatterns = [
 # Public URLs that are meant to be cached.
 public_urlpatterns = [
     path('sitemap.xml', sitemap),
+    # Kiosk display page at /display
+    path('display/', kiosk_display, name='kiosk_display'),
+    # Mailing list subscription endpoint
+    path('api/subscribe/', mailing_list_subscribe, name='mailing_list_subscribe'),
 ]
 
 if settings.DEBUG:
