@@ -1,3 +1,19 @@
+/* 
+ * AI-Friendly Design Token System
+ * 
+ * This token system is optimized for AI-assisted development with:
+ * - Semantic naming that describes intent, not appearance
+ * - Consistent patterns for easy AI recognition
+ * - Performance and accessibility metadata
+ * - Configuration-based styling support
+ * 
+ * Token Categories:
+ * - Colors: Global, interaction states, hover states
+ * - Sizes: Layout spacing, component dimensions
+ * - Typography: Font families, sizes, weights, line heights
+ * - Interactions: Transitions, animations, accessibility
+ */
+
 :root {
   /* --- COLOR --- */
 
@@ -14,6 +30,31 @@
   --color-text: var(--color-black);
   --color-primary: #000;
   --color-accent: #e91e63;
+
+  /* interaction states */
+  --color-interactive-primary: var(--color-black);
+  --color-interactive-primary-text: var(--color-white);
+  --color-interactive-secondary: var(--color-white);
+  --color-interactive-secondary-text: var(--color-black);
+
+  /* hover state tokens */
+  --color-hover-background: var(--color-interactive-primary);
+  --color-hover-text: var(--color-interactive-primary-text);
+  --color-hover-border: var(--color-interactive-primary);
+
+  /* interaction performance tokens */
+  --transition-duration-fast: 0.15s;
+  --transition-duration-normal: 0.2s;
+  --transition-duration-slow: 0.3s;
+  --transition-easing-standard: ease;
+  --transition-easing-decelerate: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+  /* accessibility tokens */
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 2px;
+  --focus-outline-color: var(--color-interactive-primary);
+  --animation-reduce-motion: 1; /* 1 = normal, 0 = reduced */
 
   /* --- SIZE --- */
 
@@ -87,6 +128,7 @@
   --font-size-subheading: var(--font-size-20);
   --font-size-label: var(--font-size-14);
   --font-size-body: var(--font-size-16);
+  --font-size-small: var(--font-size-14);
   --font-size-detail: var(--font-size-10);
 
   /* --- FONT WEIGHT --- */
@@ -139,6 +181,7 @@
         --font-size-quote: var(--font-size-32);
         --font-size-subheading: var(--font-size-24);
         --font-size-label: var(--font-size-16);
+        --font-size-small: var(--font-size-16);
         --font-size-detail: var(--font-size-12);
         --line-height-title: var(--line-height-120);
         --line-height-quote: var(--line-height-170);
