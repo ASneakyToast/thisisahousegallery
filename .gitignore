@@ -280,4 +280,7 @@ webpack-stats.json
 .env
 .envs/
 
+# Compiled static assets (webpack output)
+static/
+
 **/.claude/settings.local.json

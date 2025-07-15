@@ -5,6 +5,24 @@
   padding: 0 var(--size-layout-gutter);
 }
 
+/* Exhibition Video Section */
+.exhibition-video-section {
+  margin-bottom: var(--size-layout-section-spacing);
+}
+
+.exhibition-video-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.exhibition-video-container iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border-radius: var(--border-radius-medium);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
 /* Exhibition Hero Section */
 .exhibition-hero {
   display: grid;
