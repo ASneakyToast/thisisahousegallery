@@ -2,6 +2,7 @@ from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.blocks import PageChooserBlock
+from wagtail.embeds.blocks import EmbedBlock
 
 from housegallery.core.blocks.links import ButtonLinkBlock, CarrotLinkBlock, ListOfLinksBlock
 from housegallery.core.blocks import GalleryBlock
@@ -49,10 +50,18 @@ class ExhibitionFeatureBlock(blocks.StructBlock):
         required=True,
         help_text="Select an exhibition page to feature"
     )
+    display_type = blocks.ChoiceBlock(
+        choices=[
+            ('gallery', 'Image Gallery'),
+            ('video', 'YouTube Video'),
+        ],
+        default='gallery',
+        help_text="Choose whether to display an image gallery or a YouTube video (video must be set in the exhibition's Video Content field)"
+    )
     randomize_gallery = blocks.BooleanBlock(
         required=False,
         default=False,
-        help_text="Randomize the gallery image order daily (uses current date as seed for consistent daily ordering)"
+        help_text="Randomize the gallery image order daily (only applies to gallery mode)"
     )
     
     class Meta:

@@ -257,6 +257,18 @@
   flex: 3;
 }
 
+/* Exhibition feature video layout */
+.exhibition-feature-video {
+  flex: 3 1 0%;
+}
+
+/* Video embed responsive styling */
+.exhibition-feature-video iframe {
+  width: 100%;
+  aspect-ratio: 4 / 2;
+  height: auto;
+}
+
 /* Gallery item button styles */
 .gallery-lightbox-item {
   position: relative;

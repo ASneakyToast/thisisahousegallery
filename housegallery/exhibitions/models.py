@@ -8,6 +8,8 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, MultipleChooserPanel, HelpPanel
+from wagtail.embeds.models import Embed
+from wagtail.embeds import embeds
 
 from .widgets import ExhibitionImageChooserPanel
 from housegallery.artworks.widgets import ArtworkChooserPanel
@@ -322,6 +324,11 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         use_json_field=True,
         help_text="Gallery images, showcards, and other content for this exhibition"
     )
+    video_embed_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="YouTube or Vimeo URL for exhibition video content"
+    )
 
     template = 'pages/exhibitions/exhibition_page.html'
     
@@ -363,6 +370,9 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 chooser_field_name="image"
             ),
         ], heading="Images"),
+        MultiFieldPanel([
+            FieldPanel('video_embed_url'),
+        ], heading="Video Content"),
     ]
     
     promote_panels = (
