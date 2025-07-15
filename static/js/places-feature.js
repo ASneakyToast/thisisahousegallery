@@ -68,20 +68,26 @@ class PlacesFeature {
             const otherPlaceId = card.getAttribute('data-place-id');
             if (otherPlaceId !== placeId) {
                 this.expandedCards.delete(otherPlaceId);
-                card.classList.remove('place-info-card--expanded', 'place-info-card--active');
+                card.setAttribute('data-state', 'inactive');
+                const header = card.querySelector('[data-action="toggle-accordion"]');
+                if (header) header.setAttribute('aria-expanded', 'false');
             }
         });
         
         if (isExpanded) {
             // Collapse this accordion and show all images
             this.expandedCards.delete(placeId);
-            cardElement.classList.remove('place-info-card--expanded', 'place-info-card--active');
+            cardElement.setAttribute('data-state', 'inactive');
+            const header = cardElement.querySelector('[data-action="toggle-accordion"]');
+            if (header) header.setAttribute('aria-expanded', 'false');
             this.activePlace = null;
             this.showAllImages();
         } else {
             // Expand this accordion and filter images
             this.expandedCards.add(placeId);
-            cardElement.classList.add('place-info-card--expanded', 'place-info-card--active');
+            cardElement.setAttribute('data-state', 'active');
+            const header = cardElement.querySelector('[data-action="toggle-accordion"]');
+            if (header) header.setAttribute('aria-expanded', 'true');
             this.activePlace = placeId;
             this.filterImagesByPlace(placeId);
         }
@@ -377,7 +383,9 @@ class PlacesFeature {
         });
         
         this.placeCards.forEach(card => {
-            card.classList.remove('place-info-card--active', 'place-info-card--expanded');
+            card.setAttribute('data-state', 'inactive');
+            const header = card.querySelector('[data-action="toggle-accordion"]');
+            if (header) header.setAttribute('aria-expanded', 'false');
         });
         
         this.updateGalleryState(false);

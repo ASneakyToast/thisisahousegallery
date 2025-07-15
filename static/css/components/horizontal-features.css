@@ -6,7 +6,6 @@
 .horizontal-features-block {
   position: relative;
   margin: var(--size-layout-section-spacing) 0;
-  padding: 0 var(--size-layout-gutter);
   
   /* Respect user's motion preferences */
   @media (prefers-reduced-motion: reduce) {
@@ -24,6 +23,7 @@
   font-weight: var(--font-weight-bold, 700);
   margin: 0;
   margin-bottom: var(--size-layout-element-spacing);
+  padding-left: var(--size-layout-gutter);
   color: var(--color-text);
 }
 
@@ -35,8 +35,11 @@
 
 .horizontal-features-block__scroll-container {
   position: relative;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none; /* Firefox */
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--size-layout-gutter);
 }
 
 .horizontal-features-block__scroll-container::-webkit-scrollbar {
@@ -46,8 +49,13 @@
 .horizontal-features-block__track {
   display: flex;
   gap: 1rem;
-  transition: transform 0.3s ease;
-  will-change: transform;
+  padding-left: var(--size-layout-gutter);
+}
+
+.horizontal-features-block__track::after {
+  content: '';
+  flex-shrink: 0;
+  width: var(--size-layout-gutter);
 }
 
 /* Individual Feature Cards */
@@ -59,6 +67,7 @@
   background: var(--color-surface, #fff);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  scroll-snap-align: start;
 }
 
 .horizontal-features-card:hover {
@@ -101,54 +110,6 @@
 }
 
 
-/* Navigation Controls */
-.horizontal-features-block__controls {
-  position: absolute;
-  top: 50%;
-  right: 1rem;
-  transform: translateY(-50%);
-  display: flex;
-  justify-content: flex-end;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.horizontal-features-block__nav {
-  width: 44px;
-  height: 44px;
-  background: rgba(0, 0, 0, 0.7);
-  border: none;
-  border-radius: 50%;
-  color: white;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  pointer-events: auto;
-  backdrop-filter: blur(4px);
-}
-
-.horizontal-features-block__nav:hover {
-  background: rgba(0, 0, 0, 0.9);
-  transform: scale(1.1);
-}
-
-.horizontal-features-block__nav:disabled {
-  background: rgba(0, 0, 0, 0.3);
-  cursor: not-allowed;
-  transform: scale(1);
-}
-
-.horizontal-features-block__nav--next {
-  /* Positioned by parent controls container */
-}
-
-.horizontal-features-block__nav-icon {
-  display: block;
-  line-height: 1;
-}
 
 
 /* Empty State */
@@ -162,7 +123,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .horizontal-features-block {
-    padding: 0 var(--size-layout-gutter);
+    /* No padding - handled by track */
   }
   
   .horizontal-features-block__title {
@@ -170,11 +131,6 @@
   }
   
   
-  .horizontal-features-block__nav {
-    width: 36px;
-    height: 36px;
-    font-size: 1.25rem;
-  }
   
   
   .horizontal-features-card__image-container {
@@ -200,10 +156,6 @@
 }
 
 /* Focus states for accessibility */
-.horizontal-features-block__nav:focus-visible {
-  outline: 2px solid var(--color-primary, #007bff);
-  outline-offset: 2px;
-}
 
 .horizontal-features-card__link:focus-visible {
   outline: 2px solid var(--color-primary, #007bff);
@@ -216,9 +168,4 @@
     border: 2px solid currentColor;
   }
   
-  .horizontal-features-block__nav {
-    background: black;
-    color: white;
-    border: 2px solid white;
-  }
 }
