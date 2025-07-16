@@ -18,4 +18,7 @@ import './places-feature.js';
 // Import kiosk gallery functionality
 import './kiosk-gallery.js';
 
+// Import floating hero functionality
+import './floating-hero.js';
+
 // Any other project-wide JavaScript functionality goes here

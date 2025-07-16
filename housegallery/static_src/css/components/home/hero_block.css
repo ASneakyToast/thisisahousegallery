@@ -9,7 +9,6 @@
   font-family: var(--font-family-intro);
   line-height: var(--line-height-intro);
   font-weight: var(--font-weight-intro);
-  width: 74%;
   margin-bottom: var(--size-layout-section-spacing);
 }
 

@@ -1,0 +1,262 @@
+/* Floating Hero Images Component */
+
+/* Container for floating hero images */
+.floating-hero {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-hero__container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Transform groups for better performance */
+.floating-hero__group {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    /* Start groups off-screen on the right */
+    transform: translateX(100vw);
+}
+
+/* Individual floating images within groups */
+.floating-hero__image {
+    position: absolute;
+    top: 50%;
+    left: var(--horizontal-spacing, 0px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    overflow: hidden;
+    backface-visibility: hidden;
+    transform: translateY(calc(-50% + var(--vertical-offset, 0px)));
+}
+
+/* Style the actual img element inside the wrapper */
+.floating-hero__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Size variations adapted from kiosk gallery */
+.floating-hero__image--tiny {
+    width: 120px;
+    height: 120px;
+    z-index: 2;
+}
+
+.floating-hero__image--small {
+    width: 180px;
+    height: 180px;
+    z-index: 3;
+}
+
+.floating-hero__image--medium {
+    width: 260px;
+    height: 200px;
+    z-index: 4;
+}
+
+.floating-hero__image--large {
+    width: 360px;
+    height: 240px;
+    z-index: 5;
+}
+
+.floating-hero__image--huge {
+    width: 480px;
+    height: 280px;
+    z-index: 6;
+}
+
+/* Hero section content positioning */
+.hero-section {
+    position: relative;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: var(--size-layout-large-spacing);
+    overflow: hidden;
+}
+
+.hero-section__content {
+    position: relative;
+    z-index: 10;
+    text-align: left;
+    max-width: 66%;
+    pointer-events: auto;
+}
+
+.hero-section__intro {
+    position: relative;
+    z-index: 10;
+    margin-bottom: var(--size-layout-element-spacing);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-section__links {
+    position: relative;
+    z-index: 10;
+}
+
+/* Keyframe animation for group movement */
+@keyframes floating-hero-group {
+    0% {
+        transform: translateX(100vw);
+    }
+    100% {
+        transform: translateX(-400px);
+    }
+}
+
+/* Hover effects */
+.hero-section:hover .floating-hero__image {
+    opacity: 1;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .floating-hero__image--tiny {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .floating-hero__image--small {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .floating-hero__image--medium {
+        width: 180px;
+        height: 140px;
+    }
+    
+    .floating-hero__image--large {
+        width: 240px;
+        height: 160px;
+    }
+    
+    .floating-hero__image--huge {
+        width: 320px;
+        height: 200px;
+    }
+    
+    .hero-section {
+        min-height: 50vh;
+        padding: var(--size-layout-element-spacing);
+    }
+    
+    /* Reduce number of floating groups on mobile for performance */
+    .floating-hero__group:nth-child(n+4) {
+        display: none;
+    }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .floating-hero__image--tiny {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .floating-hero__image--small {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .floating-hero__image--medium {
+        width: 220px;
+        height: 170px;
+    }
+    
+    .floating-hero__image--large {
+        width: 300px;
+        height: 200px;
+    }
+    
+    .floating-hero__image--huge {
+        width: 400px;
+        height: 240px;
+    }
+}
+
+/* Accessibility: Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .floating-hero {
+        display: none;
+    }
+    
+    .floating-hero__group {
+        animation: none !important;
+    }
+    
+    .floating-hero__image {
+        opacity: 0.3;
+        position: static;
+        display: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .floating-hero__image {
+        opacity: 1;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        border: 2px solid var(--color-primary, #000);
+    }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .floating-hero__image {
+        opacity: 1;
+        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+    }
+    
+    .hero-section:hover .floating-hero__image {
+        opacity: 1;
+    }
+}
+
+/* Performance optimizations for groups */
+.floating-hero__group {
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.floating-hero__image {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Improve scroll performance */
+.floating-hero__container {
+    transform: translateZ(0);
+}
+
+/* Print styles - hide floating images */
+@media print {
+    .floating-hero {
+        display: none;
+    }
+}

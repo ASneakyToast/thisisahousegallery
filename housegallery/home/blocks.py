@@ -1,4 +1,5 @@
 from wagtail import blocks
+from wagtail.images.blocks import ImageChooserBlock
 
 from housegallery.core.rich_text import MINIMAL_RICHTEXT
 from housegallery.core.blocks.links import ButtonLinkBlock, CarrotLinkBlock, ListOfLinksBlock
@@ -27,6 +28,15 @@ class HeroSection(blocks.StructBlock):
         required=False,
         label='Call to Actions',
         help_text='Add links for the hero section'
+    )
+
+    floating_images = blocks.ListBlock(
+        ImageChooserBlock(),
+        required=False,
+        label='Floating Images',
+        help_text='Select images to float across the hero section (up to 20 images supported)',
+        max_num=20,
+        min_num=0
     )
 
     class Meta:
