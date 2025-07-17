@@ -279,7 +279,7 @@
   padding: 0;
   margin: 0;
   margin-bottom: var(--size-layout-item-gap, 15px); /* Match existing gallery spacing */
-  border: none;
+  border: 1px solid var(--color-black);
   background: none;
   vertical-align: top; /* Remove baseline alignment space */
   width: 100%;
@@ -288,8 +288,8 @@
 }
 
 .gallery-lightbox-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px var(--color-black);
 }
 
 .gallery-lightbox-item:focus {

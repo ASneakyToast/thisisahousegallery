@@ -214,14 +214,14 @@
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-    /* Columns layout tablet - 3 columns */
+    /* Columns layout tablet - 4 columns */
     .gallery-columns-container .gallery-image,
     .gallery-columns-container .gallery-single-image {
-        width: calc(33.333% - 0.67rem);
+        width: calc(25% - 0.75rem);
     }
     
     .gallery-columns-container.masonry .gallery-images {
-        columns: 3;
+        columns: 4;
     }
 }
 
@@ -235,14 +235,14 @@
         font-size: 1.5rem;
     }
     
-    /* Columns layout responsive - 2 columns */
+    /* Columns layout responsive - 3 columns for mobile */
     .gallery-columns-container .gallery-image,
     .gallery-columns-container .gallery-single-image {
-        width: calc(50% - 0.5rem);
+        width: calc(33.333% - 0.5rem);
     }
     
     .gallery-columns-container.masonry .gallery-images {
-        columns: 2;
+        columns: 3;
     }
     
     /* Rows layout responsive */
@@ -272,18 +272,18 @@
 
 @media (max-width: 480px) {
     .gallery-images {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 0.5rem;
     }
     
-    /* Columns layout mobile - single column */
+    /* Columns layout mobile - 3 columns even on small screens */
     .gallery-columns-container .gallery-image,
     .gallery-columns-container .gallery-single-image {
-        width: 100%;
+        width: calc(33.333% - 0.33rem);
     }
     
     .gallery-columns-container.masonry .gallery-images {
-        columns: 1;
+        columns: 3;
     }
     
     /* Rows layout mobile */
