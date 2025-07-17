@@ -107,7 +107,7 @@
     {% endif %}
 
     <!-- Exhibition Gallery Section -->
-    {% with exhibition_images=page.get_exhibition_images opening_images=page.get_opening_images %}
+    {% with exhibition_images=page.get_exhibition_images opening_images=page.get_opening_images in_progress_images=page.get_in_progress_images %}
         {% if exhibition_images %}
         <section class="exhibition-gallery-section">
             <div class="exhibition-section-header">
@@ -135,6 +135,23 @@
                     {% image gallery_image.image width-800 as opening_img %}
                     <img src="{{ opening_img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
                          width="{{ opening_img.width }}" height="{{ opening_img.height }}"
+                         loading="lazy" decoding="async">
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- In Progress Gallery Section -->
+        {% if in_progress_images %}
+        <section class="in-progress-gallery-section">
+            <div class="exhibition-section-header">
+                <h2 class="exhibition-section-title">In Progress Shots</h2>
+            </div>
+            <div class="exhibition-images">
+                {% for gallery_image in in_progress_images %}
+                    {% image gallery_image.image width-800 as in_progress_img %}
+                    <img src="{{ in_progress_img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
+                         width="{{ in_progress_img.width }}" height="{{ in_progress_img.height }}"
                          loading="lazy" decoding="async">
                 {% endfor %}
             </div>
