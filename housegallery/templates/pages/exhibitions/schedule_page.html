@@ -4,7 +4,7 @@
 {% block body_class %}schedule-page{% endblock %}
 
 {% block content %}
-<div class="body normal">
+<div class="body">
     <!-- Schedule Header -->
     <header class="schedule-header">
         <h1 class="title type-title">{{ page.title }}</h1>
@@ -58,21 +58,54 @@
     <div class="schedule-grid-container" id="schedule-grid">
         {% now "Y-m-d" as today %}
         
-        <!-- Featured Events -->
-        {% if featured_child_events %}
-        <section class="schedule-section featured-events" data-category="featured">
-            <h2 class="section-heading">
-                Featured
-            </h2>
-            <div class="schedule-card-grid featured-grid">
-                {% for event in featured_child_events %}
-                    <div class="grid-item featured-item" data-category="featured">
-                        {% include "components/exhibitions/event_card.html" with event=event today=today layout="featured" %}
+        <!-- Featured + Upcoming Events Container -->
+        <div class="schedule-sections-container">
+            <!-- Featured Events -->
+            {% if featured_child_events %}
+            <section class="schedule-section featured-events" data-category="featured">
+                <h2 class="section-heading">
+                    Featured
+                </h2>
+                <div class="schedule-card-grid featured-grid">
+                    {% for event in featured_child_events %}
+                        <div class="grid-item featured-item" data-category="featured">
+                            {% include "components/exhibitions/event_card.html" with event=event today=today layout="featured" %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Upcoming Events -->
+            {% if upcoming_events %}
+            <section class="schedule-section upcoming-events" data-category="upcoming">
+                <h2 class="section-heading">
+                    Upcoming
+                </h2>
+                <div class="schedule-card-grid upcoming-grid">
+                    {% for event in upcoming_events %}
+                        <div class="grid-item upcoming-item" data-category="upcoming">
+                            {% include "components/exhibitions/event_card.html" with event=event today=today layout="grid" %}
+                        </div>
+                    {% endfor %}
+                    
+                    <!-- Add Event Placeholder Card -->
+                    <div class="grid-item add-event-item">
+                        <div class="add-event-card">
+                            <header class="add-event-card__header">
+                                <div class="add-event-card__meta">
+                                    <div></div>
+                                    <span class="add-event-card__icon">+</span>
+                                </div>
+                                <h3 class="add-event-card__title">Add Your Event</h3>
+                            </header>
+                            <p class="add-event-card__description">Submit your exhibition or event to be featured in our schedule</p>
+                        </div>
                     </div>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
+                </div>
+            </section>
+            {% endif %}
+        </div>
 
         <!-- Current Events -->
         {% if current_events %}
@@ -85,22 +118,6 @@
                 {% for event in current_events %}
                     <div class="grid-item current-item" data-category="current">
                         {% include "components/exhibitions/event_card.html" with event=event today=today layout="current" %}
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
-
-        <!-- Upcoming Events -->
-        {% if upcoming_events %}
-        <section class="schedule-section upcoming-events" data-category="upcoming">
-            <h2 class="section-heading">
-                Upcoming
-            </h2>
-            <div class="schedule-card-grid upcoming-grid">
-                {% for event in upcoming_events %}
-                    <div class="grid-item upcoming-item" data-category="upcoming">
-                        {% include "components/exhibitions/event_card.html" with event=event today=today layout="grid" %}
                     </div>
                 {% endfor %}
             </div>
@@ -147,21 +164,6 @@
     </div>
     {% endif %}
 
-    <!-- Contact and Submission Information -->
-    <footer class="schedule-footer">
-        {% if page.submission_info %}
-        <div class="schedule-submission-info rich-text">
-            <h3>Submit an Event</h3>
-            {{ page.submission_info|richtext }}
-        </div>
-        {% endif %}
-
-        {% if page.contact_email %}
-        <div class="schedule-contact-email">
-            <p>For event inquiries: <a href="mailto:{{ page.contact_email }}" class="email-link">{{ page.contact_email }}</a></p>
-        </div>
-        {% endif %}
-    </footer>
 </div>
 
 

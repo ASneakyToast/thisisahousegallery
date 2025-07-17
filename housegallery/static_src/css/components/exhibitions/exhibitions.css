@@ -1,24 +1,29 @@
 /* Exhibitions page styles */
 
-.body.normal {
+/* Page layout structure */
+.exhibitions-index .body {
   margin: var(--size-layout-heading-spacing) 0;
-  padding: 0 var(--size-layout-gutter);
 }
 
 .exhibition-page-header {
+  padding: var(--size-layout-heading-spacing) var(--size-layout-gutter);
+  text-align: left;
+  border-bottom: 1px solid var(--color-black);
   margin-bottom: var(--size-layout-section-spacing);
 }
 
-.exhibition-page-header .title {
-  margin-bottom: var(--size-15);
+.exhibition-page-header .type-title {
+  margin: 0;
 }
 
 .exhibition-page-header .exhibition-description {
   margin-bottom: 0;
 }
 
-.exhibition-page-header .exhibition-content {
-  margin-bottom: 0;
+/* Exhibition content now outside header */
+.exhibition-content {
+  padding: 0 var(--size-layout-gutter);
+  margin-bottom: var(--size-layout-section-spacing);
 }
 
 .exhibition-page-header .places-intro {
@@ -278,6 +283,7 @@
 /* Exhibitions Listing Page */
 .exhibitions-listing {
   margin-top: var(--size-layout-section-spacing);
+  padding: 0 var(--size-layout-gutter);
 }
 
 .exhibitions-section {
@@ -395,5 +401,16 @@
   .pagination {
     flex-direction: column;
     gap: var(--size-10, 10px);
+  }
+  
+  /* Stack exhibition listing items on mobile */
+  .exhibition-listing-item {
+    flex-direction: column;
+    gap: var(--size-layout-element-spacing);
+  }
+  
+  /* Remove sticky positioning on mobile */
+  .exhibition-header-link {
+    position: static;
   }
 }

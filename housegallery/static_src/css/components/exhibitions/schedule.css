@@ -1,14 +1,16 @@
 /* Modern Schedule Page Styles */
 
-.body.normal {
-  margin: var(--size-layout-heading-spacing) 0;
-  padding: 0 var(--size-layout-gutter);
-}
+/* Layout removed - using selective padding instead */
 
 /* Schedule Header */
 .schedule-header {
-  margin-bottom: var(--size-layout-section-spacing);
+  padding: var(--size-layout-heading-spacing) var(--size-layout-gutter);
   text-align: left;
+  border-bottom: 1px solid var(--color-black);
+}
+
+.schedule-header .type-title {
+  margin: 0;
 }
 
 .schedule-intro {
@@ -22,11 +24,52 @@
   margin-bottom: var(--size-layout-section-spacing);
 }
 
+/* Other content sections need padding */
+.current-events,
+.past-events,
+.schedule-content,
+.empty-state {
+  padding: 0 var(--size-layout-gutter);
+}
+
+/* Content sections need padding */
+.schedule-sections-container {
+  padding: 0 var(--size-layout-gutter);
+}
+
+/* Featured + Upcoming Side-by-Side Layout */
+@media (min-width: 1000px) {
+  .schedule-sections-container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--size-layout-section-spacing);
+    align-items: start;
+  }
+  
+  .featured-events {
+    grid-column: 1;
+    margin-bottom: 0;
+    border-right: 1px solid var(--color-black);
+    padding-right: var(--size-layout-section-spacing);
+  }
+  
+  .upcoming-events {
+    grid-column: 2;
+    margin-bottom: 0;
+  }
+  
+  /* Adjust upcoming grid for side layout */
+  .upcoming-events .upcoming-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .section-heading {
   font-family: var(--font-family-heading);
   font-size: var(--font-size-heading);
   font-weight: 700;
   margin: 0 0 var(--size-layout-element-spacing) 0;
+  padding-top: var(--size-layout-section-spacing);
   color: var(--color-black);
   text-align: left;
   display: flex;
@@ -47,12 +90,17 @@
 
 /* Featured grid - larger cards */
 .featured-grid {
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, min(450px, 1fr)));
   gap: var(--size-layout-section-spacing);
 }
 
 /* Regular grid - smaller cards */
-.upcoming-grid,
+.upcoming-grid {
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-flow: column;
+  grid-template-rows: repeat(3, auto);
+}
+
 .current-grid,
 .past-grid {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -130,6 +178,14 @@
   height: auto;
   display: block;
   transition: transform 0.3s ease;
+}
+
+/* Featured images should maintain their intended size */
+.event-image--featured {
+  max-width: 400px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
 }
 
 .event-card:hover .event-image {
@@ -282,9 +338,24 @@
   50% { opacity: 0.7; }
 }
 
-/* Featured Card Layout */
+/* Featured Link Layout (Image Only) */
+.event-featured-link {
+  display: block;
+  max-width: 400px;
+  justify-self: start;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.event-featured-link:hover {
+  transform: translateY(-2px);
+}
+
+/* Legacy featured card styles (if needed) */
 .event-card--featured {
   border: 2px solid var(--color-black);
+  max-width: 400px;
+  justify-self: start;
 }
 
 .event-card--featured .event-card__title {
@@ -403,6 +474,69 @@
 
 .email-link:hover {
   opacity: 0.7;
+}
+
+/* Add Event Cards */
+.add-event-card {
+  background: transparent;
+  border: 2px dashed var(--color-black);
+  border-radius: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 1.5rem;
+  cursor: pointer;
+  opacity: 0.7;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.add-event-card:hover {
+  opacity: 1;
+  border-color: var(--color-black);
+  border-style: solid;
+  transform: translateY(-2px);
+}
+
+.add-event-card__header {
+  margin-bottom: 0.75rem;
+}
+
+.add-event-card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.5rem;
+  gap: 1rem;
+}
+
+.add-event-card__icon {
+  font-size: var(--font-size-detail);
+  font-family: var(--font-family-body);
+  padding: 0.25rem 0.5rem;
+  background: var(--color-black);
+  color: var(--color-white);
+  font-weight: var(--font-weight-normal);
+}
+
+.add-event-card__title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  line-height: 1.3;
+  color: var(--color-black);
+}
+
+.add-event-card__description {
+  font-size: var(--font-size-small);
+  color: var(--color-text, #666);
+  margin: 0;
+  line-height: 1.4;
+  margin-top: auto;
 }
 
 /* Enhanced Empty State */
