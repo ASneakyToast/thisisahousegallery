@@ -224,28 +224,8 @@
   }
 }
 
-.quickview-item:hover {
-  cursor: pointer;
-}
 
-.fullscreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw !important;
-  height: 100vh !important;
-  max-width: none !important;
-  max-height: none !important;
-  object-fit: contain;
-  box-sizing: border-box;
-  background: #fff;
-  padding: 32px;
-  z-index: 32;
-}
 
-.exhibition-card:has(.fullscreen) {
-  position: relative;
-}
 
 /* Exhibition content */
 .exhibition-content {

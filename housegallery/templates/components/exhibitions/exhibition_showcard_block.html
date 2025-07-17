@@ -4,7 +4,7 @@
     <div class="showcard-image">
         {% image value.front_image width-1440 as img %}
         <img src="{{ img.url }}" alt="The promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery." 
-             class="quickview-item" width="{{ img.width }}" height="{{ img.height }}"
+             width="{{ img.width }}" height="{{ img.height }}"
              loading="lazy" decoding="async">
     </div>
     
@@ -12,7 +12,7 @@
     <div class="showcard-image">
         {% image value.back_image width-1440 as img %}
         <img src="{{ img.url }}" alt="The back side of the promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery." 
-             class="quickview-item" width="{{ img.width }}" height="{{ img.height }}"
+             width="{{ img.width }}" height="{{ img.height }}"
              loading="lazy" decoding="async">
     </div>
     {% endif %}

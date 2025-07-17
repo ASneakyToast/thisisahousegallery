@@ -15,7 +15,7 @@
                             {% if seed|divisibleby:3 %}
                                 <div class="gallery-single-image gallery-item--small">
                                     {% image item.image width-600 as img %}
-                                    <img src="{{ img.url }}" alt="{{ item.caption|default:item.image.alt|default:item.image.title }}" class="quickview-item" loading="lazy" width="{{ img.width }}" height="{{ img.height }}">
+                                    <img src="{{ img.url }}" alt="{{ item.caption|default:item.image.alt|default:item.image.title }}"  loading="lazy" width="{{ img.width }}" height="{{ img.height }}">
                                     {% if item.caption %}
                                         <div class="gallery-caption">{{ item.caption }}</div>
                                     {% endif %}
@@ -24,7 +24,7 @@
                                 {% if seed|divisibleby:2 %}
                                     <div class="gallery-single-image gallery-item--medium">
                                         {% image item.image width-800 as img %}
-                                        <img src="{{ img.url }}" alt="{{ item.caption|default:item.image.alt|default:item.image.title }}" class="quickview-item" loading="lazy" width="{{ img.width }}" height="{{ img.height }}">
+                                        <img src="{{ img.url }}" alt="{{ item.caption|default:item.image.alt|default:item.image.title }}"  loading="lazy" width="{{ img.width }}" height="{{ img.height }}">
                                         {% if item.caption %}
                                             <div class="gallery-caption">{{ item.caption }}</div>
                                         {% endif %}
@@ -32,7 +32,7 @@
                                 {% else %}
                                     <div class="gallery-single-image gallery-item--large">
                                         {% image item.image width-1200 as img %}
-                                        <img src="{{ img.url }}" alt="{{ item.caption|default:item.image.alt|default:item.image.title }}" class="quickview-item" loading="lazy" width="{{ img.width }}" height="{{ img.height }}">
+                                        <img src="{{ img.url }}" alt="{{ item.caption|default:item.image.alt|default:item.image.title }}"  loading="lazy" width="{{ img.width }}" height="{{ img.height }}">
                                         {% if item.caption %}
                                             <div class="gallery-caption">{{ item.caption }}</div>
                                         {% endif %}
@@ -43,7 +43,7 @@
                     {% else %}
                         <div class="gallery-single-image">
                             {% image item.image width-800 as img %}
-                            <img src="{{ img.url }}" alt="{{ item.caption|default:item.image.alt|default:item.image.title }}" class="quickview-item" loading="lazy" width="{{ img.width }}" height="{{ img.height }}">
+                            <img src="{{ img.url }}" alt="{{ item.caption|default:item.image.alt|default:item.image.title }}"  loading="lazy" width="{{ img.width }}" height="{{ img.height }}">
                             {% if item.caption %}
                                 <div class="gallery-caption">{{ item.caption }}</div>
                             {% endif %}

@@ -8,20 +8,20 @@
                 {% if seed|divisibleby:3 %}
                     <div class="gallery-image gallery-item--small">
                         {% with image.get_web_optimized as img %}
-                        <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}" class="quickview-item" loading="lazy">
+                        <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}"  loading="lazy">
                         {% endwith %}
                     </div>
                 {% else %}
                     {% if seed|divisibleby:2 %}
                         <div class="gallery-image gallery-item--medium">
                             {% with image.get_web_optimized as img %}
-                            <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}" class="quickview-item" loading="lazy">
+                            <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}"  loading="lazy">
                             {% endwith %}
                         </div>
                     {% else %}
                         <div class="gallery-image gallery-item--large">
                             {% with image.get_display_optimized as img %}
-                            <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}" class="quickview-item" loading="lazy">
+                            <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}"  loading="lazy">
                             {% endwith %}
                         </div>
                     {% endif %}
@@ -35,7 +35,7 @@
             {% for image in images %}
                 <div class="gallery-image">
                     {% with image.get_display_optimized as img %}
-                    <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}" class="quickview-item" loading="lazy">
+                    <img src="{{ img.url }}" alt="{{ image.alt|default:image.title }}"  loading="lazy">
                     {% endwith %}
                 </div>
             {% empty %}
