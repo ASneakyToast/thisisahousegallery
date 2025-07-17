@@ -84,7 +84,6 @@
 
   .header__logo p {
     font-size: var(--font-size-label);
-    padding-left: 16px;
     padding-top: 7px;
   }
 }
