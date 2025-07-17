@@ -8,6 +8,7 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, MultipleChooserPanel, HelpPanel
+from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.embeds.models import Embed
 from wagtail.embeds import embeds
 
@@ -208,6 +209,144 @@ class ExhibitionArtwork(Orderable):
 
 
 
+class InstallationPhoto(Orderable):
+    """Installation photos showing gallery setup and artwork display"""
+    page = ParentalKey(
+        'ExhibitionPage',
+        on_delete=models.CASCADE,
+        related_name='installation_photos'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    related_artwork = models.ForeignKey(
+        'artworks.Artwork',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='installation_photos',
+        help_text="Automatically detected artwork relationship based on image usage"
+    )
+
+    panels = [
+        ExhibitionImageChooserPanel('image'),
+    ]
+
+    class Meta:
+        verbose_name = "Installation Photo"
+        verbose_name_plural = "Installation Photos"
+
+    def detect_related_artwork(self):
+        """
+        Automatically detect artwork relationship based on image usage.
+        Uses priority-based detection:
+        1. Image is artwork's cover_image
+        2. Image in artwork's artwork_images
+        3. Image in artwork's StreamField artifacts
+        """
+        if not self.page or not self.image:
+            return None
+            
+        # Get all artworks in this exhibition
+        exhibition_artworks = self.page.artworks
+        
+        for artwork in exhibition_artworks:
+                
+            # Priority 1: Gallery images match
+            if hasattr(artwork, 'artwork_images') and artwork.artwork_images.filter(image=self.image).exists():
+                return artwork
+                
+            # Priority 2: StreamField artifacts (more complex)
+            if hasattr(artwork, 'artifacts') and artwork.artifacts:
+                for block in artwork.artifacts:
+                    if hasattr(block, 'value') and hasattr(block.value, 'get') and block.value.get('image') == self.image:
+                        return artwork
+        
+        return None
+
+    def update_related_artwork(self):
+        """Update the cached related_artwork field with detected relationship."""
+        detected_artwork = self.detect_related_artwork()
+        if self.related_artwork != detected_artwork:
+            self.related_artwork = detected_artwork
+            # Save without triggering the save hooks to avoid recursion
+            super().save(update_fields=['related_artwork'])
+
+    def save(self, *args, **kwargs):
+        """Override save to automatically detect artwork relationships."""
+        super().save(*args, **kwargs)
+        # Update related artwork after saving (to ensure we have an ID)
+        self.update_related_artwork()
+
+
+class OpeningReceptionPhoto(Orderable):
+    """Photos from exhibition opening reception events"""
+    page = ParentalKey(
+        'ExhibitionPage',
+        on_delete=models.CASCADE,
+        related_name='opening_reception_photos'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+
+    panels = [
+        ExhibitionImageChooserPanel('image'),
+    ]
+
+    class Meta:
+        verbose_name = "Opening Reception Photo"
+        verbose_name_plural = "Opening Reception Photos"
+
+
+class ShowcardPhoto(Orderable):
+    """Exhibition showcards and promotional materials"""
+    page = ParentalKey(
+        'ExhibitionPage',
+        on_delete=models.CASCADE,
+        related_name='showcard_photos'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+
+    panels = [
+        ExhibitionImageChooserPanel('image'),
+    ]
+
+    class Meta:
+        verbose_name = "Showcard Photo"
+        verbose_name_plural = "Showcard Photos"
+
+
+class InProgressPhoto(Orderable):
+    """Behind-the-scenes photos of exhibition setup and preparation"""
+    page = ParentalKey(
+        'ExhibitionPage',
+        on_delete=models.CASCADE,
+        related_name='in_progress_photos'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+
+    panels = [
+        ExhibitionImageChooserPanel('image'),
+    ]
+
+    class Meta:
+        verbose_name = "In Progress Photo"
+        verbose_name_plural = "In Progress Photos"
+
+
 class ExhibitionImage(Orderable):
     """Through model for exhibition images with image type categorization"""
     page = ParentalKey(
@@ -228,12 +367,13 @@ class ExhibitionImage(Orderable):
     image_type = models.CharField(
         max_length=20,
         choices=[
-            ('exhibition', 'Exhibition'),
-            ('opening', 'Opening'),
+            ('exhibition', 'Installation Photos'),
+            ('opening', 'Opening Reception'),
             ('showcards', 'Showcards'),
+            ('in_progress', 'In Progress Shots'),
         ],
         default='exhibition',
-        help_text="Type of image - exhibition, opening event, or showcards"
+        help_text="Categorize this image: Installation Photos (gallery setup), Opening Reception (event photos), Showcards (promotional materials), or In Progress Shots (behind-the-scenes)"
     )
     related_artwork = models.ForeignKey(
         'artworks.Artwork',
@@ -297,6 +437,8 @@ class ExhibitionImage(Orderable):
         self.update_related_artwork()
 
 
+
+
 class ExhibitionPage(Page, ListingFields, ClusterableModel):
     """Individual exhibition page."""
 
@@ -346,30 +488,43 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
     ]
     
     content_panels = Page.content_panels + [
-  	    MultiFieldPanel([
-		    FieldPanel('start_date'),
-		    FieldPanel('end_date'),
+        MultiFieldPanel([
+            FieldPanel('start_date'),
+            FieldPanel('end_date'),
             FieldPanel('description'),
             FieldPanel('featured_image'),
-	    ], heading="Exhibition Information"),
-	    MultipleChooserPanel(
-        'exhibition_artists',
-        label="Artists",
-        chooser_field_name="artist"
-    ),
-	    MultipleChooserPanel(
-        'exhibition_artworks',
-        label="Artworks",
-        chooser_field_name="artwork"
-    ),
+        ], heading="Exhibition Information"),
+        MultipleChooserPanel(
+            'exhibition_artists',
+            label="Artists",
+            chooser_field_name="artist"
+        ),
+        MultipleChooserPanel(
+            'exhibition_artworks',
+            label="Artworks",
+            chooser_field_name="artwork"
+        ),
         FieldPanel('body'),
-        MultiFieldPanel([
-            MultipleChooserPanel(
-                'exhibition_images',
-                label="Exhibition Images",
-                chooser_field_name="image"
-            ),
-        ], heading="Images"),
+        MultipleChooserPanel(
+            'installation_photos',
+            label="Installation Photos",
+            chooser_field_name="image"
+        ),
+        MultipleChooserPanel(
+            'opening_reception_photos',
+            label="Opening Reception",
+            chooser_field_name="image"
+        ),
+        MultipleChooserPanel(
+            'showcard_photos',
+            label="Showcards",
+            chooser_field_name="image"
+        ),
+        MultipleChooserPanel(
+            'in_progress_photos',
+            label="In Progress Shots",
+            chooser_field_name="image"
+        ),
         MultiFieldPanel([
             FieldPanel('video_embed_url'),
         ], heading="Video Content"),
@@ -390,28 +545,31 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         return [ea.artwork for ea in self.exhibition_artworks.all()]
     
     def get_exhibition_images(self):
-        """Get all images of type 'exhibition'"""
-        return self.exhibition_images.filter(image_type='exhibition')
+        """Get all installation photos (for backward compatibility)"""
+        return self.installation_photos.all()
     
     def get_opening_images(self):
-        """Get all images of type 'opening'"""
-        return self.exhibition_images.filter(image_type='opening')
+        """Get all opening reception photos"""
+        return self.opening_reception_photos.all()
     
     def get_showcards_images(self):
-        """Get all images of type 'showcards'"""
-        return self.exhibition_images.filter(image_type='showcards')
+        """Get all showcard photos"""
+        return self.showcard_photos.all()
+    
+    def get_in_progress_images(self):
+        """Get all in progress photos"""
+        return self.in_progress_photos.all()
     
     def get_all_gallery_images(self):
-        """Get all images from MultipleChooserPanel field with artwork data"""
+        """Get all images from all image types with artwork data"""
         images = []
         
-        # Process all exhibition_images
-        for gallery_image in self.exhibition_images.all():
+        # Process installation photos
+        for gallery_image in self.installation_photos.all():
             image_data = {
                 'image': gallery_image.image,
-                'caption': gallery_image.caption,
                 'credit': gallery_image.image.credit,
-                'type': gallery_image.image_type,
+                'type': 'exhibition',  # for backward compatibility
                 'related_artwork': gallery_image.related_artwork,
             }
             
@@ -426,6 +584,36 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                     'artwork_size': artwork.size if hasattr(artwork, 'size') else None,
                 })
             
+            images.append(image_data)
+        
+        # Process opening reception photos
+        for gallery_image in self.opening_reception_photos.all():
+            image_data = {
+                'image': gallery_image.image,
+                'credit': gallery_image.image.credit,
+                'type': 'opening',
+                'related_artwork': None,
+            }
+            images.append(image_data)
+        
+        # Process showcard photos
+        for gallery_image in self.showcard_photos.all():
+            image_data = {
+                'image': gallery_image.image,
+                'credit': gallery_image.image.credit,
+                'type': 'showcards',
+                'related_artwork': None,
+            }
+            images.append(image_data)
+        
+        # Process in progress photos
+        for gallery_image in self.in_progress_photos.all():
+            image_data = {
+                'image': gallery_image.image,
+                'credit': gallery_image.image.credit,
+                'type': 'in_progress',
+                'related_artwork': None,
+            }
             images.append(image_data)
         
         return images
