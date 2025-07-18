@@ -33,10 +33,17 @@
             {% endif %}
         </div>
         
-        {% if page.featured_image %}
+        {% if page.get_first_showcard_image %}
         <div class="exhibition-hero__image">
-            {% image page.featured_image width-800 height-600 as hero_img %}
+            {% image page.get_first_showcard_image width-800 height-600 as hero_img %}
             <img src="{{ hero_img.url }}" alt="{{ page.title }}" class="exhibition-hero-img">
+        </div>
+        {% elif page.get_first_gallery_image %}
+        <div class="exhibition-hero__image">
+            {% with page.get_first_gallery_image as first_gallery %}
+            {% image first_gallery.image width-800 height-600 as hero_img %}
+            <img src="{{ hero_img.url }}" alt="{{ page.title }}" class="exhibition-hero-img">
+            {% endwith %}
         </div>
         {% endif %}
     </header>

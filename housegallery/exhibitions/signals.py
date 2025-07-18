@@ -69,7 +69,7 @@ def create_opening_event(sender, instance, created, **kwargs):
         related_exhibition=instance,
         start_date=instance.start_date or timezone.now().date(),
         description=f"Join us for the opening reception of {instance.title}. {instance.description[:200]}..." if instance.description else f"Join us for the opening reception of {instance.title}.",
-        featured_image=instance.get_first_showcard_image() or instance.featured_image,
+        featured_image=instance.get_first_showcard_image(),
         live=True,
         featured_on_schedule=True,
     )

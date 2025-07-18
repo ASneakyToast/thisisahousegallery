@@ -453,13 +453,6 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
     description = RichTextField(
         blank=True
     )
-    featured_image = models.ForeignKey(
-        get_image_model_string(),
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
     body = StreamField(
         ExhibitionStreamBlock(),
         blank=True,
@@ -506,7 +499,6 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             FieldPanel('start_date'),
             FieldPanel('end_date'),
             FieldPanel('description'),
-            FieldPanel('featured_image'),
         ], heading="Exhibition Information"),
         MultipleChooserPanel(
             'exhibition_artists',
