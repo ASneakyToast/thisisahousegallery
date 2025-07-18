@@ -732,6 +732,14 @@ class EventPage(Page, ListingFields, ClusterableModel):
         blank=True,
         help_text="Short promotional tagline for listings"
     )
+    related_exhibition = models.ForeignKey(
+        'exhibitions.ExhibitionPage',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='related_events',
+        help_text="Link this event to a specific exhibition"
+    )
     
     # Date & Time Fields (Enhanced from month/year strings)
     start_date = models.DateField(help_text="Event start date")
@@ -858,6 +866,7 @@ class EventPage(Page, ListingFields, ClusterableModel):
         MultiFieldPanel([
             FieldPanel('event_type'),
             FieldPanel('tagline'),
+            FieldPanel('related_exhibition'),
         ], heading="Event Classification"),
         
         # Scheduling
