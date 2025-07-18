@@ -522,11 +522,6 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             chooser_field_name="image"
         ),
         MultipleChooserPanel(
-            'showcard_photos',
-            label="Showcards",
-            chooser_field_name="image"
-        ),
-        MultipleChooserPanel(
             'in_progress_photos',
             label="In Progress Shots",
             chooser_field_name="image"
@@ -543,6 +538,13 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             MultiFieldPanel([
                 FieldPanel('create_opening_event'),
             ], heading="Events"),
+            MultiFieldPanel([
+                MultipleChooserPanel(
+                    'showcard_photos',
+                    label="Showcards",
+                    chooser_field_name="image"
+                ),
+            ], heading="Promotional Materials"),
         ]
     )
 
