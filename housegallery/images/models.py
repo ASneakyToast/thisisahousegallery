@@ -3,6 +3,8 @@ import logging
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from PIL import ExifTags
 from PIL import Image as PILImage
 from wagtail.images.models import AbstractImage
@@ -350,3 +352,32 @@ class Rendition(AbstractRendition):
         unique_together = (
             ("image", "filter_spec", "focal_point_key"),
         )
+
+
+@receiver(post_save, sender=CustomImage)
+def generate_standard_renditions(sender, instance, created, **kwargs):
+    """
+    Generate standard renditions when an image is uploaded.
+    This pre-generates the common sizes used in templates to avoid
+    template-time image processing.
+    """
+    if created:
+        try:
+            # Generate standard thumbnail size (400px width) 
+            instance.get_rendition('width-400')
+            instance.get_rendition('width-400|format-webp')
+            
+            # Generate standard full size (1200px width)
+            instance.get_rendition('width-1200')
+            instance.get_rendition('width-1200|format-webp')
+            
+            logger.info(
+                "Generated standard renditions for image: %s", 
+                instance.title
+            )
+        except Exception as e:
+            logger.error(
+                "Failed to generate renditions for image %s: %s", 
+                instance.title, 
+                str(e)
+            )

@@ -21,12 +21,12 @@
             
             <h1 class="exhibition-title-hero">{{ page.title }}</h1>
             
-            {% if page.artists %}
+            {% if page.exhibition_artists.all %}
             <div class="exhibition-artists-hero">
                 <span class="exhibition-artists-label">Artists:</span>
                 <div class="exhibition-artists-list">
-                    {% for artist in page.artists %}
-                        <span class="exhibition-artist-name">{{ artist.name }}</span>{% if not forloop.last %}, {% endif %}
+                    {% for exhibition_artist in page.exhibition_artists.all %}
+                        <span class="exhibition-artist-name">{{ exhibition_artist.artist.name }}</span>{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -79,32 +79,32 @@
     {% endif %}
 
     <!-- Featured Artworks Section -->
-    {% if page.artworks %}
+    {% if page.exhibition_artworks.all %}
     <section class="exhibition-artworks-section">
         <div class="exhibition-section-header">
             <h2 class="exhibition-section-title">Artworks</h2>
         </div>
         <div class="exhibition-artworks-grid">
-            {% for artwork in page.artworks %}
+            {% for exhibition_artwork in page.exhibition_artworks.all %}
                 <article class="exhibition-artwork-card">
-                    {% if artwork.featured_image %}
-                        {% image artwork.featured_image width-500 height-400 as artwork_img %}
+                    {% if exhibition_artwork.artwork.featured_image %}
+                        {% image exhibition_artwork.artwork.featured_image width-500 height-400 as artwork_img %}
                         <div class="exhibition-artwork-image">
-                            <img src="{{ artwork_img.url }}" alt="{{ artwork.title|striptags }}"
+                            <img src="{{ artwork_img.url }}" alt="{{ exhibition_artwork.artwork.title|striptags }}"
                                  width="{{ artwork_img.width }}" height="{{ artwork_img.height }}"
                                  loading="lazy" class="exhibition-artwork-img">
                         </div>
                     {% endif %}
                     <div class="exhibition-artwork-content">
-                        <h3 class="exhibition-artwork-title">{{ artwork.title|striptags }}</h3>
-                        {% if artwork.artist %}
-                            <p class="exhibition-artwork-artist">{{ artwork.artist.name }}</p>
+                        <h3 class="exhibition-artwork-title">{{ exhibition_artwork.artwork.title|striptags }}</h3>
+                        {% if exhibition_artwork.artwork.artist %}
+                            <p class="exhibition-artwork-artist">{{ exhibition_artwork.artwork.artist.name }}</p>
                         {% endif %}
-                        {% if artwork.medium %}
-                            <p class="exhibition-artwork-medium">{{ artwork.medium }}</p>
+                        {% if exhibition_artwork.artwork.medium %}
+                            <p class="exhibition-artwork-medium">{{ exhibition_artwork.artwork.medium }}</p>
                         {% endif %}
-                        {% if artwork.year %}
-                            <p class="exhibition-artwork-year">{{ artwork.year }}</p>
+                        {% if exhibition_artwork.artwork.year %}
+                            <p class="exhibition-artwork-year">{{ exhibition_artwork.artwork.year }}</p>
                         {% endif %}
                     </div>
                 </article>

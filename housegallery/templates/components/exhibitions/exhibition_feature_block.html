@@ -8,8 +8,8 @@
                 <section>
                     <h2>{{ exhibition.title }}</h2>
                     <section class="exhibition-header__artists">
-                        {% for artist in exhibition.artists %}
-                            <p>{{ artist.name }}</p>
+                        {% for exhibition_artist in exhibition.exhibition_artists.all %}
+                            <p>{{ exhibition_artist.artist.name }}</p>
                         {% endfor %}
                     </section>
                 </section>
@@ -30,12 +30,10 @@
                             <div class="gallery-container gallery-columns-container masonry">
                                 <div class="gallery-images">
                                     {% for image_data in gallery_images %}
-                                        {% image image_data.image width-400 as img_thumb %}
-                                        {% image image_data.image width-1200 as img_full %}
                                         <button class="gallery-lightbox-item" 
                                                 data-media-type="image"
-                                                data-media-src="{{ img_full.url }}"
-                                                data-thumbnail-src="{{ img_thumb.url }}"
+                                                data-media-src="{{ image_data.full_url }}"
+                                                data-thumbnail-src="{{ image_data.thumb_url }}"
                                                 data-caption="{{ image_data.caption|default:exhibition.title }}"
                                                 data-index="{{ forloop.counter0 }}"
                                                 data-image-type="{{ image_data.type }}"
@@ -50,7 +48,7 @@
                                                 data-artwork-size="{{ image_data.artwork_size|default:'' }}"
                                                 {% endif %}
                                                 aria-label="View {{ image_data.caption|default:exhibition.title }} in lightbox">
-                                            <img src="{{ img_thumb.url }}" 
+                                            <img src="{{ image_data.thumb_url }}" 
                                                  alt="{{ image_data.caption|default:exhibition.title }}" 
                                                  loading="lazy" 
                                                  class="gallery-single-image" 
@@ -69,12 +67,10 @@
                             <div class="gallery-container gallery-columns-container masonry">
                                 <div class="gallery-images">
                                     {% for image_data in gallery_images %}
-                                        {% image image_data.image width-400 as img_thumb %}
-                                        {% image image_data.image width-1200 as img_full %}
                                         <button class="gallery-lightbox-item" 
                                                 data-media-type="image"
-                                                data-media-src="{{ img_full.url }}"
-                                                data-thumbnail-src="{{ img_thumb.url }}"
+                                                data-media-src="{{ image_data.full_url }}"
+                                                data-thumbnail-src="{{ image_data.thumb_url }}"
                                                 data-caption="{{ image_data.caption|default:exhibition.title }}"
                                                 data-index="{{ forloop.counter0 }}"
                                                 data-image-type="{{ image_data.type }}"
@@ -89,7 +85,7 @@
                                                 data-artwork-size="{{ image_data.artwork_size|default:'' }}"
                                                 {% endif %}
                                                 aria-label="View {{ image_data.caption|default:exhibition.title }} in lightbox">
-                                            <img src="{{ img_thumb.url }}" 
+                                            <img src="{{ image_data.thumb_url }}" 
                                                  alt="{{ image_data.caption|default:exhibition.title }}" 
                                                  loading="lazy" 
                                                  class="gallery-single-image" 

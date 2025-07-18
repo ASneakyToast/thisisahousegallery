@@ -129,7 +129,21 @@ class ExhibitionsIndexPage(Page, ListingFields):
     
     def get_exhibitions(self):
         """Return all live ExhibitionPage objects, ordered by start date."""
-        return ExhibitionPage.objects.live().descendant_of(self).order_by('-start_date')
+        from django.db.models import Prefetch
+        
+        # Optimize prefetch for typed images with their relationships
+        return ExhibitionPage.objects.live().public().descendant_of(self).select_related(
+            'featured_image'
+        ).prefetch_related(
+            # Artists and artworks
+            'exhibition_artists__artist',
+            'exhibition_artworks__artwork',
+            # Typed images with their CustomImage relationships
+            Prefetch('installation_photos', queryset=InstallationPhoto.objects.select_related('image', 'related_artwork').prefetch_related('related_artwork__materials')),
+            Prefetch('opening_reception_photos', queryset=OpeningReceptionPhoto.objects.select_related('image')),
+            Prefetch('showcard_photos', queryset=ShowcardPhoto.objects.select_related('image')),
+            Prefetch('in_progress_photos', queryset=InProgressPhoto.objects.select_related('image')),
+        ).order_by('-start_date')
     
     def get_context(self, request):
         """Add exhibitions to the context with upcoming/current/past categorization."""
@@ -168,6 +182,7 @@ class ExhibitionsIndexPage(Page, ListingFields):
         context['upcoming_exhibitions'] = upcoming_exhibitions
         context['current_exhibitions'] = current_exhibitions
         context['past_exhibitions'] = paginated_past_exhibitions
+        context['all_exhibitions'] = all_exhibitions  # Add all exhibitions for simple listing
         return context
 
 
@@ -548,14 +563,8 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         ]
     )
 
-	# Add a property to access artists easily
-    @property
-    def artists(self):
-        return [ea.artist for ea in self.exhibition_artists.all()]
-
-    @property
-    def artworks(self):
-        return [ea.artwork for ea in self.exhibition_artworks.all()]
+	# Artists and artworks are accessed via exhibition_artists and exhibition_artworks relationships
+    # No need for properties that create additional queries
     
     def get_exhibition_images(self):
         """Get all installation photos (for backward compatibility)"""
@@ -574,20 +583,59 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         return self.in_progress_photos.all()
     
     def get_all_gallery_images(self):
-        """Get all images from all image types with artwork data"""
+        """Get all images from all typed image models with artwork data"""
+        from django.core.cache import cache
+        
+        # Simple cache key based on exhibition ID and last published date
+        timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
+        cache_key = f'exhibition_images_{self.pk}_{timestamp}'
+        cached_images = cache.get(cache_key)
+        
+        if cached_images is not None:
+            return cached_images
+        
         images = []
         
-        # Process installation photos
-        for gallery_image in self.installation_photos.all():
+        # Helper function to process any image type
+        def process_image(gallery_image, image_type):
+            """Process a single image with standard renditions and metadata"""
+            # Generate standard rendition URLs
+            try:
+                thumb_rendition = gallery_image.image.get_rendition('width-400')
+                full_rendition = gallery_image.image.get_rendition('width-1200')
+                thumb_url = thumb_rendition.url
+                full_url = full_rendition.url
+                
+                # Generate WebP versions
+                try:
+                    thumb_webp = gallery_image.image.get_rendition('width-400|format-webp')
+                    full_webp = gallery_image.image.get_rendition('width-1200|format-webp')
+                    thumb_webp_url = thumb_webp.url
+                    full_webp_url = full_webp.url
+                except Exception:
+                    thumb_webp_url = thumb_url
+                    full_webp_url = full_url
+            except Exception:
+                # Fallback to original image
+                thumb_url = gallery_image.image.file.url
+                full_url = gallery_image.image.file.url
+                thumb_webp_url = thumb_url
+                full_webp_url = full_url
+            
+            # Base image data
             image_data = {
                 'image': gallery_image.image,
                 'credit': gallery_image.image.credit,
-                'type': 'exhibition',  # for backward compatibility
-                'related_artwork': gallery_image.related_artwork,
+                'type': image_type,
+                'related_artwork': getattr(gallery_image, 'related_artwork', None),
+                'thumb_url': thumb_url,
+                'full_url': full_url,
+                'thumb_webp_url': thumb_webp_url,
+                'full_webp_url': full_webp_url,
             }
             
-            # Add artwork metadata if available
-            if gallery_image.related_artwork:
+            # Add artwork metadata if available (only InstallationPhoto has related_artwork)
+            if hasattr(gallery_image, 'related_artwork') and gallery_image.related_artwork:
                 artwork = gallery_image.related_artwork
                 image_data.update({
                     'artwork_title': artwork.title,
@@ -597,37 +645,27 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                     'artwork_size': artwork.size if hasattr(artwork, 'size') else None,
                 })
             
-            images.append(image_data)
+            return image_data
         
-        # Process opening reception photos
+        # Process each image type using prefetched data
+        # Installation photos (exhibition images)
+        for gallery_image in self.installation_photos.all():
+            images.append(process_image(gallery_image, 'exhibition'))
+        
+        # Opening reception photos
         for gallery_image in self.opening_reception_photos.all():
-            image_data = {
-                'image': gallery_image.image,
-                'credit': gallery_image.image.credit,
-                'type': 'opening',
-                'related_artwork': None,
-            }
-            images.append(image_data)
+            images.append(process_image(gallery_image, 'opening'))
         
-        # Process showcard photos
+        # Showcard photos
         for gallery_image in self.showcard_photos.all():
-            image_data = {
-                'image': gallery_image.image,
-                'credit': gallery_image.image.credit,
-                'type': 'showcards',
-                'related_artwork': None,
-            }
-            images.append(image_data)
+            images.append(process_image(gallery_image, 'showcards'))
         
-        # Process in progress photos
+        # In progress photos
         for gallery_image in self.in_progress_photos.all():
-            image_data = {
-                'image': gallery_image.image,
-                'credit': gallery_image.image.credit,
-                'type': 'in_progress',
-                'related_artwork': None,
-            }
-            images.append(image_data)
+            images.append(process_image(gallery_image, 'in_progress'))
+        
+        # Cache the processed images for 1 hour
+        cache.set(cache_key, images, 3600)
         
         return images
     
