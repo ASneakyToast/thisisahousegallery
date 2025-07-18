@@ -471,6 +471,20 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         null=True,
         help_text="YouTube or Vimeo URL for exhibition video content"
     )
+    
+    # Event creation fields
+    create_opening_event = models.BooleanField(
+        default=False,
+        help_text="Check to automatically create an opening reception event for this exhibition"
+    )
+    auto_created_opening_event = models.ForeignKey(
+        'exhibitions.EventPage',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='auto_created_from_exhibition',
+        help_text="The opening event that was automatically created for this exhibition"
+    )
 
     template = 'pages/exhibitions/exhibition_page.html'
     
@@ -533,6 +547,11 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
     promote_panels = (
         Page.promote_panels
         + ListingFields.promote_panels
+        + [
+            MultiFieldPanel([
+                FieldPanel('create_opening_event'),
+            ], heading="Events"),
+        ]
     )
 
 	# Add a property to access artists easily

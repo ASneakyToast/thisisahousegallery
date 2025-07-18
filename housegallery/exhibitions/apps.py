@@ -8,3 +8,5 @@ class ExhibitionsConfig(AppConfig):
     def ready(self):
         # Import models to ensure proper registration
         from housegallery.exhibitions.models import ExhibitionsIndexPage, ExhibitionPage, SchedulePage
+        # Import signals to register handlers
+        from . import signals
