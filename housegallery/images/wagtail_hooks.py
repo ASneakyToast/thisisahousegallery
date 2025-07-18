@@ -25,6 +25,13 @@ def hide_default_documents_menu(request, menu_items):
 
 
 @hooks.register('construct_main_menu')
+def hide_default_eventpage_menu(request, menu_items):
+    """Hide the default EventPage menu item since we're replacing it with a custom Events submenu."""
+    # Remove the default EventPage menu item (appears as "Events" due to verbose_name_plural)
+    menu_items[:] = [item for item in menu_items if getattr(item, 'name', None) != 'eventpage']
+
+
+@hooks.register('construct_main_menu')
 def add_assets_menu(request, menu_items):
     """Add custom Assets menu with Images and Documents submenus."""
     
