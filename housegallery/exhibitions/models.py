@@ -132,9 +132,7 @@ class ExhibitionsIndexPage(Page, ListingFields):
         from django.db.models import Prefetch
         
         # Optimize prefetch for typed images with their relationships
-        return ExhibitionPage.objects.live().public().descendant_of(self).select_related(
-            'featured_image'
-        ).prefetch_related(
+        return ExhibitionPage.objects.live().public().descendant_of(self).prefetch_related(
             # Artists and artworks
             'exhibition_artists__artist',
             'exhibition_artworks__artwork',
