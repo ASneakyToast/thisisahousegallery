@@ -682,6 +682,98 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         random.shuffle(randomized_images)
         
         return randomized_images
+    
+    def get_filtered_gallery_images(self):
+        """
+        Get filtered gallery images for exhibitions index page with:
+        - First showcard as first item
+        - All installation photos in middle  
+        - Remaining showcards as last items
+        - Excludes opening reception photos and in-progress photos
+        """
+        from django.core.cache import cache
+        
+        # Simple cache key based on exhibition ID and last published date
+        timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
+        cache_key = f'exhibition_filtered_images_{self.pk}_{timestamp}'
+        cached_images = cache.get(cache_key)
+        
+        if cached_images is not None:
+            return cached_images
+        
+        images = []
+        
+        # Helper function to process any image type (reuse from get_all_gallery_images)
+        def process_image(gallery_image, image_type):
+            """Process a single image with standard renditions and metadata"""
+            # Generate standard rendition URLs
+            try:
+                thumb_rendition = gallery_image.image.get_rendition('width-400')
+                full_rendition = gallery_image.image.get_rendition('width-1200')
+                thumb_url = thumb_rendition.url
+                full_url = full_rendition.url
+                
+                # Generate WebP versions
+                try:
+                    thumb_webp = gallery_image.image.get_rendition('width-400|format-webp')
+                    full_webp = gallery_image.image.get_rendition('width-1200|format-webp')
+                    thumb_webp_url = thumb_webp.url
+                    full_webp_url = full_webp.url
+                except Exception:
+                    thumb_webp_url = thumb_url
+                    full_webp_url = full_url
+            except Exception:
+                # Fallback to original image
+                thumb_url = gallery_image.image.file.url
+                full_url = gallery_image.image.file.url
+                thumb_webp_url = thumb_url
+                full_webp_url = full_url
+            
+            # Base image data
+            image_data = {
+                'image': gallery_image.image,
+                'credit': gallery_image.image.credit,
+                'type': image_type,
+                'related_artwork': getattr(gallery_image, 'related_artwork', None),
+                'thumb_url': thumb_url,
+                'full_url': full_url,
+                'thumb_webp_url': thumb_webp_url,
+                'full_webp_url': full_webp_url,
+            }
+            
+            # Add artwork metadata if available (only InstallationPhoto has related_artwork)
+            if hasattr(gallery_image, 'related_artwork') and gallery_image.related_artwork:
+                artwork = gallery_image.related_artwork
+                image_data.update({
+                    'artwork_title': artwork.title,
+                    'artwork_artist': artwork.artist_names if artwork.artist_names else None,
+                    'artwork_date': artwork.date.year if artwork.date else None,
+                    'artwork_materials': ', '.join([tag.name for tag in artwork.materials.all()]) if hasattr(artwork, 'materials') else None,
+                    'artwork_size': artwork.size if hasattr(artwork, 'size') else None,
+                })
+            
+            return image_data
+        
+        # Get showcard photos
+        showcard_photos = list(self.showcard_photos.all())
+        
+        # Add first showcard if available
+        if showcard_photos:
+            first_showcard = showcard_photos[0]
+            images.append(process_image(first_showcard, 'showcards'))
+        
+        # Add all installation photos
+        for gallery_image in self.installation_photos.all():
+            images.append(process_image(gallery_image, 'exhibition'))
+        
+        # Add remaining showcards (excluding the first one)
+        for showcard in showcard_photos[1:]:
+            images.append(process_image(showcard, 'showcards'))
+        
+        # Cache the processed images for 1 hour
+        cache.set(cache_key, images, 3600)
+        
+        return images
         
     def get_current_date(self):
         """Return the current date for date comparisons."""
