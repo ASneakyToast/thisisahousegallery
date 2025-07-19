@@ -195,8 +195,17 @@
 }
 
 @media (max-width: 675px) {
+  .exhibition-images {
+    columns: 2;
+    column-gap: var(--size-5);
+    column-fill: balance;
+  }
+  
   .exhibition-images img {
     max-height: 20vh;
+    width: 100%;
+    break-inside: avoid;
+    margin-bottom: var(--size-5);
   }
 
   .title {

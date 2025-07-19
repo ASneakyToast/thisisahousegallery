@@ -319,6 +319,31 @@
   .exhibition-artists-list {
     flex-direction: row;
   }
+  
+  .exhibition-images {
+    columns: 2;
+    column-gap: var(--size-5);
+    column-fill: balance;
+  }
+  
+  .exhibition-images img {
+    width: 100%;
+    break-inside: avoid;
+    margin-bottom: var(--size-5);
+  }
+  
+  .exhibition-artworks-grid {
+    columns: 2;
+    column-gap: 1rem;
+    column-fill: balance;
+  }
+  
+  .exhibition-artwork-card {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: none;
+  }
 }
 
 @media (max-width: 480px) {
