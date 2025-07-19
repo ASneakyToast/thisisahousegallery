@@ -81,7 +81,7 @@ logsBucket: "gs://housegallery-cloudbuild-log/${_BUILD_TYPE}"
 
 substitutions:
   _BUILD_TYPE: prod
-  _DB_INSTANCE_NAME: housegallery-uswest1
+  _DB_INSTANCE_NAME: housegallery
   _DJANGO_SETTINGS: config.settings.production
   _REGION: us-west1
   _SERVICE_ACCOUNT: housegallerybutler@housegallery.iam.gserviceaccount.com
@@ -90,7 +90,7 @@ substitutions:
   _MGMT_CMD_CLEARSESSIONS: housegallery-${_BUILD_TYPE}-mgmt-cmd-clearsessions
   _MGMT_CMD_UPDATEINDEX: housegallery-${_BUILD_TYPE}-mgmt-cmd-update-index
   _ARTIFACT_REGISTRY: housegallery
-  _CLOUD_SQL_CONNECTION_NAME: ${PROJECT_ID}:${_REGION}:${_DB_INSTANCE_NAME}
+  _CLOUD_SQL_CONNECTION_NAME: ${PROJECT_ID}:us-west2:${_DB_INSTANCE_NAME}
   _IMAGE_NAME: us-west2-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/${_SERVICE_NAME}
 
 options:

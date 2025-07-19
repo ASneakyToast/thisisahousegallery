@@ -55,7 +55,7 @@ logsBucket: "gs://housegallery-cloudbuild-log/${_BUILD_TYPE}"
 
 substitutions:
   _BUILD_TYPE: prod
-  _DB_INSTANCE_NAME: housegallery-uswest1
+  _DB_INSTANCE_NAME: housegallery
   _DB_NAME: housegallery-${_BUILD_TYPE}
   _DJANGO_SETTINGS: config.settings.production
   _REGION: us-west2
