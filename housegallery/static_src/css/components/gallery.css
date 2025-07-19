@@ -58,6 +58,7 @@
     display: block;
     columns: 5;
     column-gap: var(--size-layout-item-gap, 15px);
+    column-fill: balance;
     height: auto;
     max-height: none;
 }
