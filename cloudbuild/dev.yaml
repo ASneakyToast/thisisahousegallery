@@ -44,7 +44,6 @@ steps:
       "--command", "/start",
       "--image", "${_IMAGE_NAME}:latest",
       "--memory", "2048Mi",
-      "--no-traffic",
       "--platform", "managed",
       "--region", "${_REGION}",
       "--service-account", "${_SERVICE_ACCOUNT}",
