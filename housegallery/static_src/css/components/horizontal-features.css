@@ -29,20 +29,20 @@
 
 .horizontal-features-block__container {
   position: relative;
-  overflow: hidden;
   height: 70vh;
 }
 
 .horizontal-features-block__scroll-container {
   position: relative;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   scrollbar-width: none; /* Firefox */
   scroll-snap-type: x mandatory;
   scroll-padding-inline: var(--size-layout-gutter);
   scroll-behavior: smooth;
   touch-action: pan-x;
   -webkit-overflow-scrolling: touch;
+  padding: 4px 0;
 }
 
 .horizontal-features-block__scroll-container::-webkit-scrollbar {
@@ -66,16 +66,15 @@
   flex: 0 0 auto;
   width: auto;
   position: relative;
-  overflow: hidden;
   background: var(--color-surface, #fff);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-black);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   scroll-snap-align: start;
 }
 
 .horizontal-features-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--color-black);
 }
 
 .horizontal-features-card__link {
@@ -133,8 +132,9 @@
     font-size: var(--font-size-huge, 2.5rem);
   }
   
-  
-  
+  .horizontal-features-block__container {
+    height: 50vh;
+  }
   
   .horizontal-features-card__image-container {
     height: 50vh;
@@ -143,6 +143,9 @@
 }
 
 @media (max-width: 480px) {
+  .horizontal-features-block__container {
+    height: 40vh;
+  }
   
   .horizontal-features-card__image-container {
     height: 40vh;
