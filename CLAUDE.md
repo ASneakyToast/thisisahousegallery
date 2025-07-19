@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+<!-- Migration to us-west1: Testing new dev trigger -->
+
 ## Project Overview
 
 This is a Wagtail-based (Django) implementation of "This is a House Gallery", a gallery website built with:
