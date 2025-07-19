@@ -15,7 +15,7 @@ SECRET_KEY = env(
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 # Explicit ALLOWED_HOSTS for production and dev domains
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["thisisahousegallery.com", "dev.thisisahousegallery.com"])
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["thisisahousegallery.com", "qa.thisisahousegallery.com"])
 
 
 # DATABASES
