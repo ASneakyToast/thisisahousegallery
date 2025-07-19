@@ -126,8 +126,8 @@ logsBucket: "gs://housegallery-cloudbuild-log/${_BUILD_TYPE}"
 substitutions:
   _ARTIFACT_REGISTRY: housegallery
   _BUILD_TYPE: ''  # must define in the build trigger: staging/qa/dev-*
-  _CLOUD_SQL_CONNECTION_NAME: ${PROJECT_ID}:us-west1:${_DB_INSTANCE_NAME}
-  _DB_INSTANCE_NAME: housegallery-uswest1
+  _CLOUD_SQL_CONNECTION_NAME: ${PROJECT_ID}:us-west2:${_DB_INSTANCE_NAME}
+  _DB_INSTANCE_NAME: housegallery
   _DJANGO_SETTINGS: config.settings.production
   _IMAGE_NAME: us-west2-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/${_SERVICE_NAME}
   _MGMT_CMD_CLEARSESSIONS: housegallery-${_BUILD_TYPE}-mgmt-cmd-clearsessions
