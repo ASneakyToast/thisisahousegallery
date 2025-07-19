@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # [START prod_build]
-# PROD - Cloudbuild Build + Backup DB
+# PROD - Cloudbuild Build
 
 steps:
 
@@ -34,22 +34,6 @@ steps:
     name: "gcr.io/cloud-builders/docker"
     args: ["push", "${_IMAGE_NAME}", "--all-tags"]
 
-  - id: "backup db"
-    name: "gcr.io/cloud-builders/gcloud"
-    entrypoint: 'bash'
-    args:
-      - '-c'  # pass the followings as a command to bash
-      - gcloud sql export sql "${_DB_INSTANCE_NAME}" gs://housegallery-db-exports/"${_DB_NAME}"-$(date +%Y%m%d-%H%M%S).sql.gz --database "${_DB_NAME}"
-    waitFor: ['-']  # The '-' indicates that this step begins immediately.
-    
-  - id: "backup media and static files"
-    name: "gcr.io/cloud-builders/gcloud"
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - gcloud storage rsync "gs://${_STORAGE_BUCKET}" "gs://${_STORAGE_BUCKET}-backup" --recursive --delete-unmatched-destination-objects
-    waitFor: ['-']
-    
 
 logsBucket: "gs://housegallery-cloudbuild-log/${_BUILD_TYPE}"
 
