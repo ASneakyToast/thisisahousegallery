@@ -39,7 +39,7 @@ steps:
     entrypoint: 'bash'
     args:
       - '-c'  # pass the followings as a command to bash
-      - gcloud sql export sql "${_DB_INSTANCE_NAME}" gs://cca-db-exports/"${_DB_NAME}"-$(date +%Y%m%d-%H%M%S).sql.gz --database "${_DB_NAME}"
+      - gcloud sql export sql "${_DB_INSTANCE_NAME}" gs://housegallery-db-exports/"${_DB_NAME}"-$(date +%Y%m%d-%H%M%S).sql.gz --database "${_DB_NAME}"
     waitFor: ['-']  # The '-' indicates that this step begins immediately.
     
   - id: "backup media and static files"
@@ -47,7 +47,7 @@ steps:
     entrypoint: 'bash'
     args:
       - '-c'
-      - gcloud storage rsync "gs://${_STORAGE_BUCKET}" "gs://${_STORAGE_BUCKET}-backup" --recursive --delete-unmatched-destination-objects --storage-class=STANDARD
+      - gcloud storage rsync "gs://${_STORAGE_BUCKET}" "gs://${_STORAGE_BUCKET}-backup" --recursive --delete-unmatched-destination-objects
     waitFor: ['-']
     
 
