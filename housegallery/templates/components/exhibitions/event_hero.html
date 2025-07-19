@@ -71,6 +71,13 @@
                      width="{{ hero_img.width }}" height="{{ hero_img.height }}"
                      class="event-hero-img">
             </div>
+        {% else %}
+            <!-- Fallback for events without featured images -->
+            <div class="event-hero-image event-hero-image--placeholder">
+                <div class="event-hero-placeholder">
+                    <span class="event-hero-placeholder__text">{{ event.get_event_type_display }}</span>
+                </div>
+            </div>
         {% endif %}
     </div>
 </section>

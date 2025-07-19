@@ -1205,7 +1205,7 @@ class SchedulePage(Page, ListingFields):
         from django.utils import timezone
         return self.get_children().live().type(EventPage).filter(
             eventpage__start_date__gte=timezone.now().date()
-        ).order_by('eventpage__start_date')
+        ).specific().order_by('eventpage__start_date')
     
     def get_current_events(self):
         """Returns currently happening events"""
@@ -1214,7 +1214,7 @@ class SchedulePage(Page, ListingFields):
         return self.get_children().live().type(EventPage).filter(
             eventpage__start_date__lte=today,
             eventpage__end_date__gte=today
-        ).order_by('eventpage__start_date')
+        ).specific().order_by('eventpage__start_date')
     
     def get_past_events(self):
         """Returns past events, ordered by most recent first"""
@@ -1223,29 +1223,29 @@ class SchedulePage(Page, ListingFields):
         return self.get_children().live().type(EventPage).filter(
             Q(eventpage__end_date__lt=timezone.now().date()) |
             Q(eventpage__end_date__isnull=True, eventpage__start_date__lt=timezone.now().date())
-        ).order_by('-eventpage__start_date')
+        ).specific().order_by('-eventpage__start_date')
     
     def get_featured_events(self):
         """Returns events marked as featured"""
         return self.get_children().live().type(EventPage).filter(
             eventpage__featured_on_schedule=True
-        ).order_by('eventpage__start_date')
+        ).specific().order_by('eventpage__start_date')
     
     def get_events_by_type(self, event_type):
         """Returns events filtered by type"""
         return self.get_children().live().type(EventPage).filter(
             eventpage__event_type=event_type
-        ).order_by('eventpage__start_date')
+        ).specific().order_by('eventpage__start_date')
     
     def get_events_by_venue(self, place):
         """Returns events at a specific venue"""
         return self.get_children().live().type(EventPage).filter(
             eventpage__venue_place=place
-        ).order_by('eventpage__start_date')
+        ).specific().order_by('eventpage__start_date')
     
     def get_events_by_month(self, year, month):
         """Returns events for a specific month"""
         return self.get_children().live().type(EventPage).filter(
             eventpage__start_date__year=year,
             eventpage__start_date__month=month
-        ).order_by('eventpage__start_date')
+        ).specific().order_by('eventpage__start_date')

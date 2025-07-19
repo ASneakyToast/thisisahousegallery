@@ -9,11 +9,15 @@ Supports multiple layouts: grid (default), featured, timeline, current
     <!-- Featured layout: Just the image -->
     <a href="{{ event.get_url }}" class="event-featured-link" id="{{ event.title|slugify }}">
         {% if event.featured_image %}
-            {% image event.featured_image width-400 height-500 as featured_img %}
-            <img src="{{ featured_img.url }}" alt="{{ event.title }}" loading="lazy" class="event-image event-image--featured">
+            {% image event.featured_image fill-400x500 as featured_img %}
+            <img src="{{ featured_img.url }}" alt="{{ event.title }}" 
+                 width="{{ featured_img.width }}" height="{{ featured_img.height }}"
+                 loading="lazy" class="event-image event-image--featured">
         {% else %}
-            <!-- Placeholder Image -->
-            <img src="https://picsum.photos/400/500?random={{ event.id }}" alt="{{ event.title }} placeholder" loading="lazy" class="event-image event-image--featured event-placeholder">
+            <!-- No featured image fallback -->
+            <div class="event-image event-image--featured event-no-image">
+                <span class="event-no-image__text">{{ event.title }}</span>
+            </div>
         {% endif %}
     </a>
 {% else %}
@@ -30,45 +34,32 @@ Supports multiple layouts: grid (default), featured, timeline, current
                 <!-- Event Header -->
                 <header class="event-card__header">
                     <div class="event-card__meta">
-                        <time class="event-date" datetime="{{ event.start_date|date:'Y-m-d' }}">
+                        <div class="event-date">
                             {% if layout == 'timeline' %}
                                 <span class="event-date__day">{{ event.start_date|date:"j" }}</span>
                                 <span class="event-date__month">{{ event.start_date|date:"M" }}</span>
                             {% else %}
-                                <span class="event-date__full">{{ event.start_date|date:"F j, Y" }}</span>
-                                {% if event.start_time %}
-                                    <span class="event-time">{{ event.start_time|date:"g:i A" }}{% if event.end_time %} - {{ event.end_time|date:"g:i A" }}{% endif %}</span>
-                                {% endif %}
+                                <span class="event-type-display">{{ event.get_event_type_display }}</span>
                             {% endif %}
-                        </time>
+                        </div>
                         
-                        <span class="event-type">{{ event.get_event_type_display }}</span>
+                        <span class="event-type">{{ event.start_date|date:"F j, Y" }}</span>
                     </div>
                     
                     <h3 class="event-card__title">{{ event.title }}</h3>
                     
-                    {% if event.tagline %}
-                        <p class="event-card__tagline">{{ event.tagline }}</p>
-                    {% endif %}
                 </header>
                 
                 <!-- Event Artists -->
-                {% with featured_artists=event.get_featured_artists %}
-                    {% if featured_artists %}
+                {% with related_artists=event.get_all_related_artists %}
+                    {% if related_artists %}
                     <div class="event-card__artists">
-                        {% for event_artist in featured_artists %}
+                        {% for event_artist in related_artists %}
                             <span class="event-artist">{{ event_artist.artist.name }}</span>{% if not forloop.last %}, {% endif %}
                         {% endfor %}
                     </div>
                     {% endif %}
                 {% endwith %}
-                
-                <!-- Event Description (for grid/timeline layouts) -->
-                {% if event.description and layout != 'timeline' %}
-                <div class="event-card__description">
-                    {{ event.description|striptags|truncatewords:15 }}
-                </div>
-                {% endif %}
                 
                 <!-- Event Details -->
                 <div class="event-card__details">
@@ -78,17 +69,6 @@ Supports multiple layouts: grid (default), featured, timeline, current
                             <span class="event-detail__text">{{ event.venue_name }}</span>
                         </div>
                     {% endif %}
-                    
-                    <div class="event-detail event-detail--price">
-                        <span class="event-detail__icon">🎫</span>
-                        {% if event.ticket_price %}
-                            <span class="event-detail__text">${{ event.ticket_price }}</span>
-                        {% elif event.registration_required %}
-                            <span class="event-detail__text">Registration Required</span>
-                        {% else %}
-                            <span class="event-detail__text">Free</span>
-                        {% endif %}
-                    </div>
                     
                     {% if event.capacity %}
                         <div class="event-detail event-detail--capacity">

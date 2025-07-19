@@ -16,6 +16,7 @@
 
 .event-hero__content {
   order: 1;
+  padding: var(--size-layout-gutter) 0 0 var(--size-layout-gutter);
 }
 
 .event-hero__image {
@@ -273,6 +274,7 @@
 /* Event Content Section */
 .event-content-section {
   margin-bottom: var(--size-layout-section-spacing);
+  padding: 0 var(--size-layout-gutter);
 }
 
 .event-content {
@@ -393,7 +395,7 @@
 /* Event Gallery Section */
 .event-gallery-section {
   margin-bottom: var(--size-layout-section-spacing);
-  padding: var(--size-layout-section-spacing) 0;
+  padding: var(--size-layout-section-spacing) var(--size-layout-gutter);
   border-top: 1px solid var(--color-black);
 }
 
@@ -477,6 +479,7 @@
   
   .event-hero__content {
     order: 2;
+    padding: var(--size-layout-gutter) 0 0 var(--size-layout-gutter);
   }
   
   .event-hero__image {
