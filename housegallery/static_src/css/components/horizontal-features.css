@@ -40,6 +40,9 @@
   scrollbar-width: none; /* Firefox */
   scroll-snap-type: x mandatory;
   scroll-padding-inline: var(--size-layout-gutter);
+  scroll-behavior: smooth;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
 }
 
 .horizontal-features-block__scroll-container::-webkit-scrollbar {

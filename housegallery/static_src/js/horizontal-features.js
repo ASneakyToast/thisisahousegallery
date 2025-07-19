@@ -81,53 +81,20 @@ class HorizontalFeaturesCarousel {
     this.prevBtn?.addEventListener('click', () => this.goToPrevious());
     this.nextBtn?.addEventListener('click', () => this.goToNext());
     
-    // Touch/swipe support
-    let startX = 0;
-    let startY = 0;
-    let isDragging = false;
-    
-    this.scrollContainer.addEventListener('touchstart', (e) => {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      isDragging = true;
-      this.pauseAutoScroll();
-    }, { passive: true });
-    
-    this.scrollContainer.addEventListener('touchmove', (e) => {
-      if (!isDragging) return;
-      
-      const deltaX = e.touches[0].clientX - startX;
-      const deltaY = e.touches[0].clientY - startY;
-      
-      // Prevent vertical scrolling if horizontal movement is dominant
-      if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        e.preventDefault();
-      }
-    }, { passive: false });
-    
-    this.scrollContainer.addEventListener('touchend', (e) => {
-      if (!isDragging) return;
-      
-      const deltaX = e.changedTouches[0].clientX - startX;
-      const threshold = 50;
-      
-      if (Math.abs(deltaX) > threshold) {
-        if (deltaX > 0) {
-          this.goToPrevious();
-        } else {
-          this.goToNext();
-        }
-      }
-      
-      isDragging = false;
-      this.resumeAutoScroll();
-    }, { passive: true });
-    
     // Pause auto-scroll on hover
     if (this.autoScroll) {
       this.element.addEventListener('mouseenter', () => this.pauseAutoScroll());
       this.element.addEventListener('mouseleave', () => this.resumeAutoScroll());
     }
+    
+    // Pause auto-scroll on touch (but don't interfere with native scrolling)
+    this.scrollContainer.addEventListener('touchstart', () => {
+      this.pauseAutoScroll();
+    }, { passive: true });
+    
+    this.scrollContainer.addEventListener('touchend', () => {
+      this.resumeAutoScroll();
+    }, { passive: true });
     
     // Keyboard navigation
     this.element.addEventListener('keydown', (e) => {
@@ -159,20 +126,20 @@ class HorizontalFeaturesCarousel {
     if (this.isAnimating) return;
     
     this.isAnimating = true;
-    const translateX = -index * this.cardWidth;
+    const scrollPosition = index * this.cardWidth;
     
-    // Use anime.js for smooth animation
-    animate({
-      targets: this.track,
-      translateX: translateX,
-      duration: 600,
-      easing: 'easeOutExpo',
-      complete: () => {
-        this.isAnimating = false;
-        this.updateNavigation();
-        this.updateProgress();
-      }
+    // Use native smooth scrolling instead of anime.js
+    this.scrollContainer.scrollTo({
+      left: scrollPosition,
+      behavior: 'smooth'
     });
+    
+    // Wait for scroll to complete
+    setTimeout(() => {
+      this.isAnimating = false;
+      this.updateNavigation();
+      this.updateProgress();
+    }, 600);
   }
   
   updateNavigation() {
