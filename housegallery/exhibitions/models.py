@@ -127,26 +127,72 @@ class ExhibitionsIndexPage(Page, ListingFields):
         + ListingFields.promote_panels
     )
     
-    def get_exhibitions(self):
-        """Return all live ExhibitionPage objects, ordered by start date."""
+    def get_optimized_exhibitions(self):
+        """
+        Return all live ExhibitionPage objects with comprehensive prefetching.
+        
+        This method loads ALL data needed for the exhibitions listing page in a single
+        optimized queryset, eliminating N+1 queries by prefetching:
+        - Exhibition core relationships (artists, artworks)
+        - All photo types with their images
+        - Related artwork data (artists, materials) for photos that have it
+        """
         from django.db.models import Prefetch
         
-        # Optimize prefetch for typed images with their relationships
         return ExhibitionPage.objects.live().public().descendant_of(self).prefetch_related(
-            # Artists and artworks
+            # Core exhibition relationships
             'exhibition_artists__artist',
             'exhibition_artworks__artwork',
-            # Typed images with their CustomImage relationships
-            Prefetch('installation_photos', queryset=InstallationPhoto.objects.select_related('image', 'related_artwork').prefetch_related('related_artwork__materials')),
-            Prefetch('opening_reception_photos', queryset=OpeningReceptionPhoto.objects.select_related('image')),
-            Prefetch('showcard_photos', queryset=ShowcardPhoto.objects.select_related('image')),
-            Prefetch('in_progress_photos', queryset=InProgressPhoto.objects.select_related('image')),
+            
+            # Installation photos (has related_artwork) - comprehensive prefetch
+            Prefetch('installation_photos', 
+                queryset=InstallationPhoto.objects
+                    .select_related('image', 'related_artwork')
+                    .prefetch_related(
+                        'related_artwork__materials', 
+                        'related_artwork__artists',
+                        'image__renditions'
+                    )
+            ),
+            
+            # Photo types without related_artwork - basic optimization
+            Prefetch('opening_reception_photos', 
+                queryset=OpeningReceptionPhoto.objects
+                    .select_related('image')
+                    .prefetch_related('image__renditions')
+            ),
+            Prefetch('showcard_photos', 
+                queryset=ShowcardPhoto.objects
+                    .select_related('image')
+                    .prefetch_related('image__renditions')
+            ),
+            Prefetch('in_progress_photos', 
+                queryset=InProgressPhoto.objects
+                    .select_related('image')
+                    .prefetch_related('image__renditions')
+            ),
+            
+            # Legacy ExhibitionImage model (if still used)
+            Prefetch('exhibition_images',
+                queryset=ExhibitionImage.objects
+                    .select_related('image', 'related_artwork')
+                    .prefetch_related(
+                        'related_artwork__materials',
+                        'related_artwork__artists',
+                        'image__renditions'
+                    )
+            ),
+            
         ).order_by('-start_date')
+    
+    def get_exhibitions(self):
+        """Backwards compatibility wrapper for get_optimized_exhibitions."""
+        return self.get_optimized_exhibitions()
     
     def get_context(self, request):
         """Add exhibitions to the context with upcoming/current/past categorization."""
         context = super().get_context(request)
-        all_exhibitions = self.get_exhibitions()
+        all_exhibitions = self.get_optimized_exhibitions()
         
         # Get today's date for comparison
         from django.utils import timezone
