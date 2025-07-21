@@ -1,82 +1,82 @@
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db import models
-from django import forms
-import random
 import datetime
+import random
 
-from modelcluster.fields import ParentalKey, ParentalManyToManyField
+from django.core.paginator import EmptyPage
+from django.core.paginator import PageNotAnInteger
+from django.core.paginator import Paginator
+from django.db import models
+from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, MultipleChooserPanel, HelpPanel
-from wagtail.admin.forms import WagtailAdminModelForm
-from wagtail.embeds.models import Embed
-from wagtail.embeds import embeds
-
-from .widgets import ExhibitionImageChooserPanel
-from housegallery.artworks.widgets import ArtworkChooserPanel
-from housegallery.artists.widgets import ArtistChooserPanel
-from wagtail.fields import StreamField, RichTextField
-from wagtail.images.models import Image
+from wagtail import blocks
+from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import HelpPanel
+from wagtail.admin.panels import InlinePanel
+from wagtail.admin.panels import MultiFieldPanel
+from wagtail.admin.panels import MultipleChooserPanel
+from wagtail.fields import RichTextField
+from wagtail.fields import StreamField
 from wagtail.images import get_image_model_string
+from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Orderable
 from wagtail.search import index
-from wagtail.snippets.models import register_snippet
-from wagtail import blocks
-from wagtail.images.blocks import ImageChooserBlock
 
-
-from housegallery.core.mixins import Page, ListingFields
-from housegallery.exhibitions.blocks import ExhibitionStreamBlock
+from housegallery.artists.widgets import ArtistChooserPanel
+from housegallery.artworks.widgets import ArtworkChooserPanel
 from housegallery.core.blocks import BlankStreamBlock
+from housegallery.core.mixins import ListingFields
+from housegallery.core.mixins import Page
+from housegallery.exhibitions.blocks import ExhibitionStreamBlock
+
+from .widgets import ExhibitionImageChooserPanel
 
 # Event type choices for EventPage
 EVENT_TYPE_CHOICES = [
     # Exhibition Related
-    ('exhibition_opening', 'Exhibition Opening'),
-    ('exhibition_closing', 'Exhibition Closing'),
-    ('gallery_tour', 'Gallery Tour'),
-    
+    ("exhibition_opening", "Exhibition Opening"),
+    ("exhibition_closing", "Exhibition Closing"),
+    ("gallery_tour", "Gallery Tour"),
+
     # Educational
-    ('artist_talk', 'Artist Talk'),
-    ('workshop', 'Workshop'),
-    ('lecture', 'Lecture'),
-    ('critique', 'Critique Session'),
-    
+    ("artist_talk", "Artist Talk"),
+    ("workshop", "Workshop"),
+    ("lecture", "Lecture"),
+    ("critique", "Critique Session"),
+
     # Performance & Social
-    ('performance', 'Performance'),
-    ('reception', 'Reception'),
-    ('networking', 'Networking Event'),
-    
+    ("performance", "Performance"),
+    ("reception", "Reception"),
+    ("networking", "Networking Event"),
+
     # Sales & Markets
-    ('art_sale', 'Art Sale'),
-    ('art_fair', 'Art Fair'),
-    ('studio_sale', 'Studio Sale'),
-    
+    ("art_sale", "Art Sale"),
+    ("art_fair", "Art Fair"),
+    ("studio_sale", "Studio Sale"),
+
     # Residency & Community
-    ('open_studio', 'Open Studio'),
-    ('residency_presentation', 'Residency Presentation'),
-    ('community_event', 'Community Event'),
-    
+    ("open_studio", "Open Studio"),
+    ("residency_presentation", "Residency Presentation"),
+    ("community_event", "Community Event"),
+
     # Fundraising
-    ('fundraiser', 'Fundraiser'),
-    ('benefit', 'Benefit Event'),
-    
+    ("fundraiser", "Fundraiser"),
+    ("benefit", "Benefit Event"),
+
     # Other
-    ('other', 'Other'),
+    ("other", "Other"),
 ]
 
 # Artist role choices for EventArtist relationship
 ARTIST_ROLE_CHOICES = [
-    ('organizer', 'Event Organizer'),
-    ('performer', 'Performer'),
-    ('speaker', 'Speaker'),
-    ('teacher', 'Workshop Teacher'),
-    ('participant', 'Participant'),
-    ('featured', 'Featured Artist'),
-    ('curator', 'Curator'),
-    ('host', 'Host'),
-    ('moderator', 'Moderator'),
-    ('other', 'Other'),
+    ("organizer", "Event Organizer"),
+    ("performer", "Performer"),
+    ("speaker", "Speaker"),
+    ("teacher", "Workshop Teacher"),
+    ("participant", "Participant"),
+    ("featured", "Featured Artist"),
+    ("curator", "Curator"),
+    ("host", "Host"),
+    ("moderator", "Moderator"),
+    ("other", "Other"),
 ]
 
 
@@ -87,14 +87,14 @@ ARTIST_ROLE_CHOICES = [
 # Temporary block for migration compatibility - simple pass-through
 class MultipleImagesBlock(blocks.Block):
     """Temporary block to support existing migrations."""
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-    
+
     class Meta:
-        template = 'components/exhibitions/multiple_images_block.html'
-        icon = 'image'
-        label = 'Multiple Images'
+        template = "components/exhibitions/multiple_images_block.html"
+        icon = "image"
+        label = "Multiple Images"
 
 
 class ExhibitionsIndexPage(Page, ListingFields):
@@ -102,31 +102,31 @@ class ExhibitionsIndexPage(Page, ListingFields):
 
     body = StreamField(ExhibitionStreamBlock(), blank=True)
 
-    template = 'pages/exhibitions/exhibitions_listing.html'
-    
+    template = "pages/exhibitions/exhibitions_listing.html"
+
     parent_page_types = [
-        'home.HomePage',
-        'core.BlankPage'
+        "home.HomePage",
+        "core.BlankPage",
     ]
     subpage_types = [
-        'exhibitions.ExhibitionPage',
-        'exhibitions.SchedulePage',
-        'core.BlankPage'
+        "exhibitions.ExhibitionPage",
+        "exhibitions.SchedulePage",
+        "core.BlankPage",
     ]
-    
+
     search_fields = Page.search_fields + ListingFields.search_fields + [
-        index.SearchField('body'),
+        index.SearchField("body"),
     ]
-    
+
     content_panels = Page.content_panels + [
-        FieldPanel('body'),
+        FieldPanel("body"),
     ]
-    
+
     promote_panels = (
         Page.promote_panels
         + ListingFields.promote_panels
     )
-    
+
     def get_optimized_exhibitions(self):
         """
         Return all live ExhibitionPage objects with comprehensive prefetching.
@@ -138,131 +138,126 @@ class ExhibitionsIndexPage(Page, ListingFields):
         - Related artwork data (artists, materials) for photos that have it
         """
         from django.db.models import Prefetch
-        
+
         return ExhibitionPage.objects.live().public().descendant_of(self).prefetch_related(
-            # Core exhibition relationships
-            'exhibition_artists__artist',
-            'exhibition_artworks__artwork',
-            
-            # Installation photos (has related_artwork) - comprehensive prefetch
-            Prefetch('installation_photos', 
+            # Core exhibition relationships with comprehensive artwork data
+            "exhibition_artists__artist",
+            "exhibition_artworks__artwork",
+            "exhibition_artworks__artwork__materials",
+            "exhibition_artworks__artwork__artists",
+            "exhibition_artworks__artwork__artwork_images__image",
+
+            # Installation photos (no related_artwork caching, use on-demand detection)
+            Prefetch("installation_photos",
                 queryset=InstallationPhoto.objects
-                    .select_related('image', 'related_artwork')
-                    .prefetch_related(
-                        'related_artwork__materials', 
-                        'related_artwork__artists',
-                        'image__renditions'
-                    )
+                    .select_related("image")
+                    .prefetch_related("image__renditions"),
             ),
-            
+
             # Photo types without related_artwork - basic optimization
-            Prefetch('opening_reception_photos', 
+            Prefetch("opening_reception_photos",
                 queryset=OpeningReceptionPhoto.objects
-                    .select_related('image')
-                    .prefetch_related('image__renditions')
+                    .select_related("image")
+                    .prefetch_related("image__renditions"),
             ),
-            Prefetch('showcard_photos', 
+            Prefetch("showcard_photos",
                 queryset=ShowcardPhoto.objects
-                    .select_related('image')
-                    .prefetch_related('image__renditions')
+                    .select_related("image")
+                    .prefetch_related("image__renditions"),
             ),
-            Prefetch('in_progress_photos', 
+            Prefetch("in_progress_photos",
                 queryset=InProgressPhoto.objects
-                    .select_related('image')
-                    .prefetch_related('image__renditions')
+                    .select_related("image")
+                    .prefetch_related("image__renditions"),
             ),
-            
+
             # Legacy ExhibitionImage model (if still used)
-            Prefetch('exhibition_images',
+            Prefetch("exhibition_images",
                 queryset=ExhibitionImage.objects
-                    .select_related('image', 'related_artwork')
-                    .prefetch_related(
-                        'related_artwork__materials',
-                        'related_artwork__artists',
-                        'image__renditions'
-                    )
+                    .select_related("image")
+                    .prefetch_related("image__renditions"),
             ),
-            
-        ).order_by('-start_date')
-    
+
+        ).order_by("-start_date")
+
     def get_exhibitions(self):
         """Backwards compatibility wrapper for get_optimized_exhibitions."""
         return self.get_optimized_exhibitions()
-    
+
     def get_context(self, request):
         """Add exhibitions to the context with upcoming/current/past categorization."""
         context = super().get_context(request)
         all_exhibitions = self.get_optimized_exhibitions()
-        
+
         # Get today's date for comparison
         from django.utils import timezone
         today = timezone.now().date()
-        
+
         # Filter exhibitions by date
         upcoming_exhibitions = []
         current_exhibitions = []
         past_exhibitions = []
-        
+
         for exhibition in all_exhibitions:
             if exhibition.start_date and exhibition.start_date > today:
                 upcoming_exhibitions.append(exhibition)
-            elif (exhibition.start_date and exhibition.start_date <= today and 
+            elif (exhibition.start_date and exhibition.start_date <= today and
                   ((exhibition.end_date and exhibition.end_date >= today) or not exhibition.end_date)):
                 current_exhibitions.append(exhibition)
             else:
                 past_exhibitions.append(exhibition)
-        
+
         # Paginate only past exhibitions
         paginator = Paginator(past_exhibitions, 10)  # Show 10 past exhibitions per page
-        page = request.GET.get('page')
-        
+        page = request.GET.get("page")
+
         try:
             paginated_past_exhibitions = paginator.page(page)
         except PageNotAnInteger:
             paginated_past_exhibitions = paginator.page(1)
         except EmptyPage:
             paginated_past_exhibitions = paginator.page(paginator.num_pages)
-        
-        context['upcoming_exhibitions'] = upcoming_exhibitions
-        context['current_exhibitions'] = current_exhibitions
-        context['past_exhibitions'] = paginated_past_exhibitions
-        context['all_exhibitions'] = all_exhibitions  # Add all exhibitions for simple listing
+
+        context["upcoming_exhibitions"] = upcoming_exhibitions
+        context["current_exhibitions"] = current_exhibitions
+        context["past_exhibitions"] = paginated_past_exhibitions
+        context["all_exhibitions"] = all_exhibitions  # Add all exhibitions for simple listing
         return context
 
 
 class ExhibitionArtist(Orderable):
     """A link between an exhibition and it's main artists"""
     page = ParentalKey(
-        'ExhibitionPage',
+        "ExhibitionPage",
         on_delete=models.CASCADE,
-        related_name='exhibition_artists'
+        related_name="exhibition_artists",
     )
     artist = models.ForeignKey(
-        'artists.Artist',
+        "artists.Artist",
         on_delete=models.CASCADE,
-        related_name='exhibition_pages'
+        related_name="exhibition_pages",
     )
 
     panels = [
-        ArtistChooserPanel('artist'),
+        ArtistChooserPanel("artist"),
     ]
 
 
 class ExhibitionArtwork(Orderable):
     """A link between an exhibition and the artwork"""
     page = ParentalKey(
-        'ExhibitionPage',
+        "ExhibitionPage",
         on_delete=models.CASCADE,
-        related_name='exhibition_artworks'
+        related_name="exhibition_artworks",
     )
     artwork = models.ForeignKey(
-        'artworks.Artwork',
+        "artworks.Artwork",
         on_delete=models.CASCADE,
-        related_name='exhibition_pages'
+        related_name="exhibition_pages",
     )
 
     panels = [
-        ArtworkChooserPanel('artwork'),
+        ArtworkChooserPanel("artwork"),
     ]
 
 
@@ -271,26 +266,26 @@ class ExhibitionArtwork(Orderable):
 class InstallationPhoto(Orderable):
     """Installation photos showing gallery setup and artwork display"""
     page = ParentalKey(
-        'ExhibitionPage',
+        "ExhibitionPage",
         on_delete=models.CASCADE,
-        related_name='installation_photos'
+        related_name="installation_photos",
     )
     image = models.ForeignKey(
         get_image_model_string(),
         on_delete=models.CASCADE,
-        related_name='+'
+        related_name="+",
     )
     related_artwork = models.ForeignKey(
-        'artworks.Artwork',
+        "artworks.Artwork",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='installation_photos',
-        help_text="Automatically detected artwork relationship based on image usage"
+        related_name="installation_photos",
+        help_text="Automatically detected artwork relationship based on image usage",
     )
 
     panels = [
-        ExhibitionImageChooserPanel('image'),
+        ExhibitionImageChooserPanel("image"),
     ]
 
     class Meta:
@@ -300,6 +295,7 @@ class InstallationPhoto(Orderable):
     def detect_related_artwork(self):
         """
         Automatically detect artwork relationship based on image usage.
+        For display contexts where data may be prefetched.
         Uses priority-based detection:
         1. Image is artwork's cover_image
         2. Image in artwork's artwork_images
@@ -307,54 +303,40 @@ class InstallationPhoto(Orderable):
         """
         if not self.page or not self.image:
             return None
-            
-        # Get all artworks in this exhibition
-        exhibition_artworks = self.page.artworks
-        
+
+        # Get all artworks in this exhibition (assumes data may be prefetched)
+        exhibition_artworks = [ea.artwork for ea in self.page.exhibition_artworks.all()]
+
         for artwork in exhibition_artworks:
-                
+
             # Priority 1: Gallery images match
-            if hasattr(artwork, 'artwork_images') and artwork.artwork_images.filter(image=self.image).exists():
+            if hasattr(artwork, "artwork_images") and artwork.artwork_images.filter(image=self.image).exists():
                 return artwork
-                
+
             # Priority 2: StreamField artifacts (more complex)
-            if hasattr(artwork, 'artifacts') and artwork.artifacts:
+            if hasattr(artwork, "artifacts") and artwork.artifacts:
                 for block in artwork.artifacts:
-                    if hasattr(block, 'value') and hasattr(block.value, 'get') and block.value.get('image') == self.image:
+                    if hasattr(block, "value") and hasattr(block.value, "get") and block.value.get("image") == self.image:
                         return artwork
-        
+
         return None
-
-    def update_related_artwork(self):
-        """Update the cached related_artwork field with detected relationship."""
-        detected_artwork = self.detect_related_artwork()
-        if self.related_artwork != detected_artwork:
-            self.related_artwork = detected_artwork
-            # Save without triggering the save hooks to avoid recursion
-            super().save(update_fields=['related_artwork'])
-
-    def save(self, *args, **kwargs):
-        """Override save to automatically detect artwork relationships."""
-        super().save(*args, **kwargs)
-        # Update related artwork after saving (to ensure we have an ID)
-        self.update_related_artwork()
 
 
 class OpeningReceptionPhoto(Orderable):
     """Photos from exhibition opening reception events"""
     page = ParentalKey(
-        'ExhibitionPage',
+        "ExhibitionPage",
         on_delete=models.CASCADE,
-        related_name='opening_reception_photos'
+        related_name="opening_reception_photos",
     )
     image = models.ForeignKey(
         get_image_model_string(),
         on_delete=models.CASCADE,
-        related_name='+'
+        related_name="+",
     )
 
     panels = [
-        ExhibitionImageChooserPanel('image'),
+        ExhibitionImageChooserPanel("image"),
     ]
 
     class Meta:
@@ -365,18 +347,18 @@ class OpeningReceptionPhoto(Orderable):
 class ShowcardPhoto(Orderable):
     """Exhibition showcards and promotional materials"""
     page = ParentalKey(
-        'ExhibitionPage',
+        "ExhibitionPage",
         on_delete=models.CASCADE,
-        related_name='showcard_photos'
+        related_name="showcard_photos",
     )
     image = models.ForeignKey(
         get_image_model_string(),
         on_delete=models.CASCADE,
-        related_name='+'
+        related_name="+",
     )
 
     panels = [
-        ExhibitionImageChooserPanel('image'),
+        ExhibitionImageChooserPanel("image"),
     ]
 
     class Meta:
@@ -387,18 +369,18 @@ class ShowcardPhoto(Orderable):
 class InProgressPhoto(Orderable):
     """Behind-the-scenes photos of exhibition setup and preparation"""
     page = ParentalKey(
-        'ExhibitionPage',
+        "ExhibitionPage",
         on_delete=models.CASCADE,
-        related_name='in_progress_photos'
+        related_name="in_progress_photos",
     )
     image = models.ForeignKey(
         get_image_model_string(),
         on_delete=models.CASCADE,
-        related_name='+'
+        related_name="+",
     )
 
     panels = [
-        ExhibitionImageChooserPanel('image'),
+        ExhibitionImageChooserPanel("image"),
     ]
 
     class Meta:
@@ -409,44 +391,44 @@ class InProgressPhoto(Orderable):
 class ExhibitionImage(Orderable):
     """Through model for exhibition images with image type categorization"""
     page = ParentalKey(
-        'ExhibitionPage',
+        "ExhibitionPage",
         on_delete=models.CASCADE,
-        related_name='exhibition_images'
+        related_name="exhibition_images",
     )
     image = models.ForeignKey(
         get_image_model_string(),
         on_delete=models.CASCADE,
-        related_name='+'
+        related_name="+",
     )
     caption = models.CharField(
         max_length=255,
         blank=True,
-        help_text="Optional caption for this image"
+        help_text="Optional caption for this image",
     )
     image_type = models.CharField(
         max_length=20,
         choices=[
-            ('exhibition', 'Installation Photos'),
-            ('opening', 'Opening Reception'),
-            ('showcards', 'Showcards'),
-            ('in_progress', 'In Progress Shots'),
+            ("exhibition", "Installation Photos"),
+            ("opening", "Opening Reception"),
+            ("showcards", "Showcards"),
+            ("in_progress", "In Progress Shots"),
         ],
-        default='exhibition',
-        help_text="Categorize this image: Installation Photos (gallery setup), Opening Reception (event photos), Showcards (promotional materials), or In Progress Shots (behind-the-scenes)"
+        default="exhibition",
+        help_text="Categorize this image: Installation Photos (gallery setup), Opening Reception (event photos), Showcards (promotional materials), or In Progress Shots (behind-the-scenes)",
     )
     related_artwork = models.ForeignKey(
-        'artworks.Artwork',
+        "artworks.Artwork",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='exhibition_images',
-        help_text="Automatically detected artwork relationship based on image usage"
+        related_name="exhibition_images",
+        help_text="Automatically detected artwork relationship based on image usage",
     )
 
     panels = [
-        ExhibitionImageChooserPanel('image'),
-        FieldPanel('caption'),
-        FieldPanel('image_type'),
+        ExhibitionImageChooserPanel("image"),
+        FieldPanel("caption"),
+        FieldPanel("image_type"),
     ]
 
     class Meta:
@@ -456,6 +438,7 @@ class ExhibitionImage(Orderable):
     def detect_related_artwork(self):
         """
         Automatically detect artwork relationship based on image usage.
+        For display contexts where data may be prefetched.
         Uses priority-based detection:
         1. Image is artwork's cover_image
         2. Image in artwork's artwork_images
@@ -463,37 +446,23 @@ class ExhibitionImage(Orderable):
         """
         if not self.page or not self.image:
             return None
-            
-        # Get all artworks in this exhibition
-        exhibition_artworks = self.page.artworks
-        
+
+        # Get all artworks in this exhibition (assumes data may be prefetched)
+        exhibition_artworks = [ea.artwork for ea in self.page.exhibition_artworks.all()]
+
         for artwork in exhibition_artworks:
-                
+
             # Priority 1: Gallery images match
-            if hasattr(artwork, 'artwork_images') and artwork.artwork_images.filter(image=self.image).exists():
+            if hasattr(artwork, "artwork_images") and artwork.artwork_images.filter(image=self.image).exists():
                 return artwork
-                
+
             # Priority 2: StreamField artifacts (more complex)
-            if hasattr(artwork, 'artifacts') and artwork.artifacts:
+            if hasattr(artwork, "artifacts") and artwork.artifacts:
                 for block in artwork.artifacts:
-                    if hasattr(block, 'value') and hasattr(block.value, 'get') and block.value.get('image') == self.image:
+                    if hasattr(block, "value") and hasattr(block.value, "get") and block.value.get("image") == self.image:
                         return artwork
-        
+
         return None
-
-    def update_related_artwork(self):
-        """Update the cached related_artwork field with detected relationship."""
-        detected_artwork = self.detect_related_artwork()
-        if self.related_artwork != detected_artwork:
-            self.related_artwork = detected_artwork
-            # Save without triggering the save hooks to avoid recursion
-            super().save(update_fields=['related_artwork'])
-
-    def save(self, *args, **kwargs):
-        """Override save to automatically detect artwork relationships."""
-        super().save(*args, **kwargs)
-        # Update related artwork after saving (to ensure we have an ID)
-        self.update_related_artwork()
 
 
 
@@ -503,105 +472,105 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
     start_date = models.DateField("Exhibition start date",
         blank=True,
-        null=True
+        null=True,
     )
     end_date = models.DateField("Exhibition end date",
         blank=True,
-        null=True
+        null=True,
     )
     description = RichTextField(
-        blank=True
+        blank=True,
     )
     body = StreamField(
         ExhibitionStreamBlock(),
         blank=True,
         use_json_field=True,
-        help_text="Gallery images, showcards, and other content for this exhibition"
+        help_text="Gallery images, showcards, and other content for this exhibition",
     )
     video_embed_url = models.URLField(
         blank=True,
         null=True,
-        help_text="YouTube or Vimeo URL for exhibition video content"
+        help_text="YouTube or Vimeo URL for exhibition video content",
     )
-    
+
     # Event creation fields
     create_opening_event = models.BooleanField(
         default=False,
-        help_text="Check to automatically create an opening reception event for this exhibition"
+        help_text="Check to automatically create an opening reception event for this exhibition",
     )
     auto_created_opening_event = models.ForeignKey(
-        'exhibitions.EventPage',
+        "exhibitions.EventPage",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='auto_created_from_exhibition',
-        help_text="The opening event that was automatically created for this exhibition"
+        related_name="auto_created_from_exhibition",
+        help_text="The opening event that was automatically created for this exhibition",
     )
 
-    template = 'pages/exhibitions/exhibition_page.html'
-    
+    template = "pages/exhibitions/exhibition_page.html"
+
     parent_page_types = [
-		'exhibitions.ExhibitionsIndexPage',
-		'core.BlankPage'
+		"exhibitions.ExhibitionsIndexPage",
+		"core.BlankPage",
 	]
     subpage_types = [
-		'core.BlankPage'
+		"core.BlankPage",
 	]
-    
+
     search_fields = Page.search_fields + ListingFields.search_fields + [
-        index.SearchField('description'),
-        index.FilterField('start_date'),
+        index.SearchField("description"),
+        index.FilterField("start_date"),
     ]
-    
+
     content_panels = Page.content_panels + [
         MultiFieldPanel([
-            FieldPanel('start_date'),
-            FieldPanel('end_date'),
-            FieldPanel('description'),
+            FieldPanel("start_date"),
+            FieldPanel("end_date"),
+            FieldPanel("description"),
         ], heading="Exhibition Information"),
         MultipleChooserPanel(
-            'exhibition_artists',
+            "exhibition_artists",
             label="Artists",
-            chooser_field_name="artist"
+            chooser_field_name="artist",
         ),
         MultipleChooserPanel(
-            'exhibition_artworks',
+            "exhibition_artworks",
             label="Artworks",
-            chooser_field_name="artwork"
+            chooser_field_name="artwork",
         ),
-        FieldPanel('body'),
+        FieldPanel("body"),
         MultipleChooserPanel(
-            'installation_photos',
+            "installation_photos",
             label="Installation Photos",
-            chooser_field_name="image"
+            chooser_field_name="image",
         ),
         MultipleChooserPanel(
-            'opening_reception_photos',
+            "opening_reception_photos",
             label="Opening Reception",
-            chooser_field_name="image"
+            chooser_field_name="image",
         ),
         MultipleChooserPanel(
-            'in_progress_photos',
+            "in_progress_photos",
             label="In Progress Shots",
-            chooser_field_name="image"
+            chooser_field_name="image",
         ),
         MultiFieldPanel([
-            FieldPanel('video_embed_url'),
+            FieldPanel("video_embed_url"),
         ], heading="Video Content"),
     ]
-    
+
     promote_panels = (
         Page.promote_panels
         + ListingFields.promote_panels
         + [
             MultiFieldPanel([
-                FieldPanel('create_opening_event'),
+                FieldPanel("create_opening_event"),
             ], heading="Events"),
             MultiFieldPanel([
                 MultipleChooserPanel(
-                    'showcard_photos',
+                    "showcard_photos",
                     label="Showcards",
-                    chooser_field_name="image"
+                    chooser_field_name="image",
                 ),
             ], heading="Promotional Materials"),
         ]
@@ -609,51 +578,51 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
 	# Artists and artworks are accessed via exhibition_artists and exhibition_artworks relationships
     # No need for properties that create additional queries
-    
+
     def get_exhibition_images(self):
         """Get all installation photos (for backward compatibility)"""
         return self.installation_photos.all()
-    
+
     def get_opening_images(self):
         """Get all opening reception photos"""
         return self.opening_reception_photos.all()
-    
+
     def get_showcards_images(self):
         """Get all showcard photos"""
         return self.showcard_photos.all()
-    
+
     def get_in_progress_images(self):
         """Get all in progress photos"""
         return self.in_progress_photos.all()
-    
+
     def get_all_gallery_images(self):
         """Get all images from all typed image models with artwork data"""
         from django.core.cache import cache
-        
+
         # Simple cache key based on exhibition ID and last published date
         timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
-        cache_key = f'exhibition_images_{self.pk}_{timestamp}'
+        cache_key = f"exhibition_images_{self.pk}_{timestamp}"
         cached_images = cache.get(cache_key)
-        
+
         if cached_images is not None:
             return cached_images
-        
+
         images = []
-        
+
         # Helper function to process any image type
         def process_image(gallery_image, image_type):
             """Process a single image with standard renditions and metadata"""
             # Generate standard rendition URLs
             try:
-                thumb_rendition = gallery_image.image.get_rendition('width-400')
-                full_rendition = gallery_image.image.get_rendition('width-1200')
+                thumb_rendition = gallery_image.image.get_rendition("width-400")
+                full_rendition = gallery_image.image.get_rendition("width-1200")
                 thumb_url = thumb_rendition.url
                 full_url = full_rendition.url
-                
+
                 # Generate WebP versions
                 try:
-                    thumb_webp = gallery_image.image.get_rendition('width-400|format-webp')
-                    full_webp = gallery_image.image.get_rendition('width-1200|format-webp')
+                    thumb_webp = gallery_image.image.get_rendition("width-400|format-webp")
+                    full_webp = gallery_image.image.get_rendition("width-1200|format-webp")
                     thumb_webp_url = thumb_webp.url
                     full_webp_url = full_webp.url
                 except Exception:
@@ -665,70 +634,74 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 full_url = gallery_image.image.file.url
                 thumb_webp_url = thumb_url
                 full_webp_url = full_url
-            
+
+            # Detect related artwork on-demand using prefetched data
+            related_artwork = None
+            if hasattr(gallery_image, "detect_related_artwork"):
+                related_artwork = gallery_image.detect_related_artwork()
+
             # Base image data
             image_data = {
-                'image': gallery_image.image,
-                'credit': gallery_image.image.credit,
-                'type': image_type,
-                'related_artwork': getattr(gallery_image, 'related_artwork', None),
-                'thumb_url': thumb_url,
-                'full_url': full_url,
-                'thumb_webp_url': thumb_webp_url,
-                'full_webp_url': full_webp_url,
+                "image": gallery_image.image,
+                "credit": gallery_image.image.credit,
+                "type": image_type,
+                "related_artwork": related_artwork,
+                "thumb_url": thumb_url,
+                "full_url": full_url,
+                "thumb_webp_url": thumb_webp_url,
+                "full_webp_url": full_webp_url,
             }
-            
-            # Add artwork metadata if available (only InstallationPhoto has related_artwork)
-            if hasattr(gallery_image, 'related_artwork') and gallery_image.related_artwork:
-                artwork = gallery_image.related_artwork
+
+            # Add artwork metadata if detected (uses prefetched artwork data)
+            if related_artwork:
                 image_data.update({
-                    'artwork_title': artwork.title,
-                    'artwork_artist': artwork.artist_names if artwork.artist_names else None,
-                    'artwork_date': artwork.date.year if artwork.date else None,
-                    'artwork_materials': ', '.join([tag.name for tag in artwork.materials.all()]) if hasattr(artwork, 'materials') else None,
-                    'artwork_size': artwork.size if hasattr(artwork, 'size') else None,
+                    "artwork_title": related_artwork.title,
+                    "artwork_artist": related_artwork.artist_names if related_artwork.artist_names else None,
+                    "artwork_date": related_artwork.date.year if related_artwork.date else None,
+                    "artwork_materials": ", ".join([tag.name for tag in related_artwork.materials.all()]) if hasattr(related_artwork, "materials") else None,
+                    "artwork_size": related_artwork.size if hasattr(related_artwork, "size") else None,
                 })
-            
+
             return image_data
-        
+
         # Process each image type using prefetched data
         # Installation photos (exhibition images)
         for gallery_image in self.installation_photos.all():
-            images.append(process_image(gallery_image, 'exhibition'))
-        
+            images.append(process_image(gallery_image, "exhibition"))
+
         # Opening reception photos
         for gallery_image in self.opening_reception_photos.all():
-            images.append(process_image(gallery_image, 'opening'))
-        
+            images.append(process_image(gallery_image, "opening"))
+
         # Showcard photos
         for gallery_image in self.showcard_photos.all():
-            images.append(process_image(gallery_image, 'showcards'))
-        
+            images.append(process_image(gallery_image, "showcards"))
+
         # In progress photos
         for gallery_image in self.in_progress_photos.all():
-            images.append(process_image(gallery_image, 'in_progress'))
-        
+            images.append(process_image(gallery_image, "in_progress"))
+
         # Cache the processed images for 1 hour
         cache.set(cache_key, images, 3600)
-        
+
         return images
-    
+
     def get_randomized_gallery_images(self, seed=None):
         """Get all gallery images in randomized order using date-based seed for daily consistency"""
         if seed is None:
             # Use current date as seed for consistent daily randomization
             seed = datetime.date.today().isoformat()
-        
+
         # Get all images first
         images = self.get_all_gallery_images()
-        
+
         # Create a copy and shuffle it
         randomized_images = images.copy()
         random.seed(seed)
         random.shuffle(randomized_images)
-        
+
         return randomized_images
-    
+
     def get_filtered_gallery_images(self):
         """
         Get filtered gallery images for exhibitions index page with:
@@ -738,31 +711,31 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         - Excludes opening reception photos and in-progress photos
         """
         from django.core.cache import cache
-        
+
         # Simple cache key based on exhibition ID and last published date
         timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
-        cache_key = f'exhibition_filtered_images_{self.pk}_{timestamp}'
+        cache_key = f"exhibition_filtered_images_{self.pk}_{timestamp}"
         cached_images = cache.get(cache_key)
-        
+
         if cached_images is not None:
             return cached_images
-        
+
         images = []
-        
+
         # Helper function to process any image type (reuse from get_all_gallery_images)
         def process_image(gallery_image, image_type):
             """Process a single image with standard renditions and metadata"""
             # Generate standard rendition URLs
             try:
-                thumb_rendition = gallery_image.image.get_rendition('width-400')
-                full_rendition = gallery_image.image.get_rendition('width-1200')
+                thumb_rendition = gallery_image.image.get_rendition("width-400")
+                full_rendition = gallery_image.image.get_rendition("width-1200")
                 thumb_url = thumb_rendition.url
                 full_url = full_rendition.url
-                
+
                 # Generate WebP versions
                 try:
-                    thumb_webp = gallery_image.image.get_rendition('width-400|format-webp')
-                    full_webp = gallery_image.image.get_rendition('width-1200|format-webp')
+                    thumb_webp = gallery_image.image.get_rendition("width-400|format-webp")
+                    full_webp = gallery_image.image.get_rendition("width-1200|format-webp")
                     thumb_webp_url = thumb_webp.url
                     full_webp_url = full_webp.url
                 except Exception:
@@ -774,53 +747,57 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 full_url = gallery_image.image.file.url
                 thumb_webp_url = thumb_url
                 full_webp_url = full_url
-            
+
+            # Detect related artwork on-demand using prefetched data
+            related_artwork = None
+            if hasattr(gallery_image, "detect_related_artwork"):
+                related_artwork = gallery_image.detect_related_artwork()
+
             # Base image data
             image_data = {
-                'image': gallery_image.image,
-                'credit': gallery_image.image.credit,
-                'type': image_type,
-                'related_artwork': getattr(gallery_image, 'related_artwork', None),
-                'thumb_url': thumb_url,
-                'full_url': full_url,
-                'thumb_webp_url': thumb_webp_url,
-                'full_webp_url': full_webp_url,
+                "image": gallery_image.image,
+                "credit": gallery_image.image.credit,
+                "type": image_type,
+                "related_artwork": related_artwork,
+                "thumb_url": thumb_url,
+                "full_url": full_url,
+                "thumb_webp_url": thumb_webp_url,
+                "full_webp_url": full_webp_url,
             }
-            
-            # Add artwork metadata if available (only InstallationPhoto has related_artwork)
-            if hasattr(gallery_image, 'related_artwork') and gallery_image.related_artwork:
-                artwork = gallery_image.related_artwork
+
+            # Add artwork metadata if detected (uses prefetched artwork data)
+            if related_artwork:
                 image_data.update({
-                    'artwork_title': artwork.title,
-                    'artwork_artist': artwork.artist_names if artwork.artist_names else None,
-                    'artwork_date': artwork.date.year if artwork.date else None,
-                    'artwork_materials': ', '.join([tag.name for tag in artwork.materials.all()]) if hasattr(artwork, 'materials') else None,
-                    'artwork_size': artwork.size if hasattr(artwork, 'size') else None,
+                    "artwork_title": related_artwork.title,
+                    "artwork_artist": related_artwork.artist_names if related_artwork.artist_names else None,
+                    "artwork_date": related_artwork.date.year if related_artwork.date else None,
+                    "artwork_materials": ", ".join([tag.name for tag in related_artwork.materials.all()]) if hasattr(related_artwork, "materials") else None,
+                    "artwork_size": related_artwork.size if hasattr(related_artwork, "size") else None,
                 })
-            
+
             return image_data
-        
+
         # Get showcard photos
         showcard_photos = list(self.showcard_photos.all())
-        
+
         # Add first showcard if available
         if showcard_photos:
             first_showcard = showcard_photos[0]
-            images.append(process_image(first_showcard, 'showcards'))
-        
+            images.append(process_image(first_showcard, "showcards"))
+
         # Add all installation photos
         for gallery_image in self.installation_photos.all():
-            images.append(process_image(gallery_image, 'exhibition'))
-        
+            images.append(process_image(gallery_image, "exhibition"))
+
         # Add remaining showcards (excluding the first one)
         for showcard in showcard_photos[1:]:
-            images.append(process_image(showcard, 'showcards'))
-        
+            images.append(process_image(showcard, "showcards"))
+
         # Cache the processed images for 1 hour
         cache.set(cache_key, images, 3600)
-        
+
         return images
-        
+
     def get_current_date(self):
         """Return the current date for date comparisons."""
         from django.utils import timezone
@@ -832,21 +809,21 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             return ""
 
         return self.start_date.strftime("%m.%d.%Y")
-    
+
     def get_formatted_date_month_year(self):
         """Return start date in MM.YYYY format for exhibition context."""
         if not self.start_date:
             return ""
-        
+
         return self.start_date.strftime("%m.%Y")
-    
+
     def get_first_showcard_image(self):
         """Get the first showcard image for this exhibition."""
         showcard_images = self.get_showcards_images()
         if showcard_images.exists():
             return showcard_images.first().image
         return None
-    
+
     def get_first_gallery_image(self):
         """Get the first gallery image for this exhibition."""
         gallery_images = self.get_all_gallery_images()
@@ -862,42 +839,42 @@ class EventArtist(Orderable):
     Allows multiple artists per event with different responsibilities.
     """
     event = ParentalKey(
-        'EventPage',
-        related_name='event_artists',
-        on_delete=models.CASCADE
+        "EventPage",
+        related_name="event_artists",
+        on_delete=models.CASCADE,
     )
     artist = models.ForeignKey(
-        'artists.Artist',
+        "artists.Artist",
         on_delete=models.CASCADE,
-        help_text="Select artist from existing list"
+        help_text="Select artist from existing list",
     )
     role = models.CharField(
         max_length=50,
         choices=ARTIST_ROLE_CHOICES,
-        default='participant',
-        help_text="Artist's role in this event"
+        default="participant",
+        help_text="Artist's role in this event",
     )
     bio_override = models.TextField(
         blank=True,
-        help_text="Custom bio for this event (optional, uses artist bio if blank)"
+        help_text="Custom bio for this event (optional, uses artist bio if blank)",
     )
     is_featured = models.BooleanField(
         default=False,
-        help_text="Feature this artist prominently for this event"
+        help_text="Feature this artist prominently for this event",
     )
-    
+
     panels = [
-        ArtistChooserPanel('artist'),
-        FieldPanel('role'),
-        FieldPanel('bio_override'),
-        FieldPanel('is_featured'),
+        ArtistChooserPanel("artist"),
+        FieldPanel("role"),
+        FieldPanel("bio_override"),
+        FieldPanel("is_featured"),
     ]
-    
+
     class Meta:
-        unique_together = ['event', 'artist', 'role']
+        unique_together = ["event", "artist", "role"]
         verbose_name = "Event Artist"
         verbose_name_plural = "Event Artists"
-    
+
     def __str__(self):
         return f"{self.artist.name} - {self.get_role_display()}"
 
@@ -907,278 +884,278 @@ class EventPage(Page, ListingFields, ClusterableModel):
     Individual event pages as children of SchedulePage.
     Replaces Event snippets with full page functionality.
     """
-    
+
     # Event Classification
     event_type = models.CharField(
         max_length=50,
         choices=EVENT_TYPE_CHOICES,
-        help_text="Type of event (opening, talk, workshop, etc.)"
+        help_text="Type of event (opening, talk, workshop, etc.)",
     )
     tagline = models.CharField(
-        max_length=255, 
+        max_length=255,
         blank=True,
-        help_text="Short promotional tagline for listings"
+        help_text="Short promotional tagline for listings",
     )
     related_exhibition = models.ForeignKey(
-        'exhibitions.ExhibitionPage',
+        "exhibitions.ExhibitionPage",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='related_events',
-        help_text="Link this event to a specific exhibition"
+        related_name="related_events",
+        help_text="Link this event to a specific exhibition",
     )
-    
+
     # Date & Time Fields (Enhanced from month/year strings)
     start_date = models.DateField(help_text="Event start date")
     end_date = models.DateField(
-        blank=True, 
+        blank=True,
         null=True,
-        help_text="End date if multi-day event"
+        help_text="End date if multi-day event",
     )
     start_time = models.TimeField(
-        blank=True, 
+        blank=True,
         null=True,
-        help_text="Start time (optional for all-day events)"
+        help_text="Start time (optional for all-day events)",
     )
     end_time = models.TimeField(
-        blank=True, 
+        blank=True,
         null=True,
-        help_text="End time (optional)"
+        help_text="End time (optional)",
     )
     all_day = models.BooleanField(
         default=False,
-        help_text="Check if this is an all-day event"
+        help_text="Check if this is an all-day event",
     )
-    
+
     # Location System (Place integration + custom fallback)
     venue_place = models.ForeignKey(
-        'places.Place',
+        "places.Place",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        help_text="Select from existing gallery/art spaces"
+        help_text="Select from existing gallery/art spaces",
     )
     custom_venue_name = models.CharField(
         max_length=255,
         blank=True,
-        help_text="Venue name if not using a Place"
+        help_text="Venue name if not using a Place",
     )
     custom_address = models.TextField(
         blank=True,
-        help_text="Full address if not using a Place"
+        help_text="Full address if not using a Place",
     )
     location_details = models.TextField(
         blank=True,
-        help_text="Additional location info (room number, directions, etc.)"
+        help_text="Additional location info (room number, directions, etc.)",
     )
-    
+
     # Content Fields
     description = RichTextField(
-        help_text="Event description for listings and social sharing"
+        help_text="Event description for listings and social sharing",
     )
     body = StreamField([
-        ('paragraph', blocks.RichTextBlock()),
-        ('image', ImageChooserBlock()),
-        ('quote', blocks.BlockQuoteBlock()),
-        ('html', blocks.RawHTMLBlock()),
+        ("paragraph", blocks.RichTextBlock()),
+        ("image", ImageChooserBlock()),
+        ("quote", blocks.BlockQuoteBlock()),
+        ("html", blocks.RawHTMLBlock()),
     ], blank=True, help_text="Detailed event content")
-    
+
     # Visual Assets
     featured_image = models.ForeignKey(
         get_image_model_string(),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
-        help_text="Main event image for listings and social sharing"
+        related_name="+",
+        help_text="Main event image for listings and social sharing",
     )
     gallery_images = StreamField([
-        ('image', ImageChooserBlock()),
+        ("image", ImageChooserBlock()),
     ], blank=True, help_text="Additional event images")
-    
+
     # Event Management
     capacity = models.PositiveIntegerField(
         blank=True,
         null=True,
-        help_text="Maximum attendees (optional)"
+        help_text="Maximum attendees (optional)",
     )
     registration_required = models.BooleanField(
         default=False,
-        help_text="Does this event require registration?"
+        help_text="Does this event require registration?",
     )
     registration_link = models.URLField(
         blank=True,
-        help_text="Link to registration/tickets"
+        help_text="Link to registration/tickets",
     )
     ticket_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         blank=True,
         null=True,
-        help_text="Ticket price (leave blank for free events)"
+        help_text="Ticket price (leave blank for free events)",
     )
     contact_email = models.EmailField(
         blank=True,
-        help_text="Contact for event inquiries"
+        help_text="Contact for event inquiries",
     )
-    
+
     # External Integration
     external_link = models.URLField(
         blank=True,
-        help_text="Link to external event page, social media, etc."
+        help_text="Link to external event page, social media, etc.",
     )
-    
+
     # Admin Fields
     featured_on_schedule = models.BooleanField(
         default=True,
-        help_text="Feature this event prominently on schedule page"
+        help_text="Feature this event prominently on schedule page",
     )
-    
-    template = 'pages/exhibitions/event_page.html'
-    
-    parent_page_types = ['exhibitions.SchedulePage']
+
+    template = "pages/exhibitions/event_page.html"
+
+    parent_page_types = ["exhibitions.SchedulePage"]
     subpage_types = []
-    
+
     search_fields = Page.search_fields + ListingFields.search_fields + [
-        index.SearchField('description'),
-        index.SearchField('tagline'),
-        index.SearchField('body'),
-        index.FilterField('event_type'),
-        index.FilterField('start_date'),
+        index.SearchField("description"),
+        index.SearchField("tagline"),
+        index.SearchField("body"),
+        index.FilterField("event_type"),
+        index.FilterField("start_date"),
     ]
-    
+
     # Wagtail Configuration
     content_panels = Page.content_panels + [
         # Basic Event Info
         MultiFieldPanel([
-            FieldPanel('event_type'),
-            FieldPanel('tagline'),
-            FieldPanel('related_exhibition'),
+            FieldPanel("event_type"),
+            FieldPanel("tagline"),
+            FieldPanel("related_exhibition"),
         ], heading="Event Classification"),
-        
+
         # Scheduling
         MultiFieldPanel([
-            FieldPanel('start_date'),
-            FieldPanel('end_date'),
-            FieldPanel('start_time'),
-            FieldPanel('end_time'),
-            FieldPanel('all_day'),
+            FieldPanel("start_date"),
+            FieldPanel("end_date"),
+            FieldPanel("start_time"),
+            FieldPanel("end_time"),
+            FieldPanel("all_day"),
         ], heading="Date & Time", classname="collapsible"),
-        
+
         # Location with conditional fields
         MultiFieldPanel([
-            FieldPanel('venue_place'),
+            FieldPanel("venue_place"),
             HelpPanel("OR if venue not listed:"),
-            FieldPanel('custom_venue_name'),
-            FieldPanel('custom_address'),
-            FieldPanel('location_details'),
+            FieldPanel("custom_venue_name"),
+            FieldPanel("custom_address"),
+            FieldPanel("location_details"),
         ], heading="Location & Venue", classname="collapsible"),
-        
+
         # Content
-        FieldPanel('description'),
-        FieldPanel('body'),
-        
+        FieldPanel("description"),
+        FieldPanel("body"),
+
         # Media
         MultiFieldPanel([
-            FieldPanel('featured_image'),
-            FieldPanel('gallery_images'),
+            FieldPanel("featured_image"),
+            FieldPanel("gallery_images"),
         ], heading="Images", classname="collapsible"),
-        
+
         # Related People
         InlinePanel(
-            'event_artists',
+            "event_artists",
             label="Related Artists",
             help_text="Add artists involved in this event",
         ),
-        
+
         # Event Management
         MultiFieldPanel([
-            FieldPanel('capacity'),
-            FieldPanel('registration_required'),
-            FieldPanel('registration_link'),
-            FieldPanel('ticket_price'),
-            FieldPanel('contact_email'),
+            FieldPanel("capacity"),
+            FieldPanel("registration_required"),
+            FieldPanel("registration_link"),
+            FieldPanel("ticket_price"),
+            FieldPanel("contact_email"),
         ], heading="Registration & Pricing", classname="collapsible"),
-        
+
         # External Links
-        FieldPanel('external_link'),
-        
+        FieldPanel("external_link"),
+
         # Display Options
         MultiFieldPanel([
-            FieldPanel('featured_on_schedule'),
+            FieldPanel("featured_on_schedule"),
         ], heading="Display Options", classname="collapsible"),
     ]
-    
+
     promote_panels = (
         Page.promote_panels
         + ListingFields.promote_panels
     )
-    
+
     class Meta:
         verbose_name = "Event"
         verbose_name_plural = "Events"
-    
+
     @property
     def venue_name(self):
         """Returns the venue name, prioritizing Place over custom name"""
         if self.venue_place:
             return self.venue_place.title
         return self.custom_venue_name or "TBA"
-    
+
     @property
     def venue_address(self):
         """Returns formatted address, prioritizing Place over custom address"""
         if self.venue_place:
             return self.venue_place.address
         return self.custom_address or ""
-    
+
     @property
     def full_location_display(self):
         """Returns complete location string for display"""
         parts = []
-        
+
         # Venue name
         if self.venue_name and self.venue_name != "TBA":
             parts.append(self.venue_name)
-        
+
         # Address
         if self.venue_address:
             parts.append(self.venue_address)
-        
+
         # Additional details
         if self.location_details:
             parts.append(self.location_details)
-        
+
         return " • ".join(parts) if parts else "Location TBA"
-    
+
     @property
     def is_at_gallery_space(self):
         """Returns True if event is at a tracked gallery/art space"""
         return bool(self.venue_place)
-    
+
     def get_venue_maintainers(self):
         """Returns artists who maintain the venue (if Place)"""
         if self.venue_place:
             return self.venue_place.maintainers.all()
         return []
-    
+
     def get_featured_artists(self):
         """Returns artists marked as featured for this event"""
-        return self.event_artists.filter(is_featured=True).select_related('artist')
-    
+        return self.event_artists.filter(is_featured=True).select_related("artist")
+
     def get_organizers(self):
         """Returns event organizers"""
-        return self.event_artists.filter(role='organizer').select_related('artist')
-    
+        return self.event_artists.filter(role="organizer").select_related("artist")
+
     def get_performers(self):
         """Returns performers/speakers"""
         return self.event_artists.filter(
-            role__in=['performer', 'speaker', 'teacher']
-        ).select_related('artist')
-    
+            role__in=["performer", "speaker", "teacher"],
+        ).select_related("artist")
+
     def get_all_related_artists(self):
         """Returns all artists associated with this event"""
-        return self.event_artists.all().select_related('artist').order_by('sort_order')
+        return self.event_artists.all().select_related("artist").order_by("sort_order")
 
 
 class SchedulePage(Page, ListingFields):
@@ -1187,44 +1164,44 @@ class SchedulePage(Page, ListingFields):
     intro = RichTextField(
         blank=True,
         null=True,
-        help_text="Introduction text for the schedule page"
+        help_text="Introduction text for the schedule page",
     )
     body = StreamField(
         BlankStreamBlock(),
         blank=True,
         help_text="Additional content for the schedule page",
-        use_json_field=True
+        use_json_field=True,
     )
     contact_email = models.EmailField(
         blank=True,
         null=True,
-        help_text="Email address for schedule inquiries"
+        help_text="Email address for schedule inquiries",
     )
     submission_info = RichTextField(
         blank=True,
         null=True,
-        help_text="Information about submitting artwork or proposals"
+        help_text="Information about submitting artwork or proposals",
     )
 
-    template = 'pages/exhibitions/schedule_page.html'
+    template = "pages/exhibitions/schedule_page.html"
 
     parent_page_types = [
-        'home.HomePage',
-        'core.BlankPage'
+        "home.HomePage",
+        "core.BlankPage",
     ]
-    subpage_types = ['core.BlankPage', 'exhibitions.EventPage']
+    subpage_types = ["core.BlankPage", "exhibitions.EventPage"]
 
     search_fields = Page.search_fields + ListingFields.search_fields + [
-        index.SearchField('intro'),
-        index.SearchField('body'),
+        index.SearchField("intro"),
+        index.SearchField("body"),
     ]
 
     content_panels = Page.content_panels + [
-        FieldPanel('intro'),
-        FieldPanel('body'),
+        FieldPanel("intro"),
+        FieldPanel("body"),
         MultiFieldPanel([
-            FieldPanel('contact_email'),
-            FieldPanel('submission_info'),
+            FieldPanel("contact_email"),
+            FieldPanel("submission_info"),
         ], heading="Contact Information"),
     ]
 
@@ -1236,62 +1213,62 @@ class SchedulePage(Page, ListingFields):
     def get_context(self, request):
         """Add events to the context."""
         context = super().get_context(request)
-        
+
         # Get child EventPage instances
-        context['upcoming_events'] = self.get_upcoming_events()
-        context['current_events'] = self.get_current_events()
-        context['past_events'] = self.get_past_events()
-        context['featured_child_events'] = self.get_featured_events()
-        
+        context["upcoming_events"] = self.get_upcoming_events()
+        context["current_events"] = self.get_current_events()
+        context["past_events"] = self.get_past_events()
+        context["featured_child_events"] = self.get_featured_events()
+
         return context
-    
+
     # Event Query Methods for child EventPage instances
     def get_upcoming_events(self):
         """Returns upcoming events, ordered by start date"""
         from django.utils import timezone
         return self.get_children().live().type(EventPage).filter(
-            eventpage__start_date__gte=timezone.now().date()
-        ).specific().order_by('eventpage__start_date')
-    
+            eventpage__start_date__gte=timezone.now().date(),
+        ).specific().order_by("eventpage__start_date")
+
     def get_current_events(self):
         """Returns currently happening events"""
         from django.utils import timezone
         today = timezone.now().date()
         return self.get_children().live().type(EventPage).filter(
             eventpage__start_date__lte=today,
-            eventpage__end_date__gte=today
-        ).specific().order_by('eventpage__start_date')
-    
+            eventpage__end_date__gte=today,
+        ).specific().order_by("eventpage__start_date")
+
     def get_past_events(self):
         """Returns past events, ordered by most recent first"""
-        from django.utils import timezone
         from django.db.models import Q
+        from django.utils import timezone
         return self.get_children().live().type(EventPage).filter(
             Q(eventpage__end_date__lt=timezone.now().date()) |
-            Q(eventpage__end_date__isnull=True, eventpage__start_date__lt=timezone.now().date())
-        ).specific().order_by('-eventpage__start_date')
-    
+            Q(eventpage__end_date__isnull=True, eventpage__start_date__lt=timezone.now().date()),
+        ).specific().order_by("-eventpage__start_date")
+
     def get_featured_events(self):
         """Returns events marked as featured"""
         return self.get_children().live().type(EventPage).filter(
-            eventpage__featured_on_schedule=True
-        ).specific().order_by('eventpage__start_date')
-    
+            eventpage__featured_on_schedule=True,
+        ).specific().order_by("eventpage__start_date")
+
     def get_events_by_type(self, event_type):
         """Returns events filtered by type"""
         return self.get_children().live().type(EventPage).filter(
-            eventpage__event_type=event_type
-        ).specific().order_by('eventpage__start_date')
-    
+            eventpage__event_type=event_type,
+        ).specific().order_by("eventpage__start_date")
+
     def get_events_by_venue(self, place):
         """Returns events at a specific venue"""
         return self.get_children().live().type(EventPage).filter(
-            eventpage__venue_place=place
-        ).specific().order_by('eventpage__start_date')
-    
+            eventpage__venue_place=place,
+        ).specific().order_by("eventpage__start_date")
+
     def get_events_by_month(self, year, month):
         """Returns events for a specific month"""
         return self.get_children().live().type(EventPage).filter(
             eventpage__start_date__year=year,
-            eventpage__start_date__month=month
-        ).specific().order_by('eventpage__start_date')
+            eventpage__start_date__month=month,
+        ).specific().order_by("eventpage__start_date")
