@@ -129,32 +129,26 @@ class ExhibitionsIndexPage(Page, ListingFields):
 
     def get_optimized_exhibitions(self):
         """
-        Return all live ExhibitionPage objects with comprehensive prefetching.
+        Return all live ExhibitionPage objects with optimized prefetching.
         
-        This method loads ALL data needed for the exhibitions listing page in a single
+        This method loads all data needed for the exhibitions listing page in a single
         optimized queryset, eliminating N+1 queries by prefetching:
         - Exhibition core relationships (artists, artworks)
-        - All photo types with their images
-        - Related artwork data (artists, materials) for photos that have it
+        - All photo types with their images and renditions
         """
         from django.db.models import Prefetch
 
         return ExhibitionPage.objects.live().public().descendant_of(self).prefetch_related(
-            # Core exhibition relationships with comprehensive artwork data
+            # Core exhibition relationships (basic only)
             "exhibition_artists__artist",
             "exhibition_artworks__artwork",
-            "exhibition_artworks__artwork__materials",
-            "exhibition_artworks__artwork__artists",
-            "exhibition_artworks__artwork__artwork_images__image",
 
-            # Installation photos (no related_artwork caching, use on-demand detection)
+            # Photo prefetches (simplified - no artwork relationships)
             Prefetch("installation_photos",
                 queryset=InstallationPhoto.objects
                     .select_related("image")
                     .prefetch_related("image__renditions"),
             ),
-
-            # Photo types without related_artwork - basic optimization
             Prefetch("opening_reception_photos",
                 queryset=OpeningReceptionPhoto.objects
                     .select_related("image")
@@ -170,8 +164,6 @@ class ExhibitionsIndexPage(Page, ListingFields):
                     .select_related("image")
                     .prefetch_related("image__renditions"),
             ),
-
-            # Legacy ExhibitionImage model (if still used)
             Prefetch("exhibition_images",
                 queryset=ExhibitionImage.objects
                     .select_related("image")
@@ -292,34 +284,6 @@ class InstallationPhoto(Orderable):
         verbose_name = "Installation Photo"
         verbose_name_plural = "Installation Photos"
 
-    def detect_related_artwork(self):
-        """
-        Automatically detect artwork relationship based on image usage.
-        For display contexts where data may be prefetched.
-        Uses priority-based detection:
-        1. Image is artwork's cover_image
-        2. Image in artwork's artwork_images
-        3. Image in artwork's StreamField artifacts
-        """
-        if not self.page or not self.image:
-            return None
-
-        # Get all artworks in this exhibition (assumes data may be prefetched)
-        exhibition_artworks = [ea.artwork for ea in self.page.exhibition_artworks.all()]
-
-        for artwork in exhibition_artworks:
-
-            # Priority 1: Gallery images match
-            if hasattr(artwork, "artwork_images") and artwork.artwork_images.filter(image=self.image).exists():
-                return artwork
-
-            # Priority 2: StreamField artifacts (more complex)
-            if hasattr(artwork, "artifacts") and artwork.artifacts:
-                for block in artwork.artifacts:
-                    if hasattr(block, "value") and hasattr(block.value, "get") and block.value.get("image") == self.image:
-                        return artwork
-
-        return None
 
 
 class OpeningReceptionPhoto(Orderable):
@@ -435,34 +399,6 @@ class ExhibitionImage(Orderable):
         verbose_name = "Exhibition Image"
         verbose_name_plural = "Exhibition Images"
 
-    def detect_related_artwork(self):
-        """
-        Automatically detect artwork relationship based on image usage.
-        For display contexts where data may be prefetched.
-        Uses priority-based detection:
-        1. Image is artwork's cover_image
-        2. Image in artwork's artwork_images
-        3. Image in artwork's StreamField artifacts
-        """
-        if not self.page or not self.image:
-            return None
-
-        # Get all artworks in this exhibition (assumes data may be prefetched)
-        exhibition_artworks = [ea.artwork for ea in self.page.exhibition_artworks.all()]
-
-        for artwork in exhibition_artworks:
-
-            # Priority 1: Gallery images match
-            if hasattr(artwork, "artwork_images") and artwork.artwork_images.filter(image=self.image).exists():
-                return artwork
-
-            # Priority 2: StreamField artifacts (more complex)
-            if hasattr(artwork, "artifacts") and artwork.artifacts:
-                for block in artwork.artifacts:
-                    if hasattr(block, "value") and hasattr(block.value, "get") and block.value.get("image") == self.image:
-                        return artwork
-
-        return None
 
 
 
@@ -635,32 +571,16 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 thumb_webp_url = thumb_url
                 full_webp_url = full_url
 
-            # Detect related artwork on-demand using prefetched data
-            related_artwork = None
-            if hasattr(gallery_image, "detect_related_artwork"):
-                related_artwork = gallery_image.detect_related_artwork()
-
-            # Base image data
+            # Base image data (simplified - no artwork metadata)
             image_data = {
                 "image": gallery_image.image,
                 "credit": gallery_image.image.credit,
                 "type": image_type,
-                "related_artwork": related_artwork,
                 "thumb_url": thumb_url,
                 "full_url": full_url,
                 "thumb_webp_url": thumb_webp_url,
                 "full_webp_url": full_webp_url,
             }
-
-            # Add artwork metadata if detected (uses prefetched artwork data)
-            if related_artwork:
-                image_data.update({
-                    "artwork_title": related_artwork.title,
-                    "artwork_artist": related_artwork.artist_names if related_artwork.artist_names else None,
-                    "artwork_date": related_artwork.date.year if related_artwork.date else None,
-                    "artwork_materials": ", ".join([tag.name for tag in related_artwork.materials.all()]) if hasattr(related_artwork, "materials") else None,
-                    "artwork_size": related_artwork.size if hasattr(related_artwork, "size") else None,
-                })
 
             return image_data
 
@@ -748,32 +668,16 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 thumb_webp_url = thumb_url
                 full_webp_url = full_url
 
-            # Detect related artwork on-demand using prefetched data
-            related_artwork = None
-            if hasattr(gallery_image, "detect_related_artwork"):
-                related_artwork = gallery_image.detect_related_artwork()
-
-            # Base image data
+            # Base image data (simplified - no artwork metadata)
             image_data = {
                 "image": gallery_image.image,
                 "credit": gallery_image.image.credit,
                 "type": image_type,
-                "related_artwork": related_artwork,
                 "thumb_url": thumb_url,
                 "full_url": full_url,
                 "thumb_webp_url": thumb_webp_url,
                 "full_webp_url": full_webp_url,
             }
-
-            # Add artwork metadata if detected (uses prefetched artwork data)
-            if related_artwork:
-                image_data.update({
-                    "artwork_title": related_artwork.title,
-                    "artwork_artist": related_artwork.artist_names if related_artwork.artist_names else None,
-                    "artwork_date": related_artwork.date.year if related_artwork.date else None,
-                    "artwork_materials": ", ".join([tag.name for tag in related_artwork.materials.all()]) if hasattr(related_artwork, "materials") else None,
-                    "artwork_size": related_artwork.size if hasattr(related_artwork, "size") else None,
-                })
 
             return image_data
 
