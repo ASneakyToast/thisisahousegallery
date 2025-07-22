@@ -468,13 +468,6 @@ class ExhibitionFeatureLightbox {
       }
     }
     
-    // Add image caption if available (for non-showcard image types, since showcards include caption in context)
-    if (artworkData && artworkData.caption && !artworkData.isShowcard) {
-      const captionElement = document.createElement('div');
-      captionElement.className = 'exhibition-lightbox__image-caption';
-      captionElement.textContent = artworkData.caption;
-      metadataContainer.appendChild(captionElement);
-    }
     
     // Add image credit if available (for all image types)
     if (artworkData && artworkData.credit) {
