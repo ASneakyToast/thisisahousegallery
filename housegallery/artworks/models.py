@@ -120,6 +120,7 @@ class ArtworkImage(Orderable):
     class Meta:
         verbose_name = "Artwork Image"
         verbose_name_plural = "Artwork Images"
+        ordering = ["sort_order"]
 
 
 @register_snippet
