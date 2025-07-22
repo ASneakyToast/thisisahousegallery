@@ -892,7 +892,7 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 artwork_data = {
                     "title": artwork.title,  # Use artwork.title directly to match template
                     "artist_names": artwork.artist_names if artwork.artist_names else None,
-                    "date": artwork.date,
+                    "date": artwork.date.year if artwork.date else None,  # Show just the year
                     "size": artwork.size,
                     "materials_str": materials_str,
                 }
