@@ -328,6 +328,7 @@ class ShowcardPhoto(Orderable):
     class Meta:
         verbose_name = "Showcard Photo"
         verbose_name_plural = "Showcard Photos"
+        ordering = ['sort_order']
 
 
 class InProgressPhoto(Orderable):
