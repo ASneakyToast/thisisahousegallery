@@ -525,6 +525,8 @@
   opacity: 0.7;
   position: relative;
   box-sizing: border-box;
+  text-decoration: none;
+  color: inherit;
 }
 
 .add-event-card:hover {
