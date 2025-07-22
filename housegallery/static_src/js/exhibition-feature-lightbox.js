@@ -1,9 +1,10 @@
 /**
- * Exhibition Feature Block Lightbox
- * Simplified vanilla JavaScript lightbox for exhibition galleries
+ * Unified Gallery Lightbox
+ * Reusable vanilla JavaScript lightbox for gallery displays across the site
+ * Works with both exhibition index pages and individual exhibition pages
  */
 
-class ExhibitionFeatureLightbox {
+class UnifiedGalleryLightbox {
   constructor() {
     this.galleries = [];
     this.lightbox = null;
@@ -21,19 +22,103 @@ class ExhibitionFeatureLightbox {
 
   init() {
     // Prevent double initialization
-    if (window.exhibitionLightboxInitialized) return;
-    window.exhibitionLightboxInitialized = true;
+    if (window.unifiedGalleryLightboxInitialized) return;
+    window.unifiedGalleryLightboxInitialized = true;
 
-    // Setup galleries
-    document.querySelectorAll('.exhibition-feature-gallery').forEach(gallery => {
-      this.setupGallery(gallery);
+    // Setup galleries - look for multiple gallery container types
+    const gallerySelectors = [
+      '.exhibition-feature-gallery',     // Exhibition index galleries
+      '.unified-gallery-container',      // New unified gallery containers
+      '.exhibition-page-gallery'         // Exhibition page galleries
+    ];
+
+    gallerySelectors.forEach(selector => {
+      document.querySelectorAll(selector).forEach(gallery => {
+        this.setupGallery(gallery);
+      });
     });
+
+    // Also setup individual gallery items outside of containers (for exhibition pages)
+    this.setupIndividualGalleryItems();
 
     // Get lightbox reference
     this.lightbox = document.getElementById('exhibition-lightbox');
     
     if (this.lightbox) {
       this.setupLightbox();
+    }
+  }
+
+  setupIndividualGalleryItems() {
+    // Find the unified gallery container (hidden) to use as the main gallery
+    const unifiedGallery = document.querySelector('.unified-gallery-container');
+    
+    if (unifiedGallery) {
+      // Find all visible gallery items that should trigger the unified gallery
+      const visibleItems = document.querySelectorAll('.gallery-lightbox-item:not(.unified-gallery-container .gallery-lightbox-item)');
+      
+      // Also find artwork cards that should trigger the unified gallery
+      const artworkCards = document.querySelectorAll('.exhibition-artwork-card[data-artwork-id]');
+      
+      // Handle regular gallery items
+      visibleItems.forEach((item, index) => {
+        // Click event to open unified gallery
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          
+          // Get the target index from the data attribute
+          const targetIndex = parseInt(item.dataset.quickviewIndex) || 0;
+          
+          // Open lightbox with unified gallery
+          const unifiedItems = unifiedGallery.querySelectorAll('.gallery-lightbox-item');
+          const unifiedGalleryData = {
+            element: unifiedGallery,
+            items: unifiedItems,
+            id: unifiedGallery.dataset.galleryId || 'exhibition'
+          };
+          
+          this.openLightbox(unifiedGalleryData, targetIndex);
+        });
+
+        // Keyboard support
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            item.click(); // Trigger the click handler
+          }
+        });
+
+        // Style as clickable
+        item.style.cursor = 'pointer';
+      });
+
+      // Handle artwork cards
+      artworkCards.forEach((card) => {
+        card.addEventListener('click', (e) => {
+          e.preventDefault();
+          
+          // Get the target index from the data attribute
+          const targetIndex = parseInt(card.dataset.quickviewIndex) || 0;
+          
+          // Open lightbox with unified gallery
+          const unifiedItems = unifiedGallery.querySelectorAll('.gallery-lightbox-item');
+          const unifiedGalleryData = {
+            element: unifiedGallery,
+            items: unifiedItems,
+            id: unifiedGallery.dataset.galleryId || 'exhibition'
+          };
+          
+          this.openLightbox(unifiedGalleryData, targetIndex);
+        });
+
+        // Keyboard support for artwork cards
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            card.click();
+          }
+        });
+      });
     }
   }
 
@@ -594,12 +679,12 @@ class ExhibitionFeatureLightbox {
 
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => new ExhibitionFeatureLightbox());
+  document.addEventListener('DOMContentLoaded', () => new UnifiedGalleryLightbox());
 } else {
-  new ExhibitionFeatureLightbox();
+  new UnifiedGalleryLightbox();
 }
 
 // Export for module systems
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = ExhibitionFeatureLightbox;
+  module.exports = UnifiedGalleryLightbox;
 }

@@ -1,0 +1,33 @@
+<!-- Unified Gallery Lightbox Modal -->
+<!-- Shared component for both exhibitions index and individual exhibition pages -->
+<div id="exhibition-lightbox" 
+     class="exhibition-lightbox" 
+     role="dialog" 
+     aria-modal="true" 
+     aria-hidden="true">
+  
+  <div class="exhibition-lightbox__backdrop"></div>
+  
+  <div class="exhibition-lightbox__content">
+    <div class="exhibition-lightbox__media-container">
+      <!-- Dynamic content inserted here by JavaScript -->
+    </div>
+    
+    <div class="exhibition-lightbox__controls">
+      <div class="exhibition-lightbox__controls-header">
+        <div class="exhibition-lightbox__header-top">
+          <h2 class="exhibition-lightbox__title"></h2>
+          <button class="exhibition-lightbox__close" aria-label="Close lightbox">×</button>
+        </div>
+        <!-- Artwork metadata will be inserted here by JavaScript -->
+      </div>
+      <div class="exhibition-lightbox__navigation">
+        <button class="exhibition-lightbox__nav exhibition-lightbox__prev" aria-label="Previous image">‹</button>
+        <div class="exhibition-lightbox__counter">
+          <span class="exhibition-lightbox__current">1</span> / <span class="exhibition-lightbox__total">1</span>
+        </div>
+        <button class="exhibition-lightbox__nav exhibition-lightbox__next" aria-label="Next image">›</button>
+      </div>
+    </div>
+  </div>
+</div>

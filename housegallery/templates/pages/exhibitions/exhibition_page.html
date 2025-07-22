@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags wagtailembeds_tags %}
+{% load wagtailcore_tags wagtailimages_tags wagtailembeds_tags exhibition_tags %}
 
 {% block body_class %}exhibition-page{% endblock %}
 
@@ -80,41 +80,31 @@
 
     <!-- Featured Artworks Section -->
     {% if page.exhibition_artworks.all %}
+    {% with gallery_mapping=page.get_gallery_index_mapping %}
     <section class="exhibition-artworks-section">
         <div class="exhibition-section-header">
             <h2 class="exhibition-section-title">Artworks</h2>
         </div>
         <div class="exhibition-artworks-grid">
             {% for exhibition_artwork in page.exhibition_artworks.all %}
-                <article class="exhibition-artwork-card">
-                    {% if exhibition_artwork.artwork.featured_image %}
-                        {% image exhibition_artwork.artwork.featured_image width-500 height-400 as artwork_img %}
-                        <div class="exhibition-artwork-image">
-                            <img src="{{ artwork_img.url }}" alt="{{ exhibition_artwork.artwork.title|striptags }}"
-                                 width="{{ artwork_img.width }}" height="{{ artwork_img.height }}"
-                                 loading="lazy" class="exhibition-artwork-img">
-                        </div>
-                    {% endif %}
+                <article class="exhibition-artwork-card"
+                         {% if exhibition_artwork.artwork.artwork_images.all %}
+                         data-artwork-id="{{ exhibition_artwork.artwork.id }}"
+                         data-quickview-index="{{ gallery_mapping.artwork_first_indices|dict_get:exhibition_artwork.artwork.title|default:0 }}"
+                         style="cursor: pointer;"
+                         {% endif %}>
                     <div class="exhibition-artwork-content">
                         <h3 class="exhibition-artwork-title">{{ exhibition_artwork.artwork.title|striptags }}</h3>
-                        {% if exhibition_artwork.artwork.artist %}
-                            <p class="exhibition-artwork-artist">{{ exhibition_artwork.artwork.artist.name }}</p>
-                        {% endif %}
-                        {% if exhibition_artwork.artwork.medium %}
-                            <p class="exhibition-artwork-medium">{{ exhibition_artwork.artwork.medium }}</p>
-                        {% endif %}
-                        {% if exhibition_artwork.artwork.year %}
-                            <p class="exhibition-artwork-year">{{ exhibition_artwork.artwork.year }}</p>
-                        {% endif %}
                     </div>
                 </article>
             {% endfor %}
         </div>
     </section>
+    {% endwith %}
     {% endif %}
 
-    <!-- Exhibition Gallery Section -->
-    {% with exhibition_images=page.get_exhibition_images opening_images=page.get_opening_images in_progress_images=page.get_in_progress_images %}
+    <!-- Exhibition Gallery Section - Now Clickable -->
+    {% with exhibition_images=page.get_exhibition_images opening_images=page.get_opening_images in_progress_images=page.get_in_progress_images gallery_mapping=page.get_gallery_index_mapping %}
         {% if exhibition_images %}
         <section class="exhibition-gallery-section">
             <div class="exhibition-section-header">
@@ -123,15 +113,28 @@
             <div class="exhibition-images">
                 {% for gallery_image in exhibition_images %}
                     {% image gallery_image.image width-800 as gallery_img %}
-                    <img src="{{ gallery_img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
-                         width="{{ gallery_img.width }}" height="{{ gallery_img.height }}"
-                         loading="lazy" decoding="async">
+                    {% image gallery_image.image width-400 as thumb_img %}
+                    <button class="gallery-lightbox-item"
+                            data-media-type="image"
+                            data-media-src="{{ gallery_img.url }}"
+                            data-thumbnail-src="{{ thumb_img.url }}"
+                            data-image-type="exhibition"
+                            data-caption="{{ gallery_image.image.title|default:page.title }}"
+                            data-exhibition-title="{{ page.title }}"
+                            data-exhibition-date="{{ page.get_formatted_date_short }}"
+                            data-image-credit="{{ gallery_image.image.credit|default:'' }}"
+                            data-quickview-index="{{ gallery_mapping.installation_indices|dict_get:forloop.counter0|default:0 }}"
+                            aria-label="View {{ gallery_image.image.title|default:page.title }} in lightbox">
+                        <img src="{{ thumb_img.url }}" alt="{{ gallery_image.image.title|default:page.title }}"
+                             width="{{ thumb_img.width }}" height="{{ thumb_img.height }}"
+                             loading="lazy" decoding="async" class="gallery-single-image">
+                    </button>
                 {% endfor %}
             </div>
         </section>
         {% endif %}
 
-        <!-- Opening Gallery Section -->
+        <!-- Opening Gallery Section - Now Clickable -->
         {% if opening_images %}
         <section class="opening-gallery-section">
             <div class="exhibition-section-header">
@@ -140,15 +143,28 @@
             <div class="exhibition-images">
                 {% for gallery_image in opening_images %}
                     {% image gallery_image.image width-800 as opening_img %}
-                    <img src="{{ opening_img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
-                         width="{{ opening_img.width }}" height="{{ opening_img.height }}"
-                         loading="lazy" decoding="async">
+                    {% image gallery_image.image width-400 as thumb_img %}
+                    <button class="gallery-lightbox-item"
+                            data-media-type="image"
+                            data-media-src="{{ opening_img.url }}"
+                            data-thumbnail-src="{{ thumb_img.url }}"
+                            data-image-type="opening"
+                            data-caption="{{ gallery_image.image.title|default:page.title }}"
+                            data-exhibition-title="{{ page.title }}"
+                            data-exhibition-date="{{ page.get_formatted_date_short }}"
+                            data-image-credit="{{ gallery_image.image.credit|default:'' }}"
+                            data-quickview-index="{{ gallery_mapping.opening_indices|dict_get:forloop.counter0|default:0 }}"
+                            aria-label="View {{ gallery_image.image.title|default:page.title }} in lightbox">
+                        <img src="{{ thumb_img.url }}" alt="{{ gallery_image.image.title|default:page.title }}"
+                             width="{{ thumb_img.width }}" height="{{ thumb_img.height }}"
+                             loading="lazy" decoding="async" class="gallery-single-image">
+                    </button>
                 {% endfor %}
             </div>
         </section>
         {% endif %}
 
-        <!-- In Progress Gallery Section -->
+        <!-- In Progress Gallery Section - Now Clickable -->
         {% if in_progress_images %}
         <section class="in-progress-gallery-section">
             <div class="exhibition-section-header">
@@ -157,13 +173,68 @@
             <div class="exhibition-images">
                 {% for gallery_image in in_progress_images %}
                     {% image gallery_image.image width-800 as in_progress_img %}
-                    <img src="{{ in_progress_img.url }}" alt="{{ gallery_image.caption|default:page.title }}"
-                         width="{{ in_progress_img.width }}" height="{{ in_progress_img.height }}"
-                         loading="lazy" decoding="async">
+                    {% image gallery_image.image width-400 as thumb_img %}
+                    <button class="gallery-lightbox-item"
+                            data-media-type="image"
+                            data-media-src="{{ in_progress_img.url }}"
+                            data-thumbnail-src="{{ thumb_img.url }}"
+                            data-image-type="in_progress"
+                            data-caption="{{ gallery_image.image.title|default:page.title }}"
+                            data-exhibition-title="{{ page.title }}"
+                            data-exhibition-date="{{ page.get_formatted_date_short }}"
+                            data-image-credit="{{ gallery_image.image.credit|default:'' }}"
+                            data-quickview-index="{{ gallery_mapping.in_progress_indices|dict_get:forloop.counter0|default:0 }}"
+                            aria-label="View {{ gallery_image.image.title|default:page.title }} in lightbox">
+                        <img src="{{ thumb_img.url }}" alt="{{ gallery_image.image.title|default:page.title }}"
+                             width="{{ thumb_img.width }}" height="{{ thumb_img.height }}"
+                             loading="lazy" decoding="async" class="gallery-single-image">
+                    </button>
                 {% endfor %}
             </div>
         </section>
         {% endif %}
     {% endwith %}
+
+    <!-- Unified Gallery Container - Hidden container with all images for lightbox navigation -->
+    {% with unified_images=page.get_unified_gallery_images %}
+        {% if unified_images %}
+        <div class="exhibition-page-gallery unified-gallery-container" 
+             data-gallery-id="{{ page.title|slugify }}" 
+             style="display: none;">
+            {% for image_data in unified_images %}
+                {% image image_data.image width-400 as thumb_img %}
+                {% image image_data.image width-1200 as full_img %}
+                <button class="gallery-lightbox-item" 
+                        data-media-type="image"
+                        data-media-src="{{ full_img.url }}"
+                        data-thumbnail-src="{{ thumb_img.url }}"
+                        data-caption="{{ image_data.image.title|default:page.title }}"
+                        data-index="{{ forloop.counter0 }}"
+                        data-image-type="{{ image_data.type }}"
+                        data-exhibition-title="{{ image_data.exhibition_title }}"
+                        data-exhibition-date="{{ image_data.exhibition_date }}"
+                        data-image-credit="{{ image_data.credit|default:'' }}"
+                        {% if image_data.related_artwork %}
+                        data-artwork-title="{{ image_data.related_artwork.title }}"
+                        data-artwork-artist="{{ image_data.related_artwork.artist_names|default:'' }}"
+                        data-artwork-date="{{ image_data.related_artwork.date|default:'' }}"
+                        data-artwork-materials="{{ image_data.artwork_materials|default:'' }}"
+                        data-artwork-size="{{ image_data.related_artwork.size|default:'' }}"
+                        {% endif %}
+                        aria-label="View {{ image_data.image.title|default:page.title }} in lightbox">
+                    <img src="{{ thumb_img.url }}" 
+                         alt="{{ image_data.image.title|default:page.title }}" 
+                         loading="lazy" 
+                         class="gallery-single-image" 
+                         data-type="{{ image_data.type }}">
+                </button>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
 </div>
+
+<!-- Include shared lightbox modal component -->
+{% include "components/exhibitions/lightbox_modal.html" %}
+
 {% endblock %}

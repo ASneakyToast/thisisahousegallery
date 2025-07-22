@@ -2,7 +2,6 @@ import datetime
 import random
 
 from django.core.paginator import EmptyPage
-from django.utils.html import strip_tags
 from django.core.paginator import PageNotAnInteger
 from django.core.paginator import Paginator
 from django.db import models
@@ -135,7 +134,7 @@ class ExhibitionsIndexPage(Page, ListingFields):
                     .prefetch_related(
                         "artwork__artwork_images__image",
                         "artwork__artwork_images__image__renditions",
-                        "artwork__artists"
+                        "artwork__artists",
                     ),
             ),
 
@@ -324,7 +323,7 @@ class ShowcardPhoto(Orderable):
     class Meta:
         verbose_name = "Showcard Photo"
         verbose_name_plural = "Showcard Photos"
-        ordering = ['sort_order']
+        ordering = ["sort_order"]
 
 
 class InProgressPhoto(Orderable):
@@ -682,15 +681,15 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         def process_artwork(exhibition_artwork):
             """Process a single artwork's first gallery image as a regular gallery item"""
             artwork = exhibition_artwork.artwork
-            
+
             # Get first image from artwork_images relationship (Gallery Images > Images)
             first_artwork_image = artwork.artwork_images.first()
             if not first_artwork_image:
                 # No gallery image available - skip this artwork
                 return None
-                
+
             primary_image = first_artwork_image.image
-            
+
             try:
                 thumb_rendition = primary_image.get_rendition("width-400")
                 full_rendition = primary_image.get_rendition("width-1200")
@@ -746,17 +745,17 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
         # Collect installation photos and artworks for random mixing
         middle_items = []
-        
+
         # Add all installation photos
         for gallery_image in self.installation_photos.all():
             middle_items.append(process_image(gallery_image, "exhibition"))
-        
+
         # Add all artworks that have images
         for exhibition_artwork in self.exhibition_artworks.all():
             artwork_data = process_artwork(exhibition_artwork)
             if artwork_data:  # Only add if artwork has an image
                 middle_items.append(artwork_data)
-        
+
         # Randomly shuffle the middle items (installation photos + artworks)
         random.shuffle(middle_items)
         images.extend(middle_items)
@@ -802,6 +801,165 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         if gallery_images:
             return gallery_images[0]
         return None
+
+    def get_unified_gallery_images(self):
+        """
+        Get all images from all sections combined into one unified gallery structure
+        for the exhibition page quickview functionality.
+        
+        Returns images in order:
+        1. Installation photos
+        2. All artwork images (grouped by artwork)  
+        3. Opening reception photos
+        4. In progress shots
+        """
+        from django.core.cache import cache
+
+        # Simple cache key based on exhibition ID and last published date
+        timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
+        cache_key = f"exhibition_unified_images_{self.pk}_{timestamp}"
+        cached_images = cache.get(cache_key)
+
+        if cached_images is not None:
+            return cached_images
+
+        images = []
+
+        # Helper function to process any image type (reused from existing methods)
+        def process_image(gallery_image, image_type, artwork_data=None):
+            """Process a single image with standard renditions and metadata"""
+            # Generate standard rendition URLs
+            try:
+                thumb_rendition = gallery_image.image.get_rendition("width-400")
+                full_rendition = gallery_image.image.get_rendition("width-1200")
+                thumb_url = thumb_rendition.url
+                full_url = full_rendition.url
+
+                # Generate WebP versions
+                try:
+                    thumb_webp = gallery_image.image.get_rendition("width-400|format-webp")
+                    full_webp = gallery_image.image.get_rendition("width-1200|format-webp")
+                    thumb_webp_url = thumb_webp.url
+                    full_webp_url = full_webp.url
+                except Exception:
+                    thumb_webp_url = thumb_url
+                    full_webp_url = full_url
+            except Exception:
+                # Fallback to original image
+                thumb_url = gallery_image.image.file.url
+                full_url = gallery_image.image.file.url
+                thumb_webp_url = thumb_url
+                full_webp_url = full_url
+
+            # Base image data structure
+            image_data = {
+                "image": gallery_image.image,
+                "credit": gallery_image.image.credit,
+                "type": image_type,
+                "thumb_url": thumb_url,
+                "full_url": full_url,
+                "thumb_webp_url": thumb_webp_url,
+                "full_webp_url": full_webp_url,
+                "exhibition_title": self.title,
+                "exhibition_date": self.get_formatted_date_short(),
+            }
+
+            # Add artwork metadata if provided
+            if artwork_data:
+                image_data.update({
+                    "related_artwork": artwork_data,
+                    "artwork_materials": artwork_data.get("materials_str"),
+                })
+
+            return image_data
+
+        # 1. Installation photos (exhibition images)
+        for gallery_image in self.installation_photos.all():
+            images.append(process_image(gallery_image, "exhibition"))
+
+        # 2. All artwork images (grouped by artwork, all images per artwork)
+        for exhibition_artwork in self.exhibition_artworks.all():
+            artwork = exhibition_artwork.artwork
+
+            # Get all artwork images, not just featured image
+            artwork_images = artwork.artwork_images.all()
+
+            if artwork_images.exists():
+                # Format materials as string
+                materials_str = ", ".join(tag.name for tag in artwork.materials.all()) if artwork.materials.all() else None
+
+                # Create artwork metadata
+                artwork_data = {
+                    "title": artwork.title,  # Use artwork.title directly to match template
+                    "artist_names": artwork.artist_names if artwork.artist_names else None,
+                    "date": artwork.date,
+                    "size": artwork.size,
+                    "materials_str": materials_str,
+                }
+
+                # Add all artwork images with artwork metadata
+                for artwork_image in artwork_images:
+                    images.append(process_image(artwork_image, "artwork", artwork_data))
+
+        # 3. Opening reception photos
+        for gallery_image in self.opening_reception_photos.all():
+            images.append(process_image(gallery_image, "opening"))
+
+        # 4. In progress photos
+        for gallery_image in self.in_progress_photos.all():
+            images.append(process_image(gallery_image, "in_progress"))
+
+        # Cache the processed images for 1 hour
+        cache.set(cache_key, images, 3600)
+
+        return images
+
+    def get_gallery_index_mapping(self):
+        """
+        Get mapping data for determining quickview indices for visible gallery items.
+        Returns a dictionary with section indices and artwork first image indices.
+        """
+        unified_images = self.get_unified_gallery_images()
+        mapping = {
+            'installation_indices': {},
+            'opening_indices': {},
+            'in_progress_indices': {},
+            'artwork_first_indices': {},
+            'total_count': len(unified_images)
+        }
+        
+        # Track indices for each section
+        installation_counter = 0
+        opening_counter = 0
+        in_progress_counter = 0
+        current_artwork_title = None
+        
+        for index, image_data in enumerate(unified_images):
+            image_type = image_data.get('type')
+            
+            if image_type == 'exhibition':
+                mapping['installation_indices'][installation_counter] = index
+                installation_counter += 1
+                
+            elif image_type == 'opening':
+                mapping['opening_indices'][opening_counter] = index
+                opening_counter += 1
+                
+            elif image_type == 'in_progress':
+                mapping['in_progress_indices'][in_progress_counter] = index
+                in_progress_counter += 1
+                
+            elif image_type == 'artwork':
+                # Track first image index for each artwork
+                # Use the same title source as the template for consistency
+                related_artwork = image_data.get('related_artwork', {})
+                if related_artwork:
+                    artwork_title = related_artwork.get('title')
+                    if artwork_title and artwork_title != current_artwork_title:
+                        mapping['artwork_first_indices'][artwork_title] = index
+                        current_artwork_title = artwork_title
+        
+        return mapping
 
 
 
@@ -1106,36 +1264,36 @@ class EventPage(Page, ListingFields, ClusterableModel):
         """Get showcard images from related exhibition if available"""
         if not self.related_exhibition:
             return {
-                'first': None,
-                'last': None,
-                'all': None,
-                'count': 0
+                "first": None,
+                "last": None,
+                "all": None,
+                "count": 0,
             }
-        
+
         showcards = self.related_exhibition.showcard_photos.all()
         if not showcards.exists():
             return {
-                'first': None,
-                'last': None,
-                'all': None,
-                'count': 0
+                "first": None,
+                "last": None,
+                "all": None,
+                "count": 0,
             }
-        
+
         count = showcards.count()
         first_image = showcards.first().image if showcards.exists() else None
-        
+
         # Only return last if it's different from first
         if count > 1:
             last_showcard = showcards.last()
             last_image = last_showcard.image if last_showcard != showcards.first() else None
         else:
             last_image = None
-        
+
         return {
-            'first': first_image,
-            'last': last_image,
-            'all': showcards,
-            'count': count
+            "first": first_image,
+            "last": last_image,
+            "all": showcards,
+            "count": count,
         }
 
 

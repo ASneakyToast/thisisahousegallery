@@ -342,6 +342,26 @@
   transform: scale(1.05);
 }
 
+/* Exhibition page specific styles */
+.exhibition-images .gallery-lightbox-item {
+  display: inline-block;
+  margin-bottom: var(--size-layout-item-gap, 15px);
+  margin-right: var(--size-layout-item-gap, 15px);
+  width: auto;
+  max-width: 300px;
+}
+
+.exhibition-images .gallery-lightbox-item:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px var(--color-black);
+}
+
+/* Add hover effect for clickable artwork cards */
+.exhibition-artwork-card[data-artwork-id]:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px var(--color-black);
+}
+
 /* Loading state */
 .exhibition-lightbox__media-container.loading {
   position: relative;
