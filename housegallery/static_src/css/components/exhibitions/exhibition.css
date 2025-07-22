@@ -38,8 +38,26 @@
   justify-content: center;
 }
 
-.exhibition-hero__image {
+.exhibition-hero__image,
+.exhibition-hero__images {
   order: 2;
+}
+
+/* Dual image layout for showcards */
+.exhibition-hero__images--single {
+  /* Single image uses full width */
+}
+
+.exhibition-hero__images--dual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--size-layout-item-gap);
+}
+
+.exhibition-hero__image--primary,
+.exhibition-hero__image--secondary {
+  position: relative;
+  overflow: hidden;
 }
 
 .exhibition-hero__meta {
@@ -308,8 +326,14 @@
     order: 2;
   }
   
-  .exhibition-hero__image {
+  .exhibition-hero__image,
+  .exhibition-hero__images {
     order: 1;
+  }
+  
+  .exhibition-hero__images--dual {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--size-layout-item-gap);
   }
   
   .exhibition-title-hero {

@@ -33,19 +33,45 @@
             {% endif %}
         </div>
         
-        {% if page.get_first_showcard_image %}
-        <div class="exhibition-hero__image">
-            {% image page.get_first_showcard_image width-800 height-600 as hero_img %}
-            <img src="{{ hero_img.url }}" alt="{{ page.title }}" class="exhibition-hero-img">
-        </div>
-        {% elif page.get_first_gallery_image %}
-        <div class="exhibition-hero__image">
-            {% with page.get_first_gallery_image as first_gallery %}
-            {% image first_gallery.image width-800 height-600 as hero_img %}
-            <img src="{{ hero_img.url }}" alt="{{ page.title }}" class="exhibition-hero-img">
-            {% endwith %}
-        </div>
-        {% endif %}
+        {% with page.get_hero_showcard_data as showcard_data %}
+            {% if showcard_data.has_showcards and showcard_data.front_image and showcard_data.back_image %}
+                <!-- Both front and back showcards -->
+                <div class="exhibition-hero__images exhibition-hero__images--dual">
+                    <div class="exhibition-hero__image exhibition-hero__image--primary">
+                        {% image showcard_data.front_image width-400 as front_img %}
+                        <img src="{{ front_img.url }}" alt="The promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery." 
+                             width="{{ front_img.width }}" height="{{ front_img.height }}"
+                             loading="lazy" decoding="async" class="exhibition-hero-img exhibition-hero-img--showcard">
+                    </div>
+                    <div class="exhibition-hero__image exhibition-hero__image--secondary">
+                        {% image showcard_data.back_image width-400 as back_img %}
+                        <img src="{{ back_img.url }}" alt="The back side of the promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery." 
+                             width="{{ back_img.width }}" height="{{ back_img.height }}"
+                             loading="lazy" decoding="async" class="exhibition-hero-img exhibition-hero-img--showcard">
+                    </div>
+                </div>
+            {% elif showcard_data.has_showcards and showcard_data.front_image %}
+                <!-- Just front showcard -->
+                <div class="exhibition-hero__images exhibition-hero__images--single">
+                    <div class="exhibition-hero__image">
+                        {% image showcard_data.front_image width-800 as front_img %}
+                        <img src="{{ front_img.url }}" alt="The promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery." 
+                             width="{{ front_img.width }}" height="{{ front_img.height }}"
+                             loading="lazy" decoding="async" class="exhibition-hero-img exhibition-hero-img--showcard">
+                    </div>
+                </div>
+            {% elif page.get_first_gallery_image %}
+                <!-- Fallback to gallery image -->
+                <div class="exhibition-hero__images exhibition-hero__images--single">
+                    <div class="exhibition-hero__image">
+                        {% with page.get_first_gallery_image as first_gallery %}
+                        {% image first_gallery.image width-800 height-600 as hero_img %}
+                        <img src="{{ hero_img.url }}" alt="{{ page.title }}" class="exhibition-hero-img">
+                        {% endwith %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
     </header>
 
     <!-- Exhibition Description -->
