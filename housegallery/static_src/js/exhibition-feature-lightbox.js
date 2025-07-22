@@ -183,7 +183,9 @@ class ExhibitionFeatureLightbox {
   getArtworkData(item) {
     const imageType = item.dataset.imageType;
     const hasArtworkData = !!(item.dataset.artworkTitle);
-    const imageCredit = item.dataset.imageCredit || null;
+    const imageCredit = item.dataset.imageCredit || item.dataset.credit || null;
+    const imageCaption = item.dataset.caption || null;
+    
     
     // Priority 1: If we have artwork data, always show it regardless of image type
     if (hasArtworkData) {
@@ -196,6 +198,7 @@ class ExhibitionFeatureLightbox {
         materials: item.dataset.artworkMaterials || null,
         size: item.dataset.artworkSize || null,
         credit: imageCredit,
+        caption: imageCaption,
         hasArtwork: true
       };
     }
@@ -208,6 +211,7 @@ class ExhibitionFeatureLightbox {
         exhibitionTitle: item.dataset.exhibitionTitle || null,
         exhibitionDate: item.dataset.exhibitionDate || null,
         credit: imageCredit,
+        caption: imageCaption,
         hasArtwork: false
       };
     }
@@ -220,6 +224,21 @@ class ExhibitionFeatureLightbox {
         exhibitionTitle: item.dataset.exhibitionTitle || null,
         exhibitionDate: item.dataset.exhibitionDate || null,
         credit: imageCredit,
+        caption: imageCaption,
+        hasArtwork: false
+      };
+    }
+    
+    // Priority 4: Showcard photos
+    if (imageType === 'showcard' || imageType === 'showcards') {
+      return {
+        isExhibitionPhoto: false,
+        isOpeningPhoto: false,
+        isShowcard: true,
+        exhibitionTitle: item.dataset.exhibitionTitle || null,
+        exhibitionDate: item.dataset.exhibitionDate || null,
+        credit: imageCredit,
+        caption: imageCaption,
         hasArtwork: false
       };
     }
@@ -229,6 +248,7 @@ class ExhibitionFeatureLightbox {
       isExhibitionPhoto: false,
       isOpeningPhoto: false,
       credit: imageCredit,
+      caption: imageCaption,
       hasArtwork: false
     };
   }
@@ -387,6 +407,23 @@ class ExhibitionFeatureLightbox {
       contextElement.textContent = contextParts.join(', ');
       metadataContainer.appendChild(contextElement);
       
+    } else if (artworkData && artworkData.isShowcard) {
+      // Display showcard context
+      const contextParts = [];
+      if (artworkData.exhibitionTitle) contextParts.push(artworkData.exhibitionTitle);
+      if (artworkData.exhibitionDate) contextParts.push(artworkData.exhibitionDate);
+      // Use caption as the descriptive element (like "Showcard Front") instead of generic "Exhibition Showcard"
+      if (artworkData.caption) {
+        contextParts.push(artworkData.caption);
+      } else {
+        contextParts.push('Exhibition Showcard');
+      }
+      
+      const contextElement = document.createElement('div');
+      contextElement.className = 'exhibition-lightbox__exhibition-context';
+      contextElement.textContent = contextParts.join(', ');
+      metadataContainer.appendChild(contextElement);
+      
     } else if (artworkData && artworkData.isOpeningPhoto) {
       // Display exhibition context for opening photos
       const contextParts = [];
@@ -429,6 +466,14 @@ class ExhibitionFeatureLightbox {
         detailsElement.textContent = details.join(' • ');
         metadataContainer.appendChild(detailsElement);
       }
+    }
+    
+    // Add image caption if available (for non-showcard image types, since showcards include caption in context)
+    if (artworkData && artworkData.caption && !artworkData.isShowcard) {
+      const captionElement = document.createElement('div');
+      captionElement.className = 'exhibition-lightbox__image-caption';
+      captionElement.textContent = artworkData.caption;
+      metadataContainer.appendChild(captionElement);
     }
     
     // Add image credit if available (for all image types)

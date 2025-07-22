@@ -246,6 +246,25 @@
   margin-bottom: var(--size-layout-item-gap);
 }
 
+.showcard-modal-trigger {
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.showcard-modal-trigger:hover {
+  transform: scale(1.02);
+  opacity: 0.95;
+}
+
+.showcard-modal-trigger:focus {
+  outline: 2px solid rgba(0, 0, 0, 0.8);
+  outline-offset: 2px;
+}
+
+.showcard-modal-trigger:active {
+  transform: scale(0.98);
+}
+
 .caption {
   font-size: var(--font-size-detail);
   margin-top: 5px;

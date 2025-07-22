@@ -2,6 +2,7 @@ import datetime
 import random
 
 from django.core.paginator import EmptyPage
+from django.utils.html import strip_tags
 from django.core.paginator import PageNotAnInteger
 from django.core.paginator import Paginator
 from django.db import models
@@ -141,7 +142,15 @@ class ExhibitionsIndexPage(Page, ListingFields):
         return ExhibitionPage.objects.live().public().descendant_of(self).prefetch_related(
             # Core exhibition relationships (basic only)
             "exhibition_artists__artist",
-            "exhibition_artworks__artwork",
+            Prefetch("exhibition_artworks",
+                queryset=ExhibitionArtwork.objects
+                    .select_related("artwork")
+                    .prefetch_related(
+                        "artwork__artwork_images__image",
+                        "artwork__artwork_images__image__renditions",
+                        "artwork__artists"
+                    ),
+            ),
 
             # Photo prefetches (simplified - no artwork relationships)
             Prefetch("installation_photos",
@@ -627,7 +636,7 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         """
         Get filtered gallery images for exhibitions index page with:
         - First showcard as first item
-        - All installation photos in middle  
+        - Randomly mixed installation photos and artworks in middle  
         - Remaining showcards as last items
         - Excludes opening reception photos and in-progress photos
         """
@@ -682,6 +691,64 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
             return image_data
 
+        # Helper function to process artworks
+        def process_artwork(exhibition_artwork):
+            """Process a single artwork's first gallery image as a regular gallery item"""
+            artwork = exhibition_artwork.artwork
+            
+            # Get first image from artwork_images relationship (Gallery Images > Images)
+            first_artwork_image = artwork.artwork_images.first()
+            if not first_artwork_image:
+                # No gallery image available - skip this artwork
+                return None
+                
+            primary_image = first_artwork_image.image
+            
+            try:
+                thumb_rendition = primary_image.get_rendition("width-400")
+                full_rendition = primary_image.get_rendition("width-1200")
+                thumb_url = thumb_rendition.url
+                full_url = full_rendition.url
+
+                # Generate WebP versions
+                try:
+                    thumb_webp = primary_image.get_rendition("width-400|format-webp")
+                    full_webp = primary_image.get_rendition("width-1200|format-webp")
+                    thumb_webp_url = thumb_webp.url
+                    full_webp_url = full_webp.url
+                except Exception:
+                    thumb_webp_url = thumb_url
+                    full_webp_url = full_url
+            except Exception:
+                thumb_url = primary_image.file.url
+                full_url = primary_image.file.url
+                thumb_webp_url = thumb_url
+                full_webp_url = full_url
+
+            # Format materials as string
+            materials_str = ", ".join(tag.name for tag in artwork.materials.all()) if artwork.materials.all() else None
+
+            # Create artwork image data (similar to regular image structure)
+            artwork_image_data = {
+                "image": primary_image,
+                "credit": primary_image.credit,
+                "type": "artwork",
+                "thumb_url": thumb_url,
+                "full_url": full_url,
+                "thumb_webp_url": thumb_webp_url,
+                "full_webp_url": full_webp_url,
+                # Include artwork metadata for modal display
+                "related_artwork": {
+                    "title": str(artwork) if artwork.title else None,
+                    "artist_names": artwork.artist_names if artwork.artist_names else None,
+                    "date": artwork.date,
+                    "size": artwork.size,
+                },
+                "artwork_materials": materials_str,
+            }
+
+            return artwork_image_data
+
         # Get showcard photos
         showcard_photos = list(self.showcard_photos.all())
 
@@ -690,9 +757,22 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             first_showcard = showcard_photos[0]
             images.append(process_image(first_showcard, "showcards"))
 
+        # Collect installation photos and artworks for random mixing
+        middle_items = []
+        
         # Add all installation photos
         for gallery_image in self.installation_photos.all():
-            images.append(process_image(gallery_image, "exhibition"))
+            middle_items.append(process_image(gallery_image, "exhibition"))
+        
+        # Add all artworks that have images
+        for exhibition_artwork in self.exhibition_artworks.all():
+            artwork_data = process_artwork(exhibition_artwork)
+            if artwork_data:  # Only add if artwork has an image
+                middle_items.append(artwork_data)
+        
+        # Randomly shuffle the middle items (installation photos + artworks)
+        random.shuffle(middle_items)
+        images.extend(middle_items)
 
         # Add remaining showcards (excluding the first one)
         for showcard in showcard_photos[1:]:

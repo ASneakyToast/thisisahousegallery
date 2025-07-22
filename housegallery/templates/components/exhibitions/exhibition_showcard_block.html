@@ -1,18 +1,40 @@
 {% load wagtailimages_tags %}
 
 <div class="exhibition-showcard">
-    <div class="showcard-image">
-        {% image value.front_image width-1440 as img %}
+    <div class="showcard-image gallery-lightbox-item showcard-modal-trigger"
+         data-media-type="image"
+         data-media-src="{% image value.front_image width-1440 as img %}{{ img.url }}"
+         data-thumbnail-src="{% image value.front_image width-800 as thumb_img %}{{ thumb_img.url }}"
+         data-caption="{{ value.front_image.title|default:page.title }}"
+         data-index="0"
+         data-image-type="showcard"
+         data-exhibition-title="{{ page.title }}"
+         data-exhibition-date="{{ page.specific.date_string }}"
+         {% if value.front_image.credit %}data-credit="{{ value.front_image.credit }}"{% endif %}
+         tabindex="0"
+         role="button"
+         aria-label="Open showcard in modal">
         <img src="{{ img.url }}" alt="The promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery." 
              width="{{ img.width }}" height="{{ img.height }}"
              loading="lazy" decoding="async">
     </div>
     
     {% if value.back_image %}
-    <div class="showcard-image">
-        {% image value.back_image width-1440 as img %}
-        <img src="{{ img.url }}" alt="The back side of the promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery." 
-             width="{{ img.width }}" height="{{ img.height }}"
+    <div class="showcard-image gallery-lightbox-item showcard-modal-trigger"
+         data-media-type="image"
+         data-media-src="{% image value.back_image width-1440 as back_img %}{{ back_img.url }}"
+         data-thumbnail-src="{% image value.back_image width-800 as back_thumb_img %}{{ back_thumb_img.url }}"
+         data-caption="{{ value.back_image.title|default:page.title }} (Back)"
+         data-index="1"
+         data-image-type="showcard"
+         data-exhibition-title="{{ page.title }}"
+         data-exhibition-date="{{ page.specific.date_string }}"
+         {% if value.back_image.credit %}data-credit="{{ value.back_image.credit }}"{% endif %}
+         tabindex="0"
+         role="button"
+         aria-label="Open showcard back in modal">
+        <img src="{{ back_img.url }}" alt="The back side of the promotional showcard for the exhibition '{{ page.title }}' by This is a House Gallery." 
+             width="{{ back_img.width }}" height="{{ back_img.height }}"
              loading="lazy" decoding="async">
     </div>
     {% endif %}

@@ -243,6 +243,15 @@
   font-family: var(--font-family-heading, 'Montserrat', sans-serif);
 }
 
+.exhibition-lightbox__image-caption {
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 500;
+  margin-top: 8px;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
 .exhibition-lightbox__image-credit {
   font-size: 0.85rem;
   color: rgba(0, 0, 0, 0.6);
