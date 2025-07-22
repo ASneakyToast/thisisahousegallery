@@ -66,19 +66,6 @@ EVENT_TYPE_CHOICES = [
     ("other", "Other"),
 ]
 
-# Artist role choices for EventArtist relationship
-ARTIST_ROLE_CHOICES = [
-    ("organizer", "Event Organizer"),
-    ("performer", "Performer"),
-    ("speaker", "Speaker"),
-    ("teacher", "Workshop Teacher"),
-    ("participant", "Participant"),
-    ("featured", "Featured Artist"),
-    ("curator", "Curator"),
-    ("host", "Host"),
-    ("moderator", "Moderator"),
-    ("other", "Other"),
-]
 
 
 
@@ -820,8 +807,8 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
 class EventArtist(Orderable):
     """
-    Through model linking Events to Artists with roles.
-    Allows multiple artists per event with different responsibilities.
+    Through model linking Events to Artists.
+    Simplified relationship without roles or featured flags.
     """
     event = ParentalKey(
         "EventPage",
@@ -833,35 +820,18 @@ class EventArtist(Orderable):
         on_delete=models.CASCADE,
         help_text="Select artist from existing list",
     )
-    role = models.CharField(
-        max_length=50,
-        choices=ARTIST_ROLE_CHOICES,
-        default="participant",
-        help_text="Artist's role in this event",
-    )
-    bio_override = models.TextField(
-        blank=True,
-        help_text="Custom bio for this event (optional, uses artist bio if blank)",
-    )
-    is_featured = models.BooleanField(
-        default=False,
-        help_text="Feature this artist prominently for this event",
-    )
 
     panels = [
         ArtistChooserPanel("artist"),
-        FieldPanel("role"),
-        FieldPanel("bio_override"),
-        FieldPanel("is_featured"),
     ]
 
     class Meta:
-        unique_together = ["event", "artist", "role"]
+        unique_together = ["event", "artist"]
         verbose_name = "Event Artist"
         verbose_name_plural = "Event Artists"
 
     def __str__(self):
-        return f"{self.artist.name} - {self.get_role_display()}"
+        return f"{self.artist.name}"
 
 
 class EventPage(Page, ListingFields, ClusterableModel):
@@ -1125,22 +1095,48 @@ class EventPage(Page, ListingFields, ClusterableModel):
         return []
 
     def get_featured_artists(self):
-        """Returns artists marked as featured for this event"""
-        return self.event_artists.filter(is_featured=True).select_related("artist")
-
-    def get_organizers(self):
-        """Returns event organizers"""
-        return self.event_artists.filter(role="organizer").select_related("artist")
-
-    def get_performers(self):
-        """Returns performers/speakers"""
-        return self.event_artists.filter(
-            role__in=["performer", "speaker", "teacher"],
-        ).select_related("artist")
+        """Returns all artists associated with this event (simplified)"""
+        return self.event_artists.all().select_related("artist")
 
     def get_all_related_artists(self):
         """Returns all artists associated with this event"""
         return self.event_artists.all().select_related("artist").order_by("sort_order")
+
+    def get_related_showcard_images(self):
+        """Get showcard images from related exhibition if available"""
+        if not self.related_exhibition:
+            return {
+                'first': None,
+                'last': None,
+                'all': None,
+                'count': 0
+            }
+        
+        showcards = self.related_exhibition.showcard_photos.all()
+        if not showcards.exists():
+            return {
+                'first': None,
+                'last': None,
+                'all': None,
+                'count': 0
+            }
+        
+        count = showcards.count()
+        first_image = showcards.first().image if showcards.exists() else None
+        
+        # Only return last if it's different from first
+        if count > 1:
+            last_showcard = showcards.last()
+            last_image = last_showcard.image if last_showcard != showcards.first() else None
+        else:
+            last_image = None
+        
+        return {
+            'first': first_image,
+            'last': last_image,
+            'all': showcards,
+            'count': count
+        }
 
 
 class SchedulePage(Page, ListingFields):

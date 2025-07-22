@@ -88,6 +88,4 @@ def create_opening_event(sender, instance, created, **kwargs):
         EventArtist.objects.create(
             event=event_page,
             artist=exhibition_artist.artist,
-            role='featured',
-            is_featured=True
         )

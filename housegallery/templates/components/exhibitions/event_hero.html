@@ -64,20 +64,85 @@
             {% endif %}
         </div>
         
-        {% if event.featured_image %}
-            <div class="event-hero-image">
-                {% image event.featured_image width-800 as hero_img %}
-                <img src="{{ hero_img.url }}" alt="{{ event.title }}"
-                     width="{{ hero_img.width }}" height="{{ hero_img.height }}"
-                     class="event-hero-img">
-            </div>
-        {% else %}
-            <!-- Fallback for events without featured images -->
-            <div class="event-hero-image event-hero-image--placeholder">
-                <div class="event-hero-placeholder">
-                    <span class="event-hero-placeholder__text">{{ event.get_event_type_display }}</span>
+        {% with event.get_related_showcard_images as showcards %}
+            {% if event.featured_image and showcards.first %}
+                <!-- Event image + first showcard -->
+                <div class="event-hero__images event-hero__images--dual">
+                    <div class="event-hero__image event-hero__image--primary">
+                        {% image event.featured_image width-400 as hero_img %}
+                        <img src="{{ hero_img.url }}" alt="{{ event.title }}"
+                             width="{{ hero_img.width }}" height="{{ hero_img.height }}"
+                             class="event-hero-img">
+                    </div>
+                    <div class="event-hero__image event-hero__image--secondary">
+                        {% image showcards.first width-400 as showcard_img %}
+                        <img src="{{ showcard_img.url }}" alt="Showcard for {{ event.related_exhibition.title }}"
+                             width="{{ showcard_img.width }}" height="{{ showcard_img.height }}"
+                             class="event-hero-img event-hero-img--showcard">
+                    </div>
                 </div>
-            </div>
-        {% endif %}
+            {% elif event.featured_image and showcards.last %}
+                <!-- Event image + last showcard -->
+                <div class="event-hero__images event-hero__images--dual">
+                    <div class="event-hero__image event-hero__image--primary">
+                        {% image event.featured_image width-400 as hero_img %}
+                        <img src="{{ hero_img.url }}" alt="{{ event.title }}"
+                             width="{{ hero_img.width }}" height="{{ hero_img.height }}"
+                             class="event-hero-img">
+                    </div>
+                    <div class="event-hero__image event-hero__image--secondary">
+                        {% image showcards.last width-400 as showcard_img %}
+                        <img src="{{ showcard_img.url }}" alt="Showcard for {{ event.related_exhibition.title }}"
+                             width="{{ showcard_img.width }}" height="{{ showcard_img.height }}"
+                             class="event-hero-img event-hero-img--showcard">
+                    </div>
+                </div>
+            {% elif event.featured_image %}
+                <!-- Just event image (current behavior) -->
+                <div class="event-hero__images event-hero__images--single">
+                    <div class="event-hero__image">
+                        {% image event.featured_image width-800 as hero_img %}
+                        <img src="{{ hero_img.url }}" alt="{{ event.title }}"
+                             width="{{ hero_img.width }}" height="{{ hero_img.height }}"
+                             class="event-hero-img">
+                    </div>
+                </div>
+            {% elif showcards.first and showcards.last and showcards.count > 1 %}
+                <!-- First + last showcard -->
+                <div class="event-hero__images event-hero__images--dual">
+                    <div class="event-hero__image event-hero__image--primary">
+                        {% image showcards.first width-400 as first_showcard_img %}
+                        <img src="{{ first_showcard_img.url }}" alt="Showcard for {{ event.related_exhibition.title }}"
+                             width="{{ first_showcard_img.width }}" height="{{ first_showcard_img.height }}"
+                             class="event-hero-img event-hero-img--showcard">
+                    </div>
+                    <div class="event-hero__image event-hero__image--secondary">
+                        {% image showcards.last width-400 as last_showcard_img %}
+                        <img src="{{ last_showcard_img.url }}" alt="Showcard for {{ event.related_exhibition.title }}"
+                             width="{{ last_showcard_img.width }}" height="{{ last_showcard_img.height }}"
+                             class="event-hero-img event-hero-img--showcard">
+                    </div>
+                </div>
+            {% elif showcards.first %}
+                <!-- Just first showcard -->
+                <div class="event-hero__images event-hero__images--single">
+                    <div class="event-hero__image">
+                        {% image showcards.first width-800 as showcard_img %}
+                        <img src="{{ showcard_img.url }}" alt="Showcard for {{ event.related_exhibition.title }}"
+                             width="{{ showcard_img.width }}" height="{{ showcard_img.height }}"
+                             class="event-hero-img event-hero-img--showcard">
+                    </div>
+                </div>
+            {% else %}
+                <!-- Existing placeholder -->
+                <div class="event-hero__images event-hero__images--placeholder">
+                    <div class="event-hero__image event-hero__image--placeholder">
+                        <div class="event-hero-placeholder">
+                            <span class="event-hero-placeholder__text">{{ event.get_event_type_display }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
     </div>
 </section>
