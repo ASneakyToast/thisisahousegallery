@@ -17,7 +17,8 @@ SECRET_KEY = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 # Explicit ALLOWED_HOSTS for production and dev domains
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[
-    "thisisahousegallery.com", 
+    "thisisahousegallery.com",
+    "www.thisisahousegallery.com",
     "prod.thisisahousegallery.com",
     "qa.thisisahousegallery.com",
     "housegallery-dev-jrl-service-591747915969.us-west1.run.app"
