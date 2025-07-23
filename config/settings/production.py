@@ -1,6 +1,7 @@
 # ruff: noqa: E501
 from .base import *  # noqa: F403
 from .base import DATABASES
+from .base import GS_BUCKET_NAME
 from .base import INSTALLED_APPS
 from .base import SPECTACULAR_SETTINGS
 from .base import env
@@ -37,6 +38,7 @@ STORAGES = {
     "default": {
         "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
         "OPTIONS": {
+            "bucket_name": GS_BUCKET_NAME,
             "location": "media",
             "file_overwrite": False,
         },
