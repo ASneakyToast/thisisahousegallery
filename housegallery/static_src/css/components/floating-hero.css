@@ -10,6 +10,7 @@
     overflow: hidden;
     pointer-events: none;
     z-index: 1;
+    contain: layout style paint;
 }
 
 .floating-hero__container {
@@ -29,7 +30,7 @@
     backface-visibility: hidden;
     transform-style: preserve-3d;
     /* Start groups off-screen on the right */
-    transform: translateX(100vw);
+    transform: translateX(100%);
 }
 
 /* Individual floating images within groups */
@@ -119,7 +120,7 @@
 /* Keyframe animation for group movement */
 @keyframes floating-hero-group {
     0% {
-        transform: translateX(100vw);
+        transform: translateX(100%);
     }
     100% {
         transform: translateX(-400px);

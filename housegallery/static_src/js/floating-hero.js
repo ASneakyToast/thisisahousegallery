@@ -28,6 +28,12 @@ class FloatingHero {
         this.preferReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         this.isMobile = window.innerWidth <= 768;
         
+        // Cache container dimensions for stable positioning
+        this.containerHeight = 0;
+        this.resizeObserver = null;
+        this.intersectionObserver = null;
+        this.isVisible = true;
+        
         this.init();
     }
 
@@ -52,6 +58,9 @@ class FloatingHero {
             console.log('⚠️ No floating images found, skipping animation');
             return;
         }
+
+        // Cache container height for stable positioning
+        this.containerHeight = this.container.offsetHeight;
 
         // Store images for processing
         this.images = images;
@@ -105,8 +114,8 @@ class FloatingHero {
             const sizeClass = this.getRandomWeightedSize();
             img.classList.add(`floating-hero__image--${sizeClass}`);
             
-            // Position within group (vertical spread)
-            const verticalOffset = (Math.random() - 0.5) * (window.innerHeight * 0.6);
+            // Position within group (vertical spread) - use container height instead of viewport
+            const verticalOffset = (Math.random() - 0.5) * (this.containerHeight * 0.6);
             img.style.setProperty('--vertical-offset', `${verticalOffset}px`);
             
             // Random horizontal spacing within group
@@ -137,7 +146,7 @@ class FloatingHero {
     }
 
     startAnimation() {
-        if (this.isAnimating) return;
+        if (this.isAnimating || !this.isVisible || this.preferReducedMotion) return;
         
         this.isAnimating = true;
         
@@ -150,31 +159,76 @@ class FloatingHero {
     }
 
     setupEventListeners() {
-        // Handle resize
-        window.addEventListener('resize', () => {
-            this.handleResize();
-        });
+        // Use ResizeObserver for better performance than window resize events
+        if ('ResizeObserver' in window) {
+            this.resizeObserver = new ResizeObserver((entries) => {
+                for (let entry of entries) {
+                    this.handleContainerResize(entry.contentRect);
+                }
+            });
+            this.resizeObserver.observe(this.container);
+        } else {
+            // Fallback for older browsers
+            window.addEventListener('resize', () => {
+                this.handleResize();
+            });
+        }
+        
+        // Use Intersection Observer to pause animations when off-screen
+        if ('IntersectionObserver' in window) {
+            this.intersectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    this.isVisible = entry.isIntersecting;
+                    if (entry.isIntersecting) {
+                        this.startAnimation();
+                    } else {
+                        this.stop();
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px', // Start animation slightly before visible
+                threshold: 0.1
+            });
+            this.intersectionObserver.observe(this.element);
+        }
         
         // Handle reduced motion preference changes
         const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         mediaQuery.addEventListener('change', (e) => {
             if (e.matches) {
                 this.stop();
-            } else {
+            } else if (this.isVisible) {
                 this.startAnimation();
             }
         });
     }
 
+    handleContainerResize(contentRect) {
+        // Modern ResizeObserver handler - more efficient than window resize
+        this.isMobile = window.innerWidth <= 768;
+        
+        // Update cached container height from ResizeObserver
+        this.containerHeight = contentRect.height;
+        
+        // Re-calculate vertical offsets using stable container height
+        this.images.forEach(img => {
+            const verticalOffset = (Math.random() - 0.5) * (this.containerHeight * 0.6);
+            img.style.setProperty('--vertical-offset', `${verticalOffset}px`);
+        });
+    }
+
     handleResize() {
-        // Debounced resize handling for groups
+        // Fallback debounced resize handling for older browsers
         clearTimeout(this.resizeTimeout);
         this.resizeTimeout = setTimeout(() => {
             this.isMobile = window.innerWidth <= 768;
             
-            // Re-calculate vertical offsets for new window height
+            // Update cached container height
+            this.containerHeight = this.container.offsetHeight;
+            
+            // Re-calculate vertical offsets using stable container height
             this.images.forEach(img => {
-                const verticalOffset = (Math.random() - 0.5) * (window.innerHeight * 0.6);
+                const verticalOffset = (Math.random() - 0.5) * (this.containerHeight * 0.6);
                 img.style.setProperty('--vertical-offset', `${verticalOffset}px`);
             });
         }, 250);
@@ -210,7 +264,18 @@ class FloatingHero {
         // Clean up resize timeout
         clearTimeout(this.resizeTimeout);
         
-        // Clean up event listeners (when implemented)
+        // Clean up observers
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+            this.resizeObserver = null;
+        }
+        
+        if (this.intersectionObserver) {
+            this.intersectionObserver.disconnect();
+            this.intersectionObserver = null;
+        }
+        
+        // Clean up fallback event listener
         window.removeEventListener('resize', this.handleResize.bind(this));
         
         console.log('🔥 Floating hero destroyed');
