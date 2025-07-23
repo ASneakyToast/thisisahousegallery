@@ -122,6 +122,21 @@
                     <div class="exhibition-artwork-content">
                         <h3 class="exhibition-artwork-title">{{ exhibition_artwork.artwork.title|striptags }}</h3>
                     </div>
+                    
+                    <!-- Hidden hover preview image for desktop animation -->
+                    {% if exhibition_artwork.artwork.artwork_images.all %}
+                        {% with first_image=exhibition_artwork.artwork.artwork_images.first %}
+                            {% image first_image.image width-400 as artwork_preview %}
+                            <div class="exhibition-artwork-hover-preview" data-preview-src="{{ artwork_preview.url }}">
+                                <img src="{{ artwork_preview.url }}" 
+                                     alt="{{ exhibition_artwork.artwork.title }} preview" 
+                                     class="exhibition-artwork-hover-img"
+                                     width="{{ artwork_preview.width }}" 
+                                     height="{{ artwork_preview.height }}"
+                                     loading="lazy" decoding="async">
+                            </div>
+                        {% endwith %}
+                    {% endif %}
                 </article>
             {% endfor %}
         </div>

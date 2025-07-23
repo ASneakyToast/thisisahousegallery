@@ -19,4 +19,7 @@ import './kiosk-gallery.js';
 // Import floating hero functionality
 import './floating-hero.js';
 
+// Import artwork hover animations functionality
+import './artwork-hover-animations.js';
+
 // Any other project-wide JavaScript functionality goes here
