@@ -14,7 +14,7 @@
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
-        content="A wagtail version of thisisahousegallery.com" />
+        content="{% if page.search_description %}{{ page.search_description }}{% else %}This is a House Gallery serves as a project and exhibition place for the DIY Bay Area art scene.{% endif %}" />
   <meta name="author"
         content="Joel Lithgow" />
   <link rel="icon" href="{% static 'images/favicons/house-favicon.jpg' %}" />
