@@ -164,6 +164,10 @@
         padding: var(--size-layout-element-spacing);
     }
     
+    .hero-section__content {
+        max-width: none;
+    }
+    
     /* Reduce number of floating groups on mobile for performance */
     .floating-hero__group:nth-child(n+4) {
         display: none;
