@@ -52,9 +52,9 @@ async function addArtworks() {
     // Navigate to login page
     await page.goto('https://housegallery-dev-jrl-service-591747915969.us-west2.run.app/admin/login/');
     
-    // Fill in login credentials
-    await page.fill('input[name="username"]', 'playwright-workstudy');
-    await page.fill('input[name="password"]', 'catdogcatdog');
+    // Fill in login credentials from environment
+    await page.fill('input[name="username"]', process.env.WAGTAIL_USER || 'playwright-workstudy');
+    await page.fill('input[name="password"]', process.env.WAGTAIL_PASS || 'defaultpassword');
     await page.click('button[type="submit"]');
     
     // Wait for login to complete

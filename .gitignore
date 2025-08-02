@@ -279,6 +279,7 @@ housegallery/static/webpack_bundles/
 webpack-stats.json
 .env
 .envs/
+playwright-workstudy/.env
 
 # Compiled static assets (webpack output)
 static/
