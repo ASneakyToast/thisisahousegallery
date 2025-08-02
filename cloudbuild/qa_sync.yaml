@@ -1,0 +1,92 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START qa_sync]
+# QA SYNC - Copy prod database and media to QA environment
+
+steps:
+
+  - id: "sync-media-and-static-files"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |-
+        echo "Syncing media and static files from production to QA..."
+        gcloud storage rsync "gs://${_STORAGE_BUCKET_PROD}" "gs://${_STORAGE_BUCKET_QA}" --recursive --delete-unmatched-destination-objects
+        echo "Media and static sync completed"
+    waitFor: ['-'] # starts immediately
+
+  - id: "sync-database"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |-
+        echo "Starting database sync from production to QA..."
+        
+        # Get the latest production database export
+        LATEST_BACKUP=$(gcloud storage ls 'gs://housegallery-db-exports/housegallery-prod-*.sql.gz' | sort | tail -1)
+        echo "Using backup: $LATEST_BACKUP"
+        
+        # Delete existing QA database
+        echo "Deleting existing QA database..."
+        gcloud sql databases delete "${_DB_NAME_QA}" --instance="${_DB_INSTANCE_NAME}" --quiet || echo "Database does not exist, proceeding..."
+        
+        # Create new QA database
+        echo "Creating new QA database..."
+        gcloud sql databases create "${_DB_NAME_QA}" --instance="${_DB_INSTANCE_NAME}"
+        
+        # Import production backup to QA database
+        echo "Importing production backup to QA database..."
+        gcloud sql import sql "${_DB_INSTANCE_NAME}" "$LATEST_BACKUP" --database="${_DB_NAME_QA}" --quiet
+        
+        echo "Database sync completed"
+    waitFor: ['-'] # starts immediately, runs in parallel with media sync
+
+  - id: "run-qa-migrations"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "execute", "${_MGMT_CMD_MIGRATE_QA}",
+      "--region", "${_REGION}",
+      "--wait"
+    ]
+    waitFor: ['sync-database'] # wait for database to be ready
+
+  - id: "update-qa-search-index"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "execute", "${_MGMT_CMD_UPDATEINDEX_QA}",
+      "--region", "${_REGION}",
+      "--wait"
+    ]
+    waitFor: ['run-qa-migrations'] # wait for migrations to complete
+
+logsBucket: "gs://housegallery-cloudbuild-log/qa_sync"
+
+substitutions:
+  _BUILD_TYPE: qa
+  _DB_INSTANCE_NAME: housegallery
+  _DB_NAME_QA: housegallery-qa
+  _MGMT_CMD_MIGRATE_QA: housegallery-qa-mgmt-cmd-migrate
+  _MGMT_CMD_UPDATEINDEX_QA: housegallery-qa-mgmt-cmd-update-index
+  _REGION: us-west1
+  _STORAGE_BUCKET_PROD: housegallery-prod
+  _STORAGE_BUCKET_QA: housegallery-qa
+
+options:
+  logging: GCS_ONLY
+  dynamic_substitutions: true
+
+# [END qa_sync]
