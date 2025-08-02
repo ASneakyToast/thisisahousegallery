@@ -178,7 +178,7 @@ class BaseArtworkChooseView(BaseChooseView):
     @property
     def columns(self):
         return [
-            Column(
+            TitleColumn(
                 name="title",
                 label=_("Title"),
                 accessor=lambda obj: str(obj),
