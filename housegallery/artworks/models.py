@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.html import strip_tags
+from django.utils.html import strip_tags, format_html
 
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
@@ -16,6 +16,7 @@ from wagtail.blocks import StructBlock, CharBlock, RichTextBlock, ListBlock, Cho
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.images import get_image_model_string
+from wagtail.search import index
 
 from housegallery.exhibitions.widgets import ExhibitionImageChooserPanel, ExhibitionImageChooserWidget
 from housegallery.artists.widgets import ArtistChooserPanel
@@ -92,6 +93,9 @@ class ArtworkArtist(Orderable):
         verbose_name = "Artwork Artist"
         verbose_name_plural = "Artwork Artists"
         unique_together = ['artwork', 'artist']  # Prevent duplicate artist assignments
+        indexes = [
+            models.Index(fields=['artwork', 'artist'], name='artwork_artist_idx'),
+        ]
 
 
 class ArtworkImage(Orderable):
@@ -123,7 +127,6 @@ class ArtworkImage(Orderable):
         ordering = ["sort_order"]
 
 
-@register_snippet
 class Artwork(ClusterableModel):
     title = RichTextField(
         blank=True
@@ -194,7 +197,60 @@ class Artwork(ClusterableModel):
     def get_artists(self):
         """Return all artists for this artwork"""
         return self.artists.all()
+    
+    @property
+    def materials_list(self):
+        """Return materials as comma-separated list for admin display"""
+        return ", ".join([tag.name for tag in self.materials.all()]) or "-"
+
+    @property  
+    def description_preview(self):
+        """Return truncated description for admin display"""
+        if self.description:
+            return (self.description[:75] + '...') if len(self.description) > 75 else self.description
+        return "-"
+    
+    def date_year(self):
+        """Return just the year from the date field for admin display"""
+        if self.date:
+            return self.date.year
+        return "-"
+    date_year.short_description = "Date"
+    date_year.admin_order_field = "date"
+    
+    def admin_thumb(self):
+        """Return thumbnail HTML for admin list display"""
+        first_image = self.artwork_images.first()
+        if first_image and first_image.image:
+            try:
+                rendition = first_image.image.get_rendition('fill-60x60')
+                return format_html(
+                    '<img src="{}" width="60" height="60" alt="{}" />',
+                    rendition.url,
+                    f"Thumbnail for {self}"
+                )
+            except Exception:
+                return "-"
+        return "-"
+    admin_thumb.short_description = "Thumbnail"
+    
+    search_fields = [
+        index.SearchField('title'),
+        index.SearchField('description'),
+        index.SearchField('artist_names'),
+        index.FilterField('date'),
+        index.FilterField('id'),
+        index.RelatedFields('artists', [
+            index.SearchField('name'),
+        ]),
+        index.RelatedFields('materials', [
+            index.SearchField('name'),
+        ]),
+    ]
 
     class Meta:
         verbose_name = "Artwork"
         verbose_name_plural = "Artworks"
+        indexes = [
+            models.Index(fields=['-date', 'title'], name='artwork_date_title_idx'),
+        ]
