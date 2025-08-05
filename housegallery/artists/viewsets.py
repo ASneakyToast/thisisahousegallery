@@ -27,7 +27,7 @@ class ArtistSnippetViewSet(SnippetViewSet):
     add_to_admin_menu = False
     
     # List display configuration
-    list_display = ["name_sortable", "email", "artwork_count"]
+    list_display = ["name_sortable", "email", "artwork_count", "date_published"]
     list_filter = ["birth_year"]
     list_per_page = 100
     ordering = ["name"]
