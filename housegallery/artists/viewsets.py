@@ -24,7 +24,7 @@ class ArtistSnippetViewSet(SnippetViewSet):
     menu_order = 100
     add_to_settings_menu = False
     exclude_from_explorer = False
-    add_to_admin_menu = True
+    add_to_admin_menu = False
     
     # List display configuration
     list_display = ["name_sortable", "email", "artwork_count"]
