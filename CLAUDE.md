@@ -190,6 +190,7 @@ gcloud sql instances list  # Shows all regions
 
 **Cloud Build Triggers:**
 - `housegallery-dev-jrl`: Auto-deploys dev environment on `jrl/*` branch pushes
+- `housegallery-dev-tag-build`: Auto-deploys dev environment on `dev-*` tag pushes
 - `housegallery-prod`: Auto-builds production on `main` branch pushes (includes database backup)
 - `housegallery-prod-deploy-manual`: Manual production deployment trigger
 - `housegallery-qa-sync`: Manual QA sync from production database and media
@@ -225,6 +226,42 @@ This will:
 4. Update the search index for the QA environment
 
 **Note:** This operation will completely replace the QA database with production data. Ensure any QA-specific data is backed up if needed.
+
+### Development Deployment Options
+
+The project supports two methods for deploying to the development environment:
+
+#### Method 1: Branch-Based Deployment (Automatic)
+Push to any `jrl/*` branch to trigger automatic deployment:
+```bash
+git checkout -b jrl/my-feature
+git push origin jrl/my-feature
+# Automatically triggers housegallery-dev-jrl build
+```
+
+#### Method 2: Tag-Based Deployment (On-Demand)
+Create and push a `dev-*` tag for on-demand deployment:
+```bash
+# Deploy current commit to dev environment
+git tag dev-feature-admin-upgrades
+git push origin dev-feature-admin-upgrades
+
+# Deploy with date for testing
+git tag dev-$(date +%Y%m%d)
+git push origin dev-$(date +%Y%m%d)
+
+# Deploy specific version for testing
+git tag dev-v1.0.0
+git push origin dev-v1.0.0
+```
+
+**Tag Naming Conventions:**
+- `dev-*`: General development deployments
+- `dev-feature-*`: Feature testing (e.g., `dev-feature-api-enhancement`)
+- `dev-v*`: Version-specific dev deployments (e.g., `dev-v1.0.0`)
+- `dev-YYYYMMDD`: Date-based deployments for testing
+
+Both deployment methods work simultaneously and deploy to the same dev environment.
 
 ## Working with the Codebase
 
