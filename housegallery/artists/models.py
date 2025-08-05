@@ -1,10 +1,12 @@
 from django.db import models
 from django.utils.html import format_html
+from django.contrib.contenttypes.fields import GenericRelation
 
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.models import DraftStateMixin, RevisionMixin
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, PublishingPanel
 from wagtail.images.models import Image
 from wagtail.images import get_image_model_string
 from wagtail.search import index
@@ -51,7 +53,7 @@ class SocialMediaLinkBlock(StructBlock):
         template = 'blocks/social_media_link_block.html'
 
 
-class Artist(ClusterableModel):
+class Artist(DraftStateMixin, RevisionMixin, ClusterableModel):
     """
     A snippet model representing an artist.
     """
@@ -81,6 +83,9 @@ class Artist(ClusterableModel):
         blank=True,
         help_text="Add social media profiles for this artist"
     )
+    
+    # Required for RevisionMixin
+    _revisions = GenericRelation("wagtailcore.Revision", related_query_name="artist")
 
     panels = [
         MultiFieldPanel([
@@ -92,6 +97,7 @@ class Artist(ClusterableModel):
             FieldPanel('birth_year'),
         ], heading="Artist Details"),
         FieldPanel('social_media_links', heading="Social Media Profiles"),
+        PublishingPanel(),
     ]
       
     search_fields = [
@@ -139,6 +145,14 @@ class Artist(ClusterableModel):
         return self.name
     name_sortable.short_description = "Name"
     name_sortable.admin_order_field = "name"
+    
+    def date_published(self):
+        """Return the first published date for admin display"""
+        if self.first_published_at:
+            return self.first_published_at.strftime('%Y-%m-%d')
+        return "-"
+    date_published.short_description = "Date Added"
+    date_published.admin_order_field = "first_published_at"
     
     class Meta:
         verbose_name = "Artist"
