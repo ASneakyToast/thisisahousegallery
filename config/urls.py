@@ -15,6 +15,8 @@ from wagtail.utils.urlpatterns import decorate_urlpatterns
 from housegallery.home.views import kiosk_display, mailing_list_subscribe
 
 ignore_cache_urlpatterns = [
+    # API URLs
+    path('api/', include('housegallery.api.urls')),
     # Custom images URLs (must come before wagtailadmin_urls to override)
     path('admin/images/', include('housegallery.images.urls')),
     path('admin/', include(wagtailadmin_urls)),
