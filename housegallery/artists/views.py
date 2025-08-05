@@ -15,6 +15,10 @@ from wagtail.admin.views.generic.chooser import (BaseChooseView,
                                                  CreationFormMixin)
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import TranslatableMixin
+from wagtail.snippets.views.snippets import IndexView
+from wagtail.admin.forms.search import SearchForm
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 
 class ArtistSearchFilterMixin(forms.Form):
@@ -179,3 +183,54 @@ class ArtistChooserViewSet(ChooserViewSet):
 
 
 artist_chooser_viewset = ArtistChooserViewSet("artist_chooser")
+
+
+@method_decorator(never_cache, name='dispatch')
+class ArtistIndexView(IndexView):
+    """Custom index view for Artist snippets with advanced filtering"""
+    
+    def get_filters(self):
+        """Add custom filters to the index view"""
+        filters = super().get_filters()
+        
+        # Add custom filter form
+        filter_form = self.get_filter_form()
+        if filter_form:
+            filters['custom'] = filter_form
+        
+        return filters
+    
+    def get_filter_form(self):
+        """Get the custom filter form instance"""
+        if hasattr(self, '_filter_form'):
+            return self._filter_form
+            
+        FilterForm = self.get_filter_form_class()
+        self._filter_form = FilterForm(self.request.GET or None)
+        return self._filter_form
+    
+    def get_filter_form_class(self):
+        """Use our existing ArtistSearchFilterMixin"""
+        
+        class ArtistAdminFilterForm(ArtistSearchFilterMixin, SearchForm):
+            """Combine artist filters with Wagtail's search form"""
+            
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                # Remove the duplicate 'q' field from SearchForm if it exists
+                if 'q' in self.fields and hasattr(ArtistSearchFilterMixin, 'q'):
+                    # Keep the ArtistSearchFilterMixin version of 'q'
+                    search_form_q = self.fields.pop('q', None)
+        
+        return ArtistAdminFilterForm
+    
+    def get_queryset(self):
+        """Apply custom filtering to queryset"""
+        queryset = super().get_queryset()
+        
+        # Apply custom filters
+        filter_form = self.get_filter_form()
+        if filter_form and filter_form.is_valid():
+            queryset = filter_form.filter(queryset)
+        
+        return queryset
