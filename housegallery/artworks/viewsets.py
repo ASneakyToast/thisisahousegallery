@@ -52,7 +52,7 @@ class ArtworkSnippetViewSet(SnippetViewSet):
     add_to_admin_menu = False
     
     # List display configuration
-    list_display = ["__str__", "admin_thumb", "artist_names", "date_year"]
+    list_display = ["title_sortable", "admin_thumb", "artist_names", "date_year", "date_published"]
     list_filter = ["date", "artists", "materials"]
     list_per_page = 40
     ordering = ["-date", "title"]

@@ -1,16 +1,16 @@
 from django.db import models
 from django.utils.html import strip_tags, format_html
+from django.contrib.contenttypes.fields import GenericRelation
 
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from taggit.models import TaggedItemBase
 
-from wagtail.models import Orderable
-from wagtail.admin.panels import FieldPanel, InlinePanel, MultipleChooserPanel, MultiFieldPanel
+from wagtail.models import Orderable, DraftStateMixin, RevisionMixin
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultipleChooserPanel, MultiFieldPanel, PublishingPanel
 from wagtail.images.models import Image
 from wagtail.documents.models import Document
-from wagtail.snippets.models import register_snippet
 from wagtail.fields import StreamField, RichTextField
 from wagtail.blocks import StructBlock, CharBlock, RichTextBlock, ListBlock, ChoiceBlock, BooleanBlock, StreamBlock
 from wagtail.images.blocks import ImageChooserBlock
@@ -127,7 +127,7 @@ class ArtworkImage(Orderable):
         ordering = ["sort_order"]
 
 
-class Artwork(ClusterableModel):
+class Artwork(DraftStateMixin, RevisionMixin, ClusterableModel):
     title = RichTextField(
         blank=True
     )
@@ -157,6 +157,9 @@ class Artwork(ClusterableModel):
         ('document', ArtworkDocumentBlock()),
         ('text', ArtworkTextBlock()),
     ], blank=True)
+    
+    # Required for RevisionMixin
+    _revisions = GenericRelation("wagtailcore.Revision", related_query_name="artwork")
 
     panels = [
         FieldPanel('title'),
@@ -174,6 +177,7 @@ class Artwork(ClusterableModel):
             ),
         ], heading="Gallery Images"),
         FieldPanel('artifacts'),
+        PublishingPanel(),
     ]
 
     def __str__(self):
@@ -233,6 +237,20 @@ class Artwork(ClusterableModel):
                 return "-"
         return "-"
     admin_thumb.short_description = "Thumbnail"
+    
+    def title_sortable(self):
+        """Return artwork title with explicit sorting"""
+        return strip_tags(self.title) if self.title else "Untitled"
+    title_sortable.short_description = "Title"
+    title_sortable.admin_order_field = "title"
+    
+    def date_published(self):
+        """Return the first published date for admin display"""
+        if self.first_published_at:
+            return self.first_published_at.strftime('%Y-%m-%d')
+        return "-"
+    date_published.short_description = "Date Added"
+    date_published.admin_order_field = "first_published_at"
     
     search_fields = [
         index.SearchField('title'),
