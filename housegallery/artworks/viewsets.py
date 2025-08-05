@@ -49,7 +49,7 @@ class ArtworkSnippetViewSet(SnippetViewSet):
     menu_order = 200
     add_to_settings_menu = False
     exclude_from_explorer = False
-    add_to_admin_menu = True
+    add_to_admin_menu = False
     
     # List display configuration
     list_display = ["__str__", "admin_thumb", "artist_names", "date_year"]
