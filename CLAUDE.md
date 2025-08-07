@@ -193,7 +193,7 @@ gcloud sql instances list  # Shows all regions
 - `housegallery-dev-tag-build`: Auto-deploys dev environment on `dev-*` tag pushes
 - `housegallery-prod`: Auto-builds production on `main` branch pushes (includes database backup)
 - `housegallery-prod-deploy-manual`: Manual production deployment trigger
-- `housegallery-qa-sync`: Manual QA sync from production database and media
+- `housegallery-dev-sync`: Manual dev sync from production database and media
 
 **Production Workflow:**
 1. **Merge to main** → Triggers `housegallery-prod` build (backup + build image)
@@ -211,21 +211,21 @@ gcloud sql instances list  # Shows all regions
 gcloud builds triggers run housegallery-prod-deploy-manual --region=us-west2 --branch=main
 ```
 
-**QA Environment Sync:**
-To sync the QA environment with production data (database and media files):
+**Dev Environment Sync:**
+To sync the dev environment with production data (database and media files):
 
 ```bash
-# Sync QA environment with production data
-gcloud builds triggers run housegallery-qa-sync --region=us-west2 --branch=main
+# Sync dev environment with production data
+gcloud builds triggers run housegallery-dev-sync --region=us-west2 --branch=main
 ```
 
 This will:
-1. Copy all media and static files from `gs://housegallery-prod` to `gs://housegallery-qa`
-2. Export the latest production database backup and import it to the QA database
-3. Run migrations on the QA database
-4. Update the search index for the QA environment
+1. Copy all media and static files from `gs://housegallery-prod` to `gs://housegallery-dev`
+2. Export the latest production database backup and import it to the dev database
+3. Run migrations on the dev database
+4. Update the search index for the dev environment
 
-**Note:** This operation will completely replace the QA database with production data. Ensure any QA-specific data is backed up if needed.
+**Note:** This operation will completely replace the dev database with production data. Ensure any dev-specific data is backed up if needed.
 
 ### Development Deployment Options
 
