@@ -54,16 +54,9 @@ steps:
   - id: "run-dev-migrations"
     name: "gcr.io/cloud-builders/gcloud"
     args: [
-      "run", "jobs", "deploy", "${_MGMT_CMD_MIGRATE_DEV}",
-      "--command", "bash",
-      "--args", "-c",
-      "--args", "python manage.py migrate --fake-initial && python manage.py migrate",
-      "--image", "us-west2-docker.pkg.dev/${PROJECT_ID}/housegallery/housegallery-${_BUILD_TYPE}-service:latest",
-      "--execute-now",
-      "--memory", "1024Mi",
+      "run", "jobs", "execute", "${_MGMT_CMD_MIGRATE_DEV}",
       "--region", "${_REGION}",
-      "--service-account", "housegallerybutler@housegallery.iam.gserviceaccount.com",
-      "--set-cloudsql-instances", "${PROJECT_ID}:us-west2:${_DB_INSTANCE_NAME}",
+      "--wait"
     ]
     waitFor: ['sync-database'] # wait for database to be ready
 
