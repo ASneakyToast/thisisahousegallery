@@ -17,8 +17,6 @@ from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import TranslatableMixin
 from wagtail.snippets.views.snippets import IndexView
 from wagtail.admin.forms.search import SearchForm
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import never_cache
 
 
 class ArtistSearchFilterMixin(forms.Form):
@@ -185,7 +183,6 @@ class ArtistChooserViewSet(ChooserViewSet):
 artist_chooser_viewset = ArtistChooserViewSet("artist_chooser")
 
 
-@method_decorator(never_cache, name='dispatch')
 class ArtistIndexView(IndexView):
     """Custom index view for Artist snippets with advanced filtering"""
     

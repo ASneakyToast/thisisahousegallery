@@ -109,21 +109,6 @@ class Artist(DraftStateMixin, RevisionMixin, ClusterableModel):
     def __str__(self):
         return self.name
     
-    def admin_thumb(self):
-        """Return thumbnail HTML for admin list display"""
-        if self.profile_image:
-            try:
-                rendition = self.profile_image.get_rendition('fill-60x60')
-                return format_html(
-                    '<img src="{}" width="60" height="60" alt="{}" />',
-                    rendition.url,
-                    f"Profile photo of {self.name}"
-                )
-            except Exception:
-                return "-"
-        return "-"
-    admin_thumb.short_description = "Photo"
-    
     def bio_preview(self):
         """Return truncated bio for admin display"""
         if self.bio:

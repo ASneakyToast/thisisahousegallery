@@ -17,8 +17,121 @@ from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import TranslatableMixin
 from wagtail.snippets.views.snippets import IndexView
 from wagtail.admin.forms.search import SearchForm
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import never_cache
+
+
+class ArtworkAdminFilterForm(forms.Form):
+    """Combined artwork filter form for admin interface"""
+    
+    q = forms.CharField(
+        label=_("Search term"),
+        widget=forms.TextInput(attrs={"placeholder": _("Search artworks by title, description, or artist...")}),
+        required=False,
+    )
+    
+    artist = forms.ModelChoiceField(
+        queryset=None,
+        required=False,
+        empty_label=_("All artists")
+    )
+    
+    materials = forms.CharField(
+        label=_("Materials"),
+        widget=forms.TextInput(attrs={"placeholder": _("e.g. oil, canvas, mixed media")}),
+        required=False,
+        help_text=_("Search by materials used in the artwork")
+    )
+    
+    min_year = forms.IntegerField(
+        label=_("From year"),
+        required=False,
+        widget=forms.NumberInput(attrs={"placeholder": _("e.g. 2020")})
+    )
+    
+    max_year = forms.IntegerField(
+        label=_("To year"), 
+        required=False,
+        widget=forms.NumberInput(attrs={"placeholder": _("e.g. 2024")})
+    )
+    
+    min_width = forms.IntegerField(
+        label=_("Min width (inches)"),
+        required=False,
+        widget=forms.NumberInput(attrs={"placeholder": _("e.g. 12")})
+    )
+    
+    max_width = forms.IntegerField(
+        label=_("Max width (inches)"),
+        required=False,
+        widget=forms.NumberInput(attrs={"placeholder": _("e.g. 48")})
+    )
+    
+    min_height = forms.IntegerField(
+        label=_("Min height (inches)"),
+        required=False,
+        widget=forms.NumberInput(attrs={"placeholder": _("e.g. 16")})
+    )
+    
+    max_height = forms.IntegerField(
+        label=_("Max height (inches)"),
+        required=False,
+        widget=forms.NumberInput(attrs={"placeholder": _("e.g. 60")})
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Dynamically set artist queryset
+        Artist = apps.get_model('artists', 'Artist')
+        self.fields['artist'].queryset = Artist.objects.all().order_by('name')
+
+    def filter(self, queryset):
+        """Apply filters to the queryset based on form data"""
+        if not self.is_valid():
+            return queryset
+
+        # Search term filter
+        if self.cleaned_data.get('q'):
+            search_term = self.cleaned_data['q']
+            queryset = queryset.filter(
+                Q(title__icontains=search_term) |
+                Q(description__icontains=search_term) |
+                Q(artists__name__icontains=search_term)
+            ).distinct()
+
+        # Artist filter
+        if self.cleaned_data.get('artist'):
+            queryset = queryset.filter(artists=self.cleaned_data['artist'])
+
+        # Materials filter
+        if self.cleaned_data.get('materials'):
+            materials_term = self.cleaned_data['materials']
+            queryset = queryset.filter(materials__icontains=materials_term)
+
+        # Year range filters
+        if self.cleaned_data.get('min_year'):
+            queryset = queryset.filter(date__year__gte=self.cleaned_data['min_year'])
+        
+        if self.cleaned_data.get('max_year'):
+            queryset = queryset.filter(date__year__lte=self.cleaned_data['max_year'])
+
+        # Size filters (convert to centimeters for database comparison)
+        if self.cleaned_data.get('min_width'):
+            min_width_cm = self.cleaned_data['min_width'] * 2.54
+            queryset = queryset.filter(width__gte=min_width_cm)
+        
+        if self.cleaned_data.get('max_width'):
+            max_width_cm = self.cleaned_data['max_width'] * 2.54
+            queryset = queryset.filter(width__lte=max_width_cm)
+        
+        if self.cleaned_data.get('min_height'):
+            min_height_cm = self.cleaned_data['min_height'] * 2.54
+            queryset = queryset.filter(height__gte=min_height_cm)
+        
+        if self.cleaned_data.get('max_height'):
+            max_height_cm = self.cleaned_data['max_height'] * 2.54
+            queryset = queryset.filter(height__lte=max_height_cm)
+
+        return queryset
 
 
 class ArtworkSearchFilterMixin(forms.Form):
@@ -258,7 +371,6 @@ class ArtworkChooserViewSet(ChooserViewSet):
 artwork_chooser_viewset = ArtworkChooserViewSet("artwork_chooser")
 
 
-@method_decorator(never_cache, name='dispatch')
 class ArtworkIndexView(IndexView):
     """Custom index view for Artwork snippets with advanced filtering"""
     
@@ -283,18 +395,7 @@ class ArtworkIndexView(IndexView):
         return self._filter_form
     
     def get_filter_form_class(self):
-        """Use our existing ArtworkSearchFilterMixin"""
-        
-        class ArtworkAdminFilterForm(ArtworkSearchFilterMixin, SearchForm):
-            """Combine artwork filters with Wagtail's search form"""
-            
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-                # Remove the duplicate 'q' field from SearchForm if it exists
-                if 'q' in self.fields and hasattr(ArtworkSearchFilterMixin, 'q'):
-                    # Keep the ArtworkSearchFilterMixin version of 'q'
-                    search_form_q = self.fields.pop('q', None)
-        
+        """Use our extracted ArtworkAdminFilterForm"""
         return ArtworkAdminFilterForm
     
     def get_queryset(self):
