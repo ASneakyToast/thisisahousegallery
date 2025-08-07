@@ -1,0 +1,88 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START dev_sync]
+# DEV SYNC - Copy prod database and media to dev environment
+
+steps:
+
+  - id: "sync-media-and-static-files"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |-
+        echo "Syncing media and static files from production to dev..."
+        gcloud storage rsync "gs://${_STORAGE_BUCKET_PROD}" "gs://${_STORAGE_BUCKET_DEV}" --recursive --delete-unmatched-destination-objects
+        echo "Media and static sync completed"
+    waitFor: ['-'] # starts immediately
+
+  - id: "sync-database"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |-
+        echo "Starting database sync from production to dev..."
+        
+        # Delete existing dev database
+        echo "Deleting existing dev database..."
+        gcloud sql databases delete "${_DB_NAME_DEV}" --instance="${_DB_INSTANCE_NAME}" --quiet || echo "Database does not exist, proceeding..."
+        
+        # Create new dev database
+        echo "Creating new dev database..."
+        gcloud sql databases create "${_DB_NAME_DEV}" --instance="${_DB_INSTANCE_NAME}"
+        
+        # Get the latest production database export and import it directly
+        echo "Finding and importing latest production backup..."
+        gcloud sql import sql "${_DB_INSTANCE_NAME}" "$(gcloud storage ls 'gs://housegallery-db-exports/housegallery-prod-*.sql.gz' | sort | tail -1)" --database="${_DB_NAME_DEV}" --quiet
+        
+        echo "Database sync completed"
+    waitFor: ['-'] # starts immediately, runs in parallel with media sync
+
+  - id: "run-dev-migrations"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "execute", "${_MGMT_CMD_MIGRATE_DEV}",
+      "--region", "${_REGION}",
+      "--wait"
+    ]
+    waitFor: ['sync-database'] # wait for database to be ready
+
+  - id: "update-dev-search-index"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "execute", "${_MGMT_CMD_UPDATEINDEX_DEV}",
+      "--region", "${_REGION}",
+      "--wait"
+    ]
+    waitFor: ['run-dev-migrations'] # wait for migrations to complete
+
+logsBucket: "gs://housegallery-cloudbuild-log/dev_sync"
+
+substitutions:
+  _BUILD_TYPE: dev
+  _DB_INSTANCE_NAME: housegallery
+  _DB_NAME_DEV: housegallery-${_BUILD_TYPE}
+  _MGMT_CMD_MIGRATE_DEV: housegallery-${_BUILD_TYPE}-mgmt-cmd-migrate
+  _MGMT_CMD_UPDATEINDEX_DEV: housegallery-${_BUILD_TYPE}-mgmt-cmd-update-index
+  _REGION: us-west1
+  _STORAGE_BUCKET_PROD: housegallery-prod
+  _STORAGE_BUCKET_DEV: housegallery-${_BUILD_TYPE}
+
+options:
+  logging: GCS_ONLY
+  dynamic_substitutions: true
+
+# [END dev_sync]

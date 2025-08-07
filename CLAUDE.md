@@ -190,9 +190,10 @@ gcloud sql instances list  # Shows all regions
 
 **Cloud Build Triggers:**
 - `housegallery-dev-jrl`: Auto-deploys dev environment on `jrl/*` branch pushes
+- `housegallery-dev-tag-build`: Auto-deploys dev environment on `dev-*` tag pushes
 - `housegallery-prod`: Auto-builds production on `main` branch pushes (includes database backup)
 - `housegallery-prod-deploy-manual`: Manual production deployment trigger
-- `housegallery-qa-sync`: Manual QA sync from production database and media
+- `housegallery-dev-sync`: Manual dev sync from production database and media
 
 **Production Workflow:**
 1. **Merge to main** → Triggers `housegallery-prod` build (backup + build image)
@@ -210,21 +211,57 @@ gcloud sql instances list  # Shows all regions
 gcloud builds triggers run housegallery-prod-deploy-manual --region=us-west2 --branch=main
 ```
 
-**QA Environment Sync:**
-To sync the QA environment with production data (database and media files):
+**Dev Environment Sync:**
+To sync the dev environment with production data (database and media files):
 
 ```bash
-# Sync QA environment with production data
-gcloud builds triggers run housegallery-qa-sync --region=us-west2 --branch=main
+# Sync dev environment with production data
+gcloud builds triggers run housegallery-dev-sync --region=us-west2 --branch=main
 ```
 
 This will:
-1. Copy all media and static files from `gs://housegallery-prod` to `gs://housegallery-qa`
-2. Export the latest production database backup and import it to the QA database
-3. Run migrations on the QA database
-4. Update the search index for the QA environment
+1. Copy all media and static files from `gs://housegallery-prod` to `gs://housegallery-dev`
+2. Export the latest production database backup and import it to the dev database
+3. Run migrations on the dev database
+4. Update the search index for the dev environment
 
-**Note:** This operation will completely replace the QA database with production data. Ensure any QA-specific data is backed up if needed.
+**Note:** This operation will completely replace the dev database with production data. Ensure any dev-specific data is backed up if needed.
+
+### Development Deployment Options
+
+The project supports two methods for deploying to the development environment:
+
+#### Method 1: Branch-Based Deployment (Automatic)
+Push to any `jrl/*` branch to trigger automatic deployment:
+```bash
+git checkout -b jrl/my-feature
+git push origin jrl/my-feature
+# Automatically triggers housegallery-dev-jrl build
+```
+
+#### Method 2: Tag-Based Deployment (On-Demand)
+Create and push a `dev-*` tag for on-demand deployment:
+```bash
+# Deploy current commit to dev environment
+git tag dev-feature-admin-upgrades
+git push origin dev-feature-admin-upgrades
+
+# Deploy with date for testing
+git tag dev-$(date +%Y%m%d)
+git push origin dev-$(date +%Y%m%d)
+
+# Deploy specific version for testing
+git tag dev-v1.0.0
+git push origin dev-v1.0.0
+```
+
+**Tag Naming Conventions:**
+- `dev-*`: General development deployments
+- `dev-feature-*`: Feature testing (e.g., `dev-feature-api-enhancement`)
+- `dev-v*`: Version-specific dev deployments (e.g., `dev-v1.0.0`)
+- `dev-YYYYMMDD`: Date-based deployments for testing
+
+Both deployment methods work simultaneously and deploy to the same dev environment.
 
 ## Working with the Codebase
 
