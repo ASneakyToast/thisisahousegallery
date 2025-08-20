@@ -26,7 +26,6 @@
 
 /* Other content sections need padding */
 .current-events,
-.past-events,
 .schedule-content,
 .empty-state {
   padding: 0 var(--size-layout-gutter);
@@ -101,8 +100,7 @@
   grid-template-rows: repeat(3, auto);
 }
 
-.current-grid,
-.past-grid {
+.current-grid {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
@@ -635,8 +633,7 @@
   
   .featured-grid,
   .upcoming-grid,
-  .current-grid,
-  .past-grid {
+  .current-grid {
     grid-template-columns: 1fr;
   }
   

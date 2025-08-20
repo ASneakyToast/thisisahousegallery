@@ -1377,7 +1377,6 @@ class SchedulePage(Page, ListingFields):
         # Get child EventPage instances
         context["upcoming_events"] = self.get_upcoming_events()
         context["current_events"] = self.get_current_events()
-        context["past_events"] = self.get_past_events()
         context["featured_child_events"] = self.get_featured_events()
 
         return context
@@ -1399,14 +1398,6 @@ class SchedulePage(Page, ListingFields):
             eventpage__end_date__gte=today,
         ).specific().order_by("eventpage__start_date")
 
-    def get_past_events(self):
-        """Returns past events, ordered by most recent first"""
-        from django.db.models import Q
-        from django.utils import timezone
-        return self.get_children().live().type(EventPage).filter(
-            Q(eventpage__end_date__lt=timezone.now().date()) |
-            Q(eventpage__end_date__isnull=True, eventpage__start_date__lt=timezone.now().date()),
-        ).specific().order_by("-eventpage__start_date")
 
     def get_featured_events(self):
         """Returns events marked as featured"""

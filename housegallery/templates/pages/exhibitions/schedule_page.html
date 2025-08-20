@@ -124,23 +124,6 @@
         </section>
         {% endif %}
 
-        
-        <!-- Past Events (limited display) -->
-        {% if past_events %}
-        <section class="schedule-section past-events" data-category="past">
-            <h2 class="section-heading">
-                <span class="section-icon">🕐</span>
-                Recent Past Events
-            </h2>
-            <div class="schedule-card-grid past-grid">
-                {% for event in past_events|slice:":6" %}
-                    <div class="grid-item past-item" data-category="past">
-                        {% include "components/exhibitions/event_card.html" with event=event today=today layout="grid" %}
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
     </div>
 
     <!-- Additional Page Content -->
