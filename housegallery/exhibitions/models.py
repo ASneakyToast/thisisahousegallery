@@ -27,7 +27,7 @@ from housegallery.core.mixins import ListingFields
 from housegallery.core.mixins import Page
 from housegallery.exhibitions.blocks import ExhibitionStreamBlock
 
-from .widgets import ExhibitionImageChooserPanel
+from .views import ExhibitionImageChooserWidget
 
 # Event type choices for EventPage
 EVENT_TYPE_CHOICES = [
@@ -272,7 +272,7 @@ class InstallationPhoto(Orderable):
     )
 
     panels = [
-        ExhibitionImageChooserPanel("image"),
+        FieldPanel("image", widget=ExhibitionImageChooserWidget()),
     ]
 
     class Meta:
@@ -295,7 +295,7 @@ class OpeningReceptionPhoto(Orderable):
     )
 
     panels = [
-        ExhibitionImageChooserPanel("image"),
+        FieldPanel("image", widget=ExhibitionImageChooserWidget()),
     ]
 
     class Meta:
@@ -317,7 +317,7 @@ class ShowcardPhoto(Orderable):
     )
 
     panels = [
-        ExhibitionImageChooserPanel("image"),
+        FieldPanel("image", widget=ExhibitionImageChooserWidget()),
     ]
 
     class Meta:
@@ -340,7 +340,7 @@ class InProgressPhoto(Orderable):
     )
 
     panels = [
-        ExhibitionImageChooserPanel("image"),
+        FieldPanel("image", widget=ExhibitionImageChooserWidget()),
     ]
 
     class Meta:
@@ -386,7 +386,7 @@ class ExhibitionImage(Orderable):
     )
 
     panels = [
-        ExhibitionImageChooserPanel("image"),
+        FieldPanel("image", widget=ExhibitionImageChooserWidget()),
         FieldPanel("caption"),
         FieldPanel("image_type"),
     ]

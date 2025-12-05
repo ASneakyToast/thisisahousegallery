@@ -14,7 +14,13 @@ from wagtail.admin.views.generic.chooser import (BaseChooseView,
                                                  ChooseViewMixin,
                                                  CreationFormMixin)
 from wagtail.admin.viewsets.chooser import ChooserViewSet
+from wagtail.images.widgets import AdminImageChooser
 from wagtail.models import TranslatableMixin
+
+
+class ExhibitionImageChooserWidget(AdminImageChooser):
+    """Custom image chooser widget that uses the exhibition chooser viewset."""
+    chooser_url_name = 'exhibition_image_chooser:choose'
 
 
 class ExhibitionImageSearchFilterMixin(forms.Form):
@@ -192,11 +198,17 @@ class ExhibitionImageSearchFilterMixin(forms.Form):
 class BaseExhibitionImageChooseView(BaseChooseView):
     """Base chooser view for CustomImage model with exhibition-focused columns."""
     ordering = ["-created_at"]
-    
+
     def get_queryset(self):
         """Optimize queryset to avoid N+1 queries"""
         return super().get_queryset().prefetch_related('tags')
-    
+
+    def get_context_data(self, **kwargs):
+        """Add filter form to template context so it renders in the UI."""
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = self.filter_form
+        return context
+
     @property
     def columns(self):
         return [
@@ -280,9 +292,8 @@ class ExhibitionImageChooserViewSet(ChooserViewSet):
     
     @cached_property
     def widget_class(self):
-        widget = super().widget_class
-        # Customize widget if needed for exhibition-specific functionality
-        return widget
+        # Return our custom widget with proper chooser URL and image preview rendering
+        return ExhibitionImageChooserWidget
 
 
 exhibition_image_chooser_viewset = ExhibitionImageChooserViewSet("exhibition_image_chooser")

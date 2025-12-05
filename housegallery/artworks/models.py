@@ -18,7 +18,7 @@ from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.images import get_image_model_string
 from wagtail.search import index
 
-from housegallery.exhibitions.widgets import ExhibitionImageChooserPanel, ExhibitionImageChooserWidget
+from housegallery.exhibitions.views import ExhibitionImageChooserWidget
 from housegallery.artists.widgets import ArtistChooserPanel
 
 
