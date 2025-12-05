@@ -3,7 +3,36 @@ from django.dispatch import receiver
 from django.contrib import messages
 from django.utils import timezone
 from wagtail.models import Page
-from .models import ExhibitionPage, EventPage
+from wagtail.signals import page_published, page_unpublished
+from .models import ExhibitionPage, EventPage, ExhibitionsIndexPage
+
+
+# ============================================================================
+# Cache Invalidation Signals
+# ============================================================================
+
+@receiver(page_published, sender=ExhibitionPage)
+def invalidate_exhibitions_cache_on_publish(sender, instance, **kwargs):
+    """
+    Invalidate the exhibitions listing cache when an ExhibitionPage is published.
+
+    This ensures the listing page shows updated content immediately after publish,
+    while still benefiting from caching on normal page loads.
+    """
+    ExhibitionsIndexPage.invalidate_listing_cache()
+
+
+@receiver(page_unpublished, sender=ExhibitionPage)
+def invalidate_exhibitions_cache_on_unpublish(sender, instance, **kwargs):
+    """
+    Invalidate the exhibitions listing cache when an ExhibitionPage is unpublished.
+    """
+    ExhibitionsIndexPage.invalidate_listing_cache()
+
+
+# ============================================================================
+# Auto-create Opening Event Signal
+# ============================================================================
 
 
 @receiver(post_save, sender=ExhibitionPage)

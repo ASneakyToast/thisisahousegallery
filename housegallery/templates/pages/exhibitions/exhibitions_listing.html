@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags wagtailembeds_tags %}
+{% load wagtailcore_tags wagtailimages_tags wagtailembeds_tags cache %}
 
 {% block body_class %}exhibitions-index{% endblock %}
 
@@ -13,6 +13,8 @@
     <div class="exhibitions-listing">
         {% if all_exhibitions %}
             {% for exhibition in all_exhibitions %}
+                {# Cache each exhibition card for 1 hour, auto-invalidates on republish via last_published_at #}
+                {% cache 3600 exhibition_listing_card exhibition.pk exhibition.last_published_at %}
                 <div id="{{ exhibition.title|slugify }}" class="exhibition-listing-item exhibition-title">
                     <a href="{% pageurl exhibition %}" class="exhibition-header-link">
                         <section class="exhibition-header">
@@ -60,6 +62,8 @@
                                         <img src="{{ image_data.thumb_url }}"
                                              alt="{{ image_data.image_title|default:exhibition.title }}"
                                              loading="lazy"
+                                             width="{{ image_data.thumb_width }}"
+                                             height="{{ image_data.thumb_height }}"
                                              class="gallery-single-image"
                                              data-type="{{ image_data.type }}">
                                     </button>
@@ -69,6 +73,7 @@
                         </div>
                     {% endif %}
                 </div>
+                {% endcache %}
             {% endfor %}
         {% endif %}
     </div>

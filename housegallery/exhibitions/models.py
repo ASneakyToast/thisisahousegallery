@@ -117,11 +117,14 @@ class ExhibitionsIndexPage(Page, ListingFields):
     def get_optimized_exhibitions(self):
         """
         Return all live ExhibitionPage objects with optimized prefetching.
-        
-        This method loads all data needed for the exhibitions listing page in a single
+
+        This method loads all data needed for the exhibition detail page in a single
         optimized queryset, eliminating N+1 queries by prefetching:
         - Exhibition core relationships (artists, artworks)
         - All photo types with their images and renditions
+
+        NOTE: For listing pages, use get_optimized_exhibitions_for_listing() instead
+        to avoid prefetching photo types not used in the listing template.
         """
         from django.db.models import Prefetch
 
@@ -168,17 +171,108 @@ class ExhibitionsIndexPage(Page, ListingFields):
 
         ).order_by("-start_date")
 
+    def get_optimized_exhibitions_for_listing(self):
+        """
+        Return exhibitions with minimal prefetching for listing pages.
+
+        This method only prefetches what the listing template actually uses:
+        - exhibition_artists (for artist names)
+        - showcard_photos (for first/last showcard)
+        - installation_photos (for gallery images)
+        - exhibition_artworks (for artwork images in gallery)
+
+        Saves ~6 queries compared to get_optimized_exhibitions() by NOT prefetching:
+        - opening_reception_photos
+        - in_progress_photos
+        - exhibition_images
+        """
+        from django.db.models import Prefetch
+
+        return ExhibitionPage.objects.live().public().descendant_of(self).prefetch_related(
+            # Core exhibition relationships
+            "exhibition_artists__artist",
+
+            # Only showcard photos for listing (first + ending image)
+            Prefetch("showcard_photos",
+                queryset=ShowcardPhoto.objects
+                    .select_related("image")
+                    .prefetch_related("image__renditions"),
+            ),
+
+            # Installation photos for gallery
+            Prefetch("installation_photos",
+                queryset=InstallationPhoto.objects
+                    .select_related("image")
+                    .prefetch_related("image__renditions"),
+            ),
+
+            # Exhibition artworks for gallery
+            Prefetch("exhibition_artworks",
+                queryset=ExhibitionArtwork.objects
+                    .select_related("artwork")
+                    .prefetch_related(
+                        "artwork__artwork_images__image",
+                        "artwork__artwork_images__image__renditions",
+                        "artwork__artists",
+                        "artwork__materials",
+                    ),
+            ),
+        ).order_by("-start_date")
+
     def get_exhibitions(self):
         """Backwards compatibility wrapper for get_optimized_exhibitions."""
         return self.get_optimized_exhibitions()
 
+    @staticmethod
+    def get_cache_version():
+        """Get the current cache version for exhibitions listing.
+
+        This version is incremented when any ExhibitionPage is published,
+        automatically invalidating cached exhibition lists.
+        """
+        from django.core.cache import cache
+        return cache.get('exhibitions_listing_version', 0)
+
+    @staticmethod
+    def invalidate_listing_cache():
+        """Invalidate the exhibitions listing cache.
+
+        Call this when any ExhibitionPage is published/unpublished.
+        Increments the cache version, causing all cached listings to miss.
+        """
+        from django.core.cache import cache
+        import time
+        # Use timestamp as version for guaranteed uniqueness
+        cache.set('exhibitions_listing_version', int(time.time()), None)
+
     def get_context(self, request):
-        """Add exhibitions to the context with upcoming/current/past categorization."""
+        """Add exhibitions to the context with upcoming/current/past categorization.
+
+        PERFORMANCE: Caches the exhibition queryset to avoid 25+ prefetch queries
+        on repeat visits. Cache is invalidated via signal when any exhibition
+        is published.
+        """
+        from django.core.cache import cache
+        from django.utils import timezone
+
         context = super().get_context(request)
-        all_exhibitions = self.get_optimized_exhibitions()
+
+        # Build cache key using version that changes on any exhibition publish
+        cache_version = self.get_cache_version()
+        cache_key = f"exhibitions_listing_{self.pk}_{cache_version}"
+
+        # Try to get cached exhibitions
+        cached_data = cache.get(cache_key)
+
+        if cached_data is not None:
+            all_exhibitions = cached_data
+        else:
+            # Cache miss - run the expensive prefetch query
+            all_exhibitions = list(self.get_optimized_exhibitions_for_listing())
+            # Cache for 1 hour (will be invalidated sooner if exhibition published)
+            cache.set(cache_key, all_exhibitions, 3600)
 
         # Get today's date for comparison
-        from django.utils import timezone
         today = timezone.now().date()
 
         # Filter exhibitions by date
@@ -209,7 +303,7 @@ class ExhibitionsIndexPage(Page, ListingFields):
         context["upcoming_exhibitions"] = upcoming_exhibitions
         context["current_exhibitions"] = current_exhibitions
         context["past_exhibitions"] = paginated_past_exhibitions
-        context["all_exhibitions"] = all_exhibitions  # Add all exhibitions for simple listing
+        context["all_exhibitions"] = all_exhibitions
         return context
 
 
@@ -763,7 +857,7 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
         return randomized_images
 
-    def get_filtered_gallery_images(self, max_images=5):
+    def get_filtered_gallery_images(self, max_images=None):
         """
         Get filtered gallery images for exhibitions index page with:
         - First showcard as first item
@@ -772,13 +866,13 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         - Excludes opening reception photos and in-progress photos
 
         Args:
-            max_images: Maximum number of images to return (default 10 for performance)
+            max_images: Maximum number of images to return (None = no limit, show all)
         """
         from django.core.cache import cache
 
         # Simple cache key based on exhibition ID, last published date, and max_images
         timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
-        cache_key = f"exhibition_filtered_images_{self.pk}_{timestamp}_{max_images}"
+        cache_key = f"exhibition_filtered_images_v2_{self.pk}_{timestamp}_{max_images}"
         cached_images = cache.get(cache_key)
 
         if cached_images is not None:
@@ -786,28 +880,43 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
         images = []
 
-        # Helper function to get thumb URL using prefetched renditions when available
-        def get_thumb_url_from_image(image_obj):
-            """Get thumbnail URL, using prefetched renditions if available.
+        # Helper function to get thumb URL and dimensions using prefetched renditions when available
+        def get_thumb_data_from_image(image_obj):
+            """Get thumbnail URL and dimensions, using prefetched renditions if available.
 
             PERFORMANCE: Checks prefetched renditions first to avoid DB query.
             Only calls get_rendition() if rendition not found in prefetch.
+
+            Returns dict with 'url', 'width', 'height' keys.
             """
             # Try to find width-400 rendition in prefetched data
             try:
                 renditions = list(image_obj.renditions.all())
                 for rendition in renditions:
                     if 'width-400' in rendition.filter_spec:
-                        return rendition.url
+                        return {
+                            "url": rendition.url,
+                            "width": rendition.width,
+                            "height": rendition.height,
+                        }
             except Exception:
                 pass
 
             # Fall back to generating rendition (will check DB)
             try:
                 thumb_rendition = image_obj.get_rendition("width-400")
-                return thumb_rendition.url
+                return {
+                    "url": thumb_rendition.url,
+                    "width": thumb_rendition.width,
+                    "height": thumb_rendition.height,
+                }
             except Exception:
-                return image_obj.file.url
+                # Ultimate fallback - use original image dimensions
+                return {
+                    "url": image_obj.file.url,
+                    "width": image_obj.width,
+                    "height": image_obj.height,
+                }
 
         # Helper function to process any image type
         def process_image(gallery_image, image_type):
@@ -817,12 +926,12 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             Uses prefetched renditions when available.
             """
             image_obj = gallery_image.image
-            thumb_url = get_thumb_url_from_image(image_obj)
+            thumb_data = get_thumb_data_from_image(image_obj)
 
             try:
                 full_url = image_obj.file.url
             except Exception:
-                full_url = thumb_url
+                full_url = thumb_data["url"]
 
             # Base image data - store only serializable values for caching
             image_data = {
@@ -830,9 +939,11 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 "caption": image_obj.title or "",
                 "credit": getattr(image_obj, 'credit', '') or "",
                 "type": image_type,
-                "thumb_url": thumb_url,
+                "thumb_url": thumb_data["url"],
+                "thumb_width": thumb_data["width"],
+                "thumb_height": thumb_data["height"],
                 "full_url": full_url,
-                "thumb_webp_url": thumb_url,
+                "thumb_webp_url": thumb_data["url"],
                 "full_webp_url": full_url,
             }
 
@@ -854,12 +965,12 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             first_artwork_image = artwork_images[0]
             primary_image = first_artwork_image.image
 
-            thumb_url = get_thumb_url_from_image(primary_image)
+            thumb_data = get_thumb_data_from_image(primary_image)
 
             try:
                 full_url = primary_image.file.url
             except Exception:
-                full_url = thumb_url
+                full_url = thumb_data["url"]
 
             # Format materials as string (use prefetched data)
             materials_list = list(artwork.materials.all())
@@ -874,9 +985,11 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 "caption": primary_image.title or "",
                 "credit": getattr(primary_image, 'credit', '') or "",
                 "type": "artwork",
-                "thumb_url": thumb_url,
+                "thumb_url": thumb_data["url"],
+                "thumb_width": thumb_data["width"],
+                "thumb_height": thumb_data["height"],
                 "full_url": full_url,
-                "thumb_webp_url": thumb_url,
+                "thumb_webp_url": thumb_data["url"],
                 "full_webp_url": full_url,
                 "related_artwork": {
                     "title": str(artwork) if artwork.title else "",
@@ -897,41 +1010,31 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             first_showcard = showcard_photos[0]
             images.append(process_image(first_showcard, "showcards"))
 
-        # Early return if we've hit the limit
-        if len(images) >= max_images:
-            cache.set(cache_key, images[:max_images], 3600)
-            return images[:max_images]
-
         # Collect installation photos and artworks for random mixing
-        # Limit the number we process to avoid excessive rendition generation
         middle_items = []
-        remaining_slots = max_images - len(images) - 1  # Reserve 1 slot for potential ending showcard
 
-        # Add installation photos (limited)
-        installation_photos = list(self.installation_photos.all()[:remaining_slots])
+        # Add all installation photos
+        installation_photos = list(self.installation_photos.all())
         for gallery_image in installation_photos:
             middle_items.append(process_image(gallery_image, "exhibition"))
 
-        # Add artworks that have images (limited by remaining slots)
-        artworks_to_check = remaining_slots - len(middle_items)
-        if artworks_to_check > 0:
-            for exhibition_artwork in list(self.exhibition_artworks.all()[:artworks_to_check * 2]):  # Check more in case some lack images
-                if len(middle_items) >= remaining_slots:
-                    break
-                artwork_data = process_artwork(exhibition_artwork)
-                if artwork_data:  # Only add if artwork has an image
-                    middle_items.append(artwork_data)
+        # Add all artworks that have images
+        for exhibition_artwork in list(self.exhibition_artworks.all()):
+            artwork_data = process_artwork(exhibition_artwork)
+            if artwork_data:  # Only add if artwork has an image
+                middle_items.append(artwork_data)
 
         # Randomly shuffle the middle items (installation photos + artworks)
         random.shuffle(middle_items)
-        images.extend(middle_items[:remaining_slots])
+        images.extend(middle_items)
 
-        # Add one more showcard at the end if available and we have room
-        if len(showcard_photos) > 1 and len(images) < max_images:
-            images.append(process_image(showcard_photos[1], "showcards"))
+        # Add remaining showcards at the end
+        for showcard in showcard_photos[1:]:
+            images.append(process_image(showcard, "showcards"))
 
-        # Ensure we don't exceed max_images
-        images = images[:max_images]
+        # Apply max_images limit if specified
+        if max_images is not None:
+            images = images[:max_images]
 
         # Cache the processed images for 1 hour
         cache.set(cache_key, images, 3600)
