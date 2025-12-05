@@ -620,19 +620,22 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
         return randomized_images
 
-    def get_filtered_gallery_images(self):
+    def get_filtered_gallery_images(self, max_images=10):
         """
         Get filtered gallery images for exhibitions index page with:
         - First showcard as first item
-        - Randomly mixed installation photos and artworks in middle  
+        - Randomly mixed installation photos and artworks in middle
         - Remaining showcards as last items
         - Excludes opening reception photos and in-progress photos
+
+        Args:
+            max_images: Maximum number of images to return (default 10 for performance)
         """
         from django.core.cache import cache
 
-        # Simple cache key based on exhibition ID and last published date
+        # Simple cache key based on exhibition ID, last published date, and max_images
         timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
-        cache_key = f"exhibition_filtered_images_{self.pk}_{timestamp}"
+        cache_key = f"exhibition_filtered_images_{self.pk}_{timestamp}_{max_images}"
         cached_images = cache.get(cache_key)
 
         if cached_images is not None:
@@ -751,26 +754,41 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             first_showcard = showcard_photos[0]
             images.append(process_image(first_showcard, "showcards"))
 
-        # Collect installation photos and artworks for random mixing
-        middle_items = []
+        # Early return if we've hit the limit
+        if len(images) >= max_images:
+            cache.set(cache_key, images[:max_images], 3600)
+            return images[:max_images]
 
-        # Add all installation photos
-        for gallery_image in self.installation_photos.all():
+        # Collect installation photos and artworks for random mixing
+        # Limit the number we process to avoid excessive rendition generation
+        middle_items = []
+        remaining_slots = max_images - len(images) - 1  # Reserve 1 slot for potential ending showcard
+
+        # Add installation photos (limited)
+        installation_photos = list(self.installation_photos.all()[:remaining_slots])
+        for gallery_image in installation_photos:
             middle_items.append(process_image(gallery_image, "exhibition"))
 
-        # Add all artworks that have images
-        for exhibition_artwork in self.exhibition_artworks.all():
-            artwork_data = process_artwork(exhibition_artwork)
-            if artwork_data:  # Only add if artwork has an image
-                middle_items.append(artwork_data)
+        # Add artworks that have images (limited by remaining slots)
+        artworks_to_check = remaining_slots - len(middle_items)
+        if artworks_to_check > 0:
+            for exhibition_artwork in list(self.exhibition_artworks.all()[:artworks_to_check * 2]):  # Check more in case some lack images
+                if len(middle_items) >= remaining_slots:
+                    break
+                artwork_data = process_artwork(exhibition_artwork)
+                if artwork_data:  # Only add if artwork has an image
+                    middle_items.append(artwork_data)
 
         # Randomly shuffle the middle items (installation photos + artworks)
         random.shuffle(middle_items)
-        images.extend(middle_items)
+        images.extend(middle_items[:remaining_slots])
 
-        # Add remaining showcards (excluding the first one)
-        for showcard in showcard_photos[1:]:
-            images.append(process_image(showcard, "showcards"))
+        # Add one more showcard at the end if available and we have room
+        if len(showcard_photos) > 1 and len(images) < max_images:
+            images.append(process_image(showcard_photos[1], "showcards"))
+
+        # Ensure we don't exceed max_images
+        images = images[:max_images]
 
         # Cache the processed images for 1 hour
         cache.set(cache_key, images, 3600)
