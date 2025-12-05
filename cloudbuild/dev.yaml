@@ -65,6 +65,22 @@ steps:
     ]
     waitFor: ['push-image']
 
+  - id: "create-cache-table"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_CREATECACHETABLE}",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "createcachetable",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--execute-now",
+      "--memory", "1024Mi",
+      "--region", "${_REGION}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+    ]
+    waitFor: ['run-migrations']
+
   - id: "release"
     name: "gcr.io/cloud-builders/gcloud"
     args: [
@@ -72,7 +88,7 @@ steps:
       "--to-latest",
       "--region", "${_REGION}",
     ]
-    waitFor: ['deploy-service', 'run-migrations']
+    waitFor: ['deploy-service', 'create-cache-table']
 
 
   - id: "deploy-update_index"
@@ -131,6 +147,7 @@ substitutions:
   _DJANGO_SETTINGS: config.settings.production
   _IMAGE_NAME: us-west2-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/${_SERVICE_NAME}
   _MGMT_CMD_CLEARSESSIONS: housegallery-${_BUILD_TYPE}-mgmt-cmd-clearsessions
+  _MGMT_CMD_CREATECACHETABLE: housegallery-${_BUILD_TYPE}-mgmt-cmd-createcachetable
   _MGMT_CMD_MIGRATE: housegallery-${_BUILD_TYPE}-mgmt-cmd-migrate
   _MGMT_CMD_PUBLISH: housegallery-${_BUILD_TYPE}-mgmt-cmd-publish-scheduled-pages
   _MGMT_CMD_UPDATEINDEX: housegallery-${_BUILD_TYPE}-mgmt-cmd-update-index

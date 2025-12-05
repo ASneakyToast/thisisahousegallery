@@ -797,19 +797,19 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
     def get_hero_showcard_data(self):
         """Get front and back showcard images for hero section display."""
-        showcards = self.showcard_photos.all()
-        
-        if showcards.exists():
-            # Get first two showcards (assuming front is first, back is second)
-            first_showcard = showcards[0].image if showcards.count() > 0 else None
-            second_showcard = showcards[1].image if showcards.count() > 1 else None
-            
+        # Fetch showcards once and slice - avoids N+1 .count() queries
+        showcards = list(self.showcard_photos.all()[:2])
+
+        if showcards:
+            first_showcard = showcards[0].image if len(showcards) > 0 else None
+            second_showcard = showcards[1].image if len(showcards) > 1 else None
+
             return {
                 'has_showcards': True,
                 'front_image': first_showcard,
                 'back_image': second_showcard
             }
-        
+
         return {
             'has_showcards': False,
             'front_image': None,

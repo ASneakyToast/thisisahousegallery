@@ -49,7 +49,7 @@ class KioskGallery {
         this.activeParticles = [];
         this.isPaused = false;
         this.spawnTimer = null;
-        
+
         // Performance optimization: Object pooling
         this.particlePool = [];
         this.maxPoolSize = 15; // Keep a few extra for smooth recycling
@@ -65,7 +65,6 @@ class KioskGallery {
             this.setupEventListeners();
             this.startParticleSystem();
         } catch (error) {
-            console.error('Kiosk gallery initialization failed:', error);
             this.hideLoading();
         }
     }
@@ -88,21 +87,13 @@ class KioskGallery {
     async loadSourceImages() {
         // Get all gallery images from the StreamField content
         const galleryImages = this.container.querySelectorAll('.gallery-image, .gallery-single-image');
-        
-        console.log('🎨 Floating Gallery Debug:');
-        console.log('- Container:', this.container);
-        console.log('- Source images found:', galleryImages.length);
-        
+
         if (galleryImages.length === 0) {
-            console.error('❌ No images found in gallery. Make sure you have:');
-            console.error('1. Created a KioskPage in the Wagtail admin');
-            console.error('2. Added gallery blocks with images to the page');
-            console.error('3. Published the page');
             throw new Error('No images found in gallery');
         }
 
         this.sourceImages = Array.from(galleryImages);
-        
+
         // Hide original images (they'll be cloned as particles)
         this.sourceImages.forEach(img => {
             img.style.display = 'none';
@@ -122,7 +113,6 @@ class KioskGallery {
         });
 
         await Promise.all(imagePromises);
-        console.log('✅ All images preloaded successfully');
     }
 
     setupEventListeners() {
@@ -157,7 +147,6 @@ class KioskGallery {
     }
 
     startParticleSystem() {
-        console.log('🚀 Starting floating particle system');
         this.isPaused = false;
         this.scheduleNextSpawn();
     }
@@ -166,7 +155,7 @@ class KioskGallery {
         if (this.isPaused) return;
 
         const delay = this.minSpawnDelay + Math.random() * (this.maxSpawnDelay - this.minSpawnDelay);
-        
+
         this.spawnTimer = setTimeout(() => {
             this.spawnParticle();
             this.scheduleNextSpawn();
@@ -178,12 +167,12 @@ class KioskGallery {
         if (this.particlePool.length > 0) {
             return this.particlePool.pop();
         }
-        
+
         // If pool is empty, create new particle
         const sourceImage = this.sourceImages[Math.floor(Math.random() * this.sourceImages.length)];
         return sourceImage.cloneNode(true);
     }
-    
+
     returnParticleToPool(particle) {
         // Performance optimization: Reset and pool particle for reuse
         if (this.particlePool.length < this.maxPoolSize) {
@@ -191,38 +180,37 @@ class KioskGallery {
             particle.className = '';
             particle.style.cssText = '';
             particle.id = '';
-            
+
             // Remove from DOM if attached
             if (particle.parentNode) {
                 particle.parentNode.removeChild(particle);
             }
-            
+
             this.particlePool.push(particle);
         }
     }
 
     spawnParticle() {
         if (this.isPaused || this.activeParticles.length >= this.maxParticles) {
-            console.log(`⏹️ Not spawning: paused=${this.isPaused}, particles=${this.activeParticles.length}/${this.maxParticles}`);
             return;
         }
 
         // Get particle from pool or create new one
         const particle = this.getPooledParticle();
-        
+
         // CRITICAL: Override the inherited display: none
         particle.style.display = 'block';
-        
+
         // Add unique ID for debugging
         particle.id = `particle-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        
+
         // Select random source for consistent styling
         const sourceImage = this.sourceImages[Math.floor(Math.random() * this.sourceImages.length)];
-        
+
         // Assign random size
         const sizeClass = this.getRandomWeightedChoice(this.sizeClasses);
         particle.className = `${sourceImage.className} ${sizeClass.class}`;
-        
+
         // Assign random animation pattern
         const animationClass = this.getRandomWeightedChoice(this.animationPatterns);
         particle.classList.add(animationClass.class);
@@ -234,8 +222,6 @@ class KioskGallery {
         this.container.appendChild(particle);
         this.activeParticles.push(particle);
 
-        console.log(`✨ Spawned ${sizeClass.class} particle with ${animationClass.class}`);
-
         // Set up cleanup when animation completes
         this.setupParticleCleanup(particle, animationClass.class);
     }
@@ -246,10 +232,10 @@ class KioskGallery {
         const endY = (Math.random() - 0.5) * window.innerHeight * 0.6;
         const startX = (Math.random() - 0.5) * window.innerWidth * 0.3;
         const endX = (Math.random() - 0.5) * window.innerWidth * 0.3;
-        
+
         const startScale = 0.7 + Math.random() * 0.4; // 0.7 to 1.1
         const endScale = 0.8 + Math.random() * 0.6;   // 0.8 to 1.4
-        
+
         const startRotation = (Math.random() - 0.5) * 30; // -15 to 15 degrees
         const endRotation = (Math.random() - 0.5) * 40;   // -20 to 20 degrees
 
@@ -266,17 +252,14 @@ class KioskGallery {
     rotateParticle(particle) {
         // Get current computed transform to preserve floating animation
         const currentTransform = window.getComputedStyle(particle).transform;
-        
-        console.log(`🔄 Rotating particle ${particle.id}`);
-        
+
         // Temporarily pause the CSS animation and apply rotation manually
-        const originalAnimation = particle.style.animation;
         particle.style.animationPlayState = 'paused';
-        
+
         // Apply rotation while preserving current position
         particle.style.transition = 'transform 500ms ease-out';
         particle.style.transform = `${currentTransform} rotateY(720deg)`;
-        
+
         // Reset after animation
         setTimeout(() => {
             particle.style.transform = '';
@@ -320,17 +303,15 @@ class KioskGallery {
         if (index > -1) {
             this.activeParticles.splice(index, 1);
         }
-        
+
         // Performance optimization: Return to pool instead of destroying
         this.returnParticleToPool(particle);
-        
-        console.log(`♻️ Particle pooled. Active: ${this.activeParticles.length}, Pool: ${this.particlePool.length}`);
     }
 
     getRandomWeightedChoice(choices) {
         const totalWeight = choices.reduce((sum, choice) => sum + choice.weight, 0);
         const random = Math.random() * totalWeight;
-        
+
         let weightSum = 0;
         for (const choice of choices) {
             weightSum += choice.weight;
@@ -338,7 +319,7 @@ class KioskGallery {
                 return choice;
             }
         }
-        
+
         return choices[choices.length - 1]; // Fallback
     }
 
@@ -348,14 +329,12 @@ class KioskGallery {
             clearTimeout(this.spawnTimer);
             this.spawnTimer = null;
         }
-        console.log('⏸️ Particle system paused');
     }
 
     resumeParticleSystem() {
         if (!this.isPaused) return;
         this.isPaused = false;
         this.scheduleNextSpawn();
-        console.log('▶️ Particle system resumed');
     }
 
     toggleParticleSystem() {
@@ -368,7 +347,7 @@ class KioskGallery {
 
     destroy() {
         this.pauseParticleSystem();
-        
+
         // Performance optimization: Clean up all particles and pool
         this.activeParticles.forEach(particle => {
             if (particle.parentNode) {
@@ -376,11 +355,9 @@ class KioskGallery {
             }
         });
         this.activeParticles = [];
-        
+
         // Clear the object pool
         this.particlePool = [];
-        
-        console.log('🔥 Kiosk gallery destroyed');
     }
 }
 
@@ -388,10 +365,7 @@ class KioskGallery {
 document.addEventListener('DOMContentLoaded', () => {
     const kioskGallery = document.querySelector('#kiosk-gallery');
     if (kioskGallery && !window.kioskGallery) {
-        console.log('🎬 Initializing Floating Particles Kiosk Gallery...');
         window.kioskGallery = new KioskGallery(kioskGallery);
-    } else if (window.kioskGallery) {
-        console.log('⚠️ KioskGallery already initialized, skipping...');
     }
 });
 

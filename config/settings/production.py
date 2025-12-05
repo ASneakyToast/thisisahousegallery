@@ -31,6 +31,22 @@ DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=300)
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 
+# CACHING
+# ------------------------------------------------------------------------------
+# Database-backed cache - free, no extra GCP services required
+# Run `python manage.py createcachetable` once to create the cache table
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "django_cache_table",
+    }
+}
+
+# Use cache for sessions (avoids DB hit on every request)
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+
 # STATIC & MEDIA
 # ------------------------
 STATIC_ROOT = str(BASE_DIR / "staticfiles")
@@ -42,6 +58,12 @@ STORAGES = {
             "bucket_name": GS_BUCKET_NAME,
             "location": "media",
             "file_overwrite": False,
+            # Cache headers for browser caching (1 year for immutable media)
+            "default_acl": "publicRead",
+            "querystring_auth": False,
+            "object_parameters": {
+                "cache_control": "public, max-age=31536000, immutable",
+            },
         },
     },
     "staticfiles": {

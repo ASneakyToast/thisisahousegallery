@@ -77,6 +77,21 @@ steps:
     ]
     waitFor: ['-']
 
+  - id: "deploy-cloud-run-job-createcachetable"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_CREATECACHETABLE}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--region", "${_REGION}",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+      "--memory", "1024Mi",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "createcachetable",
+    ]
+    waitFor: ['-']
+
 logsBucket: "gs://housegallery-cloudbuild-log/${_BUILD_TYPE}"
 
 substitutions:
@@ -86,8 +101,9 @@ substitutions:
   _REGION: us-west1
   _SERVICE_ACCOUNT: housegallerybutler@housegallery.iam.gserviceaccount.com
   _SERVICE_NAME: housegallery-${_BUILD_TYPE}-service
-  _MGMT_CMD_PUBLISH: housegallery-${_BUILD_TYPE}-mgmt-cmd-publish-scheduled-pages
   _MGMT_CMD_CLEARSESSIONS: housegallery-${_BUILD_TYPE}-mgmt-cmd-clearsessions
+  _MGMT_CMD_CREATECACHETABLE: housegallery-${_BUILD_TYPE}-mgmt-cmd-createcachetable
+  _MGMT_CMD_PUBLISH: housegallery-${_BUILD_TYPE}-mgmt-cmd-publish-scheduled-pages
   _MGMT_CMD_UPDATEINDEX: housegallery-${_BUILD_TYPE}-mgmt-cmd-update-index
   _ARTIFACT_REGISTRY: housegallery
   _CLOUD_SQL_CONNECTION_NAME: ${PROJECT_ID}:us-west2:${_DB_INSTANCE_NAME}
