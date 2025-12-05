@@ -43,7 +43,7 @@
                                             data-media-type="image"
                                             data-media-src="{{ image_data.full_url }}"
                                             data-thumbnail-src="{{ image_data.thumb_url }}"
-                                            data-caption="{{ image_data.image.title|default:exhibition.title }}"
+                                            data-caption="{{ image_data.image_title|default:exhibition.title }}"
                                             data-index="{{ forloop.counter0 }}"
                                             data-image-type="{{ image_data.type }}"
                                             data-exhibition-title="{{ exhibition.title }}"
@@ -56,9 +56,9 @@
                                             data-artwork-materials="{{ image_data.artwork_materials|default:'' }}"
                                             data-artwork-size="{{ image_data.related_artwork.size|default:'' }}"
                                             {% endif %}
-                                            aria-label="View {{ image_data.image.title|default:exhibition.title }} in lightbox">
+                                            aria-label="View {{ image_data.image_title|default:exhibition.title }} in lightbox">
                                         <img src="{{ image_data.thumb_url }}"
-                                             alt="{{ image_data.image.title|default:exhibition.title }}"
+                                             alt="{{ image_data.image_title|default:exhibition.title }}"
                                              loading="lazy"
                                              class="gallery-single-image"
                                              data-type="{{ image_data.type }}">

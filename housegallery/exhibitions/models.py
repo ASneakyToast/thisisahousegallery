@@ -568,10 +568,11 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 thumb_webp_url = thumb_url
                 full_webp_url = full_url
 
-            # Base image data (simplified - no artwork metadata)
+            # Base image data - store only serializable values for caching
             image_data = {
-                "image": gallery_image.image,
-                "credit": gallery_image.image.credit,
+                "image_title": gallery_image.image.title or "",
+                "caption": gallery_image.image.title or "",  # Alias for template compatibility
+                "credit": gallery_image.image.credit or "",
                 "type": image_type,
                 "thumb_url": thumb_url,
                 "full_url": full_url,
@@ -665,10 +666,11 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 thumb_webp_url = thumb_url
                 full_webp_url = full_url
 
-            # Base image data (simplified - no artwork metadata)
+            # Base image data - store only serializable values for caching
             image_data = {
-                "image": gallery_image.image,
-                "credit": gallery_image.image.credit,
+                "image_title": gallery_image.image.title or "",
+                "caption": gallery_image.image.title or "",  # Alias for template compatibility
+                "credit": gallery_image.image.credit or "",
                 "type": image_type,
                 "thumb_url": thumb_url,
                 "full_url": full_url,
@@ -712,24 +714,29 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 thumb_webp_url = thumb_url
                 full_webp_url = full_url
 
-            # Format materials as string
-            materials_str = ", ".join(tag.name for tag in artwork.materials.all()) if artwork.materials.all() else None
+            # Format materials as string (use prefetched data)
+            materials_list = list(artwork.materials.all())
+            materials_str = ", ".join(tag.name for tag in materials_list) if materials_list else ""
 
-            # Create artwork image data (similar to regular image structure)
+            # Get date year as string for serialization
+            date_year = str(artwork.date.year) if artwork.date else ""
+
+            # Create artwork image data - store only serializable values for caching
             artwork_image_data = {
-                "image": primary_image,
-                "credit": primary_image.credit,
+                "image_title": primary_image.title or "",
+                "caption": primary_image.title or "",  # Alias for template compatibility
+                "credit": primary_image.credit or "",
                 "type": "artwork",
                 "thumb_url": thumb_url,
                 "full_url": full_url,
                 "thumb_webp_url": thumb_webp_url,
                 "full_webp_url": full_webp_url,
-                # Include artwork metadata for modal display
+                # Include artwork metadata for modal display (all strings for cache serialization)
                 "related_artwork": {
-                    "title": str(artwork) if artwork.title else None,
-                    "artist_names": artwork.artist_names if artwork.artist_names else None,
-                    "date": artwork.date,
-                    "size": artwork.size,
+                    "title": str(artwork) if artwork.title else "",
+                    "artist_names": artwork.artist_names or "",
+                    "date": {"year": date_year},  # Nested dict with year as string
+                    "size": artwork.size or "",
                 },
                 "artwork_materials": materials_str,
             }
@@ -873,10 +880,11 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 thumb_webp_url = thumb_url
                 full_webp_url = full_url
 
-            # Base image data structure
+            # Base image data structure - store only serializable values for caching
             image_data = {
-                "image": gallery_image.image,
-                "credit": gallery_image.image.credit,
+                "image_title": gallery_image.image.title or "",
+                "caption": gallery_image.image.title or "",  # Alias for template compatibility
+                "credit": gallery_image.image.credit or "",
                 "type": image_type,
                 "thumb_url": thumb_url,
                 "full_url": full_url,
@@ -890,7 +898,7 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
             if artwork_data:
                 image_data.update({
                     "related_artwork": artwork_data,
-                    "artwork_materials": artwork_data.get("materials_str"),
+                    "artwork_materials": artwork_data.get("materials_str", ""),
                 })
 
             return image_data
