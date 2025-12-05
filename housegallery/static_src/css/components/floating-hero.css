@@ -45,6 +45,13 @@
     overflow: hidden;
     backface-visibility: hidden;
     transform: translateY(calc(-50% + var(--vertical-offset, 0px)));
+    /* Hide until JS moves images into groups - prevents FOUC */
+    visibility: hidden;
+}
+
+/* Show images once JS has positioned them inside groups */
+.floating-hero__group .floating-hero__image {
+    visibility: visible;
 }
 
 /* Style the actual img element inside the wrapper */
