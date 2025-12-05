@@ -145,29 +145,26 @@
     {% endif %}
 
     <!-- Exhibition Gallery Section - Now Clickable -->
-    {% with exhibition_images=page.get_exhibition_images opening_images=page.get_opening_images in_progress_images=page.get_in_progress_images gallery_mapping=page.get_gallery_index_mapping %}
+    {% with exhibition_images=page.get_exhibition_images_with_urls opening_images=page.get_opening_images_with_urls in_progress_images=page.get_in_progress_images_with_urls gallery_mapping=page.get_gallery_index_mapping %}
         {% if exhibition_images %}
         <section class="exhibition-gallery-section">
             <div class="exhibition-section-header">
                 <h2 class="exhibition-section-title">Installation Photos</h2>
             </div>
             <div class="exhibition-images">
-                {% for gallery_image in exhibition_images %}
-                    {% image gallery_image.image width-800 as gallery_img %}
-                    {% image gallery_image.image width-400 as thumb_img %}
+                {% for image_data in exhibition_images %}
                     <button class="gallery-lightbox-item"
                             data-media-type="image"
-                            data-media-src="{{ gallery_img.url }}"
-                            data-thumbnail-src="{{ thumb_img.url }}"
+                            data-media-src="{{ image_data.full_url }}"
+                            data-thumbnail-src="{{ image_data.thumb_url }}"
                             data-image-type="exhibition"
-                            data-caption="{{ gallery_image.image.title|default:page.title }}"
+                            data-caption="{{ image_data.image_title|default:page.title }}"
                             data-exhibition-title="{{ page.title }}"
                             data-exhibition-date="{{ page.get_formatted_date_short }}"
-                            data-image-credit="{{ gallery_image.image.credit|default:'' }}"
+                            data-image-credit="{{ image_data.credit|default:'' }}"
                             data-quickview-index="{{ gallery_mapping.installation_indices|dict_get:forloop.counter0|default:0 }}"
-                            aria-label="View {{ gallery_image.image.title|default:page.title }} in lightbox">
-                        <img src="{{ thumb_img.url }}" alt="{{ gallery_image.image.title|default:page.title }}"
-                             width="{{ thumb_img.width }}" height="{{ thumb_img.height }}"
+                            aria-label="View {{ image_data.image_title|default:page.title }} in lightbox">
+                        <img src="{{ image_data.thumb_url }}" alt="{{ image_data.image_title|default:page.title }}"
                              loading="lazy" decoding="async" class="gallery-single-image">
                     </button>
                 {% endfor %}
@@ -182,22 +179,19 @@
                 <h2 class="exhibition-section-title">Opening Reception</h2>
             </div>
             <div class="exhibition-images">
-                {% for gallery_image in opening_images %}
-                    {% image gallery_image.image width-800 as opening_img %}
-                    {% image gallery_image.image width-400 as thumb_img %}
+                {% for image_data in opening_images %}
                     <button class="gallery-lightbox-item"
                             data-media-type="image"
-                            data-media-src="{{ opening_img.url }}"
-                            data-thumbnail-src="{{ thumb_img.url }}"
+                            data-media-src="{{ image_data.full_url }}"
+                            data-thumbnail-src="{{ image_data.thumb_url }}"
                             data-image-type="opening"
-                            data-caption="{{ gallery_image.image.title|default:page.title }}"
+                            data-caption="{{ image_data.image_title|default:page.title }}"
                             data-exhibition-title="{{ page.title }}"
                             data-exhibition-date="{{ page.get_formatted_date_short }}"
-                            data-image-credit="{{ gallery_image.image.credit|default:'' }}"
+                            data-image-credit="{{ image_data.credit|default:'' }}"
                             data-quickview-index="{{ gallery_mapping.opening_indices|dict_get:forloop.counter0|default:0 }}"
-                            aria-label="View {{ gallery_image.image.title|default:page.title }} in lightbox">
-                        <img src="{{ thumb_img.url }}" alt="{{ gallery_image.image.title|default:page.title }}"
-                             width="{{ thumb_img.width }}" height="{{ thumb_img.height }}"
+                            aria-label="View {{ image_data.image_title|default:page.title }} in lightbox">
+                        <img src="{{ image_data.thumb_url }}" alt="{{ image_data.image_title|default:page.title }}"
                              loading="lazy" decoding="async" class="gallery-single-image">
                     </button>
                 {% endfor %}
@@ -212,22 +206,19 @@
                 <h2 class="exhibition-section-title">In Progress Shots</h2>
             </div>
             <div class="exhibition-images">
-                {% for gallery_image in in_progress_images %}
-                    {% image gallery_image.image width-800 as in_progress_img %}
-                    {% image gallery_image.image width-400 as thumb_img %}
+                {% for image_data in in_progress_images %}
                     <button class="gallery-lightbox-item"
                             data-media-type="image"
-                            data-media-src="{{ in_progress_img.url }}"
-                            data-thumbnail-src="{{ thumb_img.url }}"
+                            data-media-src="{{ image_data.full_url }}"
+                            data-thumbnail-src="{{ image_data.thumb_url }}"
                             data-image-type="in_progress"
-                            data-caption="{{ gallery_image.image.title|default:page.title }}"
+                            data-caption="{{ image_data.image_title|default:page.title }}"
                             data-exhibition-title="{{ page.title }}"
                             data-exhibition-date="{{ page.get_formatted_date_short }}"
-                            data-image-credit="{{ gallery_image.image.credit|default:'' }}"
+                            data-image-credit="{{ image_data.credit|default:'' }}"
                             data-quickview-index="{{ gallery_mapping.in_progress_indices|dict_get:forloop.counter0|default:0 }}"
-                            aria-label="View {{ gallery_image.image.title|default:page.title }} in lightbox">
-                        <img src="{{ thumb_img.url }}" alt="{{ gallery_image.image.title|default:page.title }}"
-                             width="{{ thumb_img.width }}" height="{{ thumb_img.height }}"
+                            aria-label="View {{ image_data.image_title|default:page.title }} in lightbox">
+                        <img src="{{ image_data.thumb_url }}" alt="{{ image_data.image_title|default:page.title }}"
                              loading="lazy" decoding="async" class="gallery-single-image">
                     </button>
                 {% endfor %}

@@ -528,6 +528,60 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
         """Get all in progress photos"""
         return self.in_progress_photos.all()
 
+    def _process_gallery_image(self, gallery_image, image_type):
+        """Helper to process a gallery image into a dict with pre-computed URLs."""
+        try:
+            thumb_rendition = gallery_image.image.get_rendition("width-400")
+            thumb_url = thumb_rendition.url
+            full_url = gallery_image.image.file.url
+        except Exception:
+            thumb_url = gallery_image.image.file.url
+            full_url = thumb_url
+
+        return {
+            "image_title": gallery_image.image.title or "",
+            "credit": gallery_image.image.credit or "",
+            "type": image_type,
+            "thumb_url": thumb_url,
+            "full_url": full_url,
+        }
+
+    def get_exhibition_images_with_urls(self):
+        """Get installation photos with pre-computed URLs for templates."""
+        from django.core.cache import cache
+        timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
+        cache_key = f"exhibition_install_urls_{self.pk}_{timestamp}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+        images = [self._process_gallery_image(img, "exhibition") for img in self.installation_photos.all()]
+        cache.set(cache_key, images, 3600)
+        return images
+
+    def get_opening_images_with_urls(self):
+        """Get opening reception photos with pre-computed URLs for templates."""
+        from django.core.cache import cache
+        timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
+        cache_key = f"exhibition_opening_urls_{self.pk}_{timestamp}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+        images = [self._process_gallery_image(img, "opening") for img in self.opening_reception_photos.all()]
+        cache.set(cache_key, images, 3600)
+        return images
+
+    def get_in_progress_images_with_urls(self):
+        """Get in progress photos with pre-computed URLs for templates."""
+        from django.core.cache import cache
+        timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
+        cache_key = f"exhibition_progress_urls_{self.pk}_{timestamp}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+        images = [self._process_gallery_image(img, "in_progress") for img in self.in_progress_photos.all()]
+        cache.set(cache_key, images, 3600)
+        return images
+
     def get_all_gallery_images(self):
         """Get all images from all typed image models with artwork data"""
         from django.core.cache import cache
