@@ -620,7 +620,7 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
         return randomized_images
 
-    def get_filtered_gallery_images(self, max_images=10):
+    def get_filtered_gallery_images(self, max_images=5):
         """
         Get filtered gallery images for exhibitions index page with:
         - First showcard as first item
@@ -645,31 +645,24 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
         # Helper function to process any image type (reuse from get_all_gallery_images)
         def process_image(gallery_image, image_type):
-            """Process a single image with standard renditions and metadata"""
-            # Generate standard rendition URLs
+            """Process a single image with standard renditions and metadata.
+
+            Note: WebP generation is skipped on listing page for performance.
+            Only generates thumb (width-400) rendition - full size is loaded on-demand.
+            """
+            # Generate only the thumbnail rendition for listing page performance
             try:
                 thumb_rendition = gallery_image.image.get_rendition("width-400")
-                full_rendition = gallery_image.image.get_rendition("width-1200")
                 thumb_url = thumb_rendition.url
-                full_url = full_rendition.url
-
-                # Generate WebP versions
-                try:
-                    thumb_webp = gallery_image.image.get_rendition("width-400|format-webp")
-                    full_webp = gallery_image.image.get_rendition("width-1200|format-webp")
-                    thumb_webp_url = thumb_webp.url
-                    full_webp_url = full_webp.url
-                except Exception:
-                    thumb_webp_url = thumb_url
-                    full_webp_url = full_url
+                # Use original file URL for full size - will be lazy loaded
+                full_url = gallery_image.image.file.url
             except Exception:
                 # Fallback to original image
                 thumb_url = gallery_image.image.file.url
                 full_url = gallery_image.image.file.url
-                thumb_webp_url = thumb_url
-                full_webp_url = full_url
 
             # Base image data - store only serializable values for caching
+            # WebP URLs point to same as regular for now (browser handles format)
             image_data = {
                 "image_title": gallery_image.image.title or "",
                 "caption": gallery_image.image.title or "",  # Alias for template compatibility
@@ -677,15 +670,19 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 "type": image_type,
                 "thumb_url": thumb_url,
                 "full_url": full_url,
-                "thumb_webp_url": thumb_webp_url,
-                "full_webp_url": full_webp_url,
+                "thumb_webp_url": thumb_url,  # Same as thumb for listing
+                "full_webp_url": full_url,    # Same as full for listing
             }
 
             return image_data
 
         # Helper function to process artworks
         def process_artwork(exhibition_artwork):
-            """Process a single artwork's first gallery image as a regular gallery item"""
+            """Process a single artwork's first gallery image as a regular gallery item.
+
+            Note: WebP generation is skipped on listing page for performance.
+            Only generates thumb (width-400) rendition.
+            """
             artwork = exhibition_artwork.artwork
 
             # Get first image from artwork_images relationship (Gallery Images > Images)
@@ -696,26 +693,15 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
             primary_image = first_artwork_image.image
 
+            # Generate only the thumbnail rendition for listing page performance
             try:
                 thumb_rendition = primary_image.get_rendition("width-400")
-                full_rendition = primary_image.get_rendition("width-1200")
                 thumb_url = thumb_rendition.url
-                full_url = full_rendition.url
-
-                # Generate WebP versions
-                try:
-                    thumb_webp = primary_image.get_rendition("width-400|format-webp")
-                    full_webp = primary_image.get_rendition("width-1200|format-webp")
-                    thumb_webp_url = thumb_webp.url
-                    full_webp_url = full_webp.url
-                except Exception:
-                    thumb_webp_url = thumb_url
-                    full_webp_url = full_url
+                # Use original file URL for full size - will be lazy loaded
+                full_url = primary_image.file.url
             except Exception:
                 thumb_url = primary_image.file.url
                 full_url = primary_image.file.url
-                thumb_webp_url = thumb_url
-                full_webp_url = full_url
 
             # Format materials as string (use prefetched data)
             materials_list = list(artwork.materials.all())
@@ -732,8 +718,8 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 "type": "artwork",
                 "thumb_url": thumb_url,
                 "full_url": full_url,
-                "thumb_webp_url": thumb_webp_url,
-                "full_webp_url": full_webp_url,
+                "thumb_webp_url": thumb_url,  # Same as thumb for listing
+                "full_webp_url": full_url,    # Same as full for listing
                 # Include artwork metadata for modal display (all strings for cache serialization)
                 "related_artwork": {
                     "title": str(artwork) if artwork.title else "",
