@@ -135,6 +135,7 @@ class ExhibitionsIndexPage(Page, ListingFields):
                         "artwork__artwork_images__image",
                         "artwork__artwork_images__image__renditions",
                         "artwork__artists",
+                        "artwork__materials",
                     ),
             ),
 
