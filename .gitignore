@@ -284,4 +284,8 @@ playwright-workstudy/.env
 # Compiled static assets (webpack output)
 static/
 
-**/.claude/settings.local.json
+# Claude Code local config
+.claude/
+
+# Webpack bundles in static_src
+housegallery/static_src/webpack_bundles/
