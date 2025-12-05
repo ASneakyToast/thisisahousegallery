@@ -10,6 +10,7 @@
   line-height: var(--line-height-intro);
   font-weight: var(--font-weight-intro);
   margin-bottom: var(--size-layout-section-spacing);
+  text-wrap-style: pretty;
 }
 
 h1.hero-section__intro b {
