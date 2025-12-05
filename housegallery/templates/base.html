@@ -19,6 +19,10 @@
         content="Joel Lithgow" />
   <link rel="icon" href="{% static 'images/favicons/house-favicon.jpg' %}" />
 
+  {# Preload fonts to reduce FOUT (Flash of Unstyled Text) #}
+  <link rel="preload" href="{% static 'webpack_bundles/fonts/SourceCodePro-VariableFont_wght.ttf' %}" as="font" type="font/ttf" crossorigin />
+  <link rel="preload" href="{% static 'webpack_bundles/fonts/SourceCodePro-Italic-VariableFont_wght.ttf' %}" as="font" type="font/ttf" crossorigin />
+
   {% block css %}
     {% render_bundle 'styles' 'css' %}
   {% endblock css %}

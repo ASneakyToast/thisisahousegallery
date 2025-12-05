@@ -61,7 +61,7 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  font-family: var(--font-family-heading, 'Montserrat', sans-serif);
+  font-family: var(--font-family-heading, monospace);
   color: var(--color-black, #000);
   line-height: 1.3;
   text-align: left;
@@ -217,7 +217,7 @@
   color: var(--color-black, #000);
   font-weight: 600;
   margin-bottom: 6px;
-  font-family: var(--font-family-heading, 'Montserrat', sans-serif);
+  font-family: var(--font-family-heading, monospace);
 }
 
 .exhibition-lightbox__artwork-artist {
@@ -225,7 +225,7 @@
   color: var(--color-black, #000);
   font-weight: 500;
   margin-bottom: 4px;
-  font-family: var(--font-family-heading, 'Montserrat', sans-serif);
+  font-family: var(--font-family-heading, monospace);
 }
 
 .exhibition-lightbox__artwork-details {
@@ -240,7 +240,7 @@
   color: var(--color-black, #000);
   font-weight: 500;
   line-height: 1.4;
-  font-family: var(--font-family-heading, 'Montserrat', sans-serif);
+  font-family: var(--font-family-heading, monospace);
 }
 
 .exhibition-lightbox__image-caption {

@@ -35,7 +35,7 @@
 }
 
 .kiosk-title {
-    font-family: var(--font-secondary);
+    font-family: var(--font-main);
     font-size: var(--font-size-70);
     font-weight: var(--font-weight-light);
     line-height: var(--line-height-title);
@@ -415,7 +415,7 @@
 }
 
 .subscription-title {
-    font-family: var(--font-secondary);
+    font-family: var(--font-main);
     font-size: var(--font-size-subheading);
     font-weight: var(--font-weight-normal);
     margin: 0 0 var(--size-20);

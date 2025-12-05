@@ -7,7 +7,7 @@
 .gallery-title {
     padding: 0 var(--size-layout-gutter);
     margin: var(--size-layout-heading-spacing) 0 var(--size-layout-element-spacing);
-    font-family: 'Montserrat';
+    font-family: var(--font-main);
     display: block;
     justify-self: left;
     font-size: var(--font-size-subheading);

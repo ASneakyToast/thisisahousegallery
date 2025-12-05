@@ -87,12 +87,10 @@
   /* --- FONT FAMILY --- */
 
   /* global */
-  --font-montserrat: "Montserrat", sans-serif;
-  --font-sourcecodepro: "SourceCodePro", serif;
+  --font-sourcecodepro: "SourceCodePro", monospace;
 
   /* alias */
   --font-main: var(--font-sourcecodepro);
-  --font-secondary: var(--font-montserrat);
 
   --font-family-title: var(--font-main);
   --font-family-heading: var(--font-main);
@@ -102,7 +100,7 @@
   --font-family-label: var(--font-main);
   --font-family-body: var(--font-main);
   --font-family-detail: var(--font-main);
-  --font-family-main: var(--font-secondary);
+  --font-family-main: var(--font-main);
 
   /* --- FONT SIZE --- */
 
