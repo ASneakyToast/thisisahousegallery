@@ -33,18 +33,26 @@ DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 # CACHING
 # ------------------------------------------------------------------------------
-# Database-backed cache - free, no extra GCP services required
-# Run `python manage.py createcachetable` once to create the cache table
+# Use in-memory cache for performance (avoids cross-region DB latency)
+# Note: Cache is per-container and clears on restart, but for a low-traffic
+# site this is fine - first request warms cache, subsequent requests are fast.
 CACHES = {
     "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "housegallery-cache",
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000,
+        },
+    },
+    # Keep database cache available for anything that needs persistence
+    "db": {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
         "LOCATION": "django_cache_table",
-    }
+    },
 }
 
-# Use cache for sessions (avoids DB hit on every request)
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
+# Use database for sessions (persists across container restarts)
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 
 # STATIC & MEDIA
