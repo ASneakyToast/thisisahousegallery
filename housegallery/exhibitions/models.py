@@ -860,29 +860,20 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
 
         # Helper function to process any image type (reused from existing methods)
         def process_image(gallery_image, image_type, artwork_data=None):
-            """Process a single image with standard renditions and metadata"""
-            # Generate standard rendition URLs
+            """Process a single image with standard renditions and metadata.
+
+            Only generates thumb rendition for performance - full size uses original.
+            """
+            # Generate only thumbnail rendition for performance
             try:
                 thumb_rendition = gallery_image.image.get_rendition("width-400")
-                full_rendition = gallery_image.image.get_rendition("width-1200")
                 thumb_url = thumb_rendition.url
-                full_url = full_rendition.url
-
-                # Generate WebP versions
-                try:
-                    thumb_webp = gallery_image.image.get_rendition("width-400|format-webp")
-                    full_webp = gallery_image.image.get_rendition("width-1200|format-webp")
-                    thumb_webp_url = thumb_webp.url
-                    full_webp_url = full_webp.url
-                except Exception:
-                    thumb_webp_url = thumb_url
-                    full_webp_url = full_url
+                # Use original file for full size - loaded on demand
+                full_url = gallery_image.image.file.url
             except Exception:
                 # Fallback to original image
                 thumb_url = gallery_image.image.file.url
                 full_url = gallery_image.image.file.url
-                thumb_webp_url = thumb_url
-                full_webp_url = full_url
 
             # Base image data structure - store only serializable values for caching
             image_data = {
@@ -892,8 +883,6 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                 "type": image_type,
                 "thumb_url": thumb_url,
                 "full_url": full_url,
-                "thumb_webp_url": thumb_webp_url,
-                "full_webp_url": full_webp_url,
                 "exhibition_title": self.title,
                 "exhibition_date": self.get_formatted_date_short(),
             }

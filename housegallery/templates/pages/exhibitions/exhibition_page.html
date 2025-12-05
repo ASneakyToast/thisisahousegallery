@@ -239,17 +239,15 @@
     <!-- Unified Gallery Container - Hidden container with all images for lightbox navigation -->
     {% with unified_images=page.get_unified_gallery_images %}
         {% if unified_images %}
-        <div class="exhibition-page-gallery unified-gallery-container" 
-             data-gallery-id="{{ page.title|slugify }}" 
+        <div class="exhibition-page-gallery unified-gallery-container"
+             data-gallery-id="{{ page.title|slugify }}"
              style="display: none;">
             {% for image_data in unified_images %}
-                {% image image_data.image width-400 as thumb_img %}
-                {% image image_data.image width-1200 as full_img %}
-                <button class="gallery-lightbox-item" 
+                <button class="gallery-lightbox-item"
                         data-media-type="image"
-                        data-media-src="{{ full_img.url }}"
-                        data-thumbnail-src="{{ thumb_img.url }}"
-                        data-caption="{{ image_data.image.title|default:page.title }}"
+                        data-media-src="{{ image_data.full_url }}"
+                        data-thumbnail-src="{{ image_data.thumb_url }}"
+                        data-caption="{{ image_data.image_title|default:page.title }}"
                         data-index="{{ forloop.counter0 }}"
                         data-image-type="{{ image_data.type }}"
                         data-exhibition-title="{{ image_data.exhibition_title }}"
@@ -262,11 +260,11 @@
                         data-artwork-materials="{{ image_data.artwork_materials|default:'' }}"
                         data-artwork-size="{{ image_data.related_artwork.size|default:'' }}"
                         {% endif %}
-                        aria-label="View {{ image_data.image.title|default:page.title }} in lightbox">
-                    <img src="{{ thumb_img.url }}" 
-                         alt="{{ image_data.image.title|default:page.title }}" 
-                         loading="lazy" 
-                         class="gallery-single-image" 
+                        aria-label="View {{ image_data.image_title|default:page.title }} in lightbox">
+                    <img src="{{ image_data.thumb_url }}"
+                         alt="{{ image_data.image_title|default:page.title }}"
+                         loading="lazy"
+                         class="gallery-single-image"
                          data-type="{{ image_data.type }}">
                 </button>
             {% endfor %}
