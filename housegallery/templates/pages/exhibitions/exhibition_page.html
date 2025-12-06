@@ -104,52 +104,12 @@
     </section>
     {% endif %}
 
-    <!-- Featured Artworks Section -->
-    {% if page.exhibition_artworks.all %}
-    {% with gallery_mapping=page.get_gallery_index_mapping %}
-    <section class="exhibition-artworks-section">
-        <div class="exhibition-section-header">
-            <h2 class="exhibition-section-title">Artworks</h2>
-        </div>
-        <div class="exhibition-artworks-grid">
-            {% for exhibition_artwork in page.exhibition_artworks.all %}
-                <article class="exhibition-artwork-card"
-                         {% if exhibition_artwork.artwork.artwork_images.all %}
-                         data-artwork-id="{{ exhibition_artwork.artwork.id }}"
-                         data-quickview-index="{{ gallery_mapping.artwork_first_indices|dict_get:exhibition_artwork.artwork.title|default:0 }}"
-                         style="cursor: pointer;"
-                         {% endif %}>
-                    <div class="exhibition-artwork-content">
-                        <h3 class="exhibition-artwork-title">{{ exhibition_artwork.artwork.title|striptags }}</h3>
-                    </div>
-                    
-                    <!-- Hidden hover preview image for desktop animation -->
-                    {% if exhibition_artwork.artwork.artwork_images.all %}
-                        {% with first_image=exhibition_artwork.artwork.artwork_images.first %}
-                            {% image first_image.image width-400 as artwork_preview %}
-                            <div class="exhibition-artwork-hover-preview" data-preview-src="{{ artwork_preview.url }}">
-                                <img src="{{ artwork_preview.url }}" 
-                                     alt="{{ exhibition_artwork.artwork.title }} preview" 
-                                     class="exhibition-artwork-hover-img"
-                                     width="{{ artwork_preview.width }}" 
-                                     height="{{ artwork_preview.height }}"
-                                     loading="lazy" decoding="async">
-                            </div>
-                        {% endwith %}
-                    {% endif %}
-                </article>
-            {% endfor %}
-        </div>
-    </section>
-    {% endwith %}
-    {% endif %}
-
     <!-- Exhibition Gallery Section - Now Clickable -->
     {% with exhibition_images=page.get_exhibition_images_with_urls opening_images=page.get_opening_images_with_urls in_progress_images=page.get_in_progress_images_with_urls gallery_mapping=page.get_gallery_index_mapping %}
         {% if exhibition_images %}
         <section class="exhibition-gallery-section">
             <div class="exhibition-section-header">
-                <h2 class="exhibition-section-title">Installation Photos</h2>
+                <h2 class="exhibition-section-title">Exhibition Photos</h2>
             </div>
             <div class="exhibition-images">
                 {% for image_data in exhibition_images %}
@@ -167,6 +127,44 @@
                         <img src="{{ image_data.thumb_url }}" alt="{{ image_data.image_title|default:page.title }}"
                              loading="lazy" decoding="async" class="gallery-single-image">
                     </button>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Featured Artworks Section -->
+        {% if page.exhibition_artworks.all %}
+        <section class="exhibition-artworks-section">
+            <div class="exhibition-section-header">
+                <h2 class="exhibition-section-title">Artworks</h2>
+            </div>
+            <div class="exhibition-artworks-grid">
+                {% for exhibition_artwork in page.exhibition_artworks.all %}
+                    <article class="exhibition-artwork-card"
+                             {% if exhibition_artwork.artwork.artwork_images.all %}
+                             data-artwork-id="{{ exhibition_artwork.artwork.id }}"
+                             data-quickview-index="{{ gallery_mapping.artwork_first_indices|dict_get:exhibition_artwork.artwork.title|default:0 }}"
+                             style="cursor: pointer;"
+                             {% endif %}>
+                        <div class="exhibition-artwork-content">
+                            <h3 class="exhibition-artwork-title">{{ exhibition_artwork.artwork.title|striptags }}</h3>
+                        </div>
+
+                        <!-- Hidden hover preview image for desktop animation -->
+                        {% if exhibition_artwork.artwork.artwork_images.all %}
+                            {% with first_image=exhibition_artwork.artwork.artwork_images.first %}
+                                {% image first_image.image width-400 as artwork_preview %}
+                                <div class="exhibition-artwork-hover-preview" data-preview-src="{{ artwork_preview.url }}">
+                                    <img src="{{ artwork_preview.url }}"
+                                         alt="{{ exhibition_artwork.artwork.title }} preview"
+                                         class="exhibition-artwork-hover-img"
+                                         width="{{ artwork_preview.width }}"
+                                         height="{{ artwork_preview.height }}"
+                                         loading="lazy" decoding="async">
+                                </div>
+                            {% endwith %}
+                        {% endif %}
+                    </article>
                 {% endfor %}
             </div>
         </section>
