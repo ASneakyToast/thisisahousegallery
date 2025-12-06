@@ -20,13 +20,15 @@ class ArtistChooserWidget(AdminSnippetChooser):
         """Override to use our custom artist chooser viewset with filtering."""
         return reverse('artist_chooser:choose')
 
-    def get_context(self, name, value, attrs):
+    def get_context(self, name, value_data, attrs):
         """Add preview data to context if artist has profile image."""
-        context = super().get_context(name, value, attrs)
-        if value:
+        context = super().get_context(name, value_data, attrs)
+        # value_data is a dict with 'id' key containing the actual PK
+        pk = value_data.get("id") if isinstance(value_data, dict) else value_data
+        if pk:
             from housegallery.artists.models import Artist
             try:
-                artist = Artist.objects.get(pk=value)
+                artist = Artist.objects.get(pk=pk)
                 if artist.profile_image:
                     preview = artist.profile_image.get_rendition("max-165x165")
                     context["preview"] = {

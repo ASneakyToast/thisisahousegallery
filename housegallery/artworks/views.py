@@ -12,8 +12,10 @@ from wagtail.admin.ui.tables import TitleColumn, Column
 from wagtail.admin.views.generic.chooser import (BaseChooseView,
                                                  ChooseResultsViewMixin,
                                                  ChooseViewMixin,
+                                                 ChosenResponseMixin,
                                                  ChosenViewMixin,
                                                  CreationFormMixin)
+from django.views import View
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import TranslatableMixin
 from wagtail.snippets.views.snippets import IndexView
@@ -352,7 +354,7 @@ class ArtworkChooseResultsView(ChooseResultsViewMixin, CreationFormMixin, BaseAr
     pass
 
 
-class ArtworkChosenViewMixin(ChosenViewMixin):
+class ArtworkChosenView(ChosenViewMixin, ChosenResponseMixin, View):
     """Custom chosen view that includes artwork thumbnail in response."""
 
     def get_chosen_response_data(self, artwork):
@@ -379,7 +381,7 @@ class ArtworkChooserViewSet(ChooserViewSet):
 
     choose_view_class = ArtworkChooseView
     choose_results_view_class = ArtworkChooseResultsView
-    chosen_view_class_mixin = ArtworkChosenViewMixin
+    chosen_view_class = ArtworkChosenView
 
     icon = "snippet"
     choose_one_text = _("Choose an artwork")

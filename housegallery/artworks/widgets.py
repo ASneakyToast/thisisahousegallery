@@ -20,13 +20,15 @@ class ArtworkChooserWidget(AdminSnippetChooser):
         """Override to use our custom artwork chooser viewset with filtering."""
         return reverse('artwork_chooser:choose')
 
-    def get_context(self, name, value, attrs):
+    def get_context(self, name, value_data, attrs):
         """Add preview data to context if artwork has images."""
-        context = super().get_context(name, value, attrs)
-        if value:
+        context = super().get_context(name, value_data, attrs)
+        # value_data is a dict with 'id' key containing the actual PK
+        pk = value_data.get("id") if isinstance(value_data, dict) else value_data
+        if pk:
             from housegallery.artworks.models import Artwork
             try:
-                artwork = Artwork.objects.get(pk=value)
+                artwork = Artwork.objects.get(pk=pk)
                 artwork_images = artwork.artwork_images.all()
                 if artwork_images:
                     first_image = artwork_images[0].image

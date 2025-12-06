@@ -12,8 +12,10 @@ from wagtail.admin.ui.tables import TitleColumn, Column
 from wagtail.admin.views.generic.chooser import (BaseChooseView,
                                                  ChooseResultsViewMixin,
                                                  ChooseViewMixin,
+                                                 ChosenResponseMixin,
                                                  ChosenViewMixin,
                                                  CreationFormMixin)
+from django.views import View
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import TranslatableMixin
 from wagtail.snippets.views.snippets import IndexView
@@ -164,7 +166,7 @@ class ArtistChooseResultsView(ChooseResultsViewMixin, CreationFormMixin, BaseArt
     pass
 
 
-class ArtistChosenViewMixin(ChosenViewMixin):
+class ArtistChosenView(ChosenViewMixin, ChosenResponseMixin, View):
     """Custom chosen view that includes artist profile image in response."""
 
     def get_chosen_response_data(self, artist):
@@ -189,7 +191,7 @@ class ArtistChooserViewSet(ChooserViewSet):
 
     choose_view_class = ArtistChooseView
     choose_results_view_class = ArtistChooseResultsView
-    chosen_view_class_mixin = ArtistChosenViewMixin
+    chosen_view_class = ArtistChosenView
 
     icon = "user"
     choose_one_text = _("Choose an artist")
