@@ -345,6 +345,137 @@ timeline.add({
 
 This is a significant change from anime.js v3, where the targets were specified as a property in the configuration object.
 
+## Custom Filtered Choosers for MultipleChooserPanel
+
+This project uses a pattern for creating filtered, searchable chooser modals that work with Wagtail's `MultipleChooserPanel`. This allows multi-selecting items with search/filter capabilities.
+
+### The Pattern
+
+There are 3 components needed:
+
+#### 1. Custom ChooserViewSet (defines the modal UI and filtering)
+
+```python
+# yourapp/views.py
+from wagtail.admin.views.generic.chooser import BaseChooseView, ChooseViewMixin, ChooseResultsViewMixin, CreationFormMixin
+from wagtail.admin.viewsets.chooser import ChooserViewSet
+from wagtail.admin.forms.choosers import BaseFilterForm
+
+class YourModelSearchFilterMixin(forms.Form):
+    """Filter form fields for the chooser modal."""
+    q = forms.CharField(label=_("Search"), required=False)
+    # Add more filter fields as needed...
+
+    def filter(self, objects):
+        if self.cleaned_data.get("q"):
+            objects = objects.filter(title__icontains=self.cleaned_data["q"])
+        return objects
+
+class BaseYourModelChooseView(BaseChooseView):
+    ordering = ["-created_at"]  # Default ordering
+
+    def get_filter_form_class(self):
+        return type("FilterForm", (YourModelSearchFilterMixin, BaseFilterForm), {})
+
+class YourModelChooseView(ChooseViewMixin, CreationFormMixin, BaseYourModelChooseView):
+    pass
+
+class YourModelChooseResultsView(ChooseResultsViewMixin, CreationFormMixin, BaseYourModelChooseView):
+    pass
+
+class YourModelChooserViewSet(ChooserViewSet):
+    model = 'yourapp.YourModel'
+    choose_view_class = YourModelChooseView
+    choose_results_view_class = YourModelChooseResultsView
+    icon = "snippet"
+    choose_one_text = _("Choose an item")
+
+yourmodel_chooser_viewset = YourModelChooserViewSet("yourmodel_chooser")
+```
+
+#### 2. Custom Widget (connects to your ChooserViewSet)
+
+```python
+# yourapp/widgets.py
+from django.urls import reverse
+from wagtail.admin.panels import FieldPanel
+from wagtail.snippets.widgets import AdminSnippetChooser
+
+class YourModelChooserWidget(AdminSnippetChooser):
+    """Widget that uses the custom filtered chooser."""
+
+    def __init__(self, model=None, **kwargs):
+        if model is None:
+            from yourapp.models import YourModel
+            model = YourModel
+        super().__init__(model=model, **kwargs)
+
+    def get_chooser_modal_url(self):
+        """Override to use custom chooser viewset with filtering."""
+        return reverse('yourmodel_chooser:choose')  # Must match viewset name
+
+
+class YourModelChooserPanel(FieldPanel):
+    """Panel that injects the custom widget."""
+
+    def get_form_options(self):
+        opts = super().get_form_options()
+        from yourapp.models import YourModel
+        # CRITICAL: Must use "widgets" (plural) dict with field_name as key
+        if "widgets" not in opts:
+            opts["widgets"] = {}
+        opts["widgets"][self.field_name] = YourModelChooserWidget(model=YourModel)
+        return opts
+```
+
+#### 3. Register the ViewSet (wagtail_hooks.py)
+
+```python
+# yourapp/wagtail_hooks.py
+from wagtail import hooks
+from .views import yourmodel_chooser_viewset
+
+@hooks.register('register_admin_viewset')
+def register_yourmodel_chooser_viewset():
+    return yourmodel_chooser_viewset
+```
+
+### Usage with MultipleChooserPanel
+
+```python
+# In your Orderable model
+class PageYourModel(Orderable):
+    page = ParentalKey("YourPage", related_name="page_items")
+    item = models.ForeignKey("yourapp.YourModel", on_delete=models.CASCADE)
+
+    panels = [
+        YourModelChooserPanel("item"),  # Uses your custom panel
+    ]
+
+# In your Page model
+class YourPage(Page):
+    content_panels = Page.content_panels + [
+        MultipleChooserPanel(
+            "page_items",
+            label="Items",
+            chooser_field_name="item",  # Field name in Orderable
+        ),
+    ]
+```
+
+### Critical Gotchas
+
+1. **`opts["widgets"]` not `opts["widget"]`**: The form options must use the plural `"widgets"` key with a dict mapping field names to widgets.
+
+2. **Override `get_chooser_modal_url()`**: The `AdminSnippetChooser` base class ignores `chooser_url_name` attribute - you must override the method.
+
+3. **ViewSet naming**: The URL name follows pattern `{viewset_name}:choose`, so `YourModelChooserViewSet("yourmodel_chooser")` creates URL `yourmodel_chooser:choose`.
+
+### Existing Implementations
+
+- **Artwork Chooser**: `housegallery/artworks/widgets.py`, `housegallery/artworks/views.py`
+- **Artist Chooser**: `housegallery/artists/widgets.py`, `housegallery/artists/views.py`
+
 ## Claude Code Behavioral Patterns
 
 ### MCP Server Configuration
