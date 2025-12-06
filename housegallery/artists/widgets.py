@@ -6,8 +6,9 @@ from wagtail.snippets.widgets import AdminSnippetChooser
 class ArtistChooserWidget(AdminSnippetChooser):
     """
     Custom artist chooser widget that uses the artist chooser viewset
-    with advanced filtering capabilities.
+    with advanced filtering capabilities and thumbnail previews.
     """
+    template_name = "artists/widgets/artist_chooser.html"
 
     def __init__(self, model=None, **kwargs):
         if model is None:
@@ -18,6 +19,24 @@ class ArtistChooserWidget(AdminSnippetChooser):
     def get_chooser_modal_url(self):
         """Override to use our custom artist chooser viewset with filtering."""
         return reverse('artist_chooser:choose')
+
+    def get_context(self, name, value, attrs):
+        """Add preview data to context if artist has profile image."""
+        context = super().get_context(name, value, attrs)
+        if value:
+            from housegallery.artists.models import Artist
+            try:
+                artist = Artist.objects.get(pk=value)
+                if artist.profile_image:
+                    preview = artist.profile_image.get_rendition("max-165x165")
+                    context["preview"] = {
+                        "url": preview.url,
+                        "width": preview.width,
+                        "height": preview.height,
+                    }
+            except (Artist.DoesNotExist, Exception):
+                pass
+        return context
 
 
 class ArtistChooserPanel(FieldPanel):

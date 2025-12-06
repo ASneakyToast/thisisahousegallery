@@ -12,6 +12,7 @@ from wagtail.admin.ui.tables import TitleColumn, Column
 from wagtail.admin.views.generic.chooser import (BaseChooseView,
                                                  ChooseResultsViewMixin,
                                                  ChooseViewMixin,
+                                                 ChosenViewMixin,
                                                  CreationFormMixin)
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import TranslatableMixin
@@ -351,17 +352,40 @@ class ArtworkChooseResultsView(ChooseResultsViewMixin, CreationFormMixin, BaseAr
     pass
 
 
+class ArtworkChosenViewMixin(ChosenViewMixin):
+    """Custom chosen view that includes artwork thumbnail in response."""
+
+    def get_chosen_response_data(self, artwork):
+        """Override to include artwork thumbnail preview."""
+        response_data = super().get_chosen_response_data(artwork)
+        # Add image preview if artwork has images
+        artwork_images = artwork.artwork_images.all()
+        if artwork_images:
+            first_image = artwork_images[0].image
+            try:
+                preview = first_image.get_rendition("max-165x165")
+                response_data["preview"] = {
+                    "url": preview.url,
+                    "width": preview.width,
+                    "height": preview.height,
+                }
+            except Exception:
+                pass
+        return response_data
+
+
 class ArtworkChooserViewSet(ChooserViewSet):
     model = 'artworks.Artwork'
 
     choose_view_class = ArtworkChooseView
     choose_results_view_class = ArtworkChooseResultsView
+    chosen_view_class_mixin = ArtworkChosenViewMixin
 
     icon = "snippet"
     choose_one_text = _("Choose an artwork")
     choose_another_text = _("Choose another artwork")
     paginate_by = getattr(settings, 'DEFAULT_PER_PAGE', 20)
-    
+
     @cached_property
     def widget_class(self):
         widget = super().widget_class

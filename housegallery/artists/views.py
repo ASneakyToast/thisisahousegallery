@@ -12,6 +12,7 @@ from wagtail.admin.ui.tables import TitleColumn, Column
 from wagtail.admin.views.generic.chooser import (BaseChooseView,
                                                  ChooseResultsViewMixin,
                                                  ChooseViewMixin,
+                                                 ChosenViewMixin,
                                                  CreationFormMixin)
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import TranslatableMixin
@@ -163,17 +164,38 @@ class ArtistChooseResultsView(ChooseResultsViewMixin, CreationFormMixin, BaseArt
     pass
 
 
+class ArtistChosenViewMixin(ChosenViewMixin):
+    """Custom chosen view that includes artist profile image in response."""
+
+    def get_chosen_response_data(self, artist):
+        """Override to include artist profile image preview."""
+        response_data = super().get_chosen_response_data(artist)
+        # Add image preview if artist has a profile image
+        if artist.profile_image:
+            try:
+                preview = artist.profile_image.get_rendition("max-165x165")
+                response_data["preview"] = {
+                    "url": preview.url,
+                    "width": preview.width,
+                    "height": preview.height,
+                }
+            except Exception:
+                pass
+        return response_data
+
+
 class ArtistChooserViewSet(ChooserViewSet):
     model = 'artists.Artist'
 
     choose_view_class = ArtistChooseView
     choose_results_view_class = ArtistChooseResultsView
+    chosen_view_class_mixin = ArtistChosenViewMixin
 
     icon = "user"
     choose_one_text = _("Choose an artist")
     choose_another_text = _("Choose another artist")
     paginate_by = getattr(settings, 'DEFAULT_PER_PAGE', 20)
-    
+
     @cached_property
     def widget_class(self):
         widget = super().widget_class

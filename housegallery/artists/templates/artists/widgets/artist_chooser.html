@@ -1,0 +1,12 @@
+{% extends "wagtailadmin/widgets/chooser.html" %}
+{% load l10n %}
+
+{% block chosen_icon %}
+    {% if preview %}
+        <img class="chooser__image" data-chooser-image alt="" decoding="async" height="{{ preview.height|unlocalize }}" src="{{ preview.url }}" width="{{ preview.width|unlocalize }}">
+    {% else %}
+        <div class="chooser__preview" role="presentation">
+            {% load wagtailadmin_tags %}{% icon name="user" classname="default" %}
+        </div>
+    {% endif %}
+{% endblock chosen_icon %}
