@@ -363,21 +363,27 @@ def generate_standard_renditions(sender, instance, created, **kwargs):
     """
     if created:
         try:
-            # Generate standard thumbnail size (400px width) 
+            # Legacy template tag renditions ({% image ... width-400 %} etc.)
             instance.get_rendition('width-400')
             instance.get_rendition('width-400|format-webp')
-            
-            # Generate standard full size (1200px width)
             instance.get_rendition('width-1200')
             instance.get_rendition('width-1200|format-webp')
-            
+
+            # New helper method renditions
+            # get_web_optimized() - used for smaller/medium display
+            instance.get_rendition('width-1440|format-webp|webpquality-85')
+            # get_display_optimized() - analyzes image and picks best spec
+            instance.get_display_optimized()
+            # get_thumbnail() - admin and card thumbnails
+            instance.get_rendition('fill-300x300|format-webp|webpquality-90')
+
             logger.info(
-                "Generated standard renditions for image: %s", 
+                "Generated standard renditions for image: %s",
                 instance.title
             )
         except Exception as e:
             logger.error(
-                "Failed to generate renditions for image %s: %s", 
-                instance.title, 
+                "Failed to generate renditions for image %s: %s",
+                instance.title,
                 str(e)
             )

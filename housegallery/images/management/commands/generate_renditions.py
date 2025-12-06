@@ -5,11 +5,17 @@ from housegallery.images.models import CustomImage, Rendition
 
 # Standard rendition specs used across the site
 STANDARD_RENDITIONS = [
+    # Legacy template tag renditions
     'width-400',
     'width-400|format-webp',
     'width-1200',
     'width-1200|format-webp',
+    # New helper method renditions
+    'width-1440|format-webp|webpquality-85',  # get_web_optimized()
+    'fill-300x300|format-webp|webpquality-90',  # get_thumbnail()
 ]
+
+# Note: get_display_optimized() is handled separately as it's dynamic based on image size
 
 
 class Command(BaseCommand):
@@ -130,5 +136,16 @@ class Command(BaseCommand):
                             f'  Could not create {spec} for image {image.id}: {e}'
                         )
                     )
+
+        # Handle get_display_optimized() - dynamic based on image dimensions
+        try:
+            image.get_display_optimized()
+            # Note: May or may not create a new rendition depending on existing specs
+        except Exception as e:
+            self.stdout.write(
+                self.style.WARNING(
+                    f'  Could not create display_optimized for image {image.id}: {e}'
+                )
+            )
 
         return created
