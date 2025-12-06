@@ -357,10 +357,11 @@ class Command(BaseCommand):
         )
         artwork.save()
 
-        # Add materials as tags
+        # Add materials as tags (must save after for ClusterTaggableManager)
         materials = self._parse_materials(materials_str)
         if materials:
             artwork.materials.add(*materials)
+            artwork.save()
 
         # Link to artist
         artist = self._get_or_create_artist(artist_name, artist_cache, dry_run)
