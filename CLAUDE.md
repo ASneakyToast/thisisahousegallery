@@ -463,6 +463,89 @@ class YourPage(Page):
     ]
 ```
 
+### Adding Thumbnail Previews
+
+To display thumbnail images in the chooser widget (instead of generic icons), you need two additional components:
+
+#### 1. Custom ChosenView (returns image data when item is selected)
+
+```python
+# yourapp/views.py
+from wagtail.admin.views.generic.chooser import ChosenResponseMixin, ChosenViewMixin
+from django.views import View
+
+class YourModelChosenView(ChosenViewMixin, ChosenResponseMixin, View):
+    """Custom chosen view that includes thumbnail in response."""
+
+    def get_chosen_response_data(self, obj):
+        """Override to include image preview."""
+        response_data = super().get_chosen_response_data(obj)
+        if obj.image:  # Your image field
+            try:
+                preview = obj.image.get_rendition("max-165x165")
+                response_data["preview"] = {
+                    "url": preview.url,
+                    "width": preview.width,
+                    "height": preview.height,
+                }
+            except Exception:
+                pass
+        return response_data
+
+# Then in your ChooserViewSet:
+class YourModelChooserViewSet(ChooserViewSet):
+    # ... other config ...
+    chosen_view_class = YourModelChosenView  # NOT chosen_view_class_mixin
+```
+
+#### 2. Widget get_context for initial render
+
+```python
+# yourapp/widgets.py
+class YourModelChooserWidget(AdminSnippetChooser):
+    template_name = "yourapp/widgets/yourmodel_chooser.html"
+
+    def get_context(self, name, value_data, attrs):
+        """Add preview data to context."""
+        context = super().get_context(name, value_data, attrs)
+        # IMPORTANT: value_data is a dict with 'id' key, NOT a raw PK
+        pk = value_data.get("id") if isinstance(value_data, dict) else value_data
+        if pk:
+            from yourapp.models import YourModel
+            try:
+                obj = YourModel.objects.get(pk=pk)
+                if obj.image:
+                    preview = obj.image.get_rendition("max-165x165")
+                    context["preview"] = {
+                        "url": preview.url,
+                        "width": preview.width,
+                        "height": preview.height,
+                    }
+            except (YourModel.DoesNotExist, Exception):
+                pass
+        return context
+```
+
+#### 3. Custom template
+
+```html
+{# yourapp/templates/yourapp/widgets/yourmodel_chooser.html #}
+{% extends "wagtailadmin/widgets/chooser.html" %}
+{% load l10n %}
+
+{% block chosen_icon %}
+    {% if preview %}
+        <img class="chooser__image" data-chooser-image alt="" decoding="async"
+             height="{{ preview.height|unlocalize }}" src="{{ preview.url }}"
+             width="{{ preview.width|unlocalize }}">
+    {% else %}
+        <div class="chooser__preview" role="presentation">
+            {% load wagtailadmin_tags %}{% icon name="image" classname="default" %}
+        </div>
+    {% endif %}
+{% endblock chosen_icon %}
+```
+
 ### Critical Gotchas
 
 1. **`opts["widgets"]` not `opts["widget"]`**: The form options must use the plural `"widgets"` key with a dict mapping field names to widgets.
@@ -470,6 +553,10 @@ class YourPage(Page):
 2. **Override `get_chooser_modal_url()`**: The `AdminSnippetChooser` base class ignores `chooser_url_name` attribute - you must override the method.
 
 3. **ViewSet naming**: The URL name follows pattern `{viewset_name}:choose`, so `YourModelChooserViewSet("yourmodel_chooser")` creates URL `yourmodel_chooser:choose`.
+
+4. **`value_data` is a dict**: In widget `get_context`, the `value_data` parameter is a dict like `{"id": 123, "edit_url": "..."}`, NOT a raw PK. Extract the PK with `value_data.get("id")`.
+
+5. **Use `chosen_view_class` not `chosen_view_class_mixin`**: When adding a custom ChosenView, use the `chosen_view_class` attribute on the viewset, not `chosen_view_class_mixin`.
 
 ### Existing Implementations
 
