@@ -147,7 +147,7 @@
                              style="cursor: pointer;"
                              {% endif %}>
                         <div class="exhibition-artwork-content">
-                            <h3 class="exhibition-artwork-title">{{ exhibition_artwork.artwork.title|striptags }}</h3>
+                            <h3 class="exhibition-artwork-title">{{ exhibition_artwork.artwork.title|striptags|safe }}</h3>
                         </div>
 
                         <!-- Hidden hover preview image for desktop animation -->
