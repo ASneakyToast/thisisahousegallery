@@ -181,7 +181,15 @@
                 allowSpaces: true,
                 removeConfirmation: true,
                 allowDuplicates: false,
-                tagLimit: 20
+                tagLimit: 20,
+                autocomplete: {
+                    source: function(request, response) {
+                        $.getJSON('/admin/tag-autocomplete/', {
+                            term: request.term
+                        }, response);
+                    },
+                    minLength: 2
+                }
             });
         });
     </script>
