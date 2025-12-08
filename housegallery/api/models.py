@@ -9,9 +9,10 @@ class APIKey(models.Model):
     """API key model for multi-tenant authentication"""
     
     key = models.CharField(
-        max_length=64, 
-        unique=True, 
+        max_length=64,
+        unique=True,
         db_index=True,
+        blank=True,
         help_text="The API key. Generated automatically if not provided."
     )
     name = models.CharField(
