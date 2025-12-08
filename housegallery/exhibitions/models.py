@@ -19,6 +19,7 @@ from wagtail.images import get_image_model_string
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Orderable
 from wagtail.search import index
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 
 from housegallery.artists.widgets import ArtistChooserPanel
 from housegallery.artworks.widgets import ArtworkChooserPanel
@@ -494,7 +495,7 @@ class ExhibitionImage(Orderable):
 
 
 
-class ExhibitionPage(Page, ListingFields, ClusterableModel):
+class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
     """Individual exhibition page."""
 
     start_date = models.DateField("Exhibition start date",
@@ -1273,9 +1274,49 @@ class ExhibitionPage(Page, ListingFields, ClusterableModel):
                     if artwork_title and artwork_title != current_artwork_title:
                         mapping['artwork_first_indices'][artwork_title] = index
                         current_artwork_title = artwork_title
-        
+
         return mapping
 
+    def get_catalog_url(self):
+        """Return the URL to the catalog view."""
+        return self.url + self.reverse_subpage('catalog')
+
+    @route(r'^catalog/$', name='catalog')
+    def catalog_view(self, request):
+        """
+        Render the printable catalog page for this exhibition.
+
+        Accessible at /exhibitions/[slug]/catalog/
+        """
+        # Get optimized version with prefetched relationships
+        optimized_page = ExhibitionPage.get_optimized_exhibition_detail(self.pk)
+        if optimized_page:
+            self._prefetched_objects_cache = getattr(optimized_page, '_prefetched_objects_cache', {})
+
+        # Prepare artwork data with all details for catalog
+        catalog_artworks = []
+        for exhibition_artwork in self.exhibition_artworks.all():
+            artwork = exhibition_artwork.artwork
+            artwork_images = list(artwork.artwork_images.all())
+            primary_image = artwork_images[0].image if artwork_images else None
+
+            catalog_artworks.append({
+                'artwork': artwork,
+                'primary_image': primary_image,
+                'all_images': artwork_images,
+                'artists': list(artwork.artists.all()),
+                'materials': list(artwork.materials.all()),
+            })
+
+        context = self.get_context(request)
+        context['catalog_artworks'] = catalog_artworks
+        context['is_catalog_view'] = True
+
+        return self.render(
+            request,
+            context_overrides=context,
+            template='pages/exhibitions/exhibition_catalog.html'
+        )
 
 
 class EventArtist(Orderable):

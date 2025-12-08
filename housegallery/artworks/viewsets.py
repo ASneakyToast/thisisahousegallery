@@ -52,7 +52,7 @@ class ArtworkSnippetViewSet(SnippetViewSet):
     add_to_admin_menu = False
     
     # List display configuration
-    list_display = ["title_sortable", "admin_thumb", "artist_names", "date_year", "date_published"]
+    list_display = ["title_sortable", "admin_thumb", "artist_names", "date_year", "price", "date_published"]
     list_filter = ["date", "artists", "materials"]
     list_per_page = 40
     ordering = ["-date", "title"]
@@ -62,7 +62,7 @@ class ArtworkSnippetViewSet(SnippetViewSet):
     search_fields = ["title", "description", "artists__name", "materials__name"]
     
     # Enable export
-    list_export = ["title", "artist_names", "materials_list", "size", "date", "description"]
+    list_export = ["title", "artist_names", "materials_list", "size", "price", "date", "description"]
     
     # Custom index view class to use our filter mixin
     index_view_class = ArtworkIndexView

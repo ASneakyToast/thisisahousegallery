@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}exhibition-catalog-page{% endblock %}
+
+{% block content %}
+<div class="catalog-page">
+    <!-- Catalog Header -->
+    <header class="catalog-header">
+        <div class="catalog-header__branding">
+            <span class="catalog-header__gallery-name">This is a House Gallery</span>
+        </div>
+
+        <h1 class="catalog-header__title">{{ page.title }}</h1>
+
+        {% if page.exhibition_artists.all %}
+        <div class="catalog-header__artists">
+            {% for exhibition_artist in page.exhibition_artists.all %}
+                <span class="catalog-artist-name">{{ exhibition_artist.artist.name }}</span>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="catalog-header__dates">
+            {% if page.start_date %}
+                {{ page.start_date|date:"F j, Y" }}
+                {% if page.end_date and page.end_date != page.start_date %}
+                    &ndash; {{ page.end_date|date:"F j, Y" }}
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="catalog-actions no-print">
+            <button onclick="window.print()" class="catalog-print-btn">
+                Print Catalog
+            </button>
+            <a href="{{ page.url }}" class="catalog-back-link">
+                &larr; Back to Exhibition
+            </a>
+        </div>
+    </header>
+
+    <!-- Artworks List -->
+    <section class="catalog-artworks">
+        <ol class="catalog-artworks-list">
+            {% for item in catalog_artworks %}
+                <li class="catalog-entry">
+                    <article class="catalog-entry__inner">
+                        <div class="catalog-entry__image">
+                            {% if item.primary_image %}
+                                {% image item.primary_image width-800 as artwork_img %}
+                                <img src="{{ artwork_img.url }}"
+                                     alt="{{ item.artwork.title|striptags }}"
+                                     width="{{ artwork_img.width }}"
+                                     height="{{ artwork_img.height }}"
+                                     loading="lazy" decoding="async">
+                            {% else %}
+                                <div class="catalog-entry__placeholder" aria-label="No image available"></div>
+                            {% endif %}
+                        </div>
+
+                        <div class="catalog-entry__details">
+                            <span class="catalog-entry__number">{{ forloop.counter }}</span>
+
+                            <h3 class="catalog-entry__title">{{ item.artwork.title|striptags|safe }}</h3>
+
+                            {% if item.artists %}
+                            <p class="catalog-entry__artist">
+                                {% for artist in item.artists %}
+                                    {{ artist.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            {% endif %}
+
+                            <div class="catalog-entry__meta">
+                                {% if item.artwork.date %}
+                                <span class="catalog-entry__date">{{ item.artwork.date|date:"Y" }}</span>
+                                {% endif %}
+
+                                {% if item.artwork.size %}
+                                <span class="catalog-entry__size">{{ item.artwork.size }}</span>
+                                {% endif %}
+                            </div>
+
+                            {% if item.materials %}
+                            <p class="catalog-entry__materials">
+                                {% for material in item.materials %}
+                                    {{ material.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            {% endif %}
+
+                            {% if item.artwork.price %}
+                            <p class="catalog-entry__price">{{ item.artwork.price }}</p>
+                            {% endif %}
+                        </div>
+                    </article>
+                </li>
+            {% empty %}
+                <li class="catalog-empty">No artworks in this exhibition.</li>
+            {% endfor %}
+        </ol>
+    </section>
+
+    <!-- Footer for Print -->
+    <footer class="catalog-footer">
+        <p>This is a House Gallery</p>
+    </footer>
+</div>
+{% endblock %}

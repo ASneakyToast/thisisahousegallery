@@ -137,6 +137,9 @@
         <section class="exhibition-artworks-section">
             <div class="exhibition-section-header">
                 <h2 class="exhibition-section-title">Artworks</h2>
+                <a href="{{ page.get_catalog_url }}" class="button-carrot">
+                    View Printable Catalog
+                </a>
             </div>
             <div class="exhibition-artworks-grid">
                 {% for exhibition_artwork in page.exhibition_artworks.all %}

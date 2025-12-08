@@ -21,6 +21,7 @@ require('./components/admin-chooser.css');
 require('./components/home/hero_block.css');
 require('./components/exhibitions/exhibitions.css');
 require('./components/exhibitions/exhibition.css');
+require('./components/exhibitions/exhibition-catalog.css');
 require('./components/exhibitions/schedule.css');
 require('./components/exhibitions/event.css');
 require('./components/places/places.css');

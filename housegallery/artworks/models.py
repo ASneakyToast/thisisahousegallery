@@ -152,6 +152,11 @@ class Artwork(DraftStateMixin, RevisionMixin, ClusterableModel):
         blank=True,
         null=True,
     )
+    price = models.CharField(
+        blank=True,
+        max_length=50,
+        help_text="Price or status (e.g., $500, NFS, Sold, Price on request)"
+    )
     artifacts = StreamField([
         ('image', ArtworkImageBlock()),
         ('document', ArtworkDocumentBlock()),
@@ -168,6 +173,7 @@ class Artwork(DraftStateMixin, RevisionMixin, ClusterableModel):
         FieldPanel('date'),
         FieldPanel('size'),
         FieldPanel('materials'),
+        FieldPanel('price'),
         FieldPanel('description'),
         MultiFieldPanel([
             MultipleChooserPanel(

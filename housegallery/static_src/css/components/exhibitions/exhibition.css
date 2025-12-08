@@ -172,7 +172,11 @@
 
 /* Exhibition Section Headers */
 .exhibition-section-header {
-  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--size-10);
   margin-bottom: var(--size-layout-element-spacing);
 }
 
