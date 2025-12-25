@@ -996,7 +996,7 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
                     "title": str(artwork) if artwork.title else "",
                     "artist_names": getattr(artwork, 'artist_names', '') or "",
                     "date": {"year": date_year},
-                    "size": artwork.size or "",
+                    "size_display": artwork.size_display or "",
                 },
                 "artwork_materials": materials_str,
             }
@@ -1207,7 +1207,7 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
                     "title": artwork.title,
                     "artist_names": getattr(artwork, 'artist_names', None),
                     "date": artwork.date.year if artwork.date else None,
-                    "size": artwork.size,
+                    "size_display": artwork.size_display,
                     "materials_str": materials_str,
                 }
 

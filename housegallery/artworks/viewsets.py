@@ -62,7 +62,7 @@ class ArtworkSnippetViewSet(SnippetViewSet):
     search_fields = ["title", "description", "artists__name", "materials__name"]
     
     # Enable export
-    list_export = ["title", "artist_names", "materials_list", "size", "price", "date", "description"]
+    list_export = ["title", "artist_names", "materials_list", "width_inches", "height_inches", "depth_inches", "size_display", "price", "date", "description"]
     
     # Custom index view class to use our filter mixin
     index_view_class = ArtworkIndexView

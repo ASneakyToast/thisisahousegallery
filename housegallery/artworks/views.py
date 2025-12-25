@@ -117,22 +117,18 @@ class ArtworkAdminFilterForm(forms.Form):
         if self.cleaned_data.get('max_year'):
             queryset = queryset.filter(date__year__lte=self.cleaned_data['max_year'])
 
-        # Size filters (convert to centimeters for database comparison)
+        # Size filters (using new dimension fields in inches)
         if self.cleaned_data.get('min_width'):
-            min_width_cm = self.cleaned_data['min_width'] * 2.54
-            queryset = queryset.filter(width__gte=min_width_cm)
-        
+            queryset = queryset.filter(width_inches__gte=self.cleaned_data['min_width'])
+
         if self.cleaned_data.get('max_width'):
-            max_width_cm = self.cleaned_data['max_width'] * 2.54
-            queryset = queryset.filter(width__lte=max_width_cm)
-        
+            queryset = queryset.filter(width_inches__lte=self.cleaned_data['max_width'])
+
         if self.cleaned_data.get('min_height'):
-            min_height_cm = self.cleaned_data['min_height'] * 2.54
-            queryset = queryset.filter(height__gte=min_height_cm)
-        
+            queryset = queryset.filter(height_inches__gte=self.cleaned_data['min_height'])
+
         if self.cleaned_data.get('max_height'):
-            max_height_cm = self.cleaned_data['max_height'] * 2.54
-            queryset = queryset.filter(height__lte=max_height_cm)
+            queryset = queryset.filter(height_inches__lte=self.cleaned_data['max_height'])
 
         return queryset
 
@@ -258,32 +254,28 @@ class ArtworkSearchFilterMixin(forms.Form):
         if date_to:
             objects = objects.filter(date__lte=date_to)
             
-        # Size category filtering (basic implementation)
+        # Size category filtering using dimension fields
         size_category = self.cleaned_data.get("size_category")
         if size_category:
+            # Calculate max dimension (largest of width or height)
+            # Small: max dimension < 24"
+            # Medium: max dimension 24-48"
+            # Large: max dimension > 48"
             if size_category == 'small':
-                # Artworks with size field containing keywords suggesting small size
                 objects = objects.filter(
-                    Q(size__icontains='small') |
-                    Q(size__iregex=r'\b\d{1,2}["\s]') |  # Less than 100 inches/cm
-                    Q(size__iregex=r'\b[1-9]\d{0,1}\s*(cm|in)')  # 1-99 cm/in
-                )
+                    Q(width_inches__lt=24) | Q(width_inches__isnull=True),
+                    Q(height_inches__lt=24) | Q(height_inches__isnull=True)
+                ).exclude(width_inches__isnull=True, height_inches__isnull=True)
             elif size_category == 'medium':
-                # Medium sized works
                 objects = objects.filter(
-                    Q(size__icontains='medium') |
-                    Q(size__iregex=r'\b1\d{2}["\s]') |  # 100-199 range
-                    Q(size__iregex=r'\b[1-9]\d{2}\s*(cm|in)')  # 100-999 cm/in
+                    Q(width_inches__gte=24, width_inches__lte=48) |
+                    Q(height_inches__gte=24, height_inches__lte=48)
                 )
             elif size_category == 'large':
-                # Large works
                 objects = objects.filter(
-                    Q(size__icontains='large') |
-                    Q(size__iregex=r'\b[2-9]\d{2}["\s]') |  # 200+ range
-                    Q(size__iregex=r'\b\d{4,}\s*(cm|in)')  # 1000+ cm/in
+                    Q(width_inches__gt=48) | Q(height_inches__gt=48)
                 )
-                
-            
+
         return objects
 
 
@@ -318,7 +310,7 @@ class BaseArtworkChooseView(BaseChooseView):
             Column(
                 name="size",
                 label=_("Size"),
-                accessor=lambda obj: obj.size or '-',
+                accessor=lambda obj: obj.size_display or '-',
             ),
             Column(
                 name="date",

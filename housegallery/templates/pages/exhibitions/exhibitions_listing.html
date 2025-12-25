@@ -56,7 +56,7 @@
                                             data-artwork-artist="{{ image_data.related_artwork.artist_names|default:'' }}"
                                             data-artwork-date="{{ image_data.related_artwork.date.year|default:'' }}"
                                             data-artwork-materials="{{ image_data.artwork_materials|default:'' }}"
-                                            data-artwork-size="{{ image_data.related_artwork.size|default:'' }}"
+                                            data-artwork-size="{{ image_data.related_artwork.size_display|default:'' }}"
                                             {% endif %}
                                             aria-label="View {{ image_data.image_title|default:exhibition.title }} in lightbox">
                                         <img src="{{ image_data.thumb_url }}"

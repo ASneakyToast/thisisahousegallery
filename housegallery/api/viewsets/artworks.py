@@ -1,3 +1,5 @@
+from decimal import Decimal, InvalidOperation
+
 from django.db.models import Prefetch, Q
 from rest_framework import viewsets, filters
 from rest_framework.decorators import action
@@ -82,14 +84,47 @@ class ArtworkViewSet(viewsets.ReadOnlyModelViewSet):
         if date_to:
             queryset = queryset.filter(date__lte=date_to)
         
-        # Filter by size presence
+        # Filter by size presence (using new dimension fields)
         has_size = params.get('has_size')
         if has_size is not None:
             if has_size.lower() == 'true':
-                queryset = queryset.exclude(size='')
+                queryset = queryset.filter(
+                    Q(width_inches__isnull=False) | Q(height_inches__isnull=False)
+                )
             elif has_size.lower() == 'false':
-                queryset = queryset.filter(size='')
-        
+                queryset = queryset.filter(
+                    width_inches__isnull=True, height_inches__isnull=True
+                )
+
+        # Filter by dimension ranges
+        min_width = params.get('min_width')
+        if min_width:
+            try:
+                queryset = queryset.filter(width_inches__gte=Decimal(min_width))
+            except InvalidOperation:
+                pass
+
+        max_width = params.get('max_width')
+        if max_width:
+            try:
+                queryset = queryset.filter(width_inches__lte=Decimal(max_width))
+            except InvalidOperation:
+                pass
+
+        min_height = params.get('min_height')
+        if min_height:
+            try:
+                queryset = queryset.filter(height_inches__gte=Decimal(min_height))
+            except InvalidOperation:
+                pass
+
+        max_height = params.get('max_height')
+        if max_height:
+            try:
+                queryset = queryset.filter(height_inches__lte=Decimal(max_height))
+            except InvalidOperation:
+                pass
+
         return queryset
     
     @action(detail=False, methods=['get'])

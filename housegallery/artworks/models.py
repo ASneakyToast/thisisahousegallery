@@ -146,7 +146,28 @@ class Artwork(DraftStateMixin, RevisionMixin, ClusterableModel):
     size = models.CharField(
         blank=True,
         max_length=255,
-        help_text="Height x Width x Depth"
+        help_text="Descriptive size (e.g., 'Dimensions vary', 'Site-specific'). Use dimension fields for numeric values."
+    )
+    width_inches = models.DecimalField(
+        blank=True,
+        null=True,
+        max_digits=7,
+        decimal_places=3,
+        help_text="Width in inches"
+    )
+    height_inches = models.DecimalField(
+        blank=True,
+        null=True,
+        max_digits=7,
+        decimal_places=3,
+        help_text="Height in inches"
+    )
+    depth_inches = models.DecimalField(
+        blank=True,
+        null=True,
+        max_digits=7,
+        decimal_places=3,
+        help_text="Depth in inches (optional for 2D works)"
     )
     date = models.DateTimeField(
         blank=True,
@@ -171,7 +192,12 @@ class Artwork(DraftStateMixin, RevisionMixin, ClusterableModel):
         # Artist management panel
         InlinePanel('artwork_artists', label="Artists"),
         FieldPanel('date'),
-        FieldPanel('size'),
+        MultiFieldPanel([
+            FieldPanel('width_inches'),
+            FieldPanel('height_inches'),
+            FieldPanel('depth_inches'),
+            FieldPanel('size'),
+        ], heading="Dimensions"),
         FieldPanel('materials'),
         FieldPanel('price'),
         FieldPanel('description'),
@@ -212,6 +238,24 @@ class Artwork(DraftStateMixin, RevisionMixin, ClusterableModel):
     def materials_list(self):
         """Return materials as comma-separated list for admin display"""
         return ", ".join([tag.name for tag in self.materials.all()]) or "-"
+
+    @property
+    def size_display(self):
+        """Return formatted size string for display (e.g., '25" x 6" x 1"')."""
+        if not self.width_inches and not self.height_inches:
+            return self.size or ""  # Fallback to old field
+        parts = []
+        if self.height_inches:
+            # Format without trailing zeros
+            h = self.height_inches.normalize()
+            parts.append(f'{h}"')
+        if self.width_inches:
+            w = self.width_inches.normalize()
+            parts.append(f'{w}"')
+        if self.depth_inches:
+            d = self.depth_inches.normalize()
+            parts.append(f'{d}"')
+        return " x ".join(parts) if parts else ""
 
     @property  
     def description_preview(self):

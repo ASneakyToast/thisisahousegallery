@@ -16,12 +16,13 @@ class ArtworkImageSerializer(serializers.ModelSerializer):
 
 class ArtworkListSerializer(serializers.ModelSerializer):
     """Lightweight serializer for artwork listings"""
-    
+
     title_plain = serializers.SerializerMethodField()
     artists = serializers.SerializerMethodField()
     primary_image = serializers.SerializerMethodField()
     materials_list = serializers.SerializerMethodField()
-    
+    size_display = serializers.CharField(read_only=True)
+
     class Meta:
         model = Artwork
         fields = [
@@ -31,7 +32,11 @@ class ArtworkListSerializer(serializers.ModelSerializer):
             'artists',
             'description',
             'materials_list',
-            'size',
+            'size',  # Keep for backward compatibility
+            'size_display',  # Formatted size string
+            'width_inches',
+            'height_inches',
+            'depth_inches',
             'date',
             'primary_image',
         ]
