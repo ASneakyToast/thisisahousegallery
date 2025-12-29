@@ -5,8 +5,8 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from PIL import ExifTags
 from PIL import Image as PILImage
+from PIL import ImageOps
 from wagtail.images.models import AbstractImage
 from wagtail.images.models import AbstractRendition
 from wagtail.images.models import Image
@@ -237,29 +237,14 @@ class CustomImage(AbstractImage):
 
     def _fix_image_rotation(self, image):
         """
-        Fix image rotation based on EXIF data.
+        Fix image rotation based on EXIF data using Pillow's built-in handler.
+        Handles all 8 EXIF orientation values correctly.
         """
         try:
-            # Get EXIF data using the modern method
-            exif = image.getexif()
-            if exif is not None:
-                # Get orientation tag directly
-                orientation_value = exif.get(ExifTags.Base.Orientation.value)
-                # EXIF orientation constants
-                rotate_180 = 3
-                rotate_270 = 6
-                rotate_90 = 8
-                if orientation_value == rotate_180:
-                    image = image.rotate(180, expand=True)
-                elif orientation_value == rotate_270:
-                    image = image.rotate(270, expand=True)
-                elif orientation_value == rotate_90:
-                    image = image.rotate(90, expand=True)
-        except (AttributeError, KeyError, TypeError):
-            # If EXIF processing fails, continue with original image
-            pass
-
-        return image
+            return ImageOps.exif_transpose(image)
+        except Exception:
+            # If EXIF processing fails, return original image
+            return image
 
     def _resize_image(self, image, max_dimension=2560):
         """
