@@ -1,20 +1,18 @@
 # ruff: noqa: E501
 from .base import *  # noqa: F403
+from .base import DATABASES
 from .base import INSTALLED_APPS
 from .base import MIDDLEWARE
 from .base import WEBPACK_LOADER
-from .base import env
 
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [
-    "localhost", 
-    "0.0.0.0", 
+    "localhost",
+    "0.0.0.0",
     "127.0.0.1",
 ]  # noqa: S104
 
@@ -23,17 +21,9 @@ INTERNAL_IPS = ['127.0.0.1']
 
 # DATABASES
 # ------------------------------------------------------------------------------
-# Cloud SQL via proxy
-DATABASES = {
-    "default": env.db(),  # Uses DATABASE_URL environment variable
-}
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
-
-
-# GCP Integration
-# ------------------------------------------------------------------------------
-PROJECT_ID = env("GCP_PROJECT")
-BUILD_TYPE = env("BUILD_TYPE")
+# Override Cloud SQL socket path with local cloud-sql-proxy TCP connection
+DATABASES["default"]["HOST"] = "cloud-sql-proxy"
+DATABASES["default"]["PORT"] = "5432"
 
 
 # TEMPLATES

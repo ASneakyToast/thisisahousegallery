@@ -4,7 +4,7 @@ services:
     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
     platform: linux/amd64
     volumes:
-      - ~/.config/gcloud/application_default_credentials.json:/credentials.json
+      - ${GOOGLE_ADC:-~/.config/gcloud/application_default_credentials.json}:/credentials.json
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/credentials.json
     ports:
@@ -18,10 +18,12 @@ services:
     container_name: housegallery_local_cloud_django
     depends_on:
       - cloud-sql-proxy
-    env_file:
-      - ../.envs/.local-cloud
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.local_cloud
+      - BUILD_TYPE=dev-jrl
+      - GOOGLE_APPLICATION_CREDENTIALS=/credentials.json
     volumes:
-      - ~/.config/gcloud/application_default_credentials.json:/credentials.json
+      - ${GOOGLE_ADC:-~/.config/gcloud/application_default_credentials.json}:/credentials.json
     command: /start
 
   node:
