@@ -1,0 +1,12 @@
+This is a House Gallery
+
+Confirm your subscription
+=========================
+
+You requested to subscribe to the This is a House Gallery newsletter
+with the email address {{ email }}.
+
+Click the link below to confirm:
+{{ confirm_url }}
+
+If you didn't request this, you can ignore this email.

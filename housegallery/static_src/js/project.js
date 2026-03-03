@@ -22,4 +22,7 @@ import './floating-hero.js';
 // Import artwork hover animations functionality
 import './artwork-hover-animations.js';
 
+// Import newsletter subscription functionality
+import './newsletter-subscribe.js';
+
 // Any other project-wide JavaScript functionality goes here

@@ -113,7 +113,7 @@
                     submitBtn.textContent = 'Subscribing...';
                     
                     try {
-                        const response = await fetch('{% url "mailing_list_subscribe" %}', {
+                        const response = await fetch('{% url "newsletter:subscribe" %}', {
                             method: 'POST',
                             body: formData
                         });

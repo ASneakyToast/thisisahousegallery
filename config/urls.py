@@ -12,7 +12,7 @@ from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.utils.urlpatterns import decorate_urlpatterns
 
-from housegallery.home.views import kiosk_display, mailing_list_subscribe
+from housegallery.home.views import kiosk_display
 
 ignore_cache_urlpatterns = [
     # API URLs
@@ -29,8 +29,8 @@ public_urlpatterns = [
     path('sitemap.xml', sitemap),
     # Kiosk display page at /display
     path('display/', kiosk_display, name='kiosk_display'),
-    # Mailing list subscription endpoint
-    path('api/subscribe/', mailing_list_subscribe, name='mailing_list_subscribe'),
+    # Newsletter
+    path('newsletter/', include('housegallery.newsletter.urls')),
 ]
 
 if settings.DEBUG:

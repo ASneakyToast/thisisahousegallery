@@ -1,0 +1,162 @@
+/* Newsletter signup page */
+.newsletter-signup {
+    max-width: var(--size-layout-restricted-column);
+    margin: 0 auto;
+    padding: var(--size-layout-section-spacing) var(--size-layout-gutter);
+}
+
+.newsletter-signup__title {
+    font-family: var(--font-family-title);
+    font-size: var(--font-size-title);
+    font-weight: var(--font-weight-title);
+    line-height: var(--line-height-title);
+    margin: 0 0 var(--size-layout-element-spacing);
+}
+
+.newsletter-signup__intro {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-body);
+    line-height: var(--line-height-body);
+    margin: 0 0 var(--size-layout-element-spacing);
+}
+
+.newsletter-signup__note {
+    font-family: var(--font-family-detail);
+    font-size: var(--font-size-detail);
+    font-weight: var(--font-weight-detail);
+    line-height: var(--line-height-detail);
+    margin: var(--size-layout-element-spacing) 0 0;
+    opacity: 0.6;
+}
+
+/* Shared form styles (signup page + footer) */
+.newsletter-form__group,
+.footer-subscribe__form {
+    display: flex;
+    gap: 0;
+}
+
+.newsletter-form__input,
+.footer-subscribe__input {
+    flex: 1;
+    padding: var(--size-10) var(--size-15);
+    border: 1px solid var(--color-black);
+    background: var(--color-white);
+    color: var(--color-black);
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-body);
+    outline: none;
+}
+
+.newsletter-form__input:focus,
+.footer-subscribe__input:focus {
+    outline: var(--focus-outline-width) solid var(--focus-outline-color);
+    outline-offset: var(--focus-outline-offset);
+}
+
+.newsletter-form__button,
+.footer-subscribe__button {
+    padding: var(--size-10) var(--size-20);
+    border: 1px solid var(--color-black);
+    border-left: none;
+    background: var(--color-interactive-primary);
+    color: var(--color-interactive-primary-text);
+    font-family: var(--font-family-label);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-label);
+    cursor: pointer;
+    transition: opacity var(--transition-duration-fast) var(--transition-easing-standard);
+    white-space: nowrap;
+}
+
+.newsletter-form__button:hover,
+.footer-subscribe__button:hover {
+    opacity: 0.8;
+}
+
+.newsletter-form__button:disabled,
+.footer-subscribe__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.newsletter-form__messages,
+.footer-subscribe__messages {
+    margin-top: var(--size-10);
+    font-family: var(--font-family-detail);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-detail);
+    line-height: var(--line-height-detail);
+}
+
+.newsletter-form__messages--success,
+.footer-subscribe__messages--success {
+    color: #2e7d32;
+}
+
+.newsletter-form__messages--error,
+.footer-subscribe__messages--error {
+    color: #c62828;
+}
+
+/* Confirm/unsubscribe message pages */
+.newsletter-message {
+    max-width: var(--size-layout-restricted-column);
+    margin: 0 auto;
+    padding: var(--size-layout-section-spacing) var(--size-layout-gutter);
+}
+
+.newsletter-message__title {
+    font-family: var(--font-family-title);
+    font-size: var(--font-size-title);
+    font-weight: var(--font-weight-title);
+    line-height: var(--line-height-title);
+    margin: 0 0 var(--size-layout-element-spacing);
+}
+
+.newsletter-message__text {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-body);
+    line-height: var(--line-height-body);
+    margin: 0 0 var(--size-layout-element-spacing);
+}
+
+.newsletter-message__link {
+    font-family: var(--font-family-label);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-label);
+    color: var(--color-black);
+    text-decoration: underline;
+}
+
+/* Footer subscribe form */
+.footer-subscribe {
+    margin-top: var(--size-20);
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.footer-subscribe__label {
+    font-family: var(--font-family-detail);
+    font-size: var(--font-size-detail);
+    font-weight: var(--font-weight-detail);
+    line-height: var(--line-height-detail);
+    margin: 0 0 var(--size-5);
+    opacity: 0.6;
+}
+
+.footer-subscribe__input {
+    border-color: var(--color-black);
+}
+
+.footer-subscribe__button {
+    border-left: none;
+}
+
+.footer-subscribe__messages {
+    text-align: left;
+}

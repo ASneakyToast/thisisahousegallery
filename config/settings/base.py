@@ -58,7 +58,7 @@ if env('PREPEND_WWW', default='false').lower().strip() == 'true':
 # ------------------------------------------------------------------------------
 # Only load GCP secrets for production/staging environments
 django_settings = os.environ.get("DJANGO_SETTINGS_MODULE", "")
-if django_settings not in ["config.settings.local", "config.settings.local_offline"]:
+if django_settings not in ["config.settings.local", "config.settings.local_offline", "config.settings.test"]:
     if 'SECRET_KEY' in env:
         SECRET_KEY = env('SECRET_KEY')
 
@@ -83,7 +83,7 @@ if django_settings not in ["config.settings.local", "config.settings.local_offli
 # DATABASES
 # ------------------------------------------------------------------------------
 # For production/staging environments
-if django_settings not in ["config.settings.local", "config.settings.local_offline"]:
+if django_settings not in ["config.settings.local", "config.settings.local_offline", "config.settings.test"]:
     DATABASES = {
         "default": env.db(),    # Raises ImproperlyConfigured expection if DATABASE_URL not in os.env
     }
@@ -186,6 +186,7 @@ LOCAL_APPS = [
     "housegallery.images",
     "housegallery.places",
     "housegallery.api",
+    "housegallery.newsletter",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + WAGTAIL_APPS + THIRD_PARTY_APPS + LOCAL_APPS + GOOGLE_APPS

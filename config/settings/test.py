@@ -37,5 +37,9 @@ MEDIA_URL = "http://media.testserver"
 # django-webpack-loader
 # ------------------------------------------------------------------------------
 WEBPACK_LOADER["DEFAULT"]["LOADER_CLASS"] = "webpack_loader.loaders.FakeWebpackLoader"  # noqa: F405
+# SECURITY
+# ------------------------------------------------------------------------------
+SECURE_SSL_REDIRECT = False
+
 # Your stuff...
 # ------------------------------------------------------------------------------

@@ -25,3 +25,4 @@ require('./components/exhibitions/exhibition-catalog.css');
 require('./components/exhibitions/schedule.css');
 require('./components/exhibitions/event.css');
 require('./components/places/places.css');
+require('./components/newsletter.css');

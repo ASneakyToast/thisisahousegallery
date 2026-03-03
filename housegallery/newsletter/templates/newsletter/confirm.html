@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Confirmed - This is a House Gallery{% endblock %}
+
+{% block content %}
+<div class="newsletter-message">
+    {% if already_confirmed %}
+        <h1 class="newsletter-message__title">Already Confirmed</h1>
+        <p class="newsletter-message__text">
+            Your subscription for <strong>{{ subscriber.email }}</strong> was already confirmed.
+        </p>
+    {% else %}
+        <h1 class="newsletter-message__title">You're In</h1>
+        <p class="newsletter-message__text">
+            Your subscription for <strong>{{ subscriber.email }}</strong> has been confirmed.
+            You'll receive our next newsletter when it's ready.
+        </p>
+    {% endif %}
+    <a href="/" class="newsletter-message__link">Back to the gallery</a>
+</div>
+{% endblock %}
