@@ -1,18 +1,14 @@
-// Newsletter subscription form handler
-// Works for both the dedicated signup page form and the footer form
+// Newsletter subscription form handler for the dedicated signup page
 
-function initNewsletterForm(form) {
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('newsletter-form');
     if (!form) return;
-
-    const messagesId = form.id === 'footer-newsletter-form'
-        ? 'footer-newsletter-messages'
-        : 'newsletter-messages';
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const formData = new FormData(form);
-        const messages = document.getElementById(messagesId);
+        const messages = document.getElementById('newsletter-messages');
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
 
@@ -52,9 +48,4 @@ function initNewsletterForm(form) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    initNewsletterForm(document.getElementById('newsletter-form'));
-    initNewsletterForm(document.getElementById('footer-newsletter-form'));
 });
