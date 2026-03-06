@@ -136,6 +136,19 @@ steps:
     ]
     waitFor: ['push-image']
 
+  - id: "deploy-send_newsletter"
+    name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "jobs", "deploy", "${_MGMT_CMD_SEND_NEWSLETTER}",
+      "--command", "python,manage.py,send_newsletter",
+      "--image", "${_IMAGE_NAME}:latest",
+      "--memory", "1024Mi",
+      "--region", "${_REGION}",
+      "--service-account", "${_SERVICE_ACCOUNT}",
+      "--set-cloudsql-instances", "${_CLOUD_SQL_CONNECTION_NAME}",
+    ]
+    waitFor: ['push-image']
+
 
 logsBucket: "gs://housegallery-cloudbuild-log/${_BUILD_TYPE}"
 
@@ -150,6 +163,7 @@ substitutions:
   _MGMT_CMD_CREATECACHETABLE: housegallery-${_BUILD_TYPE}-mgmt-cmd-createcachetable
   _MGMT_CMD_MIGRATE: housegallery-${_BUILD_TYPE}-mgmt-cmd-migrate
   _MGMT_CMD_PUBLISH: housegallery-${_BUILD_TYPE}-mgmt-cmd-publish-scheduled-pages
+  _MGMT_CMD_SEND_NEWSLETTER: housegallery-${_BUILD_TYPE}-mgmt-cmd-send-newsletter
   _MGMT_CMD_UPDATEINDEX: housegallery-${_BUILD_TYPE}-mgmt-cmd-update-index
   _REGION: us-west1
   _SERVICE_ACCOUNT: housegallerybutler@housegallery.iam.gserviceaccount.com
