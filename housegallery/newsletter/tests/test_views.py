@@ -139,6 +139,90 @@ class TestSignupPage:
 
 
 @pytest.mark.django_db
+class TestUnsubscribeRequestPage:
+    def test_page_renders(self):
+        client = Client()
+        resp = client.get(reverse("newsletter:unsubscribe_request_page"))
+        assert resp.status_code == 200
+
+
+@pytest.mark.django_db
+class TestUnsubscribeRequestView:
+    def setup_method(self):
+        from django.core.cache import cache
+
+        cache.clear()
+        self.client = Client(enforce_csrf_checks=True)
+        self.url = reverse("newsletter:unsubscribe_request")
+
+    def test_requires_post(self):
+        resp = self.client.get(self.url)
+        assert resp.status_code == 405
+
+    def test_rejects_without_csrf_token(self):
+        resp = self.client.post(self.url, {"email": "test@example.com"})
+        assert resp.status_code == 403
+
+    def _post_with_csrf(self, data):
+        client = Client()
+        return client.post(self.url, data)
+
+    def test_missing_email(self):
+        resp = self._post_with_csrf({})
+        assert resp.status_code == 400
+        assert resp.json()["success"] is False
+
+    def test_invalid_email(self):
+        resp = self._post_with_csrf({"email": "notanemail"})
+        assert resp.status_code == 400
+
+    @patch("housegallery.newsletter.views._send_unsubscribe_email")
+    def test_active_subscriber_sends_email(self, mock_send):
+        Subscriber.objects.create(email="active@example.com", confirmed=True)
+        resp = self._post_with_csrf({"email": "active@example.com"})
+        assert resp.status_code == 200
+        assert resp.json()["success"] is True
+        mock_send.assert_called_once()
+
+    @patch("housegallery.newsletter.views._send_unsubscribe_email")
+    def test_nonexistent_email_returns_generic_success(self, mock_send):
+        resp = self._post_with_csrf({"email": "nobody@example.com"})
+        assert resp.status_code == 200
+        assert resp.json()["success"] is True
+        mock_send.assert_not_called()
+
+    @patch("housegallery.newsletter.views._send_unsubscribe_email")
+    def test_inactive_subscriber_no_email(self, mock_send):
+        """Unconfirmed subscriber should not receive unsubscribe email."""
+        Subscriber.objects.create(email="pending@example.com", confirmed=False)
+        resp = self._post_with_csrf({"email": "pending@example.com"})
+        assert resp.status_code == 200
+        assert resp.json()["success"] is True
+        mock_send.assert_not_called()
+
+    @patch("housegallery.newsletter.views._send_unsubscribe_email")
+    def test_already_unsubscribed_no_email(self, mock_send):
+        from django.utils import timezone
+
+        Subscriber.objects.create(
+            email="gone@example.com",
+            confirmed=True,
+            unsubscribed_at=timezone.now(),
+        )
+        resp = self._post_with_csrf({"email": "gone@example.com"})
+        assert resp.status_code == 200
+        assert resp.json()["success"] is True
+        mock_send.assert_not_called()
+
+    def test_rate_limiting(self):
+        client = Client()
+        for _ in range(5):
+            client.post(self.url, {"email": "rate@example.com"})
+        resp = client.post(self.url, {"email": "rate@example.com"})
+        assert resp.status_code == 429
+
+
+@pytest.mark.django_db
 class TestPreviewView:
     def test_anonymous_user_redirects_to_login(self):
         Newsletter.objects.create(title="Test", slug="test")

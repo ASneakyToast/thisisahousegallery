@@ -36,7 +36,28 @@ def add_newsletter_menu(request, menu_items):
         order=200
     )
 
-    newsletter_submenu = Menu(items=[subscribers_item, newsletters_item])
+    subscribe_page_item = MenuItem(
+        'Subscribe Page',
+        reverse('newsletter:signup'),
+        icon_name='link-external',
+        attrs={"target": "_blank"},
+        order=300,
+    )
+
+    unsubscribe_page_item = MenuItem(
+        'Unsubscribe Page',
+        reverse('newsletter:unsubscribe_request_page'),
+        icon_name='link-external',
+        attrs={"target": "_blank"},
+        order=400,
+    )
+
+    newsletter_submenu = Menu(items=[
+        subscribers_item,
+        newsletters_item,
+        subscribe_page_item,
+        unsubscribe_page_item,
+    ])
 
     newsletter_menu = SubmenuMenuItem(
         'Newsletter',

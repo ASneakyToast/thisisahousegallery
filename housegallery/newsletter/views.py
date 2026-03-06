@@ -136,6 +136,59 @@ def signup_page(request):
     return render(request, "newsletter/signup_page.html")
 
 
+def unsubscribe_request_page(request):
+    """Dedicated page for entering email to unsubscribe."""
+    return render(request, "newsletter/unsubscribe_request_page.html")
+
+
+@require_POST
+def unsubscribe_request(request):
+    """Handle unsubscribe-by-email requests. Returns JSON for AJAX forms."""
+    # Rate limit: 5 requests per minute per IP
+    ip = _get_client_ip(request)
+    cache_key = f"newsletter_unsubscribe_{ip}"
+    request_count = cache.get(cache_key, 0)
+    if request_count >= 5:
+        return JsonResponse(
+            {"success": False, "error": "Too many requests. Please try again later."},
+            status=429,
+        )
+    cache.set(cache_key, request_count + 1, 60)
+
+    email = request.POST.get("email", "").strip().lower()
+
+    if not email:
+        return JsonResponse(
+            {"success": False, "error": "Email address is required."}, status=400
+        )
+
+    try:
+        validate_email(email)
+    except ValidationError:
+        return JsonResponse(
+            {"success": False, "error": "Please enter a valid email address."},
+            status=400,
+        )
+
+    # Look up subscriber and send confirmation if active
+    try:
+        subscriber = Subscriber.objects.get(email=email)
+        if subscriber.is_active:
+            _send_unsubscribe_email(request, subscriber)
+    except Subscriber.DoesNotExist:
+        pass
+    except Exception:
+        logger.exception("Failed to send unsubscribe confirmation email")
+
+    # Always return the same message for privacy
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "If this email is subscribed, you'll receive an email with an unsubscribe link.",
+        }
+    )
+
+
 @staff_member_required
 def preview(request, slug):
     """Staff-only preview of a newsletter edition."""
@@ -149,6 +202,37 @@ def preview(request, slug):
     }
 
     return render(request, newsletter.template_path, context)
+
+
+def _send_unsubscribe_email(request, subscriber):
+    """Send an email with the unsubscribe link for confirmation."""
+    unsubscribe_path = reverse(
+        "newsletter:unsubscribe", args=[subscriber.unsubscribe_token]
+    )
+    unsubscribe_url = request.build_absolute_uri(unsubscribe_path)
+
+    subject = "Unsubscribe from This is a House Gallery"
+    html_message = render_to_string(
+        "newsletter/emails/confirm_unsubscribe.html",
+        {"unsubscribe_url": unsubscribe_url, "email": subscriber.email},
+    )
+    text_message = render_to_string(
+        "newsletter/emails/confirm_unsubscribe.txt",
+        {"unsubscribe_url": unsubscribe_url, "email": subscriber.email},
+    )
+
+    from_email = getattr(
+        settings, "DEFAULT_FROM_EMAIL", "noreply@thisisahousegallery.com"
+    )
+
+    send_mail(
+        subject=subject,
+        message=text_message,
+        from_email=from_email,
+        recipient_list=[subscriber.email],
+        html_message=html_message,
+        fail_silently=False,
+    )
 
 
 def _send_confirmation_email(request, subscriber):
