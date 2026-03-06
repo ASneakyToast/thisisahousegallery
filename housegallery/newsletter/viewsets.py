@@ -12,12 +12,18 @@ class SubscriberSnippetViewSet(SnippetViewSet):
     add_to_settings_menu = False
     add_to_admin_menu = False
 
-    list_display = ["email", "confirmed", "created_at", "confirmed_at", "unsubscribed_at"]
-    list_filter = ["confirmed"]
+    list_display = [
+        "email", "confirmed", "bounce_count", "last_bounced_at",
+        "created_at", "confirmed_at", "unsubscribed_at",
+    ]
+    list_filter = ["confirmed", "bounce_count"]
     list_per_page = 50
     ordering = ["-created_at"]
     search_fields = ["email"]
-    list_export = ["email", "confirmed", "created_at", "confirmed_at", "unsubscribed_at"]
+    list_export = [
+        "email", "confirmed", "bounce_count", "last_bounced_at",
+        "created_at", "confirmed_at", "unsubscribed_at",
+    ]
 
 
 class NewsletterSnippetViewSet(SnippetViewSet):

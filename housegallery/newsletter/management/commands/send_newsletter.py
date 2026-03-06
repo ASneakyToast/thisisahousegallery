@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 
 from housegallery.newsletter.models import Newsletter, Subscriber
+from housegallery.newsletter.utils import add_utm_params, get_base_url
 
 
 class Command(BaseCommand):
@@ -42,6 +43,11 @@ class Command(BaseCommand):
             action="store_true",
             help="Send even if newsletter was already sent",
         )
+        parser.add_argument(
+            "--include-bounced",
+            action="store_true",
+            help="Include subscribers suppressed due to bounces",
+        )
 
     def handle(self, *args, **options):
         slug = options["slug"]
@@ -50,6 +56,7 @@ class Command(BaseCommand):
         batch_size = options["batch_size"]
         batch_delay = options["batch_delay"]
         force = options["force"]
+        include_bounced = options["include_bounced"]
 
         try:
             newsletter = Newsletter.objects.get(slug=slug)
@@ -75,6 +82,8 @@ class Command(BaseCommand):
             subscribers = Subscriber.objects.filter(
                 confirmed=True, unsubscribed_at__isnull=True
             )
+            if not include_bounced:
+                subscribers = subscribers.filter(bounce_count__lt=3)
             recipients = list(subscribers.values("email", "unsubscribe_token"))
             self.stdout.write(f"Sending to {len(recipients)} subscribers")
 
@@ -93,7 +102,7 @@ class Command(BaseCommand):
 
         for i, recipient in enumerate(recipients):
             # Build per-recipient unsubscribe URL
-            unsub_url = f"{_get_base_url()}/newsletter/unsubscribe/{recipient['unsubscribe_token']}/"
+            unsub_url = f"{get_base_url()}/newsletter/unsubscribe/{recipient['unsubscribe_token']}/"
 
             context = {
                 "newsletter": newsletter,
@@ -104,6 +113,7 @@ class Command(BaseCommand):
 
             try:
                 html_content = render_to_string(newsletter.template_path, context)
+                html_content = add_utm_params(html_content, newsletter.slug)
             except Exception as e:
                 raise CommandError(f"Error rendering template: {e}")
 
@@ -125,7 +135,15 @@ class Command(BaseCommand):
                 self.stdout.write(f"  Sent to {recipient['email']}")
             except Exception as e:
                 errors += 1
-                self.stderr.write(f"  FAILED {recipient['email']}: {e}")
+                try:
+                    subscriber = Subscriber.objects.get(email=recipient["email"])
+                    subscriber.record_bounce()
+                    self.stderr.write(
+                        f"  FAILED {recipient['email']}: {e} "
+                        f"(bounce {subscriber.bounce_count}/3)"
+                    )
+                except Subscriber.DoesNotExist:
+                    self.stderr.write(f"  FAILED {recipient['email']}: {e}")
 
             # Batch delay
             if (i + 1) % batch_size == 0 and i + 1 < len(recipients):
@@ -144,16 +162,3 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(f"Done. Sent: {sent}, Errors: {errors}")
         )
-
-
-def _get_base_url():
-    """Get the site base URL from Wagtail settings or fallback."""
-    try:
-        from wagtail.models import Site
-
-        site = Site.objects.filter(is_default_site=True).first()
-        if site:
-            return site.root_url.rstrip("/")
-    except Exception:
-        pass
-    return "https://thisisahousegallery.com"

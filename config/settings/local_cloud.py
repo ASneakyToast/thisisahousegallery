@@ -1,9 +1,31 @@
 # ruff: noqa: E501
+import io
+import os
+
 from .base import *  # noqa: F403
-from .base import DATABASES
 from .base import INSTALLED_APPS
 from .base import MIDDLEWARE
 from .base import WEBPACK_LOADER
+from .base import env
+
+from google.cloud import secretmanager
+
+# SECRETS & GCP
+# ------------------------------------------------------------------------------
+# Load secrets from Secret Manager (same as base.py does for production,
+# but done here because local_cloud is excluded from base.py's Secret Manager block).
+PROJECT_ID = os.environ.get("GCP_PROJECT")
+BUILD_TYPE = os.environ.get("BUILD_TYPE")
+if not PROJECT_ID or not BUILD_TYPE:
+    raise Exception("No GCP_PROJECT or BUILD_TYPE. Exit")
+
+client = secretmanager.SecretManagerServiceClient()
+secret = f"projects/{PROJECT_ID}/secrets/housegallery-settings/versions/latest"
+payload = client.access_secret_version(name=secret).payload.data.decode("UTF-8")
+env.read_env(io.StringIO(payload))
+
+SECRET_KEY = env("SECRET_KEY")
+
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -21,9 +43,14 @@ INTERNAL_IPS = ['127.0.0.1']
 
 # DATABASES
 # ------------------------------------------------------------------------------
-# Override Cloud SQL socket path with local cloud-sql-proxy TCP connection
-DATABASES["default"]["HOST"] = "cloud-sql-proxy"
+# Build from DATABASE_URL (now available via Secret Manager).
+# Override HOST to use the cloud-sql-proxy Docker service by default;
+# .env.local can set CLOUD_SQL_PROXY_HOST=localhost for uv run outside Docker.
+DATABASES = {"default": env.db()}
+DATABASES["default"]["HOST"] = env("CLOUD_SQL_PROXY_HOST", default="cloud-sql-proxy")
 DATABASES["default"]["PORT"] = "5432"
+DATABASES["default"]["NAME"] = f"housegallery-{BUILD_TYPE}"
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 
 # TEMPLATES
@@ -52,6 +79,11 @@ CACHES = {
         "LOCATION": "",
     },
 }
+
+
+# EMAIL
+# ------------------------------------------------------------------------------
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 
 # WhiteNoise

@@ -12,6 +12,8 @@ class Subscriber(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
     unsubscribed_at = models.DateTimeField(null=True, blank=True)
+    bounce_count = models.PositiveIntegerField(default=0)
+    last_bounced_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -23,8 +25,22 @@ class Subscriber(models.Model):
         return f"{self.email} ({status})"
 
     @property
+    def is_suppressed(self):
+        return self.bounce_count >= 3
+
+    @property
     def is_active(self):
-        return self.confirmed and self.unsubscribed_at is None
+        return self.confirmed and self.unsubscribed_at is None and not self.is_suppressed
+
+    def record_bounce(self):
+        self.bounce_count += 1
+        self.last_bounced_at = timezone.now()
+        self.save(update_fields=["bounce_count", "last_bounced_at"])
+
+    def clear_bounces(self):
+        self.bounce_count = 0
+        self.last_bounced_at = None
+        self.save(update_fields=["bounce_count", "last_bounced_at"])
 
     def confirm(self):
         self.confirmed = True

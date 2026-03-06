@@ -5,6 +5,15 @@ import sys
 from pathlib import Path
 
 if __name__ == "__main__":
+    # Load .env.local for local development outside Docker (e.g. uv run manage.py ...).
+    # Skip when DJANGO_SETTINGS_MODULE is already set (i.e. inside Docker, where
+    # compose provides env vars and .env.local values like CLOUD_SQL_PROXY_HOST=localhost
+    # would conflict with the Docker service name).
+    env_file = Path(__file__).parent / ".env.local"
+    if env_file.exists() and "DJANGO_SETTINGS_MODULE" not in os.environ:
+        import environ
+        environ.Env.read_env(str(env_file), overwrite=False)
+
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 
     try:

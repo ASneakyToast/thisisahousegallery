@@ -129,9 +129,8 @@ def preview(request, slug):
 
 def _send_confirmation_email(request, subscriber):
     """Send the double opt-in confirmation email."""
-    confirm_url = request.build_absolute_uri(
-        reverse("newsletter:confirm", args=[subscriber.confirmation_token])
-    )
+    confirm_path = reverse("newsletter:confirm", args=[subscriber.confirmation_token])
+    confirm_url = request.build_absolute_uri(confirm_path)
 
     subject = "Confirm your subscription to This is a House Gallery"
     html_message = render_to_string(
