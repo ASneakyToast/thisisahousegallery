@@ -52,11 +52,19 @@ def add_newsletter_menu(request, menu_items):
         order=400,
     )
 
+    email_settings_item = MenuItem(
+        'Email Settings',
+        reverse('wagtailsettings:edit', args=['newsletter', 'newsletteremailsettings']),
+        icon_name='cog',
+        order=500,
+    )
+
     newsletter_submenu = Menu(items=[
         subscribers_item,
         newsletters_item,
         subscribe_page_item,
         unsubscribe_page_item,
+        email_settings_item,
     ])
 
     newsletter_menu = SubmenuMenuItem(

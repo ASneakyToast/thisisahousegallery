@@ -2,6 +2,8 @@ import uuid
 
 from django.db import models
 from django.utils import timezone
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 
 
 class Subscriber(models.Model):
@@ -84,3 +86,78 @@ class Newsletter(models.Model):
     @property
     def template_path(self):
         return f"newsletter/editions/{self.slug}.html"
+
+
+@register_setting(icon="mail")
+class NewsletterEmailSettings(BaseSiteSetting):
+    confirmation_subject = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Subject line for the subscription confirmation email.",
+    )
+    confirmation_heading = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Heading shown in the confirmation email.",
+    )
+    confirmation_body = models.TextField(
+        blank=True,
+        default="",
+        help_text="Body text for the confirmation email. Use {email} for the subscriber's address.",
+    )
+    confirmation_button_text = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Button text in the confirmation email.",
+    )
+
+    unsubscribe_subject = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Subject line for the unsubscribe confirmation email.",
+    )
+    unsubscribe_heading = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Heading shown in the unsubscribe email.",
+    )
+    unsubscribe_body = models.TextField(
+        blank=True,
+        default="",
+        help_text="Body text for the unsubscribe email. Use {email} for the subscriber's address.",
+    )
+    unsubscribe_button_text = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text="Button text in the unsubscribe email.",
+    )
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel("confirmation_subject"),
+                FieldPanel("confirmation_heading"),
+                FieldPanel("confirmation_body"),
+                FieldPanel("confirmation_button_text"),
+            ],
+            heading="Subscription Confirmation Email",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("unsubscribe_subject"),
+                FieldPanel("unsubscribe_heading"),
+                FieldPanel("unsubscribe_body"),
+                FieldPanel("unsubscribe_button_text"),
+            ],
+            heading="Unsubscribe Confirmation Email",
+        ),
+    ]
+
+    class Meta:
+        verbose_name = "Newsletter Email Settings"

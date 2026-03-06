@@ -13,9 +13,41 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from .models import Newsletter, Subscriber
+from .models import Newsletter, NewsletterEmailSettings, Subscriber
 
 logger = logging.getLogger(__name__)
+
+_CONFIRMATION_DEFAULTS = {
+    "subject": "Confirm your subscription to This is a House Gallery",
+    "heading": "Confirm your subscription",
+    "body": "You requested to subscribe to the This is a House Gallery newsletter with the email address {email}.",
+    "button_text": "Confirm subscription",
+}
+
+_UNSUBSCRIBE_DEFAULTS = {
+    "subject": "Unsubscribe from This is a House Gallery",
+    "heading": "Unsubscribe from our newsletter",
+    "body": "You requested to unsubscribe {email} from the This is a House Gallery newsletter.",
+    "button_text": "Unsubscribe",
+}
+
+
+class _SafeDict(dict):
+    """Dict subclass that returns '{key}' for missing keys instead of raising KeyError."""
+
+    def __missing__(self, key):
+        return f"{{{key}}}"
+
+
+def _get_email_settings():
+    """Load NewsletterEmailSettings for the default site, or return None."""
+    try:
+        from wagtail.models import Site
+
+        site = Site.objects.get(is_default_site=True)
+        return NewsletterEmailSettings.for_site(site)
+    except Exception:
+        return None
 
 
 def _get_client_ip(request):
@@ -211,14 +243,37 @@ def _send_unsubscribe_email(request, subscriber):
     )
     unsubscribe_url = request.build_absolute_uri(unsubscribe_path)
 
-    subject = "Unsubscribe from This is a House Gallery"
+    email_settings = _get_email_settings()
+    subject = (
+        (email_settings.unsubscribe_subject if email_settings else "")
+        or _UNSUBSCRIBE_DEFAULTS["subject"]
+    )
+    heading = (
+        (email_settings.unsubscribe_heading if email_settings else "")
+        or _UNSUBSCRIBE_DEFAULTS["heading"]
+    )
+    raw_body = (
+        (email_settings.unsubscribe_body if email_settings else "")
+        or _UNSUBSCRIBE_DEFAULTS["body"]
+    )
+    button_text = (
+        (email_settings.unsubscribe_button_text if email_settings else "")
+        or _UNSUBSCRIBE_DEFAULTS["button_text"]
+    )
+    body = raw_body.format_map(_SafeDict(email=subscriber.email))
+
+    context = {
+        "unsubscribe_url": unsubscribe_url,
+        "email": subscriber.email,
+        "heading": heading,
+        "body": body,
+        "button_text": button_text,
+    }
     html_message = render_to_string(
-        "newsletter/emails/confirm_unsubscribe.html",
-        {"unsubscribe_url": unsubscribe_url, "email": subscriber.email},
+        "newsletter/emails/confirm_unsubscribe.html", context
     )
     text_message = render_to_string(
-        "newsletter/emails/confirm_unsubscribe.txt",
-        {"unsubscribe_url": unsubscribe_url, "email": subscriber.email},
+        "newsletter/emails/confirm_unsubscribe.txt", context
     )
 
     from_email = getattr(
@@ -240,14 +295,37 @@ def _send_confirmation_email(request, subscriber):
     confirm_path = reverse("newsletter:confirm", args=[subscriber.confirmation_token])
     confirm_url = request.build_absolute_uri(confirm_path)
 
-    subject = "Confirm your subscription to This is a House Gallery"
+    email_settings = _get_email_settings()
+    subject = (
+        (email_settings.confirmation_subject if email_settings else "")
+        or _CONFIRMATION_DEFAULTS["subject"]
+    )
+    heading = (
+        (email_settings.confirmation_heading if email_settings else "")
+        or _CONFIRMATION_DEFAULTS["heading"]
+    )
+    raw_body = (
+        (email_settings.confirmation_body if email_settings else "")
+        or _CONFIRMATION_DEFAULTS["body"]
+    )
+    button_text = (
+        (email_settings.confirmation_button_text if email_settings else "")
+        or _CONFIRMATION_DEFAULTS["button_text"]
+    )
+    body = raw_body.format_map(_SafeDict(email=subscriber.email))
+
+    context = {
+        "confirm_url": confirm_url,
+        "email": subscriber.email,
+        "heading": heading,
+        "body": body,
+        "button_text": button_text,
+    }
     html_message = render_to_string(
-        "newsletter/emails/confirm_subscription.html",
-        {"confirm_url": confirm_url, "email": subscriber.email},
+        "newsletter/emails/confirm_subscription.html", context
     )
     text_message = render_to_string(
-        "newsletter/emails/confirm_subscription.txt",
-        {"confirm_url": confirm_url, "email": subscriber.email},
+        "newsletter/emails/confirm_subscription.txt", context
     )
 
     from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@thisisahousegallery.com")

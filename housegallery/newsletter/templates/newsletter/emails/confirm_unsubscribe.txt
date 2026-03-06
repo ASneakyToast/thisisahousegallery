@@ -1,12 +1,10 @@
 This is a House Gallery
 
-Unsubscribe from our newsletter
+{{ heading }}
 ================================
 
-You requested to unsubscribe {{ email }} from the
-This is a House Gallery newsletter.
+{{ body }}
 
-Click the link below to unsubscribe:
-{{ unsubscribe_url }}
+{{ button_text }}: {{ unsubscribe_url }}
 
 If you didn't request this, you can ignore this email.
