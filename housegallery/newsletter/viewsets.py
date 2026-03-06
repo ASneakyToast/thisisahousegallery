@@ -1,6 +1,41 @@
-from wagtail.snippets.views.snippets import SnippetViewSet
+from functools import cached_property
 
+from django.urls import path, reverse
+from wagtail.admin.widgets.button import Button
+from wagtail.snippets.views.snippets import EditView, SnippetViewSet
+
+from .admin_views import SendNewsletterView
 from .models import Newsletter, Subscriber
+
+
+class NewsletterEditView(EditView):
+    @cached_property
+    def header_more_buttons(self):
+        buttons = super().header_more_buttons
+        newsletter = self.object
+
+        label = (
+            "Resend Newsletter"
+            if newsletter.status == Newsletter.Status.SENT
+            else "Send Newsletter"
+        )
+        send_button = Button(
+            label,
+            url=reverse(
+                "wagtailsnippets_newsletter_newsletter:send",
+                args=[newsletter.pk],
+            ),
+            icon_name="mail",
+            priority=1,
+        )
+        preview_button = Button(
+            "Preview",
+            url=reverse("newsletter:preview", args=[newsletter.slug]),
+            icon_name="doc-full",
+            attrs={"target": "_blank"},
+            priority=2,
+        )
+        return [send_button, preview_button] + buttons
 
 
 class SubscriberSnippetViewSet(SnippetViewSet):
@@ -35,8 +70,21 @@ class NewsletterSnippetViewSet(SnippetViewSet):
     add_to_settings_menu = False
     add_to_admin_menu = False
 
+    edit_view_class = NewsletterEditView
+
     list_display = ["title", "slug", "status", "sent_count", "sent_at", "created_at"]
     list_filter = ["status"]
     list_per_page = 50
     ordering = ["-created_at"]
     search_fields = ["title", "slug"]
+
+    def get_urlpatterns(self):
+        urlpatterns = super().get_urlpatterns()
+        urlpatterns += [
+            path(
+                "send/<str:pk>/",
+                SendNewsletterView.as_view(),
+                name="send",
+            ),
+        ]
+        return urlpatterns

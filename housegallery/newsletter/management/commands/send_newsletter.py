@@ -1,16 +1,7 @@
-import time
-
-from django.conf import settings
-from django.core import mail
-from django.core.mail import EmailMultiAlternatives
 from django.core.management.base import BaseCommand, CommandError
-from django.template.loader import render_to_string
-from django.utils import timezone
 
-from housegallery.newsletter.models import Newsletter, Subscriber
-from housegallery.newsletter.utils import add_utm_params, get_base_url
-
-UNSUBSCRIBE_URL_PLACEHOLDER = "__UNSUBSCRIBE_URL__"
+from housegallery.newsletter.models import Newsletter
+from housegallery.newsletter.services import send_newsletter_edition
 
 
 class Command(BaseCommand):
@@ -54,123 +45,38 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         slug = options["slug"]
-        test_email = options.get("test")
-        dry_run = options["dry_run"]
-        batch_size = options["batch_size"]
-        batch_delay = options["batch_delay"]
-        force = options["force"]
-        include_bounced = options["include_bounced"]
 
         try:
             newsletter = Newsletter.objects.get(slug=slug)
         except Newsletter.DoesNotExist:
             raise CommandError(f"No newsletter found with slug '{slug}'.")
 
-        if newsletter.status == Newsletter.Status.SENT and not force:
-            raise CommandError(
-                f"Newsletter '{slug}' was already sent on {newsletter.sent_at}. "
-                "Use --force to send again."
+        try:
+            result = send_newsletter_edition(
+                newsletter,
+                test_email=options.get("test"),
+                dry_run=options["dry_run"],
+                batch_size=options["batch_size"],
+                batch_delay=options["batch_delay"],
+                force=options["force"],
+                include_bounced=options["include_bounced"],
+                log_callback=lambda msg: self.stdout.write(msg),
             )
+        except ValueError as e:
+            raise CommandError(str(e))
 
-        from_email = getattr(
-            settings, "DEFAULT_FROM_EMAIL", "noreply@thisisahousegallery.com"
-        )
-        subject = newsletter.effective_subject
-
-        # Determine recipients
-        if test_email:
-            recipients = [{"email": test_email, "unsubscribe_token": "test-token"}]
-            self.stdout.write(f"TEST MODE: sending to {test_email}")
-        else:
-            subscribers = Subscriber.objects.filter(
-                confirmed=True, unsubscribed_at__isnull=True
-            )
-            if not include_bounced:
-                subscribers = subscribers.filter(bounce_count__lt=3)
-            recipients = list(subscribers.values("email", "unsubscribe_token"))
-            self.stdout.write(f"Sending to {len(recipients)} subscribers")
-
-        if not recipients:
+        if result.get("no_recipients"):
             self.stdout.write(self.style.WARNING("No recipients found."))
             return
 
-        if dry_run:
+        if result.get("dry_run"):
             self.stdout.write(self.style.WARNING("DRY RUN - no emails will be sent"))
-            for r in recipients:
-                self.stdout.write(f"  Would send to: {r['email']}")
+            for email in result["would_send_to"]:
+                self.stdout.write(f"  Would send to: {email}")
             return
 
-        # Pre-render template once with placeholder unsubscribe URL
-        base_url = get_base_url()
-        context = {
-            "newsletter": newsletter,
-            "unsubscribe_url": UNSUBSCRIBE_URL_PLACEHOLDER,
-            "subscriber_email": "",
-            "preview_mode": False,
-        }
-
-        try:
-            html_template = render_to_string(newsletter.template_path, context)
-            html_template = add_utm_params(html_template, newsletter.slug)
-        except Exception as e:
-            raise CommandError(f"Error rendering template: {e}")
-
-        sent = 0
-        errors = 0
-
-        connection = mail.get_connection()
-        try:
-            connection.open()
-
-            for i, recipient in enumerate(recipients):
-                unsub_url = f"{base_url}/newsletter/unsubscribe/{recipient['unsubscribe_token']}/"
-                html_content = html_template.replace(UNSUBSCRIBE_URL_PLACEHOLDER, unsub_url)
-
-                msg = EmailMultiAlternatives(
-                    subject=subject,
-                    body=f"View this newsletter in your browser. To unsubscribe: {unsub_url}",
-                    from_email=from_email,
-                    to=[recipient["email"]],
-                    headers={
-                        "List-Unsubscribe": f"<{unsub_url}>",
-                        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-                    },
-                    connection=connection,
-                )
-                msg.attach_alternative(html_content, "text/html")
-
-                try:
-                    msg.send(fail_silently=False)
-                    sent += 1
-                    self.stdout.write(f"  Sent to {recipient['email']}")
-                except Exception as e:
-                    errors += 1
-                    try:
-                        subscriber = Subscriber.objects.get(email=recipient["email"])
-                        subscriber.record_bounce()
-                        self.stderr.write(
-                            f"  FAILED {recipient['email']}: {e} "
-                            f"(bounce {subscriber.bounce_count}/3)"
-                        )
-                    except Subscriber.DoesNotExist:
-                        self.stderr.write(f"  FAILED {recipient['email']}: {e}")
-
-                # Batch delay
-                if (i + 1) % batch_size == 0 and i + 1 < len(recipients):
-                    self.stdout.write(
-                        f"  Batch of {batch_size} sent, waiting {batch_delay}s..."
-                    )
-                    time.sleep(batch_delay)
-        finally:
-            connection.close()
-
-        # Update newsletter record (skip for test sends)
-        if not test_email:
-            newsletter.status = Newsletter.Status.SENT
-            newsletter.sent_at = timezone.now()
-            newsletter.sent_count = sent
-            newsletter.save(update_fields=["status", "sent_at", "sent_count"])
-
         self.stdout.write(
-            self.style.SUCCESS(f"Done. Sent: {sent}, Errors: {errors}")
+            self.style.SUCCESS(
+                f"Done. Sent: {result['sent']}, Errors: {result['errors']}"
+            )
         )

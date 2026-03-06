@@ -2,7 +2,9 @@ from django.urls import reverse
 
 from wagtail import hooks
 from wagtail.admin.menu import Menu, MenuItem, SubmenuMenuItem
+from wagtail.admin.widgets.button import Button
 
+from .models import Newsletter
 from .viewsets import NewsletterSnippetViewSet, SubscriberSnippetViewSet
 
 
@@ -44,3 +46,24 @@ def add_newsletter_menu(request, menu_items):
     )
 
     menu_items.append(newsletter_menu)
+
+
+@hooks.register("register_snippet_listing_buttons")
+def newsletter_listing_buttons(instance, user, next_url):
+    if not isinstance(instance, Newsletter):
+        return []
+
+    label = (
+        "Resend" if instance.status == Newsletter.Status.SENT else "Send"
+    )
+    return [
+        Button(
+            label=label,
+            url=reverse(
+                "wagtailsnippets_newsletter_newsletter:send",
+                args=[instance.pk],
+            ),
+            icon_name="mail",
+            priority=10,
+        ),
+    ]
