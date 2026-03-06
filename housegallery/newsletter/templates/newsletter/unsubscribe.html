@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Unsubscribed - This is a House Gallery{% endblock %}
+{% block title %}Unsubscribe - This is a House Gallery{% endblock %}
 
 {% block content %}
 <div class="newsletter-message">
@@ -9,11 +9,21 @@
         <p class="newsletter-message__text">
             <strong>{{ subscriber.email }}</strong> was already unsubscribed.
         </p>
-    {% else %}
+    {% elif unsubscribed %}
         <h1 class="newsletter-message__title">Unsubscribed</h1>
         <p class="newsletter-message__text">
             <strong>{{ subscriber.email }}</strong> has been removed from our mailing list.
         </p>
+    {% else %}
+        <h1 class="newsletter-message__title">Unsubscribe</h1>
+        <p class="newsletter-message__text">
+            Are you sure you want to unsubscribe <strong>{{ subscriber.email }}</strong>
+            from our mailing list?
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="newsletter-message__button">Yes, unsubscribe me</button>
+        </form>
     {% endif %}
     <a href="/" class="newsletter-message__link">Back to the gallery</a>
 </div>

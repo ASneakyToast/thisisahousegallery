@@ -6,13 +6,13 @@ from django.utils import timezone
 
 class Subscriber(models.Model):
     email = models.EmailField(unique=True)
-    confirmed = models.BooleanField(default=False)
+    confirmed = models.BooleanField(default=False, db_index=True)
     confirmation_token = models.UUIDField(default=uuid.uuid4, unique=True)
     unsubscribe_token = models.UUIDField(default=uuid.uuid4, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
-    unsubscribed_at = models.DateTimeField(null=True, blank=True)
-    bounce_count = models.PositiveIntegerField(default=0)
+    unsubscribed_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    bounce_count = models.PositiveIntegerField(default=0, db_index=True)
     last_bounced_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:

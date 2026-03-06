@@ -1,6 +1,7 @@
 <div class="footer-subscribe">
     <p class="footer-subscribe__label">Newsletter</p>
     <form class="footer-subscribe__form" id="footer-newsletter-form" action="{% url 'newsletter:subscribe' %}" method="post">
+        {% csrf_token %}
         <input type="email"
                name="email"
                placeholder="your@email.com"

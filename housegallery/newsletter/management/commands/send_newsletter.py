@@ -1,6 +1,7 @@
 import time
 
 from django.conf import settings
+from django.core import mail
 from django.core.mail import EmailMultiAlternatives
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import render_to_string
@@ -8,6 +9,8 @@ from django.utils import timezone
 
 from housegallery.newsletter.models import Newsletter, Subscriber
 from housegallery.newsletter.utils import add_utm_params, get_base_url
+
+UNSUBSCRIBE_URL_PLACEHOLDER = "__UNSUBSCRIBE_URL__"
 
 
 class Command(BaseCommand):
@@ -97,60 +100,69 @@ class Command(BaseCommand):
                 self.stdout.write(f"  Would send to: {r['email']}")
             return
 
+        # Pre-render template once with placeholder unsubscribe URL
+        base_url = get_base_url()
+        context = {
+            "newsletter": newsletter,
+            "unsubscribe_url": UNSUBSCRIBE_URL_PLACEHOLDER,
+            "subscriber_email": "",
+            "preview_mode": False,
+        }
+
+        try:
+            html_template = render_to_string(newsletter.template_path, context)
+            html_template = add_utm_params(html_template, newsletter.slug)
+        except Exception as e:
+            raise CommandError(f"Error rendering template: {e}")
+
         sent = 0
         errors = 0
 
-        for i, recipient in enumerate(recipients):
-            # Build per-recipient unsubscribe URL
-            unsub_url = f"{get_base_url()}/newsletter/unsubscribe/{recipient['unsubscribe_token']}/"
+        connection = mail.get_connection()
+        try:
+            connection.open()
 
-            context = {
-                "newsletter": newsletter,
-                "unsubscribe_url": unsub_url,
-                "subscriber_email": recipient["email"],
-                "preview_mode": False,
-            }
+            for i, recipient in enumerate(recipients):
+                unsub_url = f"{base_url}/newsletter/unsubscribe/{recipient['unsubscribe_token']}/"
+                html_content = html_template.replace(UNSUBSCRIBE_URL_PLACEHOLDER, unsub_url)
 
-            try:
-                html_content = render_to_string(newsletter.template_path, context)
-                html_content = add_utm_params(html_content, newsletter.slug)
-            except Exception as e:
-                raise CommandError(f"Error rendering template: {e}")
-
-            msg = EmailMultiAlternatives(
-                subject=subject,
-                body=f"View this newsletter in your browser. To unsubscribe: {unsub_url}",
-                from_email=from_email,
-                to=[recipient["email"]],
-                headers={
-                    "List-Unsubscribe": f"<{unsub_url}>",
-                    "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-                },
-            )
-            msg.attach_alternative(html_content, "text/html")
-
-            try:
-                msg.send(fail_silently=False)
-                sent += 1
-                self.stdout.write(f"  Sent to {recipient['email']}")
-            except Exception as e:
-                errors += 1
-                try:
-                    subscriber = Subscriber.objects.get(email=recipient["email"])
-                    subscriber.record_bounce()
-                    self.stderr.write(
-                        f"  FAILED {recipient['email']}: {e} "
-                        f"(bounce {subscriber.bounce_count}/3)"
-                    )
-                except Subscriber.DoesNotExist:
-                    self.stderr.write(f"  FAILED {recipient['email']}: {e}")
-
-            # Batch delay
-            if (i + 1) % batch_size == 0 and i + 1 < len(recipients):
-                self.stdout.write(
-                    f"  Batch of {batch_size} sent, waiting {batch_delay}s..."
+                msg = EmailMultiAlternatives(
+                    subject=subject,
+                    body=f"View this newsletter in your browser. To unsubscribe: {unsub_url}",
+                    from_email=from_email,
+                    to=[recipient["email"]],
+                    headers={
+                        "List-Unsubscribe": f"<{unsub_url}>",
+                        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+                    },
+                    connection=connection,
                 )
-                time.sleep(batch_delay)
+                msg.attach_alternative(html_content, "text/html")
+
+                try:
+                    msg.send(fail_silently=False)
+                    sent += 1
+                    self.stdout.write(f"  Sent to {recipient['email']}")
+                except Exception as e:
+                    errors += 1
+                    try:
+                        subscriber = Subscriber.objects.get(email=recipient["email"])
+                        subscriber.record_bounce()
+                        self.stderr.write(
+                            f"  FAILED {recipient['email']}: {e} "
+                            f"(bounce {subscriber.bounce_count}/3)"
+                        )
+                    except Subscriber.DoesNotExist:
+                        self.stderr.write(f"  FAILED {recipient['email']}: {e}")
+
+                # Batch delay
+                if (i + 1) % batch_size == 0 and i + 1 < len(recipients):
+                    self.stdout.write(
+                        f"  Batch of {batch_size} sent, waiting {batch_delay}s..."
+                    )
+                    time.sleep(batch_delay)
+        finally:
+            connection.close()
 
         # Update newsletter record (skip for test sends)
         if not test_email:

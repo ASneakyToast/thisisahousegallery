@@ -1,21 +1,45 @@
+import logging
+import uuid
+
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .models import Newsletter, Subscriber
 
+logger = logging.getLogger(__name__)
+
+
+def _get_client_ip(request):
+    """Extract client IP from request, respecting X-Forwarded-For."""
+    xff = request.META.get("HTTP_X_FORWARDED_FOR")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR")
+
 
 @require_POST
-@csrf_exempt
 def subscribe(request):
     """Handle newsletter subscription. Returns JSON for AJAX forms."""
+    # Rate limit: 5 requests per minute per IP
+    ip = _get_client_ip(request)
+    cache_key = f"newsletter_subscribe_{ip}"
+    request_count = cache.get(cache_key, 0)
+    if request_count >= 5:
+        return JsonResponse(
+            {"success": False, "error": "Too many requests. Please try again later."},
+            status=429,
+        )
+    cache.set(cache_key, request_count + 1, 60)
+
     email = request.POST.get("email", "").strip().lower()
 
     if not email:
@@ -43,8 +67,6 @@ def subscribe(request):
 
     # If they previously unsubscribed, re-activate the flow
     if not created and subscriber.unsubscribed_at:
-        import uuid
-
         subscriber.unsubscribed_at = None
         subscriber.confirmed = False
         subscriber.confirmation_token = uuid.uuid4()
@@ -56,9 +78,7 @@ def subscribe(request):
     try:
         _send_confirmation_email(request, subscriber)
     except Exception:
-        import logging
-
-        logging.getLogger(__name__).exception("Failed to send confirmation email")
+        logger.exception("Failed to send confirmation email")
         return JsonResponse(
             {"success": False, "error": "Could not send confirmation email. Please try again later."},
             status=500,
@@ -88,17 +108,26 @@ def confirm(request, token):
 
 
 def unsubscribe(request, token):
-    """Unsubscribe via the token included in every newsletter."""
+    """Unsubscribe via the token included in every newsletter.
+
+    GET shows a confirmation page; POST performs the unsubscribe.
+    """
     subscriber = get_object_or_404(Subscriber, unsubscribe_token=token)
 
     already_unsubscribed = subscriber.unsubscribed_at is not None
-    if not already_unsubscribed:
+
+    if request.method == "POST" and not already_unsubscribed:
         subscriber.unsubscribe()
+        return render(
+            request,
+            "newsletter/unsubscribe.html",
+            {"subscriber": subscriber, "unsubscribed": True, "already_unsubscribed": False},
+        )
 
     return render(
         request,
         "newsletter/unsubscribe.html",
-        {"subscriber": subscriber, "already_unsubscribed": already_unsubscribed},
+        {"subscriber": subscriber, "unsubscribed": False, "already_unsubscribed": already_unsubscribed},
     )
 
 
@@ -107,16 +136,11 @@ def signup_page(request):
     return render(request, "newsletter/signup_page.html")
 
 
+@staff_member_required
 def preview(request, slug):
     """Staff-only preview of a newsletter edition."""
-    if not request.user.is_staff:
-        from django.http import HttpResponseForbidden
-
-        return HttpResponseForbidden()
-
     newsletter = get_object_or_404(Newsletter, slug=slug)
 
-    # Render the edition template with preview context
     context = {
         "newsletter": newsletter,
         "subscriber": None,

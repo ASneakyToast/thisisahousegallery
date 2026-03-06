@@ -13,6 +13,7 @@
     </p>
 
     <form class="newsletter-form" id="newsletter-form" action="{% url 'newsletter:subscribe' %}" method="post">
+        {% csrf_token %}
         <div class="newsletter-form__group">
             <label for="newsletter-email" class="sr-only">Email address</label>
             <input type="email"
