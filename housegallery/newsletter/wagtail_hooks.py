@@ -5,7 +5,7 @@ from wagtail.admin.menu import Menu, MenuItem, SubmenuMenuItem
 from wagtail.admin.widgets.button import Button
 
 from .models import Newsletter
-from .viewsets import NewsletterSnippetViewSet, SubscriberSnippetViewSet
+from .viewsets import CampaignSnippetViewSet, NewsletterSnippetViewSet, SubscriberSnippetViewSet
 
 
 @hooks.register("register_admin_viewset")
@@ -16,6 +16,11 @@ def register_subscriber_snippet_viewset():
 @hooks.register("register_admin_viewset")
 def register_newsletter_snippet_viewset():
     return NewsletterSnippetViewSet()
+
+
+@hooks.register("register_admin_viewset")
+def register_campaign_snippet_viewset():
+    return CampaignSnippetViewSet()
 
 
 @hooks.register('construct_main_menu')
@@ -34,6 +39,13 @@ def add_newsletter_menu(request, menu_items):
         reverse('wagtailsnippets_newsletter_newsletter:list'),
         icon_name='mail',
         order=200
+    )
+
+    campaigns_item = MenuItem(
+        'Campaigns',
+        reverse('wagtailsnippets_newsletter_campaign:list'),
+        icon_name='tag',
+        order=150
     )
 
     subscribe_page_item = MenuItem(
@@ -61,6 +73,7 @@ def add_newsletter_menu(request, menu_items):
 
     newsletter_submenu = Menu(items=[
         subscribers_item,
+        campaigns_item,
         newsletters_item,
         subscribe_page_item,
         unsubscribe_page_item,

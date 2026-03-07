@@ -1,28 +1,24 @@
 {% extends "base.html" %}
+{% load wagtailcore_tags %}
 
-{% block title %}Newsletter - This is a House Gallery{% endblock %}
-
+{% block title %}{{ page.title }} - This is a House Gallery{% endblock %}
 {% block bodyclass %}newsletter-page{% endblock %}
 
 {% block content %}
 <div class="newsletter-signup">
-    <h1 class="newsletter-signup__title">Stay Connected</h1>
-    <p class="newsletter-signup__intro">
-        Get updates on exhibitions, events, and new work from our artists
-        delivered to your inbox.
-    </p>
+    <h1 class="newsletter-signup__title">{{ page.title }}</h1>
+
+    {% if page.intro %}
+    <div class="newsletter-signup__intro">{{ page.intro|richtext }}</div>
+    {% endif %}
 
     <form class="newsletter-form" id="newsletter-form" action="{% url 'newsletter:subscribe' %}" method="post">
         {% csrf_token %}
         {% if ref %}<input type="hidden" name="ref" value="{{ ref }}">{% endif %}
         <div class="newsletter-form__group">
             <label for="newsletter-email" class="sr-only">Email address</label>
-            <input type="email"
-                   id="newsletter-email"
-                   name="email"
-                   placeholder="your@email.com"
-                   required
-                   class="newsletter-form__input">
+            <input type="email" id="newsletter-email" name="email"
+                   placeholder="your@email.com" required class="newsletter-form__input">
             <button type="submit" class="newsletter-form__button">Subscribe</button>
         </div>
         <div class="newsletter-form__messages" id="newsletter-messages"></div>
@@ -31,5 +27,9 @@
     <p class="newsletter-signup__note">
         We'll send you a confirmation email. You can unsubscribe at any time.
     </p>
+
+    {% if page.body %}
+    <div class="page-content">{% include_block page.body %}</div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -6,11 +6,52 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 
 
+class Campaign(models.Model):
+    name = models.CharField(max_length=255, help_text="Internal name (e.g., 'March 2026 Poster - Coffee Shop').")
+    slug = models.SlugField(unique=True, help_text="URL identifier used in ?ref= links.")
+    source = models.CharField(max_length=100, blank=True, help_text="Traffic source (e.g., 'instagram', 'poster', 'personal-email').")
+    medium = models.CharField(max_length=100, blank=True, help_text="Marketing medium (e.g., 'social', 'print', 'email', 'referral').")
+    campaign_name = models.CharField(max_length=255, blank=True, help_text="Overarching campaign (e.g., 'spring-exhibition-2026').")
+    description = models.TextField(blank=True, help_text="Notes about where/how this link is used.")
+    is_active = models.BooleanField(default=True, help_text="Inactive campaigns won't accept new signups via ref links.")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("slug"),
+        MultiFieldPanel([
+            FieldPanel("source"),
+            FieldPanel("medium"),
+            FieldPanel("campaign_name"),
+        ], heading="UTM Classification"),
+        FieldPanel("description"),
+        FieldPanel("is_active"),
+    ]
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def signup_count(self):
+        return self.subscribers.count()
+
+    @property
+    def confirmed_count(self):
+        return self.subscribers.filter(confirmed=True, unsubscribed_at__isnull=True).count()
+
+
 class Subscriber(models.Model):
     email = models.EmailField(unique=True)
     confirmed = models.BooleanField(default=False, db_index=True)
     confirmation_token = models.UUIDField(default=uuid.uuid4, unique=True)
     unsubscribe_token = models.UUIDField(default=uuid.uuid4, unique=True)
+    campaign = models.ForeignKey(
+        "Campaign", null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="subscribers",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
     unsubscribed_at = models.DateTimeField(null=True, blank=True, db_index=True)
