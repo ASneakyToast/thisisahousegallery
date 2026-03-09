@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-<!-- Migration to us-west1: Testing new dev trigger -->
+<!-- Infrastructure: prod + staging environments -->
 
 ## Project Overview
 
@@ -173,7 +173,7 @@ gcloud builds triggers list --region=us-west2
 gcloud builds list --region=us-west2
 gcloud builds describe [BUILD_ID] --region=us-west2
 
-# Cloud Run services and jobs (us-west1 for dev/staging)
+# Cloud Run services and jobs (us-west1)
 gcloud run services list --region=us-west1
 gcloud run jobs list --region=us-west1
 
@@ -184,16 +184,15 @@ gcloud sql instances list  # Shows all regions
 **Hybrid Architecture:** 
 - **Cloud Build & Database**: us-west2 (triggers, builds, PostgreSQL)
 - **Cloud Run Services**: us-west1 (enables custom domain mapping)
-- **Custom Domains**: qa.thisisahousegallery.com → us-west1 service
+- **Custom Domains**: staging/prod services on us-west1
 
 ### Production Deployment
 
 **Cloud Build Triggers:**
-- `housegallery-dev-jrl`: Auto-deploys dev environment on `jrl/*` branch pushes
-- `housegallery-dev-tag-build`: Auto-deploys dev environment on `dev-*` tag pushes
+- `housegallery-staging`: Deploys staging environment on `staging-*` tag pushes
 - `housegallery-prod`: Auto-builds production on `main` branch pushes (includes database backup)
 - `housegallery-prod-deploy-manual`: Manual production deployment trigger
-- `housegallery-dev-sync`: Manual dev sync from production database and media
+- `housegallery-staging-sync`: Manual staging sync from production database and media
 
 **Production Workflow:**
 1. **Merge to main** → Triggers `housegallery-prod` build (backup + build image)
@@ -211,57 +210,40 @@ gcloud sql instances list  # Shows all regions
 gcloud builds triggers run housegallery-prod-deploy-manual --region=us-west2 --branch=main
 ```
 
-**Dev Environment Sync:**
-To sync the dev environment with production data (database and media files):
+**Staging Environment Sync:**
+To sync the staging environment with production data (database and media files):
 
 ```bash
-# Sync dev environment with production data
-gcloud builds triggers run housegallery-dev-sync --region=us-west2 --branch=main
+# Sync staging environment with production data
+gcloud builds triggers run housegallery-staging-sync --region=us-west2 --branch=main
 ```
 
 This will:
-1. Copy all media and static files from `gs://housegallery-prod` to `gs://housegallery-dev`
-2. Export the latest production database backup and import it to the dev database
-3. Run migrations on the dev database
-4. Update the search index for the dev environment
+1. Copy all media and static files from `gs://housegallery-prod` to `gs://housegallery-staging`
+2. Export the latest production database backup and import it to the staging database
+3. Run migrations on the staging database
+4. Update the search index for the staging environment
 
-**Note:** This operation will completely replace the dev database with production data. Ensure any dev-specific data is backed up if needed.
+**Note:** This operation will completely replace the staging database with production data. Ensure any staging-specific data is backed up if needed.
 
-### Development Deployment Options
+### Staging Deployment
 
-The project supports two methods for deploying to the development environment:
-
-#### Method 1: Branch-Based Deployment (Automatic)
-Push to any `jrl/*` branch to trigger automatic deployment:
+Deploy to staging by creating and pushing a `staging-*` tag:
 ```bash
-git checkout -b jrl/my-feature
-git push origin jrl/my-feature
-# Automatically triggers housegallery-dev-jrl build
-```
+# Deploy current commit to staging
+git tag staging-feature-name
+git push origin staging-feature-name
 
-#### Method 2: Tag-Based Deployment (On-Demand)
-Create and push a `dev-*` tag for on-demand deployment:
-```bash
-# Deploy current commit to dev environment
-git tag dev-feature-admin-upgrades
-git push origin dev-feature-admin-upgrades
-
-# Deploy with date for testing
-git tag dev-$(date +%Y%m%d)
-git push origin dev-$(date +%Y%m%d)
-
-# Deploy specific version for testing
-git tag dev-v1.0.0
-git push origin dev-v1.0.0
+# Deploy with date
+git tag staging-$(date +%Y%m%d)
+git push origin staging-$(date +%Y%m%d)
 ```
 
 **Tag Naming Conventions:**
-- `dev-*`: General development deployments
-- `dev-feature-*`: Feature testing (e.g., `dev-feature-api-enhancement`)
-- `dev-v*`: Version-specific dev deployments (e.g., `dev-v1.0.0`)
-- `dev-YYYYMMDD`: Date-based deployments for testing
-
-Both deployment methods work simultaneously and deploy to the same dev environment.
+- `staging-*`: General staging deployments
+- `staging-feature-*`: Feature testing (e.g., `staging-feature-api-enhancement`)
+- `staging-v*`: Version-specific staging deployments (e.g., `staging-v1.0.0`)
+- `staging-YYYYMMDD`: Date-based deployments for testing
 
 ## Working with the Codebase
 

@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START dev]
-# DEV - Cloudbuild build and deploy
+# [START staging]
+# STAGING - Cloudbuild build and deploy
 
 
 steps:
@@ -140,7 +140,9 @@ steps:
     name: "gcr.io/cloud-builders/gcloud"
     args: [
       "run", "jobs", "deploy", "${_MGMT_CMD_SEND_NEWSLETTER}",
-      "--command", "python,manage.py,send_newsletter",
+      "--command", "python",
+      "--args", "manage.py",
+      "--args", "send_newsletter",
       "--image", "${_IMAGE_NAME}:latest",
       "--memory", "1024Mi",
       "--region", "${_REGION}",
@@ -154,7 +156,7 @@ logsBucket: "gs://housegallery-cloudbuild-log/${_BUILD_TYPE}"
 
 substitutions:
   _ARTIFACT_REGISTRY: housegallery
-  _BUILD_TYPE: ''  # must define in the build trigger: staging/qa/dev-*
+  _BUILD_TYPE: staging
   _CLOUD_SQL_CONNECTION_NAME: ${PROJECT_ID}:us-west2:${_DB_INSTANCE_NAME}
   _DB_INSTANCE_NAME: housegallery
   _DJANGO_SETTINGS: config.settings.production

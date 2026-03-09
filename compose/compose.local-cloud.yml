@@ -20,7 +20,7 @@ services:
       - cloud-sql-proxy
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.local_cloud
-      - BUILD_TYPE=dev-jrl
+      - BUILD_TYPE=staging
       - GOOGLE_APPLICATION_CREDENTIALS=/credentials.json
     volumes:
       - ${GOOGLE_ADC:-~/.config/gcloud/application_default_credentials.json}:/credentials.json
