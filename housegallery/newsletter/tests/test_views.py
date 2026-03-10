@@ -131,14 +131,6 @@ class TestUnsubscribeView:
 
 
 @pytest.mark.django_db
-class TestSignupPage:
-    def test_signup_page_renders(self):
-        client = Client()
-        resp = client.get(reverse("newsletter:signup"))
-        assert resp.status_code == 200
-
-
-@pytest.mark.django_db
 class TestUnsubscribeRequestPage:
     def test_page_renders(self):
         client = Client()

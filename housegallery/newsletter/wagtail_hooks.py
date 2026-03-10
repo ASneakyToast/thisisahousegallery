@@ -5,7 +5,12 @@ from wagtail.admin.menu import Menu, MenuItem, SubmenuMenuItem
 from wagtail.admin.widgets.button import Button
 
 from .models import Newsletter
-from .viewsets import CampaignSnippetViewSet, NewsletterSnippetViewSet, SubscriberSnippetViewSet
+from .viewsets import (
+    CampaignMediumSnippetViewSet,
+    CampaignSourceSnippetViewSet,
+    NewsletterSnippetViewSet,
+    SubscriberSnippetViewSet,
+)
 
 
 @hooks.register("register_admin_viewset")
@@ -19,8 +24,13 @@ def register_newsletter_snippet_viewset():
 
 
 @hooks.register("register_admin_viewset")
-def register_campaign_snippet_viewset():
-    return CampaignSnippetViewSet()
+def register_campaign_source_snippet_viewset():
+    return CampaignSourceSnippetViewSet()
+
+
+@hooks.register("register_admin_viewset")
+def register_campaign_medium_snippet_viewset():
+    return CampaignMediumSnippetViewSet()
 
 
 @hooks.register('construct_main_menu')
@@ -41,21 +51,6 @@ def add_newsletter_menu(request, menu_items):
         order=200
     )
 
-    campaigns_item = MenuItem(
-        'Campaigns',
-        reverse('wagtailsnippets_newsletter_campaign:list'),
-        icon_name='tag',
-        order=150
-    )
-
-    subscribe_page_item = MenuItem(
-        'Subscribe Page',
-        reverse('newsletter:signup'),
-        icon_name='link-external',
-        attrs={"target": "_blank"},
-        order=300,
-    )
-
     unsubscribe_page_item = MenuItem(
         'Unsubscribe Page',
         reverse('newsletter:unsubscribe_request_page'),
@@ -73,9 +68,7 @@ def add_newsletter_menu(request, menu_items):
 
     newsletter_submenu = Menu(items=[
         subscribers_item,
-        campaigns_item,
         newsletters_item,
-        subscribe_page_item,
         unsubscribe_page_item,
         email_settings_item,
     ])

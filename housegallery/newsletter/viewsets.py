@@ -5,7 +5,7 @@ from wagtail.admin.widgets.button import Button
 from wagtail.snippets.views.snippets import EditView, SnippetViewSet
 
 from .admin_views import SendNewsletterView
-from .models import Campaign, Newsletter, Subscriber
+from .models import CampaignMedium, CampaignSource, Newsletter, Subscriber
 
 
 class NewsletterEditView(EditView):
@@ -48,31 +48,41 @@ class SubscriberSnippetViewSet(SnippetViewSet):
     add_to_admin_menu = False
 
     list_display = [
-        "email", "confirmed", "campaign", "bounce_count", "last_bounced_at",
+        "email", "confirmed", "signup_page", "bounce_count", "last_bounced_at",
         "created_at", "confirmed_at", "unsubscribed_at",
     ]
-    list_filter = ["confirmed", "bounce_count", "campaign"]
+    list_filter = ["confirmed", "bounce_count"]
     list_per_page = 50
     ordering = ["-created_at"]
     search_fields = ["email"]
     list_export = [
-        "email", "confirmed", "campaign", "bounce_count", "last_bounced_at",
+        "email", "confirmed", "signup_page", "bounce_count", "last_bounced_at",
         "created_at", "confirmed_at", "unsubscribed_at",
     ]
 
 
-class CampaignSnippetViewSet(SnippetViewSet):
-    model = Campaign
+class CampaignSourceSnippetViewSet(SnippetViewSet):
+    model = CampaignSource
     icon = "tag"
-    menu_label = "Campaigns"
-    menu_name = "campaigns"
-    menu_order = 320
+    menu_label = "Campaign Sources"
+    menu_name = "campaign_sources"
+    add_to_settings_menu = False
     add_to_admin_menu = False
 
-    list_display = ["name", "slug", "source", "medium", "campaign_name", "is_active", "signup_count", "confirmed_count", "created_at"]
-    list_filter = ["is_active", "medium", "source"]
-    ordering = ["-created_at"]
-    search_fields = ["name", "slug", "source", "medium", "campaign_name"]
+    list_display = ["name"]
+    search_fields = ["name"]
+
+
+class CampaignMediumSnippetViewSet(SnippetViewSet):
+    model = CampaignMedium
+    icon = "tag"
+    menu_label = "Campaign Media"
+    menu_name = "campaign_media"
+    add_to_settings_menu = False
+    add_to_admin_menu = False
+
+    list_display = ["name"]
+    search_fields = ["name"]
 
 
 class NewsletterSnippetViewSet(SnippetViewSet):

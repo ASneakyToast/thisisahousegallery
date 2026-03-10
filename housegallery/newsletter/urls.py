@@ -5,7 +5,6 @@ from . import views
 app_name = "newsletter"
 
 urlpatterns = [
-    path("", views.signup_page, name="signup"),
     path("subscribe/", views.subscribe, name="subscribe"),
     path("confirm/<uuid:token>/", views.confirm, name="confirm"),
     path("unsubscribe/", views.unsubscribe_request_page, name="unsubscribe_request_page"),

@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from .models import Campaign, Newsletter, NewsletterEmailSettings, Subscriber
+from .models import Newsletter, NewsletterEmailSettings, Subscriber
 
 logger = logging.getLogger(__name__)
 
@@ -87,14 +87,16 @@ def subscribe(request):
             status=400,
         )
 
-    ref = request.POST.get("ref", "").strip()
-    campaign = None
-    if ref:
-        campaign = Campaign.objects.filter(slug=ref, is_active=True).first()
+    page_id = request.POST.get("page_id", "").strip()
+    signup_page = None
+    if page_id:
+        from .pages import NewsletterSignupPage
+
+        signup_page = NewsletterSignupPage.objects.filter(pk=page_id, is_active=True).first()
 
     subscriber, created = Subscriber.objects.get_or_create(
         email=email,
-        defaults={"campaign": campaign},
+        defaults={"signup_page": signup_page},
     )
 
     if not created and subscriber.is_active:
@@ -107,9 +109,9 @@ def subscribe(request):
         subscriber.unsubscribed_at = None
         subscriber.confirmed = False
         subscriber.confirmation_token = uuid.uuid4()
-        subscriber.campaign = campaign
+        subscriber.signup_page = signup_page
         subscriber.save(
-            update_fields=["unsubscribed_at", "confirmed", "confirmation_token", "campaign"]
+            update_fields=["unsubscribed_at", "confirmed", "confirmation_token", "signup_page"]
         )
 
     # Send confirmation email
@@ -167,18 +169,6 @@ def unsubscribe(request, token):
         "newsletter/unsubscribe.html",
         {"subscriber": subscriber, "unsubscribed": False, "already_unsubscribed": already_unsubscribed},
     )
-
-
-def signup_page(request):
-    """Dedicated newsletter signup page."""
-    ref = request.GET.get("ref", "").strip()
-    campaign = None
-    if ref:
-        campaign = Campaign.objects.filter(slug=ref, is_active=True).first()
-    return render(request, "newsletter/signup_page.html", {
-        "ref": ref if campaign else "",
-        "campaign": campaign,
-    })
 
 
 def unsubscribe_request_page(request):
