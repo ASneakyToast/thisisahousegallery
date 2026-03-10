@@ -17,11 +17,7 @@ class NewsletterEditView(EditView):
         buttons = super().header_more_buttons
         newsletter = self.object
 
-        label = (
-            "Resend Newsletter"
-            if newsletter.status == Newsletter.Status.SENT
-            else "Send Newsletter"
-        )
+        label = "Send\u2026"
         send_button = Button(
             label,
             url=reverse(

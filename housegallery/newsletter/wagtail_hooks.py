@@ -102,9 +102,7 @@ def newsletter_listing_buttons(instance, user, next_url):
     if not isinstance(instance, Newsletter):
         return []
 
-    label = (
-        "Resend" if instance.status == Newsletter.Status.SENT else "Send"
-    )
+    label = "Send\u2026"
     return [
         Button(
             label=label,
