@@ -1,6 +1,5 @@
 # ruff: noqa: E501
 from .base import *  # noqa: F403
-from .base import CLOUDRUN_SERVICE_URL
 from .base import DATABASES
 from .base import GS_BUCKET_NAME
 from .base import INSTALLED_APPS
@@ -16,17 +15,13 @@ SECRET_KEY = env(
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-# Custom domains shared across all cloud environments
+# Custom domains for all cloud environments (prod + staging)
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[
     "thisisahousegallery.com",
     "www.thisisahousegallery.com",
     "prod.thisisahousegallery.com",
     "qa.thisisahousegallery.com",
 ])
-# Also allow the Cloud Run service URL (set automatically by Cloud Run)
-if CLOUDRUN_SERVICE_URL:
-    from urllib.parse import urlparse
-    ALLOWED_HOSTS.append(urlparse(CLOUDRUN_SERVICE_URL).netloc)
 
 
 # DATABASES
