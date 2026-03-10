@@ -21,8 +21,9 @@ class HomePage(Page, ListingFields):
         'exhibitions.SchedulePage',
         'places.PlacesIndexPage',
         'core.BlankPage',
-        'home.KioskPage'
-    ] 
+        'home.KioskPage',
+        'newsletter.NewsletterSignupPage',
+    ]
 
     search_fields = Page.search_fields + ListingFields.search_fields + [
         index.SearchField('body'),

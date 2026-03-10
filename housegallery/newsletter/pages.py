@@ -39,7 +39,7 @@ class NewsletterSignupPage(Page, ListingFields):
 
     template = "pages/newsletter/signup_page.html"
 
-    parent_page_types = ["home.HomePage", "core.BlankPage", "newsletter.NewsletterSignupPage"]
+    parent_page_types = ["home.HomePage", "newsletter.NewsletterSignupPage"]
     subpage_types = ["newsletter.NewsletterSignupPage"]
 
     search_fields = Page.search_fields + ListingFields.search_fields + [
