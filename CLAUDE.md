@@ -184,7 +184,7 @@ gcloud sql instances list  # Shows all regions
 **Hybrid Architecture:** 
 - **Cloud Build & Database**: us-west2 (triggers, builds, PostgreSQL)
 - **Cloud Run Services**: us-west1 (enables custom domain mapping)
-- **Custom Domains**: staging/prod services on us-west1
+- **Custom Domains**: qa.thisisahousegallery.com → staging service, thisisahousegallery.com → prod service
 
 ### Production Deployment
 
