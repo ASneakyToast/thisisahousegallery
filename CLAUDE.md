@@ -58,6 +58,11 @@ docker-compose -f compose/compose.local-cloud.yml exec django python manage.py c
 #### Mode 3: Production (GCP Secret Manager)
 Production deployment uses GCP Secret Manager for all configuration - no local env files needed.
 
+> **Never connect locally to the production database.** There is no local compose file for prod — by design. All production management commands (migrate, clearsessions, etc.) must be run via Cloud Run jobs:
+> ```bash
+> gcloud run jobs execute housegallery-prod-mgmt-cmd-migrate --region=us-west1 --wait
+> ```
+
 ### Django Commands
 
 Run these commands inside the Django container. Replace `<compose-file>` with either `compose.local-offline.yml` or `compose.local-cloud.yml`:
