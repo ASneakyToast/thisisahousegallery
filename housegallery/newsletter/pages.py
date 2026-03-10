@@ -16,6 +16,11 @@ class NewsletterSignupPage(Page, ListingFields):
     """
 
     intro = RichTextField(blank=True, help_text="Introductory text above the signup form.")
+    trust_text = models.CharField(
+        max_length=255, blank=True,
+        default="Monthly updates · No spam · Unsubscribe anytime",
+        help_text="Trust signals shown below the signup form.",
+    )
     body = StreamField(BlankStreamBlock(), blank=True, help_text="Additional content below the signup form.")
 
     source = models.ForeignKey(
@@ -49,6 +54,7 @@ class NewsletterSignupPage(Page, ListingFields):
 
     content_panels = Page.content_panels + [
         FieldPanel("intro"),
+        FieldPanel("trust_text"),
         FieldPanel("body"),
     ]
 

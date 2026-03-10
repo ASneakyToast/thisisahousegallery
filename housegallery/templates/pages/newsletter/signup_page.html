@@ -5,31 +5,48 @@
 {% block bodyclass %}newsletter-page{% endblock %}
 
 {% block content %}
-<div class="newsletter-signup">
-    <h1 class="newsletter-signup__title">{{ page.title }}</h1>
+<section class="nl-hero" data-nl-hero>
+    <div class="nl-hero__inner">
+        <h1 class="nl-hero__title" data-nl-animate="title">{{ page.title }}</h1>
 
-    {% if page.intro %}
-    <div class="newsletter-signup__intro">{{ page.intro|richtext }}</div>
-    {% endif %}
+        {% if page.intro %}
+        <div class="nl-hero__intro" data-nl-animate="intro">{{ page.intro|richtext }}</div>
+        {% endif %}
 
-    <form class="newsletter-form" id="newsletter-form" action="{% url 'newsletter:subscribe' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="page_id" value="{{ page.pk }}">
-        <div class="newsletter-form__group">
-            <label for="newsletter-email" class="sr-only">Email address</label>
-            <input type="email" id="newsletter-email" name="email"
-                   placeholder="your@email.com" required class="newsletter-form__input">
-            <button type="submit" class="newsletter-form__button">Subscribe</button>
+        {% if page.is_active %}
+        <div class="nl-card" data-nl-animate="card">
+            <form class="nl-form" id="newsletter-form" action="{% url 'newsletter:subscribe' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="page_id" value="{{ page.pk }}">
+                <div class="nl-form__group">
+                    <label for="newsletter-email" class="sr-only">Email address</label>
+                    <input type="email" id="newsletter-email" name="email"
+                           placeholder="your@email.com" required class="nl-form__input">
+                    <button type="submit" class="nl-form__button">
+                        <span class="nl-form__button-text">Subscribe</span>
+                        <span class="nl-form__button-arrow" aria-hidden="true">&rarr;</span>
+                    </button>
+                </div>
+                <div class="nl-form__messages" id="newsletter-messages" aria-live="polite"></div>
+            </form>
+            {% if page.trust_text %}
+            <p class="nl-card__trust">{{ page.trust_text }}</p>
+            {% endif %}
         </div>
-        <div class="newsletter-form__messages" id="newsletter-messages"></div>
-    </form>
+        {% else %}
+        <div class="nl-card nl-card--inactive" data-nl-animate="card">
+            <p class="nl-card__inactive-text">This signup is no longer active.</p>
+            <a href="/subscribe/" class="button-carrot">Subscribe to our mailing list</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
 
-    <p class="newsletter-signup__note">
-        We'll send you a confirmation email. You can unsubscribe at any time.
-    </p>
-
-    {% if page.body %}
-    <div class="page-content">{% include_block page.body %}</div>
-    {% endif %}
-</div>
+{% if page.body %}
+<section class="nl-body" data-nl-animate="body">
+    <div class="nl-body__inner">
+        {% include_block page.body %}
+    </div>
+</section>
+{% endif %}
 {% endblock %}
