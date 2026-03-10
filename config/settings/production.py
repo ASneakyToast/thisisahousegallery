@@ -1,5 +1,8 @@
 # ruff: noqa: E501
+from urllib.parse import urlparse
+
 from .base import *  # noqa: F403
+from .base import BUILD_TYPE
 from .base import DATABASES
 from .base import GS_BUCKET_NAME
 from .base import INSTALLED_APPS
@@ -15,9 +18,31 @@ SECRET_KEY = env(
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-# Cloud Run handles host validation at the load balancer level, so we allow all hosts.
-# CSRF protection uses CSRF_TRUSTED_ORIGINS which is set from Secret Manager.
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["*"])
+# Known custom domains per environment
+_KNOWN_HOSTS = {
+    "prod": [
+        "thisisahousegallery.com",
+        "www.thisisahousegallery.com",
+    ],
+    "staging": [
+        "qa.thisisahousegallery.com",
+        "staging.thisisahousegallery.com",
+    ],
+}
+
+ALLOWED_HOSTS = _KNOWN_HOSTS.get(BUILD_TYPE, [])
+
+# Allow additional hosts from Secret Manager (e.g. DJANGO_ALLOWED_HOSTS=host1,host2)
+ALLOWED_HOSTS += env.list("DJANGO_ALLOWED_HOSTS", default=[])
+
+# Non-prod: allow any Cloud Run URL (.run.app subdomain wildcard)
+# Prod: only allow Cloud Run URL if explicitly set via CLOUDRUN_SERVICE_URL
+if BUILD_TYPE != "prod":
+    ALLOWED_HOSTS.append(".run.app")
+else:
+    _cloudrun_url = env("CLOUDRUN_SERVICE_URL", default=None)
+    if _cloudrun_url:
+        ALLOWED_HOSTS.append(urlparse(_cloudrun_url).netloc)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
