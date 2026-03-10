@@ -13,30 +13,26 @@
     </div>
     {% endif %}
 
-    <div style="margin-bottom: 2em;">
+    <section style="margin-bottom: 2em;">
         <h2>Newsletter Details</h2>
-        <table class="listing">
+        <table>
             <tbody>
-                <tr><td><strong>Title</strong></td><td>{{ newsletter.title }}</td></tr>
-                <tr><td><strong>Subject</strong></td><td>{{ newsletter.effective_subject }}</td></tr>
-                <tr><td><strong>Slug</strong></td><td>{{ newsletter.slug }}</td></tr>
-                <tr><td><strong>Status</strong></td><td>{{ newsletter.get_status_display }}</td></tr>
-                <tr>
-                    <td><strong>Active Subscribers</strong></td>
-                    <td>{{ subscriber_count }}</td>
-                </tr>
+                <tr><th>Title</th><td>{{ newsletter.title }}</td></tr>
+                <tr><th>Subject</th><td>{{ newsletter.effective_subject }}</td></tr>
+                <tr><th>Slug</th><td>{{ newsletter.slug }}</td></tr>
+                <tr><th>Status</th><td>{{ newsletter.get_status_display }}</td></tr>
+                <tr><th>Active Subscribers</th><td>{{ subscriber_count }}</td></tr>
             </tbody>
         </table>
 
         <a href="{{ edit_url }}" class="button button-secondary" style="margin-top: 1em;">
-            {% icon name="doc-full" %}
             Edit &amp; Preview Newsletter
         </a>
-    </div>
+    </section>
 
     <hr>
 
-    <div style="margin-bottom: 2em;">
+    <section style="margin-bottom: 2em;">
         <h2>Send Test Email</h2>
         <p>Send this newsletter to a single email address for testing. This will not change the newsletter status.</p>
         <form method="post">
@@ -48,17 +44,14 @@
                     <input type="email" name="test_email" id="test_email" placeholder="test@example.com" required
                            style="min-width: 300px;">
                 </div>
-                <button type="submit" class="button button-secondary">
-                    {% icon name="mail" %}
-                    Send Test
-                </button>
+                <input type="submit" value="Send Test" class="button button-secondary">
             </div>
         </form>
-    </div>
+    </section>
 
     <hr>
 
-    <div style="margin-bottom: 2em;">
+    <section style="margin-bottom: 2em;">
         <h2>Send to All Subscribers</h2>
         {% if subscriber_count == 0 %}
             <p class="help-block help-warning">
@@ -87,11 +80,8 @@
                     </label>
                 </div>
 
-                <button type="submit" class="button button--primary serious">
-                    {% icon name="mail" %}
-                    Send to All {{ subscriber_count }} Subscriber{{ subscriber_count|pluralize }}
-                </button>
+                <input type="submit" value="Send to All {{ subscriber_count }} Subscriber{{ subscriber_count|pluralize }}" class="button serious">
             </form>
         {% endif %}
-    </div>
+    </section>
 {% endblock %}
