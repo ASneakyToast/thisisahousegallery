@@ -90,7 +90,7 @@ STORAGES = {
             "location": "media",
             "file_overwrite": False,
             # Cache headers for browser caching (1 year for immutable media)
-            "default_acl": "publicRead",
+            "default_acl": None,
             "querystring_auth": False,
             "object_parameters": {
                 "cache_control": "public, max-age=31536000, immutable",
