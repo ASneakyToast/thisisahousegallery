@@ -218,4 +218,4 @@ class TestNewsletterListingButtons:
         response = staff_client.get(url)
         if response.status_code == 200 and response.content:
             content = response.content.decode()
-            assert "Resend" in content
+            assert "Send\u2026" in content

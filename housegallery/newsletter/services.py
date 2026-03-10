@@ -6,7 +6,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-from .models import Newsletter
+from .models import Newsletter, Subscriber
 from .utils import add_utm_params, get_base_url
 
 UNSUBSCRIBE_URL_PLACEHOLDER = "__UNSUBSCRIBE_URL__"
