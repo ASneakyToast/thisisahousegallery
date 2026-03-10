@@ -10,6 +10,7 @@ from .viewsets import (
     CampaignSourceSnippetViewSet,
     NewsletterSnippetViewSet,
     SubscriberSnippetViewSet,
+    newsletter_signup_page_listing_viewset,
 )
 
 
@@ -33,6 +34,11 @@ def register_campaign_medium_snippet_viewset():
     return CampaignMediumSnippetViewSet()
 
 
+@hooks.register("register_admin_viewset")
+def register_newsletter_signup_page_listing_viewset():
+    return newsletter_signup_page_listing_viewset
+
+
 @hooks.register('construct_main_menu')
 def add_newsletter_menu(request, menu_items):
     """Add custom Newsletter menu with Subscribers and Newsletters submenus."""
@@ -49,6 +55,13 @@ def add_newsletter_menu(request, menu_items):
         reverse('wagtailsnippets_newsletter_newsletter:list'),
         icon_name='mail',
         order=200
+    )
+
+    signup_pages_item = MenuItem(
+        'Signup Pages',
+        reverse('newsletter_signup_pages:index'),
+        icon_name='form',
+        order=300,
     )
 
     unsubscribe_page_item = MenuItem(
@@ -69,6 +82,7 @@ def add_newsletter_menu(request, menu_items):
     newsletter_submenu = Menu(items=[
         subscribers_item,
         newsletters_item,
+        signup_pages_item,
         unsubscribe_page_item,
         email_settings_item,
     ])

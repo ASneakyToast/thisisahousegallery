@@ -1,11 +1,14 @@
 from functools import cached_property
 
 from django.urls import path, reverse
+from wagtail.admin.ui.tables import BooleanColumn, Column, LiveStatusTagColumn
+from wagtail.admin.viewsets.pages import PageListingViewSet
 from wagtail.admin.widgets.button import Button
 from wagtail.snippets.views.snippets import EditView, SnippetViewSet
 
 from .admin_views import SendNewsletterView
 from .models import CampaignMedium, CampaignSource, Newsletter, Subscriber
+from .pages import NewsletterSignupPage
 
 
 class NewsletterEditView(EditView):
@@ -83,6 +86,26 @@ class CampaignMediumSnippetViewSet(SnippetViewSet):
 
     list_display = ["name"]
     search_fields = ["name"]
+
+
+class NewsletterSignupPageListingViewSet(PageListingViewSet):
+    model = NewsletterSignupPage
+    icon = "form"
+    menu_label = "Signup Pages"
+    name = "newsletter_signup_pages"
+    add_to_admin_menu = False
+    columns = PageListingViewSet.columns + [
+        Column("source", label="Source"),
+        Column("medium", label="Medium"),
+        Column("campaign_name", label="Campaign"),
+        BooleanColumn("is_active", label="Active"),
+        LiveStatusTagColumn(),
+    ]
+
+
+newsletter_signup_page_listing_viewset = NewsletterSignupPageListingViewSet(
+    "newsletter_signup_pages"
+)
 
 
 class NewsletterSnippetViewSet(SnippetViewSet):
