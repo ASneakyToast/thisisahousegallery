@@ -91,8 +91,8 @@ class SubscriberTagSnippetViewSet(SnippetViewSet):
     add_to_settings_menu = False
     add_to_admin_menu = False
 
-    list_display = ["name", "slug", "description", "created_at"]
-    search_fields = ["name", "slug"]
+    list_display = ["name", "description", "created_at"]
+    search_fields = ["name"]
 
 
 class NewsletterSignupPageListingViewSet(PageListingViewSet):
@@ -126,11 +126,17 @@ class NewsletterSnippetViewSet(SnippetViewSet):
 
     edit_view_class = NewsletterEditView
 
-    list_display = ["title", "slug", "status", "sent_count", "sent_at", "created_at"]
+    list_display = ["title", "slug", "status", Column("targeting_summary", label="Targeting", accessor=lambda obj: obj.targeting_summary or "\u2014"), "sent_count", "sent_at", "created_at"]
     list_filter = ["status"]
     list_per_page = 50
     ordering = ["-created_at"]
     search_fields = ["title", "slug"]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if qs is None:
+            qs = self.model.objects.all()
+        return qs.prefetch_related("target_tags")
 
     def get_urlpatterns(self):
         urlpatterns = super().get_urlpatterns()

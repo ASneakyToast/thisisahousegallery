@@ -41,13 +41,11 @@ class CampaignMedium(models.Model):
 
 class SubscriberTag(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     panels = [
         FieldPanel("name"),
-        FieldPanel("slug"),
         FieldPanel("description"),
     ]
 
@@ -198,6 +196,11 @@ class Newsletter(PreviewableMixin, RevisionMixin, models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.get_status_display()})"
+
+    @property
+    def targeting_summary(self):
+        tag_names = [t.name for t in self.target_tags.all()]
+        return ", ".join(tag_names) if tag_names else ""
 
     @property
     def effective_subject(self):
