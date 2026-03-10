@@ -73,11 +73,6 @@ class SubscriberTagThrough(models.Model):
 
 
 class Subscriber(models.Model):
-    class Frequency(models.TextChoices):
-        EVERY_ISSUE = "every_issue", "Every issue"
-        MONTHLY = "monthly", "Monthly digest"
-        ANNOUNCEMENTS_ONLY = "announcements_only", "Major announcements only"
-
     email = models.EmailField(unique=True)
     confirmed = models.BooleanField(default=False, db_index=True)
     confirmation_token = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -89,10 +84,6 @@ class Subscriber(models.Model):
     tags = models.ManyToManyField(
         SubscriberTag, blank=True, through=SubscriberTagThrough,
         related_name="subscribers",
-    )
-    preferred_frequency = models.CharField(
-        max_length=20, choices=Frequency.choices, default=Frequency.EVERY_ISSUE,
-        help_text="How often this subscriber wants to receive newsletters.",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
@@ -167,13 +158,6 @@ class Newsletter(PreviewableMixin, RevisionMixin, models.Model):
         SubscriberTag, blank=True, related_name="newsletters",
         help_text="If set, only subscribers with ANY of these tags receive this newsletter.",
     )
-    target_frequency = models.CharField(
-        max_length=20,
-        choices=Subscriber.Frequency.choices,
-        blank=True,
-        help_text="Minimum frequency tier. Leave blank to ignore frequency filtering.",
-    )
-
     panels = [
         FieldPanel("title"),
         FieldPanel("slug"),
@@ -183,7 +167,6 @@ class Newsletter(PreviewableMixin, RevisionMixin, models.Model):
         MultiFieldPanel(
             [
                 FieldPanel("target_tags"),
-                FieldPanel("target_frequency"),
             ],
             heading="Targeting",
             help_text="Optional filters to target specific subscribers. If no targets are set, the newsletter is sent to all active subscribers.",

@@ -6,26 +6,11 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-from .models import Newsletter, Subscriber
+from .models import Newsletter
 from .utils import add_utm_params, get_base_url
 
 UNSUBSCRIBE_URL_PLACEHOLDER = "__UNSUBSCRIBE_URL__"
 PREFERENCES_URL_PLACEHOLDER = "__PREFERENCES_URL__"
-
-
-def get_frequency_tiers(target_frequency):
-    """Return frequency choices that should receive a newsletter at this tier.
-
-    announcements_only → everyone gets it
-    monthly → monthly + every_issue
-    every_issue → only every_issue subscribers
-    """
-    freq = Subscriber.Frequency
-    if target_frequency == freq.ANNOUNCEMENTS_ONLY:
-        return [freq.EVERY_ISSUE, freq.MONTHLY, freq.ANNOUNCEMENTS_ONLY]
-    if target_frequency == freq.MONTHLY:
-        return [freq.EVERY_ISSUE, freq.MONTHLY]
-    return [freq.EVERY_ISSUE]
 
 
 def send_newsletter_edition(
@@ -72,10 +57,6 @@ def send_newsletter_edition(
         # Apply targeting filters
         if newsletter.target_tags.exists():
             subscribers = subscribers.filter(tags__in=newsletter.target_tags.all())
-
-        if newsletter.target_frequency:
-            frequency_tiers = get_frequency_tiers(newsletter.target_frequency)
-            subscribers = subscribers.filter(preferred_frequency__in=frequency_tiers)
 
         subscribers = subscribers.distinct()
         recipients = list(subscribers.values("email", "unsubscribe_token"))

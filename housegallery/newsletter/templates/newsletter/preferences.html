@@ -36,18 +36,6 @@
         </fieldset>
         {% endif %}
 
-        <fieldset class="newsletter-preferences-form__fieldset">
-            <legend class="newsletter-preferences-form__legend">Email Frequency</legend>
-            <p class="newsletter-preferences-form__help">How often would you like to hear from us?</p>
-            {% for value, label in frequency_choices %}
-            <label class="newsletter-preferences-form__radio-label">
-                <input type="radio" name="preferred_frequency" value="{{ value }}"
-                       {% if subscriber.preferred_frequency == value %}checked{% endif %}>
-                <span>{{ label }}</span>
-            </label>
-            {% endfor %}
-        </fieldset>
-
         <button type="submit" class="newsletter-message__button">Save Preferences</button>
     </form>
 

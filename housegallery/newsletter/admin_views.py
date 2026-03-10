@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views import View
 
 from .models import Newsletter, Subscriber
-from .services import get_frequency_tiers, send_newsletter_edition
+from .services import send_newsletter_edition
 
 
 class SendNewsletterView(View):
@@ -35,9 +35,6 @@ class SendNewsletterView(View):
         )
         if self.newsletter.target_tags.exists():
             qs = qs.filter(tags__in=self.newsletter.target_tags.all())
-        if self.newsletter.target_frequency:
-            tiers = get_frequency_tiers(self.newsletter.target_frequency)
-            qs = qs.filter(preferred_frequency__in=tiers)
         return qs.distinct().count()
 
     def get_context_data(self):
@@ -56,27 +53,18 @@ class SendNewsletterView(View):
             {"url": "", "label": "Send"},
         ]
         total_count = self.get_active_subscriber_count()
-        has_targeting = (
-            self.newsletter.target_tags.exists()
-            or self.newsletter.target_frequency
-        )
+        has_targeting = self.newsletter.target_tags.exists()
         targeted_count = (
             self.get_targeted_subscriber_count()
             if has_targeting
             else total_count
         )
-        freq = self.newsletter.target_frequency
         return {
             "newsletter": self.newsletter,
             "subscriber_count": total_count,
             "targeted_count": targeted_count,
             "has_targeting": has_targeting,
             "target_tags": self.newsletter.target_tags.all(),
-            "target_frequency": (
-                self.newsletter.get_target_frequency_display()
-                if freq
-                else None
-            ),
             "already_sent": self.newsletter.status == Newsletter.Status.SENT,
             "edit_url": reverse(
                 "wagtailsnippets_newsletter_newsletter:edit",

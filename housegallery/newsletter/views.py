@@ -337,7 +337,7 @@ def _send_confirmation_email(request, subscriber):
 
 
 def preferences(request, token):
-    """Preference center — subscribers manage tags and frequency.
+    """Preference center — subscribers manage tags.
 
     Accessed via unsubscribe_token (no login required).
     """
@@ -366,12 +366,6 @@ def preferences(request, token):
             tag_id__in=selected_tag_ids,
         ).delete()
 
-        # Update frequency
-        frequency = request.POST.get("preferred_frequency", "")
-        if frequency in dict(Subscriber.Frequency.choices):
-            subscriber.preferred_frequency = frequency
-            subscriber.save(update_fields=["preferred_frequency"])
-
         saved = True
 
     unsubscribe_path = reverse(
@@ -389,7 +383,6 @@ def preferences(request, token):
             "subscriber_tag_ids": list(
                 subscriber.tags.values_list("id", flat=True),
             ),
-            "frequency_choices": Subscriber.Frequency.choices,
             "unsubscribe_url": unsubscribe_url,
             "saved": saved,
         },

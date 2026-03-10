@@ -43,12 +43,6 @@
                     <td>{% for tag in target_tags %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                 </tr>
                 {% endif %}
-                {% if target_frequency %}
-                <tr>
-                    <th>Frequency</th>
-                    <td>{{ target_frequency }}</td>
-                </tr>
-                {% endif %}
             </tbody>
         </table>
         <p style="margin-top: 0.5em; color: #666; font-size: 0.9em;">
