@@ -4,7 +4,10 @@ from django.db import models
 from django.utils import timezone
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
+from wagtail.fields import StreamField
+from wagtail.models import PreviewableMixin, RevisionMixin
 
+from .blocks import NewsletterStreamBlock
 from .pages import NewsletterSignupPage  # noqa: F401 - Required for migration discovery
 
 
@@ -88,7 +91,7 @@ class Subscriber(models.Model):
         self.save(update_fields=["unsubscribed_at"])
 
 
-class Newsletter(models.Model):
+class Newsletter(PreviewableMixin, RevisionMixin, models.Model):
     class Status(models.TextChoices):
         DRAFT = "draft", "Draft"
         SENT = "sent", "Sent"
@@ -100,12 +103,27 @@ class Newsletter(models.Model):
         help_text="Email subject line. Defaults to title if blank.",
         blank=True,
     )
+    preheader = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Preview text shown in email clients before opening.",
+    )
+    body = StreamField(NewsletterStreamBlock(), blank=True)
     status = models.CharField(
         max_length=10, choices=Status.choices, default=Status.DRAFT
     )
     sent_at = models.DateTimeField(null=True, blank=True)
     sent_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("slug"),
+        FieldPanel("subject"),
+        FieldPanel("preheader"),
+        FieldPanel("body"),
+        FieldPanel("status"),
+    ]
 
     class Meta:
         ordering = ["-created_at"]
@@ -120,6 +138,22 @@ class Newsletter(models.Model):
     @property
     def template_path(self):
         return f"newsletter/editions/{self.slug}.html"
+
+    def _get_dummy_headers(self, original_request=None):
+        headers = super()._get_dummy_headers(original_request)
+        # Wagtail's dummy request omits QUERY_STRING, which querycount middleware requires
+        headers.setdefault("QUERY_STRING", "")
+        return headers
+
+    def get_preview_template(self, request, mode_name):
+        return "newsletter/preview.html"
+
+    def get_preview_context(self, request, mode_name):
+        return {
+            "newsletter": self,
+            "unsubscribe_url": "#",
+            "preview_mode": True,
+        }
 
 
 @register_setting(icon="mail")

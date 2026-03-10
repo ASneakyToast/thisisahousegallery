@@ -44,9 +44,6 @@ class SendNewsletterView(View):
         return {
             "newsletter": self.newsletter,
             "subscriber_count": self.get_active_subscriber_count(),
-            "preview_url": reverse(
-                "newsletter:preview", args=[self.newsletter.slug]
-            ),
             "already_sent": self.newsletter.status == Newsletter.Status.SENT,
             "edit_url": reverse(
                 "wagtailsnippets_newsletter_newsletter:edit",

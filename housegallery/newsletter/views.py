@@ -2,7 +2,6 @@ import logging
 import uuid
 
 from django.conf import settings
-from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
@@ -13,7 +12,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from .models import Newsletter, NewsletterEmailSettings, Subscriber
+from .models import NewsletterEmailSettings, Subscriber
 
 logger = logging.getLogger(__name__)
 
@@ -222,21 +221,6 @@ def unsubscribe_request(request):
             "message": "If this email is subscribed, you'll receive an email with an unsubscribe link.",
         }
     )
-
-
-@staff_member_required
-def preview(request, slug):
-    """Staff-only preview of a newsletter edition."""
-    newsletter = get_object_or_404(Newsletter, slug=slug)
-
-    context = {
-        "newsletter": newsletter,
-        "subscriber": None,
-        "unsubscribe_url": "#",
-        "preview_mode": True,
-    }
-
-    return render(request, newsletter.template_path, context)
 
 
 def _send_unsubscribe_email(request, subscriber):

@@ -1,0 +1,32 @@
+{% load wagtailimages_tags %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px solid #ddd;">
+    <tr>
+        <td style="padding: 24px 0;">
+            {% if value.heading %}
+            <h2 style="font-family: 'Source Code Pro', 'Courier New', monospace; font-weight: 400; font-size: 16px; margin: 0 0 12px; color: #121212;">
+                {{ value.heading }}
+            </h2>
+            {% endif %}
+            {% image value.image original as img %}
+            {% if value.image_link %}
+            <a href="{{ value.image_link }}" style="display: block; margin: 0 0 16px;">
+                <img src="{{ img.url }}" alt="{{ value.image.title }}" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;">
+            </a>
+            {% else %}
+            <div style="margin: 0 0 16px;">
+                <img src="{{ img.url }}" alt="{{ value.image.title }}" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;">
+            </div>
+            {% endif %}
+            {% if value.description %}
+            <p style="font-family: 'Source Code Pro', 'Courier New', monospace; font-weight: 300; font-size: 14px; line-height: 1.8; margin: 0 0 16px; color: #121212;">
+                {{ value.description }}
+            </p>
+            {% endif %}
+            {% if value.link_url and value.link_text %}
+            <p style="margin: 0;">
+                <a href="{{ value.link_url }}" style="font-family: 'Source Code Pro', 'Courier New', monospace; font-weight: 400; font-size: 13px; color: #121212; text-decoration: underline;">{{ value.link_text }} &rarr;</a>
+            </p>
+            {% endif %}
+        </td>
+    </tr>
+</table>

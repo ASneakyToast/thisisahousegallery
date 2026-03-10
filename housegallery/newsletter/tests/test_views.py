@@ -1,14 +1,11 @@
-import os
 import uuid
 from unittest.mock import patch
 
 import pytest
-from django.conf import settings
-from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
 
-from housegallery.newsletter.models import Newsletter, Subscriber
+from housegallery.newsletter.models import Subscriber
 
 
 @pytest.mark.django_db
@@ -214,40 +211,3 @@ class TestUnsubscribeRequestView:
         assert resp.status_code == 429
 
 
-@pytest.mark.django_db
-class TestPreviewView:
-    def test_anonymous_user_redirects_to_login(self):
-        Newsletter.objects.create(title="Test", slug="test")
-        client = Client()
-        resp = client.get(reverse("newsletter:preview", args=["test"]))
-        assert resp.status_code == 302
-        assert "/login/" in resp.url or "/admin/login/" in resp.url
-
-    def test_staff_user_can_access(self):
-        Newsletter.objects.create(title="Test", slug="test")
-        # Create a temporary template for the preview
-        editions_dir = os.path.join(
-            settings.BASE_DIR,
-            "housegallery", "newsletter", "templates", "newsletter", "editions",
-        )
-        path = os.path.join(editions_dir, "test.html")
-        os.makedirs(editions_dir, exist_ok=True)
-        try:
-            with open(path, "w") as f:
-                f.write(
-                    '{% extends "newsletter/emails/base_email.html" %}'
-                    "{% block content %}<p>Preview</p>{% endblock %}"
-                )
-            from django.template import engines
-
-            for loader in engines["django"].engine.template_loaders:
-                if hasattr(loader, "reset"):
-                    loader.reset()
-            user = User.objects.create_user("staff", password="pass", is_staff=True)
-            client = Client()
-            client.force_login(user)
-            resp = client.get(reverse("newsletter:preview", args=["test"]))
-            assert resp.status_code == 200
-        finally:
-            if os.path.exists(path):
-                os.remove(path)

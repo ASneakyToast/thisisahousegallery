@@ -31,14 +31,7 @@ class NewsletterEditView(EditView):
             icon_name="mail",
             priority=1,
         )
-        preview_button = Button(
-            "Preview",
-            url=reverse("newsletter:preview", args=[newsletter.slug]),
-            icon_name="doc-full",
-            attrs={"target": "_blank"},
-            priority=2,
-        )
-        return [send_button, preview_button] + buttons
+        return [send_button] + buttons
 
 
 class SubscriberSnippetViewSet(SnippetViewSet):

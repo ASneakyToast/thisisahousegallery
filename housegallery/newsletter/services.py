@@ -76,7 +76,10 @@ def send_newsletter_edition(
         "preview_mode": False,
     }
 
-    html_template = render_to_string(newsletter.template_path, context)
+    if newsletter.body:
+        html_template = render_to_string("newsletter/preview.html", context)
+    else:
+        html_template = render_to_string(newsletter.template_path, context)
     html_template = add_utm_params(html_template, newsletter.slug)
 
     sent = 0

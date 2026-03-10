@@ -1,0 +1,9 @@
+{% if value.level == "h1" %}
+<h1 style="font-family: 'Source Code Pro', 'Courier New', monospace; font-weight: 300; font-size: 24px; margin: 0 0 8px; color: #121212;">
+    {{ value.text }}
+</h1>
+{% else %}
+<h2 style="font-family: 'Source Code Pro', 'Courier New', monospace; font-weight: 400; font-size: 16px; margin: 0 0 12px; color: #121212;">
+    {{ value.text }}
+</h2>
+{% endif %}
