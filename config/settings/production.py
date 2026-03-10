@@ -1,6 +1,8 @@
 # ruff: noqa: E501
+from urllib.parse import urlparse
+
 from .base import *  # noqa: F403
-from .base import CLOUDRUN_SERVICE_URL
+from .base import BUILD_TYPE
 from .base import DATABASES
 from .base import GS_BUCKET_NAME
 from .base import INSTALLED_APPS
@@ -16,18 +18,18 @@ SECRET_KEY = env(
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-# Custom domains for all cloud environments (prod + staging)
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[
-    "thisisahousegallery.com",
-    "www.thisisahousegallery.com",
-    "prod.thisisahousegallery.com",
-    "qa.thisisahousegallery.com",
-])
-
-# Also allow the Cloud Run service URL (needed for staging/preview environments)
-if CLOUDRUN_SERVICE_URL:
-    from urllib.parse import urlparse
-    ALLOWED_HOSTS.append(urlparse(CLOUDRUN_SERVICE_URL).netloc)
+# CLOUDRUN_SERVICE_URLS contains comma-separated URLs with "cloudrun-name" placeholder
+# e.g. https://housegallery-cloudrun-name-service-123.us-west1.run.app,https://thisisahousegallery.com
+# At runtime, "cloudrun-name" is replaced with BUILD_TYPE (staging, prod, etc.)
+CLOUDRUN_SERVICE_URLS = env("CLOUDRUN_SERVICE_URLS", default=None)
+if CLOUDRUN_SERVICE_URLS:
+    CLOUDRUN_SERVICE_URLS = CLOUDRUN_SERVICE_URLS.replace("cloudrun-name", BUILD_TYPE)
+    CSRF_TRUSTED_ORIGINS = CLOUDRUN_SERVICE_URLS.split(",")
+    ALLOWED_HOSTS = [urlparse(url).netloc for url in CSRF_TRUSTED_ORIGINS]
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+else:
+    raise Exception("CLOUDRUN_SERVICE_URLS must be set for production/cloud run environments")
 
 
 # DATABASES

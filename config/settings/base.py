@@ -12,8 +12,6 @@ from pathlib import Path
 import io
 import json
 import os
-from urllib.parse import urlparse
-
 import environ
 from google.cloud import secretmanager
 
@@ -54,6 +52,10 @@ if env('PREPEND_WWW', default='false').lower().strip() == 'true':
     PREPEND_WWW = True
 
 
+# BUILD TYPE
+# ------------------------------------------------------------------------------
+BUILD_TYPE = os.environ.get("BUILD_TYPE", "dev")
+
 # SECRETS & GCP
 # ------------------------------------------------------------------------------
 # Only load GCP secrets for production/staging environments
@@ -62,11 +64,10 @@ if django_settings not in ["config.settings.local", "config.settings.local_cloud
     if 'SECRET_KEY' in env:
         SECRET_KEY = env('SECRET_KEY')
 
-    # Attempt to load the Project ID or Build Type from env
+    # Attempt to load the Project ID from env
     PROJECT_ID = os.environ.get("GCP_PROJECT")
-    BUILD_TYPE = os.environ.get("BUILD_TYPE")
-    if not PROJECT_ID or not BUILD_TYPE:
-        raise Exception("No GCP_PROJECT or BUILD_TYPE. Exit")
+    if not PROJECT_ID:
+        raise Exception("No GCP_PROJECT. Exit")
 
     # [START cloudrun_django_secret_config]
     def get_secret(project_id, client, secret_name):
@@ -111,19 +112,7 @@ else:
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# [START cloudrun_django_csrf]
-# SECURITY WARNING: It's recommended that you use this when
-# running in production. The URL will be known once you first deploy
-# to Cloud Run. This code takes the URL and converts it to both these settings formats.
-CLOUDRUN_SERVICE_URL = env("CLOUDRUN_SERVICE_URL", default=None)
-if CLOUDRUN_SERVICE_URL:
-    ALLOWED_HOSTS = [urlparse(CLOUDRUN_SERVICE_URL).netloc]
-    CSRF_TRUSTED_ORIGINS = [CLOUDRUN_SERVICE_URL]
-    SECURE_SSL_REDIRECT = True
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-else:
-    ALLOWED_HOSTS = ["*"]
-# [END cloudrun_django_csrf]
+ALLOWED_HOSTS = ["*"]
 
 
 # URLS
@@ -267,7 +256,6 @@ STATIC_URL = "/static/"
 # [START cloudrun_django_static_config]
 # Define static storage via django-storages[google]
 GS_DEFAULT_ACL = "publicRead"
-BUILD_TYPE = env('BUILD_TYPE', default='dev')
 GS_BUCKET_NAME = f"housegallery-{BUILD_TYPE}"
 
 STORAGES = {
