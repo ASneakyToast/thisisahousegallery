@@ -10,6 +10,7 @@ from .viewsets import (
     CampaignSourceSnippetViewSet,
     NewsletterSnippetViewSet,
     SubscriberSnippetViewSet,
+    SubscriberTagSnippetViewSet,
     newsletter_signup_page_listing_viewset,
 )
 
@@ -32,6 +33,11 @@ def register_campaign_source_snippet_viewset():
 @hooks.register("register_admin_viewset")
 def register_campaign_medium_snippet_viewset():
     return CampaignMediumSnippetViewSet()
+
+
+@hooks.register("register_admin_viewset")
+def register_subscriber_tag_snippet_viewset():
+    return SubscriberTagSnippetViewSet()
 
 
 @hooks.register("register_admin_viewset")
@@ -64,6 +70,13 @@ def add_newsletter_menu(request, menu_items):
         order=300,
     )
 
+    tags_item = MenuItem(
+        'Subscriber Tags',
+        reverse('wagtailsnippets_newsletter_subscribertag:list'),
+        icon_name='tag',
+        order=350,
+    )
+
     unsubscribe_page_item = MenuItem(
         'Unsubscribe Page',
         reverse('newsletter:unsubscribe_request_page'),
@@ -83,6 +96,7 @@ def add_newsletter_menu(request, menu_items):
         subscribers_item,
         newsletters_item,
         signup_pages_item,
+        tags_item,
         unsubscribe_page_item,
         email_settings_item,
     ])

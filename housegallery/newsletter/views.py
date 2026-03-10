@@ -12,7 +12,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from .models import NewsletterEmailSettings, Subscriber
+from .models import NewsletterEmailSettings, Subscriber, SubscriberTag, SubscriberTagThrough
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +112,15 @@ def subscribe(request):
         subscriber.save(
             update_fields=["unsubscribed_at", "confirmed", "confirmation_token", "signup_page"]
         )
+
+    # Auto-tag from signup page
+    if signup_page:
+        auto_tags = signup_page.auto_tags.all()
+        if auto_tags:
+            for tag in auto_tags:
+                SubscriberTagThrough.objects.get_or_create(
+                    subscriber=subscriber, tag=tag
+                )
 
     # Send confirmation email
     try:
@@ -324,4 +333,64 @@ def _send_confirmation_email(request, subscriber):
         recipient_list=[subscriber.email],
         html_message=html_message,
         fail_silently=False,
+    )
+
+
+def preferences(request, token):
+    """Preference center — subscribers manage tags and frequency.
+
+    Accessed via unsubscribe_token (no login required).
+    """
+    subscriber = get_object_or_404(Subscriber, unsubscribe_token=token)
+    all_tags = SubscriberTag.objects.all()
+    saved = False
+
+    if request.method == "POST":
+        # Update tags — use through model for added_at tracking
+        selected_tag_ids = set(request.POST.getlist("tags"))
+        current_tag_ids = set(
+            str(pk)
+            for pk in subscriber.tags.values_list("id", flat=True)
+        )
+        # Add new tags
+        for tag_id in selected_tag_ids - current_tag_ids:
+            tag = SubscriberTag.objects.filter(id=tag_id).first()
+            if tag:
+                SubscriberTagThrough.objects.get_or_create(
+                    subscriber=subscriber, tag=tag,
+                )
+        # Remove unchecked tags
+        SubscriberTagThrough.objects.filter(
+            subscriber=subscriber,
+        ).exclude(
+            tag_id__in=selected_tag_ids,
+        ).delete()
+
+        # Update frequency
+        frequency = request.POST.get("preferred_frequency", "")
+        if frequency in dict(Subscriber.Frequency.choices):
+            subscriber.preferred_frequency = frequency
+            subscriber.save(update_fields=["preferred_frequency"])
+
+        saved = True
+
+    unsubscribe_path = reverse(
+        "newsletter:unsubscribe",
+        args=[subscriber.unsubscribe_token],
+    )
+    unsubscribe_url = request.build_absolute_uri(unsubscribe_path)
+
+    return render(
+        request,
+        "newsletter/preferences.html",
+        {
+            "subscriber": subscriber,
+            "all_tags": all_tags,
+            "subscriber_tag_ids": list(
+                subscriber.tags.values_list("id", flat=True),
+            ),
+            "frequency_choices": Subscriber.Frequency.choices,
+            "unsubscribe_url": unsubscribe_url,
+            "saved": saved,
+        },
     )

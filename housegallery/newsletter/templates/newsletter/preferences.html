@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Newsletter Preferences - This is a House Gallery{% endblock %}
+
+{% block content %}
+<div class="newsletter-message">
+    <h1 class="newsletter-message__title">Newsletter Preferences</h1>
+
+    {% if saved %}
+    <p class="newsletter-message__text" style="color: #2e7d32;">
+        Your preferences have been saved.
+    </p>
+    {% endif %}
+
+    <p class="newsletter-message__text">
+        Manage your newsletter preferences for <strong>{{ subscriber.email }}</strong>.
+    </p>
+
+    <form method="post" class="newsletter-preferences-form">
+        {% csrf_token %}
+
+        {% if all_tags %}
+        <fieldset class="newsletter-preferences-form__fieldset">
+            <legend class="newsletter-preferences-form__legend">Topics</legend>
+            <p class="newsletter-preferences-form__help">Select the topics you'd like to receive:</p>
+            {% for tag in all_tags %}
+            <label class="newsletter-preferences-form__checkbox-label">
+                <input type="checkbox" name="tags" value="{{ tag.id }}"
+                       {% if tag.id in subscriber_tag_ids %}checked{% endif %}>
+                <span>{{ tag.name }}</span>
+                {% if tag.description %}
+                <span class="newsletter-preferences-form__description">{{ tag.description }}</span>
+                {% endif %}
+            </label>
+            {% endfor %}
+        </fieldset>
+        {% endif %}
+
+        <fieldset class="newsletter-preferences-form__fieldset">
+            <legend class="newsletter-preferences-form__legend">Email Frequency</legend>
+            <p class="newsletter-preferences-form__help">How often would you like to hear from us?</p>
+            {% for value, label in frequency_choices %}
+            <label class="newsletter-preferences-form__radio-label">
+                <input type="radio" name="preferred_frequency" value="{{ value }}"
+                       {% if subscriber.preferred_frequency == value %}checked{% endif %}>
+                <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+        </fieldset>
+
+        <button type="submit" class="newsletter-message__button">Save Preferences</button>
+    </form>
+
+    <p class="newsletter-message__text" style="margin-top: 2em; font-size: 0.9em;">
+        <a href="{{ unsubscribe_url }}" class="newsletter-message__link">Unsubscribe from all emails</a>
+    </p>
+</div>
+{% endblock %}

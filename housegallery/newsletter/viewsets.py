@@ -7,7 +7,13 @@ from wagtail.admin.widgets.button import Button
 from wagtail.snippets.views.snippets import EditView, SnippetViewSet
 
 from .admin_views import SendNewsletterView
-from .models import CampaignMedium, CampaignSource, Newsletter, Subscriber
+from .models import (
+    CampaignMedium,
+    CampaignSource,
+    Newsletter,
+    Subscriber,
+    SubscriberTag,
+)
 from .pages import NewsletterSignupPage
 
 
@@ -75,6 +81,18 @@ class CampaignMediumSnippetViewSet(SnippetViewSet):
 
     list_display = ["name"]
     search_fields = ["name"]
+
+
+class SubscriberTagSnippetViewSet(SnippetViewSet):
+    model = SubscriberTag
+    icon = "tag"
+    menu_label = "Subscriber Tags"
+    menu_name = "subscriber_tags"
+    add_to_settings_menu = False
+    add_to_admin_menu = False
+
+    list_display = ["name", "slug", "description", "created_at"]
+    search_fields = ["name", "slug"]
 
 
 class NewsletterSignupPageListingViewSet(PageListingViewSet):

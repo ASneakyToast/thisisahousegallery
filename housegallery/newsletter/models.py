@@ -39,7 +39,47 @@ class CampaignMedium(models.Model):
         return self.name
 
 
+class SubscriberTag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("slug"),
+        FieldPanel("description"),
+    ]
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Subscriber Tag"
+        verbose_name_plural = "Subscriber Tags"
+
+    def __str__(self):
+        return self.name
+
+
+class SubscriberTagThrough(models.Model):
+    subscriber = models.ForeignKey("newsletter.Subscriber", on_delete=models.CASCADE)
+    tag = models.ForeignKey(SubscriberTag, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = [("subscriber", "tag")]
+        verbose_name = "Subscriber Tag Assignment"
+        verbose_name_plural = "Subscriber Tag Assignments"
+
+    def __str__(self):
+        return f"{self.subscriber.email} → {self.tag.name}"
+
+
 class Subscriber(models.Model):
+    class Frequency(models.TextChoices):
+        EVERY_ISSUE = "every_issue", "Every issue"
+        MONTHLY = "monthly", "Monthly digest"
+        ANNOUNCEMENTS_ONLY = "announcements_only", "Major announcements only"
+
     email = models.EmailField(unique=True)
     confirmed = models.BooleanField(default=False, db_index=True)
     confirmation_token = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -47,6 +87,14 @@ class Subscriber(models.Model):
     signup_page = models.ForeignKey(
         "newsletter.NewsletterSignupPage", null=True, blank=True,
         on_delete=models.SET_NULL, related_name="newsletter_subscribers",
+    )
+    tags = models.ManyToManyField(
+        SubscriberTag, blank=True, through=SubscriberTagThrough,
+        related_name="subscribers",
+    )
+    preferred_frequency = models.CharField(
+        max_length=20, choices=Frequency.choices, default=Frequency.EVERY_ISSUE,
+        help_text="How often this subscriber wants to receive newsletters.",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
@@ -116,12 +164,32 @@ class Newsletter(PreviewableMixin, RevisionMixin, models.Model):
     sent_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Targeting fields — if none set, sends to all (backwards compatible)
+    target_tags = models.ManyToManyField(
+        SubscriberTag, blank=True, related_name="newsletters",
+        help_text="If set, only subscribers with ANY of these tags receive this newsletter.",
+    )
+    target_frequency = models.CharField(
+        max_length=20,
+        choices=Subscriber.Frequency.choices,
+        blank=True,
+        help_text="Minimum frequency tier. Leave blank to ignore frequency filtering.",
+    )
+
     panels = [
         FieldPanel("title"),
         FieldPanel("slug"),
         FieldPanel("subject"),
         FieldPanel("preheader"),
         FieldPanel("body"),
+        MultiFieldPanel(
+            [
+                FieldPanel("target_tags"),
+                FieldPanel("target_frequency"),
+            ],
+            heading="Targeting",
+            help_text="Optional filters to target specific subscribers. If no targets are set, the newsletter is sent to all active subscribers.",
+        ),
         FieldPanel("status"),
     ]
 
@@ -152,6 +220,7 @@ class Newsletter(PreviewableMixin, RevisionMixin, models.Model):
         return {
             "newsletter": self,
             "unsubscribe_url": "#",
+            "preferences_url": "#",
             "preview_mode": True,
         }
 

@@ -41,6 +41,11 @@ class NewsletterSignupPage(Page, ListingFields):
         default=True,
         help_text="Inactive pages won't accept new signups.",
     )
+    auto_tags = models.ManyToManyField(
+        "newsletter.SubscriberTag", blank=True,
+        related_name="signup_pages",
+        help_text="Tags auto-applied to subscribers from this page.",
+    )
 
     template = "pages/newsletter/signup_page.html"
 
@@ -66,6 +71,7 @@ class NewsletterSignupPage(Page, ListingFields):
             FieldPanel("medium"),
             FieldPanel("campaign_name"),
             FieldPanel("is_active"),
+            FieldPanel("auto_tags"),
         ], heading="Campaign Tracking"),
     ]
 

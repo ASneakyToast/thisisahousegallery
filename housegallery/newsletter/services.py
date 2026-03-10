@@ -10,6 +10,22 @@ from .models import Newsletter, Subscriber
 from .utils import add_utm_params, get_base_url
 
 UNSUBSCRIBE_URL_PLACEHOLDER = "__UNSUBSCRIBE_URL__"
+PREFERENCES_URL_PLACEHOLDER = "__PREFERENCES_URL__"
+
+
+def get_frequency_tiers(target_frequency):
+    """Return frequency choices that should receive a newsletter at this tier.
+
+    announcements_only → everyone gets it
+    monthly → monthly + every_issue
+    every_issue → only every_issue subscribers
+    """
+    freq = Subscriber.Frequency
+    if target_frequency == freq.ANNOUNCEMENTS_ONLY:
+        return [freq.EVERY_ISSUE, freq.MONTHLY, freq.ANNOUNCEMENTS_ONLY]
+    if target_frequency == freq.MONTHLY:
+        return [freq.EVERY_ISSUE, freq.MONTHLY]
+    return [freq.EVERY_ISSUE]
 
 
 def send_newsletter_edition(
@@ -52,6 +68,16 @@ def send_newsletter_edition(
         )
         if not include_bounced:
             subscribers = subscribers.filter(bounce_count__lt=3)
+
+        # Apply targeting filters
+        if newsletter.target_tags.exists():
+            subscribers = subscribers.filter(tags__in=newsletter.target_tags.all())
+
+        if newsletter.target_frequency:
+            frequency_tiers = get_frequency_tiers(newsletter.target_frequency)
+            subscribers = subscribers.filter(preferred_frequency__in=frequency_tiers)
+
+        subscribers = subscribers.distinct()
         recipients = list(subscribers.values("email", "unsubscribe_token"))
         log(f"Sending to {len(recipients)} subscribers")
 
@@ -72,6 +98,7 @@ def send_newsletter_edition(
     context = {
         "newsletter": newsletter,
         "unsubscribe_url": UNSUBSCRIBE_URL_PLACEHOLDER,
+        "preferences_url": PREFERENCES_URL_PLACEHOLDER,
         "subscriber_email": "",
         "preview_mode": False,
     }
@@ -94,8 +121,13 @@ def send_newsletter_edition(
             unsub_url = (
                 f"{base_url}/newsletter/unsubscribe/{recipient['unsubscribe_token']}/"
             )
+            prefs_url = (
+                f"{base_url}/newsletter/preferences/{recipient['unsubscribe_token']}/"
+            )
             html_content = html_template.replace(
                 UNSUBSCRIBE_URL_PLACEHOLDER, unsub_url
+            ).replace(
+                PREFERENCES_URL_PLACEHOLDER, prefs_url
             )
 
             msg = EmailMultiAlternatives(

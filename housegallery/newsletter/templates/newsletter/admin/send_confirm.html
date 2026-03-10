@@ -30,6 +30,33 @@
         </a>
     </section>
 
+    {% if has_targeting %}
+    <section style="margin-bottom: 2em;">
+        <h2>Targeting</h2>
+        <p>This newsletter has targeting filters configured. It will be sent to
+           <strong>{{ targeted_count }}</strong> of {{ subscriber_count }} active subscribers.</p>
+        <table>
+            <tbody>
+                {% if target_tags %}
+                <tr>
+                    <th>Tags</th>
+                    <td>{% for tag in target_tags %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                </tr>
+                {% endif %}
+                {% if target_frequency %}
+                <tr>
+                    <th>Frequency</th>
+                    <td>{{ target_frequency }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <p style="margin-top: 0.5em; color: #666; font-size: 0.9em;">
+            Targeting can be changed on the <a href="{{ edit_url }}">newsletter edit page</a>.
+        </p>
+    </section>
+    {% endif %}
+
     <hr>
 
     <section style="margin-bottom: 2em;">
@@ -52,14 +79,18 @@
     <hr>
 
     <section style="margin-bottom: 2em;">
-        <h2>Send to All Subscribers</h2>
-        {% if subscriber_count == 0 %}
+        <h2>Send to {% if has_targeting %}Targeted{% else %}All{% endif %} Subscribers</h2>
+        {% if targeted_count == 0 %}
             <p class="help-block help-warning">
                 <svg class="icon icon-warning" aria-hidden="true"><use href="#icon-warning"></use></svg>
-                There are no active subscribers. Add confirmed subscribers before sending.
+                {% if has_targeting %}
+                    No subscribers match the current targeting filters. Adjust targeting on the <a href="{{ edit_url }}">edit page</a>.
+                {% else %}
+                    There are no active subscribers. Add confirmed subscribers before sending.
+                {% endif %}
             </p>
         {% else %}
-            <p>This will send the newsletter to all <strong>{{ subscriber_count }}</strong> active subscribers. This action cannot be undone.</p>
+            <p>This will send the newsletter to <strong>{{ targeted_count }}</strong>{% if has_targeting %} of {{ subscriber_count }}{% endif %} active subscriber{{ targeted_count|pluralize }}. This action cannot be undone.</p>
             <form method="post">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="send">
@@ -76,11 +107,11 @@
                 <div style="margin-bottom: 1em;">
                     <label>
                         <input type="checkbox" name="confirm" id="confirm_checkbox" required>
-                        I confirm I want to send this newsletter to {{ subscriber_count }} subscribers
+                        I confirm I want to send this newsletter to {{ targeted_count }} subscriber{{ targeted_count|pluralize }}
                     </label>
                 </div>
 
-                <input type="submit" value="Send to All {{ subscriber_count }} Subscriber{{ subscriber_count|pluralize }}" class="button serious">
+                <input type="submit" value="Send to {{ targeted_count }} Subscriber{{ targeted_count|pluralize }}" class="button serious">
             </form>
         {% endif %}
     </section>
