@@ -4,73 +4,113 @@ from wagtail.fields import StreamField
 from wagtail.search import index
 
 from housegallery.core.mixins import Page
-from housegallery.kiosk.blocks import KioskStreamBlock
+from housegallery.kiosk.blocks import KioskBodyBlock, KioskImageSourceBlock
 
 
 class KioskPage(Page):
     """
-    A fullscreen kiosk page for displaying an animated gallery at /display.
-    Singleton page type to prevent multiple instances.
+    Unified kiosk display page with configurable template and background.
+
+    Supports multiple display layouts (split two-column, single center column)
+    with composable content blocks (headings, QR codes, mailing list signups).
+    Routed at /display/<slug>/ using the inherited Wagtail page slug.
     """
 
-    body = StreamField(KioskStreamBlock(), blank=True)
+    TEMPLATE_CHOICES = [
+        ('split', 'Content with Image(s)'),
+        ('center', 'Single Center Column'),
+    ]
 
-    # Gallery title displayed prominently on the kiosk
-    gallery_title = models.CharField(
-        max_length=255,
-        default="This is a House Gallery",
-        help_text="Main title displayed on the kiosk screen"
+    BACKGROUND_CHOICES = [
+        ('particles', 'Floating Image Particles'),
+        ('static_image', 'Full Screen Photo'),
+        ('solid_color', 'Solid Color'),
+    ]
+
+    # --- Template Selection ---
+    display_template = models.CharField(
+        max_length=20,
+        choices=TEMPLATE_CHOICES,
+        default='split',
+        help_text="Controls the layout and positioning of content",
     )
 
-    # Mailing list settings
-    enable_mailing_list = models.BooleanField(
-        default=True,
-        help_text="Show mailing list subscription form on kiosk"
+    # --- Display Images ---
+    display_images = StreamField(KioskImageSourceBlock(), blank=True)
+
+    # --- Background ---
+    background_style = models.CharField(
+        max_length=20,
+        choices=BACKGROUND_CHOICES,
+        default='particles',
+        help_text="Controls the visual background behind content",
+    )
+    background_gallery = StreamField(
+        KioskImageSourceBlock(),
+        blank=True,
+        help_text="Background image(s) (for Full Screen Photo style)",
+    )
+    background_color = models.CharField(
+        max_length=7,
+        default='#111111',
+        blank=True,
+        help_text="Background color hex code (for Solid Color style)",
     )
 
-    mailing_list_prompt = models.CharField(
-        max_length=255,
-        default="Stay connected with our gallery",
-        help_text="Text to encourage mailing list subscription"
-    )
+    # --- Body Content (composable blocks) ---
+    body = StreamField(KioskBodyBlock(), blank=True)
 
-    # Animation settings
-    auto_advance_seconds = models.PositiveIntegerField(
+    # --- Particle Animation Settings ---
+    max_particles = models.PositiveIntegerField(
         default=8,
-        help_text="Seconds between automatic image transitions (0 to disable)"
+        help_text="Maximum number of floating particles on screen at once",
+    )
+    spawn_interval_min = models.PositiveIntegerField(
+        default=1500,
+        help_text="Minimum milliseconds between spawning new particles",
+    )
+    spawn_interval_max = models.PositiveIntegerField(
+        default=4000,
+        help_text="Maximum milliseconds between spawning new particles",
     )
 
-    show_image_count = models.PositiveIntegerField(
-        default=12,
-        help_text="Maximum number of images to display simultaneously"
-    )
-
-    template = 'pages/kiosk/kiosk_page.html'
-
-    # Singleton - only allow one kiosk page
     parent_page_types = ['home.HomePage']
     subpage_types = []
-    max_count = 1
+
+    TEMPLATE_MAP = {
+        'split': 'pages/kiosk/kiosk_split.html',
+        'center': 'pages/kiosk/kiosk_center.html',
+    }
+
+    def get_template(self, request=None, *args, **kwargs):
+        return self.TEMPLATE_MAP.get(
+            self.display_template,
+            'pages/kiosk/kiosk_split.html',
+        )
 
     search_fields = Page.search_fields + [
         index.SearchField('body'),
-        index.SearchField('gallery_title'),
+        index.SearchField('display_images'),
     ]
 
     content_panels = Page.content_panels + [
-        FieldPanel('gallery_title'),
+        MultiFieldPanel([
+            FieldPanel('display_template'),
+            FieldPanel('display_images'),
+        ], heading="Display Template"),
+        MultiFieldPanel([
+            FieldPanel('background_style'),
+            FieldPanel('background_gallery'),
+            FieldPanel('background_color'),
+        ], heading="Background"),
         FieldPanel('body'),
         MultiFieldPanel([
-            FieldPanel('enable_mailing_list'),
-            FieldPanel('mailing_list_prompt'),
-        ], heading="Mailing List Settings"),
-        MultiFieldPanel([
-            FieldPanel('auto_advance_seconds'),
-            FieldPanel('show_image_count'),
-        ], heading="Animation Settings"),
+            FieldPanel('max_particles'),
+            FieldPanel('spawn_interval_min'),
+            FieldPanel('spawn_interval_max'),
+        ], heading="Particle Animation Settings", classname="collapsible collapsed"),
     ]
 
     class Meta:
-        db_table = "home_kioskpage"
-        verbose_name = "Kiosk Display Page"
-        verbose_name_plural = "Kiosk Display Pages"
+        verbose_name = "Kiosk"
+        verbose_name_plural = "Kiosks"

@@ -1,0 +1,12 @@
+{% extends "pages/kiosk/kiosk_base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+    <div class="kiosk-center">
+        <div class="kiosk-center__content">
+            {% for block in page.body %}
+                {% include_block block %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

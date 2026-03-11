@@ -1,0 +1,101 @@
+{% load static i18n %}
+{% load render_bundle from webpack_loader %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>{{ page.title }} - Kiosk Display</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="{% static 'images/favicons/house-favicon.jpg' %}" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+    </style>
+
+    {% block css %}
+        {% render_bundle 'styles' 'css' %}
+    {% endblock css %}
+
+    {% block extra_css %}{% endblock extra_css %}
+
+    {% block javascript %}
+        {% render_bundle 'vendors' 'js' attrs='defer' %}
+        {% render_bundle 'project' 'js' attrs='defer' %}
+        {% if page.background_style == 'particles' %}
+            {% render_bundle 'kiosk-gallery' 'js' attrs='defer' %}
+        {% endif %}
+    {% endblock javascript %}
+
+    {% block extra_js_head %}{% endblock extra_js_head %}
+</head>
+
+<body class="kiosk-body">
+    {% block background %}
+        {% if page.background_style == 'particles' %}
+            <section class="kiosk-gallery"
+                     id="kiosk-gallery"
+                     data-max-particles="{{ page.max_particles }}"
+                     data-spawn-min="{{ page.spawn_interval_min }}"
+                     data-spawn-max="{{ page.spawn_interval_max }}">
+                <div class="kiosk-gallery-container">
+                    {% include_block page.display_images %}
+                </div>
+                <div class="kiosk-loading" id="kiosk-loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading gallery...</p>
+                </div>
+            </section>
+        {% elif page.background_style == 'static_image' and page.background_gallery %}
+            <div class="kiosk-bg-static">
+                {% include_block page.background_gallery %}
+            </div>
+        {% elif page.background_style == 'solid_color' %}
+            <div class="kiosk-bg-solid" style="background-color: {{ page.background_color|default:'#111111' }};"></div>
+        {% endif %}
+    {% endblock background %}
+
+    <main class="kiosk-container" id="kiosk-main">
+        {% block content %}{% endblock content %}
+    </main>
+
+    {% block extra_js %}
+        <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('[data-qr-url]').forEach(function(container) {
+                    var url = container.getAttribute('data-qr-url');
+                    if (url) {
+                        var qr = qrcode(0, 'M');
+                        qr.addData(url);
+                        qr.make();
+                        var size = Math.min(window.innerWidth, window.innerHeight) * 0.25;
+                        var cellSize = Math.floor(size / qr.getModuleCount());
+                        var canvas = document.createElement('canvas');
+                        var moduleCount = qr.getModuleCount();
+                        canvas.width = cellSize * moduleCount;
+                        canvas.height = cellSize * moduleCount;
+                        var ctx = canvas.getContext('2d');
+                        for (var row = 0; row < moduleCount; row++) {
+                            for (var col = 0; col < moduleCount; col++) {
+                                ctx.fillStyle = qr.isDark(row, col) ? '#000000' : '#ffffff';
+                                ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                            }
+                        }
+                        container.appendChild(canvas);
+                    }
+                });
+
+                {% if page.background_style == 'particles' %}
+                if (window.KioskGallery) {
+                    window.kioskGallery = new KioskGallery('#kiosk-gallery');
+                }
+                {% endif %}
+            });
+        </script>
+    {% endblock extra_js %}
+</body>
+</html>

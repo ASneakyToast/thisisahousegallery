@@ -26,6 +26,13 @@
             <h1 class="kiosk-title">{{ gallery_title }}</h1>
             <div class="fallback-message">
                 <p>{{ message }}</p>
+                {% if kiosks %}
+                <ul class="kiosk-list">
+                    {% for kiosk in kiosks %}
+                    <li><a href="{% url 'kiosk:kiosk_display_by_slug' kiosk_slug=kiosk.slug %}">{{ kiosk.title }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
                 <a href="/admin/" class="admin-link">Go to Admin</a>
             </div>
         </div>

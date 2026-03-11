@@ -9,6 +9,8 @@ module.exports = {
     project: path.resolve(__dirname, '../housegallery/static_src/js/project'),
     vendors: path.resolve(__dirname, '../housegallery/static_src/js/vendors'),
     styles: path.resolve(__dirname, '../housegallery/static_src/css/index.js'),
+    'kiosk-gallery': path.resolve(__dirname, '../housegallery/static_src/js/kiosk-gallery'),
+    'kiosk-carousel': path.resolve(__dirname, '../housegallery/static_src/js/kiosk-carousel'),
   },
   output: {
     path: path.resolve(

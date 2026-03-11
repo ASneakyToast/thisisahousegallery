@@ -13,9 +13,6 @@ import './horizontal-features.js';
 // Import places feature functionality
 import './places-feature.js';
 
-// Import kiosk gallery functionality
-import './kiosk-gallery.js';
-
 // Import floating hero functionality
 import './floating-hero.js';
 

@@ -11,11 +11,10 @@ class KioskGallery {
         this.container = this.element.querySelector('.kiosk-gallery-container');
         this.loadingElement = this.element.querySelector('#kiosk-loading');
 
-        // Configuration
-        this.maxParticles = 8; // Maximum particles on screen at once
-        this.spawnInterval = 2000; // Milliseconds between spawning new particles
-        this.minSpawnDelay = 1500; // Minimum delay between spawns
-        this.maxSpawnDelay = 4000; // Maximum delay between spawns
+        // Configuration (read from data attributes with fallback defaults)
+        this.maxParticles = parseInt(this.element.dataset.maxParticles) || 8;
+        this.minSpawnDelay = parseInt(this.element.dataset.spawnMin) || 1500;
+        this.maxSpawnDelay = parseInt(this.element.dataset.spawnMax) || 4000;
 
         // Animation patterns and their weights (probability)
         this.animationPatterns = [
