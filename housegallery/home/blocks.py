@@ -3,7 +3,7 @@ from wagtail.images.blocks import ImageChooserBlock
 
 from housegallery.core.rich_text import MINIMAL_RICHTEXT
 from housegallery.core.blocks.links import ButtonLinkBlock, CarrotLinkBlock, ListOfLinksBlock
-from housegallery.core.blocks import GalleryBlock, HorizontalFeaturesBlock
+from housegallery.core.blocks import HorizontalFeaturesBlock, GalleryBlock
 
 # Create a subclass of ListOfLinksBlock that hides the title field in the admin
 class HeroLinksBlock(ListOfLinksBlock):
@@ -48,17 +48,6 @@ class HeroSection(blocks.StructBlock):
 class ScatteredImagesBlock(blocks.StructBlock):
     image_tag
 '''
-
-
-class KioskStreamBlock(blocks.StreamBlock):
-    """StreamBlock for the kiosk display page with gallery and mailing list subscription."""
-    
-    class Meta:
-        template = 'components/streamfields/generic_stream_block.html'
-
-    gallery = GalleryBlock(
-        help_text='Images for the animated kiosk gallery display'
-    )
 
 
 class HomeStreamBlock(blocks.StreamBlock):

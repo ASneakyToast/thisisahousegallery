@@ -175,6 +175,7 @@ LOCAL_APPS = [
     "housegallery.images",
     "housegallery.places",
     "housegallery.api",
+    "housegallery.kiosk",
     "housegallery.newsletter",
 ]
 

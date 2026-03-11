@@ -1,0 +1,46 @@
+"""Create KioskPage in kiosk app state only (no DB changes).
+
+The actual table home_kioskpage already exists. This migration registers
+the model under the kiosk app label in Django's state, using
+Meta.db_table = "home_kioskpage" to keep the existing table.
+"""
+
+import django.db.models.deletion
+import wagtail.fields
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    initial = True
+
+    dependencies = [
+        ('home', '0006_remove_kioskpage_state'),
+        ('wagtailcore', '0094_alter_page_locale'),
+    ]
+
+    operations = [
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.CreateModel(
+                    name='KioskPage',
+                    fields=[
+                        ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.page')),
+                        ('body', wagtail.fields.StreamField([('gallery', 12)], blank=True, block_lookup={0: ('wagtail.blocks.CharBlock', (), {'help_text': 'Optional title for the gallery', 'max_length': 255, 'required': False}), 1: ('wagtail.blocks.ChoiceBlock', [], {'choices': [('columns', 'Columns'), ('rows', 'Rows'), ('scattered', 'Scattered')], 'help_text': 'Choose how to display the gallery images'}), 2: ('wagtail.blocks.BooleanBlock', (), {'default': False, 'help_text': 'Enable full-width layout using layout gutter spacing', 'required': False}), 3: ('wagtail.images.blocks.ImageChooserBlock', (), {'required': True}), 4: ('wagtail.blocks.CharBlock', (), {'help_text': 'Optional caption for this image', 'max_length': 255, 'required': False}), 5: ('wagtail.blocks.StructBlock', [[('image', 3), ('caption', 4)]], {}), 6: ('wagtail.blocks.CharBlock', (), {'help_text': 'Enter tag name to display all images with this tag', 'max_length': 100, 'required': True}), 7: ('wagtail.blocks.CharBlock', (), {'help_text': 'Optional title for this set of images', 'max_length': 255, 'required': False}), 8: ('wagtail.blocks.StructBlock', [[('tag', 6), ('title', 7)]], {}), 9: ('wagtail.blocks.IntegerBlock', (), {'help_text': 'Maximum number of images to display (leave blank for all)', 'max_value': 100, 'min_value': 1, 'required': False}), 10: ('wagtail.blocks.StructBlock', [[('limit', 9)]], {}), 11: ('wagtail.blocks.StreamBlock', [[('single_image', 5), ('tagged_set', 8), ('all_images', 10)]], {'help_text': 'Add gallery items'}), 12: ('wagtail.blocks.StructBlock', [[('title', 0), ('display_style', 1), ('full_width', 2), ('gallery_items', 11)]], {'help_text': 'Images for the animated kiosk gallery display'})})),
+                        ('gallery_title', models.CharField(default='This is a House Gallery', help_text='Main title displayed on the kiosk screen', max_length=255)),
+                        ('enable_mailing_list', models.BooleanField(default=True, help_text='Show mailing list subscription form on kiosk')),
+                        ('mailing_list_prompt', models.CharField(default='Stay connected with our gallery', help_text='Text to encourage mailing list subscription', max_length=255)),
+                        ('auto_advance_seconds', models.PositiveIntegerField(default=8, help_text='Seconds between automatic image transitions (0 to disable)')),
+                        ('show_image_count', models.PositiveIntegerField(default=12, help_text='Maximum number of images to display simultaneously')),
+                    ],
+                    options={
+                        'verbose_name': 'Kiosk Display Page',
+                        'verbose_name_plural': 'Kiosk Display Pages',
+                        'db_table': 'home_kioskpage',
+                    },
+                    bases=('wagtailcore.page',),
+                ),
+            ],
+            database_operations=[],
+        ),
+    ]
