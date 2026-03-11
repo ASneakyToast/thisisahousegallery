@@ -7,6 +7,15 @@ from housegallery.core.mixins import Page
 from housegallery.kiosk.blocks import KioskBodyBlock, KioskImageSourceBlock
 
 
+CAROUSEL_TRANSITION_CHOICES = [
+    ('crossfade', 'Crossfade'),
+    ('fade-black', 'Fade to Black'),
+    ('zoom-fade', 'Zoom Fade'),
+    ('soft-focus', 'Soft Focus'),
+    ('drift', 'Drift (Ken Burns)'),
+]
+
+
 class KioskPage(Page):
     """
     Unified kiosk display page with configurable template and background.
@@ -74,6 +83,22 @@ class KioskPage(Page):
         help_text="Maximum milliseconds between spawning new particles",
     )
 
+    # --- Carousel Animation Settings ---
+    carousel_interval = models.PositiveIntegerField(
+        default=5000,
+        help_text="Milliseconds between slide transitions",
+    )
+    carousel_transition_duration = models.PositiveIntegerField(
+        default=1200,
+        help_text="Milliseconds for the transition between slides",
+    )
+    carousel_transition = models.CharField(
+        max_length=20,
+        choices=CAROUSEL_TRANSITION_CHOICES,
+        default='crossfade',
+        help_text="Visual effect used when transitioning between slides",
+    )
+
     parent_page_types = ['home.HomePage']
     subpage_types = []
 
@@ -109,6 +134,11 @@ class KioskPage(Page):
             FieldPanel('spawn_interval_min'),
             FieldPanel('spawn_interval_max'),
         ], heading="Particle Animation Settings", classname="collapsible collapsed"),
+        MultiFieldPanel([
+            FieldPanel('carousel_interval'),
+            FieldPanel('carousel_transition_duration'),
+            FieldPanel('carousel_transition'),
+        ], heading="Carousel Animation Settings", classname="collapsible collapsed"),
     ]
 
     class Meta:

@@ -11,11 +11,6 @@
     <title>{{ page.title }} - Kiosk Display</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="{% static 'images/favicons/house-favicon.jpg' %}" />
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
-    </style>
-
     {% block css %}
         {% render_bundle 'styles' 'css' %}
     {% endblock css %}
@@ -27,6 +22,8 @@
         {% render_bundle 'project' 'js' attrs='defer' %}
         {% if page.background_style == 'particles' %}
             {% render_bundle 'kiosk-gallery' 'js' attrs='defer' %}
+        {% elif page.background_style == 'static_image' %}
+            {% render_bundle 'kiosk-carousel' 'js' attrs='defer' %}
         {% endif %}
     {% endblock javascript %}
 
@@ -50,7 +47,10 @@
                 </div>
             </section>
         {% elif page.background_style == 'static_image' and page.background_gallery %}
-            <div class="kiosk-bg-static">
+            <div class="kiosk-bg-static"
+                 data-carousel-interval="{{ page.carousel_interval }}"
+                 data-carousel-transition="{{ page.carousel_transition }}"
+                 data-carousel-duration="{{ page.carousel_transition_duration }}">
                 {% include_block page.background_gallery %}
             </div>
         {% elif page.background_style == 'solid_color' %}
@@ -92,6 +92,10 @@
                 {% if page.background_style == 'particles' %}
                 if (window.KioskGallery) {
                     window.kioskGallery = new KioskGallery('#kiosk-gallery');
+                }
+                {% elif page.background_style == 'static_image' %}
+                if (window.KioskCarousel) {
+                    window.KioskCarousel.init('.kiosk-bg-static');
                 }
                 {% endif %}
             });

@@ -4,9 +4,11 @@
 {% block content %}
     <div class="kiosk-center">
         <div class="kiosk-center__content">
-            {% for block in page.body %}
-                {% include_block block %}
-            {% endfor %}
+            <div class="kiosk-content-backdrop">
+                {% for block in page.body %}
+                    {% include_block block %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock content %}

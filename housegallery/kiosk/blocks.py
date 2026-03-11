@@ -1,15 +1,19 @@
 from wagtail import blocks
 from wagtail.blocks import RichTextBlock as WagtailRichTextBlock
 
-from housegallery.core.blocks import GalleryBlock
+from housegallery.core.blocks.images import (
+    AllImagesBlock,
+    SingleImageBlock,
+    TaggedSetBlock,
+)
 
 
 class KioskImageSourceBlock(blocks.StreamBlock):
-    """Image sources for the kiosk gallery display."""
+    """Image sources for kiosk display — maps directly to gallery item types."""
 
-    gallery = GalleryBlock(
-        help_text='Images for the kiosk display (carousel or static)'
-    )
+    single_image = SingleImageBlock()
+    tagged_set = TaggedSetBlock()
+    all_images = AllImagesBlock()
 
     class Meta:
         template = 'components/streamfields/generic_stream_block.html'

@@ -9,12 +9,17 @@
 {% block content %}
     <div class="kiosk-split">
         <div class="kiosk-split__content">
-            {% for block in page.body %}
-                {% include_block block %}
-            {% endfor %}
+            <div class="kiosk-content-backdrop">
+                {% for block in page.body %}
+                    {% include_block block %}
+                {% endfor %}
+            </div>
         </div>
         <div class="kiosk-split__images">
-            <div class="kiosk-carousel" id="kiosk-carousel">
+            <div class="kiosk-carousel" id="kiosk-carousel"
+                 data-carousel-interval="{{ page.carousel_interval }}"
+                 data-carousel-transition="{{ page.carousel_transition }}"
+                 data-carousel-duration="{{ page.carousel_transition_duration }}">
                 {% include_block page.display_images %}
             </div>
         </div>
