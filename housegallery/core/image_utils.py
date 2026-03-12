@@ -1,15 +1,14 @@
-"""
-Shared image URL utility functions.
-
-Centralises rendition-URL generation logic so that ExhibitionPage,
-KioskPage, and any future consumers share a single code path.
-"""
+"""Shared image URL utilities for responsive images with srcset support."""
 
 
 def _find_rendition_in_prefetch(image_obj, filter_spec):
-    """Check prefetched renditions for matching filter_spec. Returns rendition or None."""
+    """Check prefetched renditions for a matching filter spec.
+
+    Returns the rendition object if found in prefetch cache, None otherwise.
+    """
     try:
-        for rendition in image_obj.renditions.all():
+        renditions = list(image_obj.renditions.all())
+        for rendition in renditions:
             if rendition.filter_spec == filter_spec:
                 return rendition
     except Exception:
@@ -18,14 +17,17 @@ def _find_rendition_in_prefetch(image_obj, filter_spec):
 
 
 def get_image_urls(image_obj, specs=None):
-    """
-    Get standardized image URL dict for a single image.
+    """Get image URLs at multiple sizes with optional srcset generation.
 
-    Checks prefetched renditions first to avoid DB queries.
-    Falls back to get_rendition() if rendition not in prefetch cache.
+    Args:
+        image_obj: A Wagtail image instance (e.g. CustomImage).
+        specs: Optional dict mapping size names to Wagtail filter specs.
+               Defaults to thumb/medium/full for responsive srcset.
 
-    Returns dict with keys: thumb_url, medium_url, full_url,
-    original_url, width, height, alt, credit, title
+    Returns:
+        Dict with ``{key}_url`` for each spec, plus ``original_url``,
+        ``srcset``, ``sizes``, ``width``, ``height``, ``alt``, ``credit``,
+        and ``title``.
     """
     if specs is None:
         specs = {
@@ -35,6 +37,7 @@ def get_image_urls(image_obj, specs=None):
         }
 
     urls = {}
+    rendition_data = {}  # Store rendition objects for srcset generation
     for key, filter_spec in specs.items():
         rendition = _find_rendition_in_prefetch(image_obj, filter_spec)
         if rendition is None:
@@ -43,12 +46,26 @@ def get_image_urls(image_obj, specs=None):
             except Exception:
                 rendition = None
         urls[f"{key}_url"] = rendition.url if rendition else ""
+        if rendition:
+            rendition_data[key] = rendition
 
     # Original file URL
     try:
         urls["original_url"] = image_obj.file.url
     except Exception:
         urls["original_url"] = urls.get("full_url", "")
+
+    # Build srcset if we have multiple sizes
+    srcset_parts = []
+    if "thumb" in rendition_data:
+        srcset_parts.append(f"{rendition_data['thumb'].url} {rendition_data['thumb'].width}w")
+    if "medium" in rendition_data:
+        srcset_parts.append(f"{rendition_data['medium'].url} {rendition_data['medium'].width}w")
+    if "full" in rendition_data:
+        srcset_parts.append(f"{rendition_data['full'].url} {rendition_data['full'].width}w")
+
+    urls["srcset"] = ", ".join(srcset_parts) if len(srcset_parts) > 1 else ""
+    urls["sizes"] = "(max-width: 600px) 400px, (max-width: 1200px) 800px, 1440px" if urls["srcset"] else ""
 
     # Image metadata
     urls["width"] = image_obj.width
@@ -61,16 +78,18 @@ def get_image_urls(image_obj, specs=None):
 
 
 def get_image_urls_batch(image_objects, specs=None):
+    """Get image URLs for multiple images, batch-loading missing renditions.
+
+    More efficient than calling ``get_image_urls`` per image because it
+    pre-fetches renditions for the whole batch in a single query.
+
+    Args:
+        image_objects: Iterable of Wagtail image instances.
+        specs: Optional dict mapping size names to Wagtail filter specs.
+
+    Returns:
+        List of dicts (same structure as ``get_image_urls``), in input order.
     """
-    Batch get image URLs for multiple images with minimal DB queries.
-
-    Pre-fetches all needed renditions in a single query, then calls
-    get_image_urls() for each image (which finds renditions in prefetch cache).
-
-    Returns list of dicts in same order as input.
-    """
-    from housegallery.images.models import Rendition
-
     if specs is None:
         specs = {
             "thumb": "width-400",
@@ -78,31 +97,30 @@ def get_image_urls_batch(image_objects, specs=None):
             "full": "width-1440|format-webp|webpquality-85",
         }
 
-    if not image_objects:
+    images = list(image_objects)
+    if not images:
         return []
 
-    # Collect all image PKs
-    images_list = list(image_objects)
-    image_pks = [img.pk for img in images_list]
+    # Batch-load existing renditions for all images + specs in one query
+    from wagtail.images.models import AbstractRendition
+    rendition_model = type(images[0]).get_rendition_model()
     filter_specs = list(specs.values())
+    image_pks = [img.pk for img in images]
 
-    # Batch fetch all needed renditions in one query
-    renditions = Rendition.objects.filter(
+    existing = rendition_model.objects.filter(
         image_id__in=image_pks,
         filter_spec__in=filter_specs,
     ).select_related("image")
 
-    # Build lookup: {image_pk: {filter_spec: rendition}}
-    rendition_map = {}
-    for r in renditions:
-        rendition_map.setdefault(r.image_id, {})[r.filter_spec] = r
+    # Build lookup: (image_pk, filter_spec) -> rendition
+    lookup = {}
+    for rendition in existing:
+        lookup[(rendition.image_id, rendition.filter_spec)] = rendition
 
-    # Inject prefetched renditions into each image's cache
-    for img in images_list:
-        img_renditions = rendition_map.get(img.pk, {})
-        # Set up a fake prefetch cache so _find_rendition_in_prefetch works
-        if not hasattr(img, '_prefetched_objects_cache'):
-            img._prefetched_objects_cache = {}
-        img._prefetched_objects_cache['renditions'] = list(img_renditions.values())
+    # Attach prefetched renditions so get_image_urls finds them
+    for img in images:
+        matched = [r for r in existing if r.image_id == img.pk]
+        # Populate the prefetch cache
+        img.renditions._result_cache = matched  # noqa: SLF001
 
-    return [get_image_urls(img, specs) for img in images_list]
+    return [get_image_urls(img, specs) for img in images]

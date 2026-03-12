@@ -275,10 +275,12 @@ class KioskPage(Page):
 
         for artwork_image in artwork.artwork_images.all():
             image_obj = artwork_image.image
-            thumb_url, full_url = self._get_image_urls(image_obj)
+            thumb_url, full_url, srcset, sizes = self._get_image_urls(image_obj)
             items.append({
                 "thumb_url": thumb_url,
                 "full_url": full_url,
+                "srcset": srcset,
+                "sizes": sizes,
                 "caption": artwork_image.caption or title,
                 "image_type": "artwork",
                 "artwork_title": title,
@@ -332,6 +334,8 @@ class KioskPage(Page):
             {
                 "thumb_url": img_data.get("thumb_url", ""),
                 "full_url": img_data.get("full_url", ""),
+                "srcset": img_data.get("srcset", ""),
+                "sizes": img_data.get("sizes", ""),
                 "caption": img_data.get("caption", ex_title),
                 "image_type": img_data.get("type", "exhibition"),
                 "artwork_title": img_data.get("artwork_title", ""),
@@ -380,10 +384,12 @@ class KioskPage(Page):
         if not image:
             return None
 
-        thumb_url, full_url = self._get_image_urls(image)
+        thumb_url, full_url, srcset, sizes = self._get_image_urls(image)
         return {
             "thumb_url": thumb_url,
             "full_url": full_url,
+            "srcset": srcset,
+            "sizes": sizes,
             "caption": value.get("caption", "") or image.title or "",
             "image_type": "",
             "artwork_title": "",
@@ -415,10 +421,12 @@ class KioskPage(Page):
                 images = images[:limit]
 
         for image in images:
-            thumb_url, full_url = self._get_image_urls(image)
+            thumb_url, full_url, srcset, sizes = self._get_image_urls(image)
             items.append({
                 "thumb_url": thumb_url,
                 "full_url": full_url,
+                "srcset": srcset,
+                "sizes": sizes,
                 "caption": image.title or "",
                 "image_type": "",
                 "artwork_title": "",
@@ -434,10 +442,15 @@ class KioskPage(Page):
         return items
 
     def _get_image_urls(self, image_obj):
-        """Return (thumb_url, full_url) for an image object."""
+        """Return (thumb_url, full_url, srcset, sizes) for an image object."""
         from housegallery.core.image_utils import get_image_urls
-        urls = get_image_urls(image_obj, specs={"thumb": "width-400"})
-        return urls["thumb_url"] or urls["original_url"], urls["original_url"]
+        urls = get_image_urls(image_obj)
+        return (
+            urls["thumb_url"] or urls["original_url"],
+            urls["full_url"] or urls["original_url"],
+            urls.get("srcset", ""),
+            urls.get("sizes", ""),
+        )
 
     search_fields = [
         *Page.search_fields,

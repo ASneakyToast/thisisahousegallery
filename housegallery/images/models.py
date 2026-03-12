@@ -219,6 +219,9 @@ def generate_standard_renditions(sender, instance, created, **kwargs):
             instance.get_rendition('width-1200')
             instance.get_rendition('width-1200|format-webp')
 
+            # Medium size for srcset
+            instance.get_rendition('width-800|format-webp')
+
             # New helper method renditions
             # get_web_optimized() - used for smaller/medium display
             instance.get_rendition('width-1440|format-webp|webpquality-85')

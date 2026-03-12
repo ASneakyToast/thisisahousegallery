@@ -11,7 +11,8 @@
           {% if item.image_credit %}data-image-credit="{{ item.image_credit }}"{% endif %}
           aria-label="View {{ item.caption|default:'image' }} in lightbox">
     <span class="kiosk-carousel__frame">
-      <img src="{{ item.full_url }}"
+      <img src="{{ item.thumb_url }}"
+           {% if item.srcset %}srcset="{{ item.srcset }}" sizes="50vw"{% endif %}
            alt="{{ item.caption|default:'Gallery image' }}"
            loading="lazy" />
       {% if item.artwork_title or item.exhibition_title or item.caption %}

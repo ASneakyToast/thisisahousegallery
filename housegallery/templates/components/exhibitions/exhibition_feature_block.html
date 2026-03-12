@@ -48,10 +48,11 @@
                                                 data-artwork-size="{{ image_data.artwork_size|default:'' }}"
                                                 {% endif %}
                                                 aria-label="View {{ image_data.caption|default:exhibition.title }} in lightbox">
-                                            <img src="{{ image_data.thumb_url }}" 
-                                                 alt="{{ image_data.caption|default:exhibition.title }}" 
-                                                 loading="lazy" 
-                                                 class="gallery-single-image" 
+                                            <img src="{{ image_data.thumb_url }}"
+                                                 {% if image_data.srcset %}srcset="{{ image_data.srcset }}" sizes="{{ image_data.sizes }}"{% endif %}
+                                                 alt="{{ image_data.caption|default:exhibition.title }}"
+                                                 loading="lazy"
+                                                 class="gallery-single-image"
                                                  data-type="{{ image_data.type }}">
                                         </button>
                                     {% endfor %}
@@ -85,10 +86,11 @@
                                                 data-artwork-size="{{ image_data.artwork_size|default:'' }}"
                                                 {% endif %}
                                                 aria-label="View {{ image_data.caption|default:exhibition.title }} in lightbox">
-                                            <img src="{{ image_data.thumb_url }}" 
-                                                 alt="{{ image_data.caption|default:exhibition.title }}" 
-                                                 loading="lazy" 
-                                                 class="gallery-single-image" 
+                                            <img src="{{ image_data.thumb_url }}"
+                                                 {% if image_data.srcset %}srcset="{{ image_data.srcset }}" sizes="{{ image_data.sizes }}"{% endif %}
+                                                 alt="{{ image_data.caption|default:exhibition.title }}"
+                                                 loading="lazy"
+                                                 class="gallery-single-image"
                                                  data-type="{{ image_data.type }}">
                                         </button>
                                     {% endfor %}

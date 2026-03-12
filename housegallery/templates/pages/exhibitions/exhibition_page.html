@@ -124,7 +124,9 @@
                             data-image-credit="{{ image_data.credit|default:'' }}"
                             data-quickview-index="{{ gallery_mapping.installation_indices|dict_get:forloop.counter0|default:0 }}"
                             aria-label="View {{ image_data.image_title|default:page.title }} in lightbox">
-                        <img src="{{ image_data.thumb_url }}" alt="{{ image_data.image_title|default:page.title }}"
+                        <img src="{{ image_data.thumb_url }}"
+                             {% if image_data.srcset %}srcset="{{ image_data.srcset }}" sizes="{{ image_data.sizes }}"{% endif %}
+                             alt="{{ image_data.image_title|default:page.title }}"
                              loading="lazy" decoding="async" class="gallery-single-image">
                     </button>
                 {% endfor %}
@@ -192,7 +194,9 @@
                             data-image-credit="{{ image_data.credit|default:'' }}"
                             data-quickview-index="{{ gallery_mapping.opening_indices|dict_get:forloop.counter0|default:0 }}"
                             aria-label="View {{ image_data.image_title|default:page.title }} in lightbox">
-                        <img src="{{ image_data.thumb_url }}" alt="{{ image_data.image_title|default:page.title }}"
+                        <img src="{{ image_data.thumb_url }}"
+                             {% if image_data.srcset %}srcset="{{ image_data.srcset }}" sizes="{{ image_data.sizes }}"{% endif %}
+                             alt="{{ image_data.image_title|default:page.title }}"
                              loading="lazy" decoding="async" class="gallery-single-image">
                     </button>
                 {% endfor %}
@@ -219,7 +223,9 @@
                             data-image-credit="{{ image_data.credit|default:'' }}"
                             data-quickview-index="{{ gallery_mapping.in_progress_indices|dict_get:forloop.counter0|default:0 }}"
                             aria-label="View {{ image_data.image_title|default:page.title }} in lightbox">
-                        <img src="{{ image_data.thumb_url }}" alt="{{ image_data.image_title|default:page.title }}"
+                        <img src="{{ image_data.thumb_url }}"
+                             {% if image_data.srcset %}srcset="{{ image_data.srcset }}" sizes="{{ image_data.sizes }}"{% endif %}
+                             alt="{{ image_data.image_title|default:page.title }}"
                              loading="lazy" decoding="async" class="gallery-single-image">
                     </button>
                 {% endfor %}
@@ -254,6 +260,7 @@
                         {% endif %}
                         aria-label="View {{ image_data.image_title|default:page.title }} in lightbox">
                     <img src="{{ image_data.thumb_url }}"
+                         {% if image_data.srcset %}srcset="{{ image_data.srcset }}" sizes="{{ image_data.sizes }}"{% endif %}
                          alt="{{ image_data.image_title|default:page.title }}"
                          loading="lazy"
                          class="gallery-single-image"

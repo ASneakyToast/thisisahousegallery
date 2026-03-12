@@ -170,6 +170,13 @@ class ExhibitionsIndexPage(Page, ListingFields):
                     .prefetch_related("image__renditions"),
             ),
 
+            # New unified exhibition photos
+            Prefetch("exhibition_photos",
+                queryset=ExhibitionPhoto.objects
+                    .select_related("image")
+                    .prefetch_related("image__renditions", "image__tags"),
+            ),
+
         ).order_by("-start_date")
 
     def get_optimized_exhibitions_for_listing(self):
@@ -217,6 +224,13 @@ class ExhibitionsIndexPage(Page, ListingFields):
                         "artwork__artists",
                         "artwork__materials",
                     ),
+            ),
+
+            # New unified exhibition photos
+            Prefetch("exhibition_photos",
+                queryset=ExhibitionPhoto.objects
+                    .select_related("image")
+                    .prefetch_related("image__renditions", "image__tags"),
             ),
         ).order_by("-start_date")
 
@@ -444,6 +458,37 @@ class InProgressPhoto(Orderable):
         verbose_name_plural = "In Progress Photos"
 
 
+class ExhibitionPhoto(Orderable):
+    """Unified exhibition photo model. Category determined by image tags."""
+    page = ParentalKey(
+        "ExhibitionPage",
+        on_delete=models.CASCADE,
+        related_name="exhibition_photos",
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
+    caption = models.CharField(max_length=255, blank=True)
+    related_artwork = models.ForeignKey(
+        "artworks.Artwork",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="exhibition_photos",
+    )
+
+    panels = [
+        FieldPanel("image", widget=ExhibitionImageChooserWidget()),
+        FieldPanel("caption"),
+    ]
+
+    class Meta:
+        verbose_name = "Exhibition Photo"
+        verbose_name_plural = "Exhibition Photos"
+
+
 class ExhibitionImage(Orderable):
     """Through model for exhibition images with image type categorization"""
     page = ParentalKey(
@@ -568,6 +613,11 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
         ),
         FieldPanel("body"),
         MultipleChooserPanel(
+            "exhibition_photos",
+            label="Exhibition Photos",
+            chooser_field_name="image",
+        ),
+        MultipleChooserPanel(
             "installation_photos",
             label="Installation Photos",
             chooser_field_name="image",
@@ -673,6 +723,13 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
                     .select_related("image")
                     .prefetch_related("image__renditions"),
             ),
+
+            # New unified exhibition photos
+            Prefetch("exhibition_photos",
+                queryset=ExhibitionPhoto.objects
+                    .select_related("image")
+                    .prefetch_related("image__renditions", "image__tags"),
+            ),
         ).first()
 
     def get_context(self, request):
@@ -719,47 +776,47 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
             "full_url": urls["original_url"],
         }
 
-    def get_exhibition_images_with_urls(self):
-        """Get installation photos with pre-computed URLs for templates."""
+    def get_images_by_type(self, image_type=None):
+        """Get gallery images, optionally filtered by type.
+
+        Args:
+            image_type: One of "exhibition", "opening", "showcards", "in_progress",
+                        or None for all types.
+
+        Returns list of image data dicts with pre-computed URLs.
+        """
         from django.core.cache import cache
         timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
-        cache_key = f"exhibition_install_urls_{self.pk}_{timestamp}"
+        cache_key = f"exhibition_images_by_type_{self.pk}_{timestamp}_{image_type}"
         cached = cache.get(cache_key)
         if cached is not None:
             return cached
-        images = [self._process_gallery_image(img, "exhibition") for img in self.installation_photos.all()]
-        cache.set(cache_key, images, 3600)
-        return images
+
+        all_images = self.get_all_gallery_images()
+        if image_type:
+            all_images = [img for img in all_images if img.get("type") == image_type]
+
+        cache.set(cache_key, all_images, 3600)
+        return all_images
+
+    def get_exhibition_images_with_urls(self):
+        """Get installation photos with pre-computed URLs for templates."""
+        return self.get_images_by_type("exhibition")
 
     def get_opening_images_with_urls(self):
         """Get opening reception photos with pre-computed URLs for templates."""
-        from django.core.cache import cache
-        timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
-        cache_key = f"exhibition_opening_urls_{self.pk}_{timestamp}"
-        cached = cache.get(cache_key)
-        if cached is not None:
-            return cached
-        images = [self._process_gallery_image(img, "opening") for img in self.opening_reception_photos.all()]
-        cache.set(cache_key, images, 3600)
-        return images
+        return self.get_images_by_type("opening")
 
     def get_in_progress_images_with_urls(self):
         """Get in progress photos with pre-computed URLs for templates."""
-        from django.core.cache import cache
-        timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
-        cache_key = f"exhibition_progress_urls_{self.pk}_{timestamp}"
-        cached = cache.get(cache_key)
-        if cached is not None:
-            return cached
-        images = [self._process_gallery_image(img, "in_progress") for img in self.in_progress_photos.all()]
-        cache.set(cache_key, images, 3600)
-        return images
+        return self.get_images_by_type("in_progress")
 
     def get_all_gallery_images(self):
         """Get all images from all typed image models with artwork data.
 
-        PERFORMANCE: Uses prefetched data when available. Generates only thumb
-        rendition for listing performance - full size uses original file URL.
+        PERFORMANCE: Uses prefetched data when available. Uses the shared
+        ``get_image_urls`` utility which checks prefetched renditions first and
+        produces ``srcset`` / ``sizes`` strings for responsive images.
         """
         from django.core.cache import cache
 
@@ -771,14 +828,15 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
         if cached_images is not None:
             return cached_images
 
-        images = []
         from housegallery.core.image_utils import get_image_urls
+
+        images = []
 
         # Helper function to process any image type
         def process_image(gallery_image, image_type):
             """Process a single image with standard renditions and metadata"""
             image_obj = gallery_image.image
-            urls = get_image_urls(image_obj, specs={"thumb": "width-400"})
+            urls = get_image_urls(image_obj)
 
             # Base image data - store only serializable values for caching
             image_data = {
@@ -786,10 +844,12 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
                 "caption": urls["title"],
                 "credit": urls["credit"],
                 "type": image_type,
-                "thumb_url": urls["thumb_url"],
+                "thumb_url": urls["thumb_url"] or urls["original_url"],
                 "full_url": urls["original_url"],
-                "thumb_webp_url": urls["thumb_url"],
+                "thumb_webp_url": urls["thumb_url"] or urls["original_url"],
                 "full_webp_url": urls["original_url"],
+                "srcset": urls["srcset"],
+                "sizes": urls["sizes"],
             }
 
             return image_data
@@ -807,6 +867,26 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
 
         for gallery_image in list(self.in_progress_photos.all()):
             images.append(process_image(gallery_image, "in_progress"))
+
+        # Process new unified exhibition_photos (tag-based categorization)
+        for photo in list(self.exhibition_photos.all()):
+            image_tags = set(tag.name.lower() for tag in photo.image.tags.all())
+            if "installation" in image_tags:
+                photo_type = "exhibition"
+            elif "opening-reception" in image_tags:
+                photo_type = "opening"
+            elif "showcard" in image_tags:
+                photo_type = "showcards"
+            elif "in-progress" in image_tags:
+                photo_type = "in_progress"
+            else:
+                photo_type = "exhibition"  # Default to installation
+
+            image_data = process_image(photo, photo_type)
+            # Override caption with explicit caption if set
+            if photo.caption:
+                image_data["caption"] = photo.caption
+            images.append(image_data)
 
         # Cache the processed images for 1 hour
         cache.set(cache_key, images, 3600)
@@ -927,21 +1007,45 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
 
             return artwork_image_data
 
-        # Get showcard photos
+        # Get showcard photos (old model)
         showcard_photos = list(self.showcard_photos.all())
 
+        # Categorize new unified exhibition_photos by tag
+        new_showcard_photos = []
+        new_installation_photos = []
+        for photo in list(self.exhibition_photos.all()):
+            image_tags = set(tag.name.lower() for tag in photo.image.tags.all())
+            if "showcard" in image_tags:
+                new_showcard_photos.append(photo)
+            elif "installation" in image_tags or not (
+                image_tags & {"opening-reception", "in-progress"}
+            ):
+                # Default non-tagged and installation-tagged to installation
+                new_installation_photos.append(photo)
+            # opening-reception and in-progress photos are excluded from filtered view
+
+        # Combine old and new showcard sources
+        all_showcards = showcard_photos + new_showcard_photos
+
         # Add first showcard if available
-        if showcard_photos:
-            first_showcard = showcard_photos[0]
+        if all_showcards:
+            first_showcard = all_showcards[0]
             images.append(process_image(first_showcard, "showcards"))
 
         # Collect installation photos and artworks for random mixing
         middle_items = []
 
-        # Add all installation photos
+        # Add all installation photos (old model)
         installation_photos = list(self.installation_photos.all())
         for gallery_image in installation_photos:
             middle_items.append(process_image(gallery_image, "exhibition"))
+
+        # Add installation-tagged photos from new unified model
+        for photo in new_installation_photos:
+            image_data = process_image(photo, "exhibition")
+            if photo.caption:
+                image_data["caption"] = photo.caption
+            middle_items.append(image_data)
 
         # Add all artworks that have images
         for exhibition_artwork in list(self.exhibition_artworks.all()):
@@ -954,7 +1058,7 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
         images.extend(middle_items)
 
         # Add remaining showcards at the end
-        for showcard in showcard_photos[1:]:
+        for showcard in all_showcards[1:]:
             images.append(process_image(showcard, "showcards"))
 
         # Apply max_images limit if specified
@@ -994,8 +1098,17 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
 
     def get_hero_showcard_data(self):
         """Get front and back showcard images for hero section display."""
-        # Fetch showcards once and slice - avoids N+1 .count() queries
+        # Try old showcard_photos first
         showcards = list(self.showcard_photos.all()[:2])
+
+        # Also check new exhibition_photos for showcard-tagged images
+        if len(showcards) < 2:
+            for photo in self.exhibition_photos.all():
+                if len(showcards) >= 2:
+                    break
+                image_tags = set(tag.name.lower() for tag in photo.image.tags.all())
+                if "showcard" in image_tags:
+                    showcards.append(photo)
 
         if showcards:
             first_showcard = showcards[0].image if len(showcards) > 0 else None
@@ -1030,6 +1143,7 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
         2. All artwork images (grouped by artwork)
         3. Opening reception photos
         4. In progress shots
+        5. New unified exhibition_photos (tag-based, appended by type)
 
         PERFORMANCE: Uses prefetched data from get_optimized_exhibition_detail() to
         avoid N+1 queries. All image data is pre-loaded via select_related/prefetch_related.
@@ -1044,19 +1158,20 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
         if cached_images is not None:
             return cached_images
 
+        from housegallery.core.image_utils import get_image_urls
+
         images = []
         exhibition_title = self.title
         exhibition_date = self.get_formatted_date_short()
-        from housegallery.core.image_utils import get_image_urls
 
         # Helper function to process any image type
         def process_image(image_obj, image_type, artwork_data=None):
             """Process a single image with standard renditions and metadata.
 
-            Only generates thumb rendition for performance - full size uses original.
-            Uses prefetched renditions when available to avoid additional queries.
+            Uses the shared ``get_image_urls`` utility which checks prefetched
+            renditions first and produces srcset / sizes for responsive images.
             """
-            urls = get_image_urls(image_obj, specs={"thumb": "width-400"})
+            urls = get_image_urls(image_obj)
 
             # Base image data structure - store only serializable values for caching
             image_data = {
@@ -1064,8 +1179,10 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
                 "caption": urls["title"],
                 "credit": urls["credit"],
                 "type": image_type,
-                "thumb_url": urls["thumb_url"],
+                "thumb_url": urls["thumb_url"] or urls["original_url"],
                 "full_url": urls["original_url"],
+                "srcset": urls["srcset"],
+                "sizes": urls["sizes"],
                 "exhibition_title": exhibition_title,
                 "exhibition_date": exhibition_date,
             }
@@ -1121,6 +1238,26 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
         in_progress_photos = list(self.in_progress_photos.all())
         for gallery_image in in_progress_photos:
             images.append(process_image(gallery_image.image, "in_progress"))
+
+        # 5. New unified exhibition_photos (tag-based, inserted by type)
+        for photo in list(self.exhibition_photos.all()):
+            image_tags = set(tag.name.lower() for tag in photo.image.tags.all())
+            if "installation" in image_tags:
+                image_type = "exhibition"
+            elif "opening-reception" in image_tags:
+                image_type = "opening"
+            elif "showcard" in image_tags:
+                image_type = "showcards"
+            elif "in-progress" in image_tags:
+                image_type = "in_progress"
+            else:
+                image_type = "exhibition"  # Default to installation
+
+            image_data = process_image(photo.image, image_type)
+            # Override caption with explicit caption if set
+            if photo.caption:
+                image_data["caption"] = photo.caption
+            images.append(image_data)
 
         # Cache the processed images for 1 hour
         cache.set(cache_key, images, 3600)
