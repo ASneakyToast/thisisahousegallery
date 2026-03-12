@@ -1,0 +1,47 @@
+{% for item in carousel_items %}
+  <button class="gallery-lightbox-item kiosk-carousel__slide"
+          data-media-type="image"
+          data-media-src="{{ item.full_url }}"
+          data-thumbnail-src="{{ item.thumb_url }}"
+          data-caption="{{ item.caption }}"
+          data-index="{{ forloop.counter0 }}"
+          {% if item.image_type %}data-image-type="{{ item.image_type }}"{% endif %}
+          {% if item.artwork_title %} data-artwork-title="{{ item.artwork_title }}" data-artwork-artist="{{ item.artwork_artist }}" data-artwork-date="{{ item.artwork_date }}" data-artwork-materials="{{ item.artwork_materials }}" data-artwork-size="{{ item.artwork_size }}" {% endif %}
+          {% if item.exhibition_title %} data-exhibition-title="{{ item.exhibition_title }}" data-exhibition-date="{{ item.exhibition_date }}" {% endif %}
+          {% if item.image_credit %}data-image-credit="{{ item.image_credit }}"{% endif %}
+          aria-label="View {{ item.caption|default:'image' }} in lightbox">
+    <span class="kiosk-carousel__frame">
+      <img src="{{ item.full_url }}"
+           alt="{{ item.caption|default:'Gallery image' }}"
+           loading="lazy" />
+      {% if item.artwork_title or item.exhibition_title or item.caption %}
+        <span class="kiosk-carousel__caption">
+          {% if item.artwork_title %}
+            <span class="kiosk-carousel__caption-title">{{ item.artwork_title }}</span>
+            {% if item.artwork_artist %}<span class="kiosk-carousel__caption-artist">{{ item.artwork_artist }}</span>{% endif %}
+            {% if item.artwork_date or item.artwork_materials or item.artwork_size %}
+              <span class="kiosk-carousel__caption-details">
+                {% if item.artwork_date %}{{ item.artwork_date }}{% endif %}
+                {% if item.artwork_materials %}
+                  {% if item.artwork_date %},{% endif %}
+                  {{ item.artwork_materials }}
+                {% endif %}
+                {% if item.artwork_size %}
+                  {% if item.artwork_date or item.artwork_materials %},{% endif %}
+                  {{ item.artwork_size }}
+                {% endif %}
+              </span>
+            {% endif %}
+          {% elif item.exhibition_title %}
+            <span class="kiosk-carousel__caption-title">{{ item.exhibition_title }}</span>
+            {% if item.exhibition_date %}
+              <span class="kiosk-carousel__caption-details">{{ item.exhibition_date }}</span>
+            {% endif %}
+          {% elif item.caption %}
+            <span class="kiosk-carousel__caption-title">{{ item.caption }}</span>
+          {% endif %}
+        </span>
+      {% endif %}
+    </span>
+  </button>
+{% endfor %}

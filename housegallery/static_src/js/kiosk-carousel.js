@@ -2,14 +2,15 @@
  * Kiosk Carousel
  *
  * Auto-advancing carousel for the split template's image display.
- * Shows images with configurable transitions, pauses when tab is hidden.
+ * Shows images with configurable transitions, pauses when tab is hidden
+ * or when the lightbox is open.
  */
 const KioskCarousel = {
   init(containerSelector) {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
-    const images = container.querySelectorAll('.gallery-single-image, .gallery-image');
+    const images = container.querySelectorAll('.gallery-single-image, .gallery-image, .kiosk-carousel__slide');
     if (images.length === 0) return;
 
     // Read configurable settings from data attributes
@@ -64,6 +65,10 @@ const KioskCarousel = {
         start();
       }
     });
+
+    // Pause/resume when lightbox opens/closes
+    document.addEventListener('lightbox:open', stop);
+    document.addEventListener('lightbox:close', start);
 
     start();
   }

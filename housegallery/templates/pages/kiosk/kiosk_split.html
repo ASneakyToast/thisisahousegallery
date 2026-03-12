@@ -1,38 +1,46 @@
 {% extends "pages/kiosk/kiosk_base.html" %}
+
 {% load render_bundle from webpack_loader %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block extra_js_head %}
-    {% render_bundle 'kiosk-carousel' 'js' attrs='defer' %}
+  {% render_bundle 'kiosk-carousel' 'js' attrs='defer' %}
 {% endblock extra_js_head %}
-
 {% block content %}
-    <div class="kiosk-split">
-        <div class="kiosk-split__content">
-            <div class="kiosk-content-backdrop">
-                {% for block in page.body %}
-                    {% include_block block %}
-                {% endfor %}
-            </div>
-        </div>
-        <div class="kiosk-split__images">
-            <div class="kiosk-carousel" id="kiosk-carousel"
-                 data-carousel-interval="{{ page.carousel_interval }}"
-                 data-carousel-transition="{{ page.carousel_transition }}"
-                 data-carousel-duration="{{ page.carousel_transition_duration }}">
-                {% include_block page.display_images %}
-            </div>
-        </div>
+  <div class="kiosk-split">
+    <div class="kiosk-split__content">
+      <div class="kiosk-content-backdrop">
+        {% for block in page.body %}
+          {% include_block block %}
+        {% endfor %}
+      </div>
     </div>
+    <div class="kiosk-split__images">
+      <div class="kiosk-carousel kiosk-featured-carousel"
+           id="kiosk-carousel"
+           data-carousel-interval="{{ page.carousel_interval }}"
+           data-carousel-transition="{{ page.carousel_transition }}"
+           data-carousel-duration="{{ page.carousel_transition_duration }}"
+           data-gallery-id="kiosk-featured">
+        {% with carousel_items=page.get_carousel_items %}
+          {% if carousel_items %}
+            {% include "components/blocks/kiosk/featured_carousel.html" with carousel_items=carousel_items %}
+          {% else %}
+            {% include_block page.display_images %}
+          {% endif %}
+        {% endwith %}
+      </div>
+    </div>
+  </div>
+  {% include "components/exhibitions/lightbox_modal.html" %}
 {% endblock content %}
-
 {% block extra_js %}
-    {{ block.super }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.KioskCarousel) {
-                window.KioskCarousel.init('#kiosk-carousel');
-            }
-        });
-    </script>
+  {{ block.super }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.KioskCarousel) {
+        window.KioskCarousel.init('#kiosk-carousel');
+      }
+    });
+  </script>
 {% endblock extra_js %}

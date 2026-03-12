@@ -350,9 +350,66 @@ html:has(.kiosk-body) {
     }
 }
 
-.kiosk-gallery .gallery-image:hover img,
-.kiosk-gallery .gallery-single-image:hover img {
-    transform: scale(1.05);
+/* Kiosk carousel slide (button reset for featured items) */
+.kiosk-carousel__slide {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+/* Frame wrapper — shrink-wraps the image so the caption anchors to it */
+.kiosk-carousel__frame {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.kiosk-carousel__slide img {
+    display: block;
+    max-width: 100cqw;
+    max-height: 100cqh;
+    width: auto;
+    height: auto;
+}
+
+/* Carousel caption — pinned to bottom-left of the image */
+.kiosk-carousel__caption {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.4rem 0.75rem;
+    background: #fff;
+    color: #000;
+    border: 1px solid #000;
+    font-family: var(--font-main);
+    text-align: left;
+    pointer-events: none;
+}
+
+.kiosk-carousel__caption-title {
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-subheading);
+    font-style: italic;
+}
+
+.kiosk-carousel__caption-artist {
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-normal);
+}
+
+.kiosk-carousel__caption-details {
+    font-size: var(--font-size-small);
+    opacity: 0.7;
 }
 
 /* Hover effect when already rotating - scale the container during rotation */
@@ -663,6 +720,7 @@ html:has(.kiosk-body) {
     width: 100%;
     height: 100%;
     position: relative;
+    container-type: size;
 }
 
 /* Carousel wrapper elements: make transparent to layout */
@@ -673,7 +731,8 @@ html:has(.kiosk-body) {
 }
 
 .kiosk-carousel .gallery-single-image,
-.kiosk-carousel .gallery-image {
+.kiosk-carousel .gallery-image,
+.kiosk-carousel .kiosk-carousel__slide {
     position: absolute;
     inset: 0;
     opacity: 0;
@@ -684,7 +743,8 @@ html:has(.kiosk-body) {
 }
 
 .kiosk-carousel .gallery-single-image.carousel-active,
-.kiosk-carousel .gallery-image.carousel-active {
+.kiosk-carousel .gallery-image.carousel-active,
+.kiosk-carousel .kiosk-carousel__slide.carousel-active {
     opacity: 1;
     margin-bottom: 0;
 }
@@ -700,39 +760,45 @@ html:has(.kiosk-body) {
 
 /* Fade to Black: outgoing fades out immediately, incoming fades in after a delay */
 .transition-fade-black .gallery-single-image,
-.transition-fade-black .gallery-image {
+.transition-fade-black .gallery-image,
+.transition-fade-black .kiosk-carousel__slide {
     transition: opacity var(--carousel-transition-duration, 1200ms) ease;
     transition-delay: 0ms;
 }
 
 .transition-fade-black .gallery-single-image.carousel-active,
-.transition-fade-black .gallery-image.carousel-active {
+.transition-fade-black .gallery-image.carousel-active,
+.transition-fade-black .kiosk-carousel__slide.carousel-active {
     transition-delay: 0.3s;
 }
 
 /* Zoom Fade: outgoing zooms in + fades, incoming zooms from slight out to normal */
 .transition-zoom-fade .gallery-single-image,
-.transition-zoom-fade .gallery-image {
+.transition-zoom-fade .gallery-image,
+.transition-zoom-fade .kiosk-carousel__slide {
     transition: opacity var(--carousel-transition-duration, 1200ms) ease,
                 transform var(--carousel-transition-duration, 1200ms) ease;
     transform: scale(1.08);
 }
 
 .transition-zoom-fade .gallery-single-image.carousel-active,
-.transition-zoom-fade .gallery-image.carousel-active {
+.transition-zoom-fade .gallery-image.carousel-active,
+.transition-zoom-fade .kiosk-carousel__slide.carousel-active {
     transform: scale(1);
 }
 
 /* Soft Focus: outgoing blurs + fades, incoming sharpens into focus */
 .transition-soft-focus .gallery-single-image,
-.transition-soft-focus .gallery-image {
+.transition-soft-focus .gallery-image,
+.transition-soft-focus .kiosk-carousel__slide {
     transition: opacity var(--carousel-transition-duration, 1200ms) ease,
                 filter var(--carousel-transition-duration, 1200ms) ease;
     filter: blur(12px);
 }
 
 .transition-soft-focus .gallery-single-image.carousel-active,
-.transition-soft-focus .gallery-image.carousel-active {
+.transition-soft-focus .gallery-image.carousel-active,
+.transition-soft-focus .kiosk-carousel__slide.carousel-active {
     filter: blur(0);
 }
 
@@ -747,12 +813,14 @@ html:has(.kiosk-body) {
 }
 
 .transition-drift .gallery-single-image,
-.transition-drift .gallery-image {
+.transition-drift .gallery-image,
+.transition-drift .kiosk-carousel__slide {
     transition: opacity var(--carousel-transition-duration, 1200ms) ease;
 }
 
 .transition-drift .gallery-single-image.carousel-active,
-.transition-drift .gallery-image.carousel-active {
+.transition-drift .gallery-image.carousel-active,
+.transition-drift .kiosk-carousel__slide.carousel-active {
     animation: carousel-drift 8s ease-in-out alternate infinite;
 }
 
@@ -966,7 +1034,8 @@ html:has(.kiosk-body) {
     .kiosk-bg-static .gallery-single-image,
     .kiosk-bg-static .gallery-image,
     .kiosk-carousel .gallery-single-image,
-    .kiosk-carousel .gallery-image {
+    .kiosk-carousel .gallery-image,
+    .kiosk-carousel .kiosk-carousel__slide {
         transition: opacity 0.2s ease !important;
         transform: none !important;
         filter: none !important;
