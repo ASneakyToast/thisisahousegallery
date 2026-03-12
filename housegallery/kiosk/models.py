@@ -104,6 +104,10 @@ class KioskPage(Page):
         default="crossfade",
         help_text="Visual effect used when transitioning between slides",
     )
+    carousel_randomize = models.BooleanField(
+        default=False,
+        help_text="Shuffle carousel items into a random order on each page load",
+    )
 
     parent_page_types = ["home.HomePage"]
     subpage_types = []
@@ -136,12 +140,18 @@ class KioskPage(Page):
                 items.extend(self._exhibition_to_carousel_items(block.value))
             elif block.block_type == "artist":
                 items.extend(self._artist_to_carousel_items(block.value))
+            elif block.block_type == "all_artwork":
+                items.extend(self._all_artwork_to_carousel_items(block.value))
             elif block.block_type == "single_image":
                 item = self._image_to_carousel_item(block.value)
                 if item:
                     items.append(item)
             elif block.block_type in ("tagged_set", "all_images"):
                 items.extend(self._imageset_to_carousel_items(block))
+
+        if self.carousel_randomize:
+            import random
+            random.shuffle(items)
 
         return items
 
@@ -244,6 +254,20 @@ class KioskPage(Page):
 
         return items
 
+    def _all_artwork_to_carousel_items(self, value):
+        """Convert an all-artwork block to carousel items from every live artwork."""
+        from housegallery.artworks.models import Artwork
+
+        artworks = Artwork.objects.filter(live=True).order_by("-date", "title")
+        limit = value.get("limit")
+        if limit:
+            artworks = artworks[:limit]
+
+        items = []
+        for artwork in artworks:
+            items.extend(self._artwork_to_carousel_items({"artwork": artwork}))
+        return items
+
     def _image_to_carousel_item(self, value):
         """Convert a single image block to a carousel item."""
         image = value.get("image")
@@ -344,6 +368,7 @@ class KioskPage(Page):
             FieldPanel("carousel_interval"),
             FieldPanel("carousel_transition_duration"),
             FieldPanel("carousel_transition"),
+            FieldPanel("carousel_randomize"),
         ], heading="Carousel Animation Settings", classname="collapsible collapsed"),
     ]
 

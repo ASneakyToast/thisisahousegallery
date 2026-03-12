@@ -69,12 +69,28 @@ class KioskArtistBlock(blocks.StructBlock):
         label = "Artist"
 
 
+class KioskAllArtworkBlock(blocks.StructBlock):
+    """Display all artworks with full metadata in the kiosk carousel."""
+
+    limit = blocks.IntegerBlock(
+        required=False,
+        min_value=1,
+        max_value=100,
+        help_text="Maximum number of artworks to display (leave blank for all)",
+    )
+
+    class Meta:
+        icon = "image"
+        label = "All Artwork"
+
+
 class KioskFeaturedItemsBlock(blocks.StreamBlock):
     """Featured items for kiosk display — artworks, exhibitions, artists, and images."""
 
     artwork = KioskArtworkBlock()
     exhibition = KioskExhibitionBlock()
     artist = KioskArtistBlock()
+    all_artwork = KioskAllArtworkBlock()
     single_image = SingleImageBlock()
     tagged_set = TaggedSetBlock()
     all_images = AllImagesBlock()
