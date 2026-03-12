@@ -6,13 +6,12 @@ from wagtail.images.views.multiple import (
 
 class CustomAddView(BaseAddView):
     """
-    Custom multi-upload view that captures preserve_original, title, alt_text, 
+    Custom multi-upload view that captures title, alt_text,
     credit, description, and tags preferences and applies them to all images in the batch.
     """
 
     def post(self, request, *args, **kwargs):
         # Capture the preferences from the form
-        preserve_original = request.POST.get("preserve_original") == "1"
         title = request.POST.get("title", "").strip()
         alt_text = request.POST.get("alt_text", "").strip()
         credit = request.POST.get("credit", "").strip()
@@ -20,7 +19,6 @@ class CustomAddView(BaseAddView):
         tags = request.POST.get("tags", "").strip()
 
         # Store them in the session for this upload batch
-        request.session["batch_preserve_original"] = preserve_original
         request.session["batch_title"] = title
         request.session["batch_alt_text"] = alt_text
         request.session["batch_credit"] = credit
@@ -32,11 +30,10 @@ class CustomAddView(BaseAddView):
 
     def save_object(self, form):
         """
-        Override save_object to apply the batch preferences (preserve_original,
-        title, alt_text, credit, description, and tags) to each uploaded image.
+        Override save_object to apply the batch preferences (title, alt_text,
+        credit, description, and tags) to each uploaded image.
         """
         # Get the batch preferences for this upload
-        preserve_original = self.request.session.get("batch_preserve_original", False)
         title = self.request.session.get("batch_title", "")
         alt_text = self.request.session.get("batch_alt_text", "")
         credit = self.request.session.get("batch_credit", "")
@@ -47,7 +44,6 @@ class CustomAddView(BaseAddView):
         image = form.save(commit=False)
 
         # Apply the batch preferences
-        image.preserve_original = preserve_original
         if title:
             image.title = title
         if alt_text:
@@ -76,16 +72,15 @@ class CustomAddView(BaseAddView):
 class CustomCreateFromUploadedImageView(BaseCreateFromUploadedImageView):
     """
     Custom view for creating images from uploaded files that applies
-    the batch preserve_original, title, alt_text, credit, description, and tags preferences.
+    the batch title, alt_text, credit, description, and tags preferences.
     """
 
     def save_object(self, form):
         """
-        Override save_object to apply the batch preferences (preserve_original,
-        title, alt_text, credit, description, and tags) when creating an image from an uploaded file.
+        Override save_object to apply the batch preferences (title, alt_text,
+        credit, description, and tags) when creating an image from an uploaded file.
         """
         # Get the batch preferences for this upload
-        preserve_original = self.request.session.get("batch_preserve_original", False)
         title = self.request.session.get("batch_title", "")
         alt_text = self.request.session.get("batch_alt_text", "")
         credit = self.request.session.get("batch_credit", "")
@@ -98,7 +93,6 @@ class CustomCreateFromUploadedImageView(BaseCreateFromUploadedImageView):
         )
 
         # Apply the batch preferences
-        self.object.preserve_original = preserve_original
         if title:
             self.object.title = title
         if alt_text:

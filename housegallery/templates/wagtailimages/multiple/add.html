@@ -104,17 +104,6 @@
                 </p>
             {% endrawformattedfield %}
             
-            {# Preserve original toggle #}
-            {% trans "Image processing:" as preserve_label_text %}
-            {% rawformattedfield label_text=preserve_label_text id_for_label="id_preserve_original" classname="w-mt-4 w-grid" %}
-                <label class="w-flex w-items-center w-gap-2">
-                    <input type="checkbox" id="id_preserve_original" name="preserve_original" value="1">
-                    <span>{% trans "Preserve original" %}</span>
-                </label>
-                <p class="help w-text-sm w-text-gray-600 w-mt-1">
-                    {% trans "If unchecked, files will be optimized to high-quality web format (recommended for most uploads). Uses more storage when checked." %}
-                </p>
-            {% endrawformattedfield %}
         </form>
     </div>
 
