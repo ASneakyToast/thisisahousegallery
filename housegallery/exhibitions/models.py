@@ -709,20 +709,14 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
 
     def _process_gallery_image(self, gallery_image, image_type):
         """Helper to process a gallery image into a dict with pre-computed URLs."""
-        try:
-            thumb_rendition = gallery_image.image.get_rendition("width-400")
-            thumb_url = thumb_rendition.url
-            full_url = gallery_image.image.file.url
-        except Exception:
-            thumb_url = gallery_image.image.file.url
-            full_url = thumb_url
-
+        from housegallery.core.image_utils import get_image_urls
+        urls = get_image_urls(gallery_image.image, specs={"thumb": "width-400"})
         return {
-            "image_title": gallery_image.image.title or "",
-            "credit": gallery_image.image.credit or "",
+            "image_title": urls["title"],
+            "credit": urls["credit"],
             "type": image_type,
-            "thumb_url": thumb_url,
-            "full_url": full_url,
+            "thumb_url": urls["thumb_url"],
+            "full_url": urls["original_url"],
         }
 
     def get_exhibition_images_with_urls(self):
@@ -778,47 +772,24 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
             return cached_images
 
         images = []
-
-        # Helper function to get rendition URL from prefetched data or generate
-        def get_rendition_url(image_obj, filter_spec):
-            """Get rendition URL, checking prefetched data first."""
-            try:
-                renditions = list(image_obj.renditions.all())
-                for rendition in renditions:
-                    if filter_spec in rendition.filter_spec:
-                        return rendition.url
-            except Exception:
-                pass
-
-            try:
-                rendition = image_obj.get_rendition(filter_spec)
-                return rendition.url
-            except Exception:
-                return image_obj.file.url
+        from housegallery.core.image_utils import get_image_urls
 
         # Helper function to process any image type
         def process_image(gallery_image, image_type):
             """Process a single image with standard renditions and metadata"""
             image_obj = gallery_image.image
-
-            thumb_url = get_rendition_url(image_obj, "width-400")
-
-            # Use original file for full size - better performance
-            try:
-                full_url = image_obj.file.url
-            except Exception:
-                full_url = thumb_url
+            urls = get_image_urls(image_obj, specs={"thumb": "width-400"})
 
             # Base image data - store only serializable values for caching
             image_data = {
-                "image_title": image_obj.title or "",
-                "caption": image_obj.title or "",
-                "credit": getattr(image_obj, 'credit', '') or "",
+                "image_title": urls["title"],
+                "caption": urls["title"],
+                "credit": urls["credit"],
                 "type": image_type,
-                "thumb_url": thumb_url,
-                "full_url": full_url,
-                "thumb_webp_url": thumb_url,
-                "full_webp_url": full_url,
+                "thumb_url": urls["thumb_url"],
+                "full_url": urls["original_url"],
+                "thumb_webp_url": urls["thumb_url"],
+                "full_webp_url": urls["original_url"],
             }
 
             return image_data
@@ -880,44 +851,7 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
             return cached_images
 
         images = []
-
-        # Helper function to get thumb URL and dimensions using prefetched renditions when available
-        def get_thumb_data_from_image(image_obj):
-            """Get thumbnail URL and dimensions, using prefetched renditions if available.
-
-            PERFORMANCE: Checks prefetched renditions first to avoid DB query.
-            Only calls get_rendition() if rendition not found in prefetch.
-
-            Returns dict with 'url', 'width', 'height' keys.
-            """
-            # Try to find width-400 rendition in prefetched data
-            try:
-                renditions = list(image_obj.renditions.all())
-                for rendition in renditions:
-                    if 'width-400' in rendition.filter_spec:
-                        return {
-                            "url": rendition.url,
-                            "width": rendition.width,
-                            "height": rendition.height,
-                        }
-            except Exception:
-                pass
-
-            # Fall back to generating rendition (will check DB)
-            try:
-                thumb_rendition = image_obj.get_rendition("width-400")
-                return {
-                    "url": thumb_rendition.url,
-                    "width": thumb_rendition.width,
-                    "height": thumb_rendition.height,
-                }
-            except Exception:
-                # Ultimate fallback - use original image dimensions
-                return {
-                    "url": image_obj.file.url,
-                    "width": image_obj.width,
-                    "height": image_obj.height,
-                }
+        from housegallery.core.image_utils import get_image_urls
 
         # Helper function to process any image type
         def process_image(gallery_image, image_type):
@@ -927,25 +861,20 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
             Uses prefetched renditions when available.
             """
             image_obj = gallery_image.image
-            thumb_data = get_thumb_data_from_image(image_obj)
-
-            try:
-                full_url = image_obj.file.url
-            except Exception:
-                full_url = thumb_data["url"]
+            urls = get_image_urls(image_obj, specs={"thumb": "width-400"})
 
             # Base image data - store only serializable values for caching
             image_data = {
-                "image_title": image_obj.title or "",
-                "caption": image_obj.title or "",
-                "credit": getattr(image_obj, 'credit', '') or "",
+                "image_title": urls["title"],
+                "caption": urls["title"],
+                "credit": urls["credit"],
                 "type": image_type,
-                "thumb_url": thumb_data["url"],
-                "thumb_width": thumb_data["width"],
-                "thumb_height": thumb_data["height"],
-                "full_url": full_url,
-                "thumb_webp_url": thumb_data["url"],
-                "full_webp_url": full_url,
+                "thumb_url": urls["thumb_url"],
+                "thumb_width": urls["width"],
+                "thumb_height": urls["height"],
+                "full_url": urls["original_url"],
+                "thumb_webp_url": urls["thumb_url"],
+                "full_webp_url": urls["original_url"],
             }
 
             return image_data
@@ -966,12 +895,7 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
             first_artwork_image = artwork_images[0]
             primary_image = first_artwork_image.image
 
-            thumb_data = get_thumb_data_from_image(primary_image)
-
-            try:
-                full_url = primary_image.file.url
-            except Exception:
-                full_url = thumb_data["url"]
+            urls = get_image_urls(primary_image, specs={"thumb": "width-400"})
 
             # Format materials as string (use prefetched data)
             materials_list = list(artwork.materials.all())
@@ -982,16 +906,16 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
 
             # Create artwork image data - store only serializable values for caching
             artwork_image_data = {
-                "image_title": primary_image.title or "",
-                "caption": primary_image.title or "",
-                "credit": getattr(primary_image, 'credit', '') or "",
+                "image_title": urls["title"],
+                "caption": urls["title"],
+                "credit": urls["credit"],
                 "type": "artwork",
-                "thumb_url": thumb_data["url"],
-                "thumb_width": thumb_data["width"],
-                "thumb_height": thumb_data["height"],
-                "full_url": full_url,
-                "thumb_webp_url": thumb_data["url"],
-                "full_webp_url": full_url,
+                "thumb_url": urls["thumb_url"],
+                "thumb_width": urls["width"],
+                "thumb_height": urls["height"],
+                "full_url": urls["original_url"],
+                "thumb_webp_url": urls["thumb_url"],
+                "full_webp_url": urls["original_url"],
                 "related_artwork": {
                     "title": str(artwork) if artwork.title else "",
                     "artist_names": getattr(artwork, 'artist_names', '') or "",
@@ -1123,6 +1047,7 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
         images = []
         exhibition_title = self.title
         exhibition_date = self.get_formatted_date_short()
+        from housegallery.core.image_utils import get_image_urls
 
         # Helper function to process any image type
         def process_image(image_obj, image_type, artwork_data=None):
@@ -1131,44 +1056,16 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
             Only generates thumb rendition for performance - full size uses original.
             Uses prefetched renditions when available to avoid additional queries.
             """
-            # Try to use prefetched renditions first
-            thumb_url = None
-            prefetched_renditions = getattr(image_obj, '_prefetched_objects_cache', {}).get('renditions', [])
-            if not prefetched_renditions and hasattr(image_obj, 'renditions'):
-                # Check if renditions were prefetched via prefetch_related
-                try:
-                    prefetched_renditions = list(image_obj.renditions.all())
-                except Exception:
-                    prefetched_renditions = []
-
-            # Look for existing width-400 rendition in prefetched data
-            for rendition in prefetched_renditions:
-                if 'width-400' in rendition.filter_spec:
-                    thumb_url = rendition.url
-                    break
-
-            # Generate rendition only if not found in prefetch
-            if not thumb_url:
-                try:
-                    thumb_rendition = image_obj.get_rendition("width-400")
-                    thumb_url = thumb_rendition.url
-                except Exception:
-                    thumb_url = image_obj.file.url
-
-            # Use original file for full size - loaded on demand
-            try:
-                full_url = image_obj.file.url
-            except Exception:
-                full_url = thumb_url
+            urls = get_image_urls(image_obj, specs={"thumb": "width-400"})
 
             # Base image data structure - store only serializable values for caching
             image_data = {
-                "image_title": image_obj.title or "",
-                "caption": image_obj.title or "",
-                "credit": getattr(image_obj, 'credit', '') or "",
+                "image_title": urls["title"],
+                "caption": urls["title"],
+                "credit": urls["credit"],
                 "type": image_type,
-                "thumb_url": thumb_url,
-                "full_url": full_url,
+                "thumb_url": urls["thumb_url"],
+                "full_url": urls["original_url"],
                 "exhibition_title": exhibition_title,
                 "exhibition_date": exhibition_date,
             }

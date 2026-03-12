@@ -434,30 +434,10 @@ class KioskPage(Page):
         return items
 
     def _get_image_urls(self, image_obj):
-        """Return (thumb_url, full_url) for an image object.
-
-        Checks prefetched renditions first to avoid per-image DB queries.
-        """
-        try:
-            # Check prefetched renditions cache before hitting the DB
-            cached_renditions = list(image_obj.renditions.all())
-            thumb = None
-            for rendition in cached_renditions:
-                if rendition.filter_spec == "width-400":
-                    thumb = rendition
-                    break
-            if thumb is None:
-                thumb = image_obj.get_rendition("width-400")
-            thumb_url = thumb.url
-        except (FileNotFoundError, ValueError, AttributeError):
-            thumb_url = image_obj.file.url
-
-        try:
-            full_url = image_obj.file.url
-        except (FileNotFoundError, ValueError, AttributeError):
-            full_url = thumb_url
-
-        return thumb_url, full_url
+        """Return (thumb_url, full_url) for an image object."""
+        from housegallery.core.image_utils import get_image_urls
+        urls = get_image_urls(image_obj, specs={"thumb": "width-400"})
+        return urls["thumb_url"] or urls["original_url"], urls["original_url"]
 
     search_fields = [
         *Page.search_fields,
