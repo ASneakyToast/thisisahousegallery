@@ -40,41 +40,23 @@ class ImageSerializer(serializers.ModelSerializer):
         ]
     
     def get_renditions(self, obj):
-        """Return optimized renditions for the image"""
-        renditions = {}
-        
+        """Return optimized renditions for the image using shared utility."""
+        from housegallery.core.image_utils import get_image_urls
+
         try:
-            # Thumbnail rendition
-            thumbnail = obj.get_thumbnail(size=400)
-            renditions['thumbnail'] = {
-                'url': thumbnail.url,
-                'width': thumbnail.width,
-                'height': thumbnail.height,
+            urls = get_image_urls(obj)
+            return {
+                'thumbnail': {'url': urls['thumb_url']},
+                'medium': {'url': urls['medium_url']},
+                'full': {'url': urls['full_url']},
+                'srcset': urls['srcset'],
+                'sizes': urls['sizes'],
             }
-            
-            # Web optimized rendition
-            web_optimized = obj.get_web_optimized(max_width=1200)
-            renditions['web_optimized'] = {
-                'url': web_optimized.url,
-                'width': web_optimized.width,
-                'height': web_optimized.height,
-            }
-            
-            # High quality rendition
-            high_quality = obj.get_high_quality(max_dimension=2400)
-            renditions['high_quality'] = {
-                'url': high_quality.url,
-                'width': high_quality.width,
-                'height': high_quality.height,
-            }
-            
         except Exception as e:
-            # Log error but don't fail the serialization
             import logging
             logger = logging.getLogger(__name__)
             logger.error(f"Failed to generate renditions for image {obj.id}: {str(e)}")
-        
-        return renditions
+            return {}
     
     def get_metadata(self, obj):
         """Return additional metadata about the image"""

@@ -764,18 +764,6 @@ class ExhibitionPage(RoutablePageMixin, Page, ListingFields, ClusterableModel):
         """Get all in progress photos"""
         return self.in_progress_photos.all()
 
-    def _process_gallery_image(self, gallery_image, image_type):
-        """Helper to process a gallery image into a dict with pre-computed URLs."""
-        from housegallery.core.image_utils import get_image_urls
-        urls = get_image_urls(gallery_image.image, specs={"thumb": "width-400"})
-        return {
-            "image_title": urls["title"],
-            "credit": urls["credit"],
-            "type": image_type,
-            "thumb_url": urls["thumb_url"],
-            "full_url": urls["original_url"],
-        }
-
     def get_images_by_type(self, image_type=None):
         """Get gallery images, optionally filtered by type.
 
