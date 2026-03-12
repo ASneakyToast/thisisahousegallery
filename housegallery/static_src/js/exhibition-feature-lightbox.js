@@ -29,7 +29,8 @@ class UnifiedGalleryLightbox {
     const gallerySelectors = [
       '.exhibition-feature-gallery',     // Exhibition index galleries
       '.unified-gallery-container',      // New unified gallery containers
-      '.exhibition-page-gallery'         // Exhibition page galleries
+      '.exhibition-page-gallery',        // Exhibition page galleries
+      '.kiosk-featured-carousel'         // Kiosk featured items carousel
     ];
 
     gallerySelectors.forEach(selector => {
@@ -259,7 +260,10 @@ class UnifiedGalleryLightbox {
     
     // Lock body scroll
     this.lockBodyScroll();
-    
+
+    // Notify other components (e.g. kiosk carousel)
+    document.dispatchEvent(new CustomEvent('lightbox:open'));
+
     // Focus management
     const closeBtn = this.lightbox.querySelector('.exhibition-lightbox__close');
     if (closeBtn) closeBtn.focus();
@@ -636,7 +640,10 @@ class UnifiedGalleryLightbox {
     
     // Unlock body scroll
     this.unlockBodyScroll();
-    
+
+    // Notify other components (e.g. kiosk carousel)
+    document.dispatchEvent(new CustomEvent('lightbox:close'));
+
     // Clear current gallery reference and reset state
     this.currentGallery = null;
     this.currentIndex = 0;
