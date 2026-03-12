@@ -66,3 +66,54 @@ class APIKey(models.Model):
         self.last_used = timezone.now()
         self.usage_count = F('usage_count') + 1
         self.save(update_fields=['last_used', 'usage_count'])
+
+
+class ReadOnlyToken(models.Model):
+    """Lightweight token for read-only API access. Not artist-scoped."""
+
+    key = models.CharField(
+        max_length=64,
+        unique=True,
+        db_index=True,
+        blank=True,
+        help_text="The token. Generated automatically if not provided."
+    )
+    name = models.CharField(
+        max_length=100,
+        help_text="e.g. 'Kiosk display', 'Portfolio site'"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether this token is currently active"
+    )
+    allowed_ips = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="List of allowed IP addresses. Empty list allows all IPs."
+    )
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_used = models.DateTimeField(null=True, blank=True)
+    usage_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name = "Read-Only Token"
+        verbose_name_plural = "Read-Only Tokens"
+        ordering = ['-created']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.key = self.generate_key()
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def generate_key():
+        return secrets.token_urlsafe(48)
+
+    def update_usage(self):
+        self.last_used = timezone.now()
+        self.usage_count = F('usage_count') + 1
+        self.save(update_fields=['last_used', 'usage_count'])
