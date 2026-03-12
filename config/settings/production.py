@@ -56,21 +56,20 @@ DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 # CACHING
 # ------------------------------------------------------------------------------
-# Use in-memory cache for performance (avoids cross-region DB latency)
-# Note: Cache is per-container and clears on restart, but for a low-traffic
-# site this is fine - first request warms cache, subsequent requests are fast.
+# Use database cache as default for persistence across Cloud Run cold starts.
+# The kiosk carousel cache and other page-level caches survive container restarts.
 CACHES = {
     "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "django_cache_table",
+    },
+    # Keep in-memory cache available for anything that needs speed over persistence
+    "locmem": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "housegallery-cache",
         "OPTIONS": {
             "MAX_ENTRIES": 1000,
         },
-    },
-    # Keep database cache available for anything that needs persistence
-    "db": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "django_cache_table",
     },
 }
 

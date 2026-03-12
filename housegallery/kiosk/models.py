@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db import models
 from django.utils.html import strip_tags
 from wagtail.admin.panels import FieldPanel
@@ -126,22 +127,125 @@ class KioskPage(Page):
     def get_carousel_items(self):
         """Normalize all featured item block types into a uniform list of dicts
         for carousel rendering with lightbox data attributes."""
-        items = []
+
+        # --- Cache layer ---
+        timestamp = int(self.last_published_at.timestamp()) if self.last_published_at else 0
+        cache_key = f"kiosk_carousel_{self.pk}_{timestamp}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
 
         # Use featured_items if populated, fall back to display_images
         stream = self.featured_items if self.featured_items else self.display_images
         if not stream:
-            return items
+            return []
+
+        # --- First pass: collect all referenced PKs from stream blocks ---
+        artwork_pks = set()
+        exhibition_pks = set()
+        artist_pks = set()
+        has_all_artwork = False
+        all_artwork_limit = None
 
         for block in stream:
             if block.block_type == "artwork":
-                items.extend(self._artwork_to_carousel_items(block.value))
+                artwork = block.value.get("artwork")
+                if artwork:
+                    artwork_pks.add(artwork.pk)
             elif block.block_type == "exhibition":
-                items.extend(self._exhibition_to_carousel_items(block.value))
+                exhibition = block.value.get("exhibition")
+                if exhibition:
+                    exhibition_pks.add(exhibition.pk)
             elif block.block_type == "artist":
-                items.extend(self._artist_to_carousel_items(block.value))
+                artist = block.value.get("artist")
+                if artist:
+                    artist_pks.add(artist.pk)
             elif block.block_type == "all_artwork":
-                items.extend(self._all_artwork_to_carousel_items(block.value))
+                has_all_artwork = True
+                all_artwork_limit = block.value.get("limit")
+
+        # --- Batch load with prefetch_related ---
+        from django.db.models import Prefetch
+        from housegallery.artworks.models import Artwork, ArtworkImage
+        from housegallery.artists.models import Artist
+        from housegallery.exhibitions.models import ExhibitionPage
+
+        artwork_prefetches = [
+            Prefetch(
+                "artwork_images",
+                queryset=ArtworkImage.objects.select_related("image").prefetch_related(
+                    "image__renditions",
+                ),
+            ),
+            "artists",
+            "materials",
+        ]
+
+        # Prefetch individual artworks
+        artworks_by_pk = {}
+        if artwork_pks:
+            qs = Artwork.objects.filter(pk__in=artwork_pks).prefetch_related(
+                *artwork_prefetches,
+            )
+            artworks_by_pk = {a.pk: a for a in qs}
+
+        # Prefetch artists with their artworks
+        artists_by_pk = {}
+        if artist_pks:
+            qs = Artist.objects.filter(pk__in=artist_pks).prefetch_related(
+                Prefetch(
+                    "artwork_list",
+                    queryset=Artwork.objects.prefetch_related(*artwork_prefetches),
+                ),
+            )
+            artists_by_pk = {a.pk: a for a in qs}
+
+        # Prefetch exhibitions using optimized loader
+        exhibitions_by_pk = {}
+        for ex_pk in exhibition_pks:
+            try:
+                ex = ExhibitionPage.get_optimized_exhibition_detail(ex_pk)
+                if ex:
+                    exhibitions_by_pk[ex_pk] = ex
+            except Exception:
+                pass
+
+        # Prefetch all artworks if needed
+        all_artworks = None
+        if has_all_artwork:
+            qs = Artwork.objects.filter(live=True).order_by("-date", "title")
+            if all_artwork_limit:
+                qs = qs[:all_artwork_limit]
+            all_artworks = list(qs.prefetch_related(*artwork_prefetches))
+
+        # --- Second pass: build carousel items using prefetched objects ---
+        items = []
+
+        for block in stream:
+            if block.block_type == "artwork":
+                artwork = block.value.get("artwork")
+                if artwork and artwork.pk in artworks_by_pk:
+                    items.extend(self._artwork_to_carousel_items(
+                        {"artwork": artworks_by_pk[artwork.pk]},
+                    ))
+            elif block.block_type == "exhibition":
+                exhibition = block.value.get("exhibition")
+                if exhibition and exhibition.pk in exhibitions_by_pk:
+                    items.extend(self._exhibition_to_carousel_items(
+                        block.value, exhibitions_by_pk[exhibition.pk],
+                    ))
+            elif block.block_type == "artist":
+                artist = block.value.get("artist")
+                if artist and artist.pk in artists_by_pk:
+                    items.extend(self._artist_to_carousel_items(
+                        {"artist": artists_by_pk[artist.pk]},
+                    ))
+            elif block.block_type == "all_artwork":
+                if all_artworks is not None:
+                    for artwork in all_artworks:
+                        items.extend(self._artwork_to_carousel_items(
+                            {"artwork": artwork},
+                        ))
             elif block.block_type == "single_image":
                 item = self._image_to_carousel_item(block.value)
                 if item:
@@ -153,6 +257,7 @@ class KioskPage(Page):
             import random
             random.shuffle(items)
 
+        cache.set(cache_key, items, 3600)  # 1 hour
         return items
 
     def _artwork_to_carousel_items(self, value):
@@ -188,13 +293,14 @@ class KioskPage(Page):
 
         return items
 
-    def _exhibition_to_carousel_items(self, value):
+    def _exhibition_to_carousel_items(self, value, prefetched_exhibition=None):
         """Convert an exhibition block to carousel items, filtered by category."""
-        exhibition = value.get("exhibition")
+        exhibition = prefetched_exhibition or value.get("exhibition")
         if not exhibition:
             return []
 
-        exhibition = exhibition.specific
+        if not prefetched_exhibition:
+            exhibition = exhibition.specific
         max_images = value.get("max_images")
         selected_categories = value.get("image_categories") or []
 
@@ -299,10 +405,12 @@ class KioskPage(Page):
             tag = block.value.get("tag", "")
             if not tag:
                 return items
-            images = CustomImage.objects.filter(tags__name__iexact=tag).distinct()
+            images = CustomImage.objects.filter(
+                tags__name__iexact=tag,
+            ).distinct().prefetch_related("renditions")
         else:
             limit = block.value.get("limit")
-            images = CustomImage.objects.all()
+            images = CustomImage.objects.all().prefetch_related("renditions")
             if limit:
                 images = images[:limit]
 
@@ -326,9 +434,20 @@ class KioskPage(Page):
         return items
 
     def _get_image_urls(self, image_obj):
-        """Return (thumb_url, full_url) for an image object."""
+        """Return (thumb_url, full_url) for an image object.
+
+        Checks prefetched renditions first to avoid per-image DB queries.
+        """
         try:
-            thumb = image_obj.get_rendition("width-400")
+            # Check prefetched renditions cache before hitting the DB
+            cached_renditions = list(image_obj.renditions.all())
+            thumb = None
+            for rendition in cached_renditions:
+                if rendition.filter_spec == "width-400":
+                    thumb = rendition
+                    break
+            if thumb is None:
+                thumb = image_obj.get_rendition("width-400")
             thumb_url = thumb.url
         except (FileNotFoundError, ValueError, AttributeError):
             thumb_url = image_obj.file.url
