@@ -120,7 +120,9 @@ def get_image_urls_batch(image_objects, specs=None):
     # Attach prefetched renditions so get_image_urls finds them
     for img in images:
         matched = [r for r in existing if r.image_id == img.pk]
-        # Populate the prefetch cache
-        img.renditions._result_cache = matched  # noqa: SLF001
+        # Populate the prefetch cache so get_image_urls finds them
+        if not hasattr(img, "_prefetched_objects_cache"):
+            img._prefetched_objects_cache = {}  # noqa: SLF001
+        img._prefetched_objects_cache["renditions"] = matched  # noqa: SLF001
 
     return [get_image_urls(img, specs) for img in images]

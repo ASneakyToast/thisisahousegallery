@@ -158,7 +158,7 @@ class CustomImage(AbstractImage):
 
             save_kwargs = {"format": img_format}
             if img_format.upper() == "JPEG":
-                save_kwargs["quality"] = "keep"
+                save_kwargs["quality"] = 95
             elif img_format.upper() == "WEBP":
                 save_kwargs["quality"] = 95
 

@@ -138,6 +138,7 @@ class KioskPage(Page):
         # Use featured_items if populated, fall back to display_images
         stream = self.featured_items if self.featured_items else self.display_images
         if not stream:
+            cache.set(cache_key, [], 3600)
             return []
 
         # --- First pass: collect all referenced PKs from stream blocks ---

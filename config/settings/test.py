@@ -41,5 +41,17 @@ WEBPACK_LOADER["DEFAULT"]["LOADER_CLASS"] = "webpack_loader.loaders.FakeWebpackL
 # ------------------------------------------------------------------------------
 SECURE_SSL_REDIRECT = False
 
+# STORAGES
+# ------------------------------------------------------------------------------
+# Use in-memory storage so tests don't require GCS credentials.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.InMemoryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
 # Your stuff...
 # ------------------------------------------------------------------------------
