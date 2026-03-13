@@ -30,7 +30,7 @@ class UnifiedGalleryLightbox {
       '.exhibition-feature-gallery',     // Exhibition index galleries
       '.unified-gallery-container',      // New unified gallery containers
       '.exhibition-page-gallery',        // Exhibition page galleries
-      '.kiosk-featured-carousel'         // Kiosk featured items carousel
+      // Kiosk carousel is excluded — it uses openLightboxFromData() instead
     ];
 
     gallerySelectors.forEach(selector => {
@@ -623,6 +623,37 @@ class UnifiedGalleryLightbox {
     if (totalSpan) totalSpan.textContent = this.totalImages;
   }
 
+  openLightboxFromData(dataItems, startIndex, galleryId) {
+    // Wrap plain objects with a dataset property so existing lightbox code
+    // can access them identically to DOM elements
+    const wrappedItems = dataItems.map(item => ({
+      dataset: {
+        mediaType: 'image',
+        mediaSrc: item.fullUrl || '',
+        thumbnailSrc: item.thumbUrl || '',
+        caption: item.caption || '',
+        imageType: item.imageType || '',
+        artworkTitle: item.artworkTitle || '',
+        artworkArtist: item.artworkArtist || '',
+        artworkDate: item.artworkDate || '',
+        artworkMaterials: item.artworkMaterials || '',
+        artworkSize: item.artworkSize || '',
+        exhibitionTitle: item.exhibitionTitle || '',
+        exhibitionDate: item.exhibitionDate || '',
+        imageCredit: item.imageCredit || '',
+        credit: item.imageCredit || ''
+      }
+    }));
+
+    const galleryData = {
+      element: null,
+      items: wrappedItems,
+      id: galleryId
+    };
+
+    this.openLightbox(galleryData, startIndex);
+  }
+
   closeLightbox() {
     this.lightbox.setAttribute('aria-hidden', 'true');
     this.lightbox.classList.remove('exhibition-lightbox--active');
@@ -684,11 +715,13 @@ class UnifiedGalleryLightbox {
   }
 }
 
-// Initialize when DOM is ready
+// Initialize when DOM is ready and expose instance for data-driven access
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => new UnifiedGalleryLightbox());
+  document.addEventListener('DOMContentLoaded', () => {
+    window.unifiedGalleryLightbox = new UnifiedGalleryLightbox();
+  });
 } else {
-  new UnifiedGalleryLightbox();
+  window.unifiedGalleryLightbox = new UnifiedGalleryLightbox();
 }
 
 // Export for module systems

@@ -24,7 +24,55 @@
            data-gallery-id="kiosk-featured">
         {% with carousel_items=page.get_carousel_items %}
           {% if carousel_items %}
-            {% include "components/blocks/kiosk/featured_carousel.html" with carousel_items=carousel_items %}
+            {% with first=carousel_items.0 %}
+              <button class="gallery-lightbox-item kiosk-carousel__slide carousel-active"
+                      data-media-type="image"
+                      data-media-src="{{ first.full_url }}"
+                      data-thumbnail-src="{{ first.thumb_url }}"
+                      data-caption="{{ first.caption }}"
+                      data-index="0"
+                      {% if first.image_type %}data-image-type="{{ first.image_type }}"{% endif %}
+                      {% if first.artwork_title %} data-artwork-title="{{ first.artwork_title }}" data-artwork-artist="{{ first.artwork_artist }}" data-artwork-date="{{ first.artwork_date }}" data-artwork-materials="{{ first.artwork_materials }}" data-artwork-size="{{ first.artwork_size }}" {% endif %}
+                      {% if first.exhibition_title %} data-exhibition-title="{{ first.exhibition_title }}" data-exhibition-date="{{ first.exhibition_date }}" {% endif %}
+                      {% if first.image_credit %}data-image-credit="{{ first.image_credit }}"{% endif %}
+                      aria-label="View {{ first.caption|default:'image' }} in lightbox">
+                <span class="kiosk-carousel__frame">
+                  <img src="{{ first.thumb_url }}"
+                       {% if first.srcset %}srcset="{{ first.srcset }}" sizes="50vw"{% endif %}
+                       alt="{{ first.caption|default:'Gallery image' }}"
+                       decoding="async" />
+                  {% if first.artwork_title or first.exhibition_title or first.caption %}
+                    <span class="kiosk-carousel__caption">
+                      {% if first.artwork_title %}
+                        <span class="kiosk-carousel__caption-title">{{ first.artwork_title }}</span>
+                        {% if first.artwork_artist %}<span class="kiosk-carousel__caption-artist">{{ first.artwork_artist }}</span>{% endif %}
+                        {% if first.artwork_date or first.artwork_materials or first.artwork_size %}
+                          <span class="kiosk-carousel__caption-details">
+                            {% if first.artwork_date %}{{ first.artwork_date }}{% endif %}
+                            {% if first.artwork_materials %}
+                              {% if first.artwork_date %},{% endif %}
+                              {{ first.artwork_materials }}
+                            {% endif %}
+                            {% if first.artwork_size %}
+                              {% if first.artwork_date or first.artwork_materials %},{% endif %}
+                              {{ first.artwork_size }}
+                            {% endif %}
+                          </span>
+                        {% endif %}
+                      {% elif first.exhibition_title %}
+                        <span class="kiosk-carousel__caption-title">{{ first.exhibition_title }}</span>
+                        {% if first.exhibition_date %}
+                          <span class="kiosk-carousel__caption-details">{{ first.exhibition_date }}</span>
+                        {% endif %}
+                      {% elif first.caption %}
+                        <span class="kiosk-carousel__caption-title">{{ first.caption }}</span>
+                      {% endif %}
+                    </span>
+                  {% endif %}
+                </span>
+              </button>
+            {% endwith %}
+            {{ carousel_items|json_script:"kiosk-carousel-data" }}
           {% else %}
             {% include_block page.display_images %}
           {% endif %}
