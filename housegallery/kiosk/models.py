@@ -443,15 +443,18 @@ class KioskPage(Page):
         return items
 
     def _get_image_urls(self, image_obj):
-        """Return (thumb_url, full_url, srcset, sizes) for an image object."""
+        """Return (thumb_url, full_url, srcset, sizes) for an image object.
+
+        Only generates a single thumbnail rendition. The full-size URL uses
+        the original file to avoid generating expensive large renditions
+        for 100+ images on the kiosk page.
+        """
         from housegallery.core.image_utils import get_image_urls
-        urls = get_image_urls(image_obj)
-        return (
-            urls["thumb_url"] or urls["original_url"],
-            urls["full_url"] or urls["original_url"],
-            urls.get("srcset", ""),
-            urls.get("sizes", ""),
-        )
+
+        urls = get_image_urls(image_obj, specs={"thumb": "width-800|format-webp"})
+        thumb = urls["thumb_url"] or urls["original_url"]
+        original = urls["original_url"]
+        return (thumb, original, "", "")
 
     search_fields = [
         *Page.search_fields,
