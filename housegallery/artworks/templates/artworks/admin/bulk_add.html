@@ -1,0 +1,317 @@
+{% extends "wagtailadmin/generic/base.html" %}
+{% load wagtailadmin_tags i18n %}
+
+{% block main_content %}
+<form method="post" id="bulk-add-form">
+    {% csrf_token %}
+
+    <!-- Shared Defaults -->
+    <section style="margin-bottom: 2em; padding: 1.5em; background: var(--w-color-surface-field, #f6f6f8); border-radius: 6px;">
+        <h2>Shared Defaults</h2>
+        <p class="help">Values set here will apply to all rows below unless overridden per-row.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5em;">
+            <div>
+                <label for="id_artists">{{ defaults_form.artists.label }}</label>
+                <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--w-color-border-field-default, #ccc); padding: 0.5em; border-radius: 4px; background: #fff;">
+                    {{ defaults_form.artists }}
+                </div>
+            </div>
+            <div>
+                <div style="margin-bottom: 1em;">
+                    <label for="id_materials">{{ defaults_form.materials.label }}</label>
+                    {{ defaults_form.materials }}
+                    {% if defaults_form.materials.help_text %}
+                    <p class="help">{{ defaults_form.materials.help_text }}</p>
+                    {% endif %}
+                </div>
+                <div style="margin-bottom: 1em;">
+                    <label for="id_date">{{ defaults_form.date.label }}</label>
+                    {{ defaults_form.date }}
+                </div>
+                <div>
+                    <label for="id_price">{{ defaults_form.price.label }}</label>
+                    {{ defaults_form.price }}
+                    {% if defaults_form.price.help_text %}
+                    <p class="help">{{ defaults_form.price.help_text }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Per-Artwork Table -->
+    {{ formset.management_form }}
+
+    {% if formset.non_form_errors %}
+    <div class="help-block help-warning" style="margin-bottom: 1em;">
+        <svg class="icon icon-warning" aria-hidden="true"><use href="#icon-warning"></use></svg>
+        {% for error in formset.non_form_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <section>
+        <h2>Artworks</h2>
+        <div style="overflow-x: auto;">
+        <table class="listing" id="bulk-artwork-table">
+            <thead>
+                <tr>
+                    <th style="width: 30px;">#</th>
+                    <th style="min-width: 180px;">Title</th>
+                    <th style="min-width: 120px;">Image</th>
+                    <th style="min-width: 150px;">Description</th>
+                    <th style="width: 80px;">W&quot;</th>
+                    <th style="width: 80px;">H&quot;</th>
+                    <th style="width: 80px;">D&quot;</th>
+                    <th style="min-width: 100px;">Size</th>
+                    <th style="width: 100px;">Price</th>
+                    <th style="min-width: 120px;">Materials</th>
+                    <th style="width: 40px;"></th>
+                </tr>
+            </thead>
+            <tbody id="formset-body">
+                {% for form in formset %}
+                <tr class="formset-row {% if form.errors %}error{% endif %}" data-row-index="{{ forloop.counter0 }}">
+                    <td>
+                        <span class="row-number">{{ forloop.counter }}</span>
+                        {{ form.DELETE }}
+                    </td>
+                    <td>
+                        {{ form.title }}
+                        {% if form.title.errors %}<span class="error-message">{{ form.title.errors.0 }}</span>{% endif %}
+                    </td>
+                    <td>
+                        {{ form.image }}
+                        <div class="image-chooser-cell">
+                            <div class="image-preview" style="margin-bottom: 4px;"></div>
+                            <button type="button" class="button button-small button-secondary choose-image-btn">Choose</button>
+                            <button type="button" class="button button-small button-secondary clear-image-btn" style="display: none;">Clear</button>
+                        </div>
+                        {% if form.image.errors %}<span class="error-message">{{ form.image.errors.0 }}</span>{% endif %}
+                    </td>
+                    <td>
+                        {{ form.description }}
+                        {% if form.description.errors %}<span class="error-message">{{ form.description.errors.0 }}</span>{% endif %}
+                    </td>
+                    <td>
+                        {{ form.width_inches }}
+                        {% if form.width_inches.errors %}<span class="error-message">{{ form.width_inches.errors.0 }}</span>{% endif %}
+                    </td>
+                    <td>
+                        {{ form.height_inches }}
+                        {% if form.height_inches.errors %}<span class="error-message">{{ form.height_inches.errors.0 }}</span>{% endif %}
+                    </td>
+                    <td>
+                        {{ form.depth_inches }}
+                        {% if form.depth_inches.errors %}<span class="error-message">{{ form.depth_inches.errors.0 }}</span>{% endif %}
+                    </td>
+                    <td>
+                        {{ form.size }}
+                        {% if form.size.errors %}<span class="error-message">{{ form.size.errors.0 }}</span>{% endif %}
+                    </td>
+                    <td>
+                        {{ form.price }}
+                        {% if form.price.errors %}<span class="error-message">{{ form.price.errors.0 }}</span>{% endif %}
+                    </td>
+                    <td>
+                        {{ form.materials }}
+                        {% if form.materials.errors %}<span class="error-message">{{ form.materials.errors.0 }}</span>{% endif %}
+                    </td>
+                    <td>
+                        <button type="button" class="button button-small button-secondary no remove-row-btn" title="Remove row">&times;</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+
+        <div style="margin-top: 1em;">
+            <button type="button" class="button button-secondary" id="add-row-btn">+ Add Row</button>
+        </div>
+    </section>
+
+    <!-- Hidden empty form template for JS cloning -->
+    <template id="empty-form">
+        <tr class="formset-row" data-row-index="__prefix__">
+            <td>
+                <span class="row-number"></span>
+                {{ formset.empty_form.DELETE }}
+            </td>
+            <td>{{ formset.empty_form.title }}</td>
+            <td>
+                {{ formset.empty_form.image }}
+                <div class="image-chooser-cell">
+                    <div class="image-preview" style="margin-bottom: 4px;"></div>
+                    <button type="button" class="button button-small button-secondary choose-image-btn">Choose</button>
+                    <button type="button" class="button button-small button-secondary clear-image-btn" style="display: none;">Clear</button>
+                </div>
+            </td>
+            <td>{{ formset.empty_form.description }}</td>
+            <td>{{ formset.empty_form.width_inches }}</td>
+            <td>{{ formset.empty_form.height_inches }}</td>
+            <td>{{ formset.empty_form.depth_inches }}</td>
+            <td>{{ formset.empty_form.size }}</td>
+            <td>{{ formset.empty_form.price }}</td>
+            <td>{{ formset.empty_form.materials }}</td>
+            <td><button type="button" class="button button-small button-secondary no remove-row-btn" title="Remove row">&times;</button></td>
+        </tr>
+    </template>
+
+    <!-- Actions -->
+    <div style="margin-top: 2em; display: flex; gap: 1em;">
+        <button type="submit" name="action" value="draft" class="button button-secondary">Save as Drafts</button>
+        <button type="submit" name="action" value="publish" class="button">Save &amp; Publish</button>
+    </div>
+</form>
+
+<style>
+    #bulk-artwork-table input[type="text"],
+    #bulk-artwork-table input[type="number"],
+    #bulk-artwork-table textarea,
+    #bulk-artwork-table select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    #bulk-artwork-table textarea {
+        resize: vertical;
+    }
+    .formset-row.error td {
+        background-color: var(--w-color-critical-50, #fef2f2);
+    }
+    .error-message {
+        color: var(--w-color-critical-200, #dc2626);
+        font-size: 0.85em;
+        display: block;
+    }
+    .formset-row.deleted {
+        display: none;
+    }
+    .image-preview img {
+        max-width: 60px;
+        max-height: 60px;
+        border-radius: 3px;
+    }
+    /* Hide the DELETE checkbox - managed by JS */
+    .formset-row input[type="checkbox"][name$="-DELETE"] {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+(function() {
+    var body = document.getElementById('formset-body');
+    var totalFormsInput = document.getElementById('id_form-TOTAL_FORMS');
+    var addBtn = document.getElementById('add-row-btn');
+    var emptyFormTemplate = document.getElementById('empty-form');
+
+    // Add Row
+    addBtn.addEventListener('click', function() {
+        var totalForms = parseInt(totalFormsInput.value, 10);
+        var maxForms = 50;
+        if (totalForms >= maxForms) {
+            alert('Maximum of ' + maxForms + ' rows reached.');
+            return;
+        }
+        var templateContent = emptyFormTemplate.innerHTML;
+        var newRow = templateContent.replace(/__prefix__/g, totalForms);
+        var tr = document.createElement('tbody');
+        tr.innerHTML = newRow;
+        var row = tr.firstElementChild;
+        row.querySelector('.row-number').textContent = totalForms + 1;
+        body.appendChild(row);
+        totalFormsInput.value = totalForms + 1;
+        bindRowHandlers(row);
+        renumberRows();
+    });
+
+    // Remove Row (set DELETE, hide)
+    function bindRowHandlers(row) {
+        var removeBtn = row.querySelector('.remove-row-btn');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                var deleteCheckbox = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+                if (deleteCheckbox) {
+                    deleteCheckbox.checked = true;
+                }
+                row.classList.add('deleted');
+                renumberRows();
+            });
+        }
+        // Image chooser
+        var chooseBtn = row.querySelector('.choose-image-btn');
+        var clearBtn = row.querySelector('.clear-image-btn');
+        if (chooseBtn) {
+            chooseBtn.addEventListener('click', function() {
+                openImageChooser(row);
+            });
+        }
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                clearImage(row);
+            });
+        }
+    }
+
+    function renumberRows() {
+        var rows = body.querySelectorAll('.formset-row:not(.deleted)');
+        for (var i = 0; i < rows.length; i++) {
+            var numSpan = rows[i].querySelector('.row-number');
+            if (numSpan) numSpan.textContent = i + 1;
+        }
+    }
+
+    // Image chooser via Wagtail's ModalWorkflow
+    function openImageChooser(row) {
+        if (typeof ModalWorkflow === 'undefined') {
+            alert('Image chooser is not available. Please ensure you are in the Wagtail admin.');
+            return;
+        }
+        ModalWorkflow({
+            url: '/admin/images/chooser/',
+            onload: {},
+            responses: {
+                chosen: function(imageData) {
+                    var hiddenInput = row.querySelector('input[name$="-image"]');
+                    var preview = row.querySelector('.image-preview');
+                    var chooseBtn = row.querySelector('.choose-image-btn');
+                    var clearBtn = row.querySelector('.clear-image-btn');
+                    if (hiddenInput) {
+                        hiddenInput.value = imageData.id;
+                    }
+                    if (preview && imageData.preview) {
+                        preview.innerHTML = '<img src="' + imageData.preview.url + '" alt="">';
+                    } else if (preview && imageData.edit_link) {
+                        preview.innerHTML = '<span style="font-size: 0.85em;">' + (imageData.title || 'Image #' + imageData.id) + '</span>';
+                    }
+                    if (chooseBtn) chooseBtn.style.display = 'none';
+                    if (clearBtn) clearBtn.style.display = '';
+                }
+            }
+        });
+    }
+
+    function clearImage(row) {
+        var hiddenInput = row.querySelector('input[name$="-image"]');
+        var preview = row.querySelector('.image-preview');
+        var chooseBtn = row.querySelector('.choose-image-btn');
+        var clearBtn = row.querySelector('.clear-image-btn');
+        if (hiddenInput) hiddenInput.value = '';
+        if (preview) preview.innerHTML = '';
+        if (chooseBtn) chooseBtn.style.display = '';
+        if (clearBtn) clearBtn.style.display = 'none';
+    }
+
+    // Bind handlers to existing rows
+    var existingRows = body.querySelectorAll('.formset-row');
+    for (var i = 0; i < existingRows.length; i++) {
+        bindRowHandlers(existingRows[i]);
+    }
+})();
+</script>
+{% endblock %}

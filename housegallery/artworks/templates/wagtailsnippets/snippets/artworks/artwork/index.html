@@ -1,0 +1,9 @@
+{% extends "wagtailsnippets/snippets/index.html" %}
+{% load wagtailadmin_tags %}
+
+{% block extra_actions %}
+    <a href="{% url 'wagtailsnippets_artworks_artwork:bulk_add' %}" class="button bicolor button--icon">
+        {% icon name="plus" %}Bulk Add
+    </a>
+    {{ block.super }}
+{% endblock %}
