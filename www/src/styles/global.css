@@ -1,0 +1,295 @@
+/* ================================================================
+   DESIGN TOKENS
+   ================================================================ */
+
+:root {
+  /* --- COLORS --- */
+  --color-white: #fefefe;
+  --color-black: #121212;
+  --color-accent: #e91e63;
+
+  --color-surface: var(--color-white);
+  --color-text: var(--color-black);
+  --color-primary: #000;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+
+  /* interaction states */
+  --color-interactive-primary: var(--color-black);
+  --color-interactive-primary-text: var(--color-white);
+  --color-interactive-secondary: var(--color-white);
+  --color-interactive-secondary-text: var(--color-black);
+
+  /* hover state tokens */
+  --color-hover-background: var(--color-interactive-primary);
+  --color-hover-text: var(--color-interactive-primary-text);
+  --color-hover-border: var(--color-interactive-primary);
+
+  /* functional colors (admin) */
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+
+  /* --- SIZES --- */
+  --size-5: 5px;
+  --size-10: 10px;
+  --size-15: 15px;
+  --size-20: 20px;
+  --size-25: 25px;
+  --size-30: 30px;
+  --size-40: 40px;
+  --size-80: 80px;
+  --size-110: 80px;
+  --size-130: 130px;
+  --size-140: 140px;
+  --size-200: 200px;
+  --size-280: 280px;
+  --size-640: 640px;
+
+  /* layout aliases */
+  --size-layout-gutter: var(--size-15);
+  --size-layout-item-gap: var(--size-15);
+  --size-layout-element-spacing: var(--size-25);
+  --size-layout-section-spacing: var(--size-40);
+  --size-layout-heading-spacing: var(--size-30);
+  --size-layout-large-spacing: var(--size-110);
+  --size-layout-xlarge-spacing: var(--size-130);
+  --size-layout-restricted-column: var(--size-640);
+
+  /* --- FONT FAMILY --- */
+  --font-display: "SourceCodePro", monospace;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-main: var(--font-display);
+
+  --font-family-title: var(--font-display);
+  --font-family-heading: var(--font-display);
+  --font-family-intro: var(--font-display);
+  --font-family-quote: var(--font-display);
+  --font-family-subheading: var(--font-display);
+  --font-family-label: var(--font-display);
+  --font-family-body: var(--font-body);
+  --font-family-detail: var(--font-display);
+  --font-family-main: var(--font-display);
+
+  /* --- FONT SIZE --- */
+  --font-size-10: 10px;
+  --font-size-12: 12px;
+  --font-size-14: 14px;
+  --font-size-16: 16px;
+  --font-size-18: 18px;
+  --font-size-20: 20px;
+  --font-size-24: 24px;
+  --font-size-32: 32px;
+  --font-size-40: 40px;
+  --font-size-50: 50px;
+
+  --font-size-title: var(--font-size-24);
+  --font-size-heading: var(--font-size-40);
+  --font-size-intro: var(--font-size-24);
+  --font-size-subheading: var(--font-size-20);
+  --font-size-label: var(--font-size-14);
+  --font-size-body: var(--font-size-16);
+  --font-size-small: var(--font-size-14);
+  --font-size-detail: var(--font-size-10);
+
+  /* --- FONT WEIGHT --- */
+  --font-weight-light: 100;
+  --font-weight-normal: 400;
+  --font-weight-heavy: 700;
+
+  --font-weight-title: var(--font-weight-light);
+  --font-weight-heading: var(--font-weight-normal);
+  --font-weight-intro: var(--font-weight-light);
+  --font-weight-subheading: var(--font-weight-heavy);
+  --font-weight-label: var(--font-weight-light);
+  --font-weight-body: var(--font-weight-light);
+  --font-weight-detail: var(--font-weight-light);
+
+  /* --- LINE HEIGHT --- */
+  --line-height-110: 110%;
+  --line-height-120: 120%;
+  --line-height-130: 130%;
+  --line-height-140: 140%;
+  --line-height-150: 150%;
+  --line-height-160: 160%;
+  --line-height-170: 170%;
+  --line-height-180: 180%;
+
+  --line-height-title: var(--line-height-110);
+  --line-height-heading: var(--line-height-120);
+  --line-height-intro: var(--line-height-150);
+  --line-height-subheading: var(--line-height-130);
+  --line-height-label: var(--line-height-140);
+  --line-height-body: var(--line-height-180);
+  --line-height-detail: var(--line-height-160);
+
+  /* --- TRANSITIONS --- */
+  --transition-duration-fast: 0.15s;
+  --transition-duration-normal: 0.2s;
+  --transition-duration-slow: 0.3s;
+  --transition-easing-standard: ease;
+  --transition-easing-decelerate: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+  /* --- FOCUS / ACCESSIBILITY --- */
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 2px;
+  --focus-outline-color: var(--color-interactive-primary);
+
+  /* --- LAYOUT --- */
+  --radius: 0;
+  --shadow-sm: 1px 1px 0px var(--color-black);
+  --shadow-md: 2px 2px 0px var(--color-black);
+}
+
+/* Responsive token overrides */
+@media screen and (min-width: 768px) {
+  :root {
+    --size-layout-gutter: var(--size-30);
+    --size-layout-heading-spacing: var(--size-layout-large-spacing);
+    --font-size-title: var(--font-size-32);
+    --font-size-heading: var(--font-size-50);
+    --font-size-intro: var(--font-size-32);
+    --font-size-subheading: var(--font-size-24);
+    --font-size-label: var(--font-size-16);
+    --font-size-small: var(--font-size-16);
+    --font-size-detail: var(--font-size-12);
+    --line-height-title: var(--line-height-120);
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  :root {
+    --size-layout-gutter: var(--size-40);
+    --font-size-title: var(--font-size-40);
+  }
+}
+
+/* ================================================================
+   @FONT-FACE
+   ================================================================ */
+
+@font-face {
+  font-family: "SourceCodePro";
+  src: url("/fonts/SourceCodePro-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SourceCodePro";
+  src: url("/fonts/SourceCodePro-Italic-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ================================================================
+   RESET
+   ================================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ================================================================
+   BASE
+   ================================================================ */
+
+html {
+  font-size: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+  background: var(--color-white);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ================================================================
+   BUTTONS
+   ================================================================ */
+
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  width: fit-content;
+  background: var(--color-interactive-secondary);
+  color: var(--color-interactive-secondary-text);
+  border: 1px solid var(--color-black);
+  padding: 8px 24px;
+  font-size: var(--font-size-label);
+  font-family: var(--font-family-label);
+  line-height: var(--line-height-label);
+  font-weight: var(--font-weight-label);
+  cursor: pointer;
+  transition: all var(--transition-duration-normal) var(--transition-easing-standard);
+}
+
+.btn:hover,
+.btn:focus {
+  background: var(--color-hover-background);
+  color: var(--color-hover-text);
+  text-decoration: none;
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-black);
+  outline-offset: 2px;
+}
+
+.button-carrot {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  width: fit-content;
+  color: var(--color-interactive-secondary-text);
+  border: 1px solid var(--color-black);
+  padding: 6px 8px;
+  font-size: var(--font-size-label);
+  font-family: var(--font-family-label);
+  line-height: var(--line-height-label);
+  font-weight: var(--font-weight-label);
+  transition: color var(--transition-duration-normal) ease;
+}
+
+.button-carrot::before {
+  content: "\2192";
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.button-carrot:hover,
+.button-carrot:focus {
+  background: var(--color-hover-background);
+  color: var(--color-hover-text);
+  text-decoration: none;
+  outline: none;
+}
+
+.button-carrot:focus-visible {
+  outline: 2px solid var(--color-black);
+  outline-offset: 2px;
+}

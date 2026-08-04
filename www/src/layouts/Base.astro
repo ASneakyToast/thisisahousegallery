@@ -1,0 +1,117 @@
+---
+import "../styles/global.css";
+const year = new Date().getFullYear();
+const { title = "This is a House Gallery" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="preload"
+      href="/fonts/SourceCodePro-VariableFont_wght.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <title>{title}</title>
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="/">
+        <img src="/images/houseLogo-180x180.png" alt="" width="36" height="36" />
+        <p class="wordmark-text">This is a House Gallery</p>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="/exhibitions">Exhibitions</a>
+        <a href="/schedule">Schedule</a>
+        <a href="/about">About us</a>
+      </nav>
+    </header>
+
+    <main class="site-content">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <p>&copy; {year} This is a House Gallery</p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light;
+  }
+
+  .site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 16px var(--size-layout-gutter);
+    border-bottom: 1px solid var(--color-black);
+  }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .wordmark:hover {
+    text-decoration: none;
+  }
+
+  .wordmark img {
+    width: 36px;
+    height: auto;
+  }
+
+  .wordmark-text {
+    font-family: var(--font-display);
+    font-size: var(--font-size-label);
+    font-weight: 100;
+    line-height: var(--line-height-label);
+    margin: 0;
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .site-nav a {
+    font-family: var(--font-display);
+    font-size: var(--font-size-label);
+    font-weight: var(--font-weight-label);
+  }
+
+  .site-nav a:hover {
+    text-decoration: underline;
+  }
+
+  .site-content {
+    flex: 1;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--size-layout-section-spacing) var(--size-layout-gutter);
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--color-black);
+    padding: 24px var(--size-layout-gutter);
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: var(--font-size-detail);
+    font-weight: var(--font-weight-detail);
+    color: var(--color-text);
+  }
+</style>

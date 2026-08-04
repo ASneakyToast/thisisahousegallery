@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="This is a House Gallery">
+  <section class="hero">
+    <h1 class="type-title">This is a House Gallery</h1>
+    <p class="tagline">
+      This is a House Gallery serves as a project and exhibition place for the
+      DIY Bay Area art scene.
+    </p>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    text-align: left;
+    max-width: var(--size-layout-restricted-column);
+  }
+
+  .tagline {
+    font-family: var(--font-family-intro);
+    font-size: var(--font-size-intro);
+    font-weight: var(--font-weight-intro);
+    line-height: var(--line-height-intro);
+    color: var(--color-text);
+  }
+</style>
