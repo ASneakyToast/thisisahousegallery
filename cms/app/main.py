@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from sqladmin import Admin, ModelView
 
 from app.api.v1 import router as v1_router
@@ -19,6 +20,14 @@ def healthz() -> dict[str, str]:
 
 
 app.include_router(v1_router, prefix="/v1")
+
+# Serve locally stored media (renditions + originals) under /media
+if settings.media_storage == "local":
+    app.mount(
+        "/media",
+        StaticFiles(directory=settings.media_root, check_dir=False),
+        name="media",
+    )
 
 admin = Admin(app, engine=engine)
 

@@ -12,6 +12,7 @@ dependencies = [
     "sqladmin>=0.20",
     "pydantic-settings>=2.2",
     "python-multipart>=0.0.9",
+    "pillow>=12.3.0",
 ]
 
 [build-system]
