@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: housegallery-cms-db
+    environment:
+      POSTGRES_USER: cms
+      POSTGRES_PASSWORD: cms
+      POSTGRES_DB: cms
+    ports:
+      - "5432:5432"
+    volumes:
+      - cms_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  cms_postgres_data:
