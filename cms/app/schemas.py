@@ -1,0 +1,115 @@
+"""Pydantic response schemas for the /v1 read API."""
+
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Any, Optional
+
+from pydantic import BaseModel, ConfigDict
+
+
+class ORMModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TagOut(ORMModel):
+    id: int
+    name: str
+    slug: str
+
+
+class SocialLinkOut(BaseModel):
+    platform: str = ""
+    platform_name: str = ""
+    url: str = ""
+    handle: str = ""
+
+
+class RenditionOut(ORMModel):
+    filter_spec: str
+    file_path: str
+    width: int
+    height: int
+
+
+class ImageOut(ORMModel):
+    id: int
+    title: str = ""
+    alt: str = ""
+    credit: str = ""
+    description: str = ""
+    file_path: str
+    width: int = 0
+    height: int = 0
+    renditions: list[RenditionOut] = []
+
+
+class ArtistOut(ORMModel):
+    id: int
+    name: str
+    slug: str
+    bio: str = ""
+    website: str = ""
+    email: str = ""
+    birth_year: Optional[int] = None
+    socials: list[dict[str, Any]] = []
+    profile_image: Optional[ImageOut] = None
+
+
+class ArtistDetailOut(ArtistOut):
+    artworks: list["ArtworkOut"] = []
+
+
+class ArtworkOut(ORMModel):
+    id: int
+    title: str
+    slug: str
+    description: str = ""
+    size: str = ""
+    width_inches: Optional[float] = None
+    height_inches: Optional[float] = None
+    depth_inches: Optional[float] = None
+    date: Optional[datetime] = None
+    price: str = ""
+    artifacts: list[dict[str, Any]] = []
+    artists: list[ArtistOut] = []
+    images: list[ImageOut] = []
+    tags: list[TagOut] = []
+
+
+class ExhibitionOut(ORMModel):
+    id: int
+    title: str
+    slug: str
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    description: str = ""
+    body: list[dict[str, Any]] = []
+    video_embed_url: str = ""
+    listing_title: str = ""
+    listing_summary: str = ""
+    listing_image: Optional[ImageOut] = None
+    artists: list[ArtistOut] = []
+    artworks: list[ArtworkOut] = []
+
+
+class ExhibitionPhotoOut(ORMModel):
+    id: int
+    category: str
+    sort_order: int
+    image: Optional[ImageOut] = None
+
+
+class ExhibitionDetailOut(ExhibitionOut):
+    photos: list[ExhibitionPhotoOut] = []
+
+
+class SiteSettingsOut(ORMModel):
+    site_title: str = ""
+    tagline: str = ""
+    nav: list[dict[str, Any]] = []
+    contact: dict[str, Any] = {}
+    socials: list[dict[str, Any]] = []
+
+
+ArtistDetailOut.model_rebuild()
