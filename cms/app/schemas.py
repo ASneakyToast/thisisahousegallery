@@ -30,6 +30,7 @@ class RenditionOut(ORMModel):
     file_path: str
     width: int
     height: int
+    url: str = ""
 
 
 class ImageOut(ORMModel):
@@ -41,6 +42,7 @@ class ImageOut(ORMModel):
     file_path: str
     width: int = 0
     height: int = 0
+    file_url: str = ""
     renditions: list[RenditionOut] = []
 
 
