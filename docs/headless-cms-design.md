@@ -164,8 +164,26 @@ URLs remain bucket-based.
 
 ---
 
-## 10. Open questions
-- Object store provider for active serving: **R2 (Cloudflare)** vs **B2
-  (Backblaze)** vs GCS — pick based on egress/availability (recommend R2 or B2).
-- Exact rendition size set.
-- Whether to keep the newsletter/kiosk models in the port, or drop from v1.
+## 10. Decisions on open questions (2026-08-03)
+
+### 10.1 Object store provider → **AWS S3**
+- Rationale: consolidating other AWS services; one account/one mental model outweighs
+  R2's egress-fee advantage for a gallery's modest media traffic.
+- R2/B2 remain ~config-swap later (all S3-compatible; URLs stored absolute).
+- **Full-res originals → S3 lifecycled to Glacier/Deep Archive** (cold, cheap archive).
+  **Renditions → S3 Standard** (what builds/browsers fetch).
+
+### 10.2 Rendition set → reuse existing `images.py` sizes
+- `thumbnail_400`, `web_optimized_1200` (`width-1200|webp q85`), `high_quality_2400`
+  (`max-2400|webp q95`) — matches template usage (width-400/800/1200/1440).
+- **Full-res originals always preserved** (archive tier), never served in page.
+- Hi-res cap ~2400–3840px (4K-ish); WebP everywhere.
+
+### 10.3 Newsletter + kiosk → **decouple from CMS v1**
+- **Kiosk:** a separate consumer app of the CMS API (own Astro/static app, same media),
+  NOT a built-in CMS feature. Only pre-rendered as a route if TTFP/caching benefits.
+- **Newsletter:** keep as a *future, separate project* (subscriber service + AWS SES is the
+  natural fit). CMS v1 = content only; subscribers may be a thin stored record, but sending
+  is out of scope for v1. Do NOT gate the core gallery on it.
+
+
