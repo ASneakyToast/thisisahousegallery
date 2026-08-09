@@ -1,12 +1,25 @@
 ---
-// Header ported from housegallery/templates/components/header.html
-// + the main-menu block. Nav links mirror the live site's settings.
-const menuLinks = [
-  { text: 'Exhibitions', href: '/exhibitions/', cta: true },
-  { text: 'Schedule', href: '/schedule/', cta: true },
-  { text: 'About us', href: '/about/', cta: false },
-];
-const ctas = menuLinks.filter((l) => l.cta);
+// Header ported from housegallery/templates/components/header.html + main-menu.
+// Nav is driven by the CMS (site_settings.nav) so it's editable via admin,
+// with a safe fallback if the CMS is unreachable at build time.
+import { cms } from '../lib/cms';
+
+let nav: { label: string; url: string; cta: boolean }[] = [];
+try {
+  const settings = await cms.siteSettings();
+  nav = (settings.nav ?? []).map((n) => ({
+    label: String(n.label ?? ''),
+    url: String(n.url ?? '/'),
+    cta: Boolean(n.cta),
+  }));
+} catch {
+  nav = [
+    { label: 'Exhibitions', url: '/exhibitions/', cta: true },
+    { label: 'Schedule', url: '/schedule/', cta: true },
+    { label: 'About us', url: '/about/', cta: false },
+  ];
+}
+const ctas = nav.filter((l) => l.cta);
 ---
 
 <div class="header__overlay"></div>
@@ -18,7 +31,7 @@ const ctas = menuLinks.filter((l) => l.cta);
 
   <div class="header__ctas">
     {ctas.map((l) => (
-      <a href={l.href} class="button-carrot">{l.text}</a>
+      <a href={l.url} class="button-carrot">{l.label}</a>
     ))}
   </div>
 
@@ -44,9 +57,9 @@ const ctas = menuLinks.filter((l) => l.cta);
     <span class="main-menu__close-icon"></span>
   </button>
   <ul class="main-menu__items">
-    {menuLinks.map((l) => (
+    {nav.map((l) => (
       <li>
-        <a class="button-carrot" href={l.href}>{l.text}</a>
+        <a class="button-carrot" href={l.url}>{l.label}</a>
       </li>
     ))}
   </ul>
