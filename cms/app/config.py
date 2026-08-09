@@ -13,6 +13,12 @@ class Settings(BaseSettings):
     media_root: str = "media"
     media_url: str = "/media/"
     media_originals_dir: str = "originals"
+    # S3 backend (used when MEDIA_STORAGE=s3)
+    aws_region: str = "us-west-2"
+    aws_s3_bucket: str = "housegallery-cms"
+    aws_access_key_id: str = ""
+    aws_secret_access_key: str = ""
+    s3_base_url: str = ""
 
 
 @lru_cache
