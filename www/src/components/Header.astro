@@ -1,11 +1,28 @@
 ---
 // Header ported from housegallery/templates/components/header.html
-// + the main-menu block. Nav links mirror the live site's settings.
-const menuLinks = [
-  { text: 'Exhibitions', href: '/exhibitions/', cta: true },
-  { text: 'Schedule', href: '/schedule/', cta: true },
-  { text: 'About us', href: '/about/', cta: false },
-];
+// + the main-menu block + js/menu.js (the menu open/close interaction).
+// Nav links come from the CMS site-settings when available, else fall back to
+// the live site's three links.
+import { cms } from '../lib/cms';
+
+let nav: { label: string; url: string; cta: boolean }[] = [];
+try {
+  const settings = await cms.siteSettings();
+  nav = (settings.nav ?? []).map((n) => ({
+    label: String(n.label ?? ''),
+    url: String(n.url ?? '/'),
+    cta: Boolean(n.cta),
+  }));
+} catch {
+  /* CMS unreachable — use defaults */
+}
+const menuLinks = nav.length
+  ? nav
+  : [
+      { label: 'Exhibitions', url: '/exhibitions/', cta: true },
+      { label: 'Schedule', url: '/schedule/', cta: true },
+      { label: 'About us', url: '/about/', cta: false },
+    ];
 const ctas = menuLinks.filter((l) => l.cta);
 ---
 
@@ -18,7 +35,7 @@ const ctas = menuLinks.filter((l) => l.cta);
 
   <div class="header__ctas">
     {ctas.map((l) => (
-      <a href={l.href} class="button-carrot">{l.text}</a>
+      <a href={l.url} class="button-carrot">{l.label}</a>
     ))}
   </div>
 
@@ -39,15 +56,80 @@ const ctas = menuLinks.filter((l) => l.cta);
   </nav>
 </header>
 
-<div id="main-menu" class="main-menu__container" hidden>
+<div id="main-menu" class="main-menu__container">
   <button class="main-menu__close-button" aria-label="Close menu">
     <span class="main-menu__close-icon"></span>
   </button>
   <ul class="main-menu__items">
     {menuLinks.map((l) => (
       <li>
-        <a class="button-carrot" href={l.href}>{l.text}</a>
+        <a class="button-carrot" href={l.url}>{l.label}</a>
       </li>
     ))}
   </ul>
 </div>
+
+<script>
+  // Ported from js/menu.js (Menu Animation Controller). The CSS drives the
+  // slide/overlay/stagger via classes; this wires up the button, close, overlay,
+  // outside-click and Escape handlers.
+  function initMenu() {
+    const menuButton = document.querySelector('.header__menu-button');
+    const closeButton = document.querySelector('.main-menu__close-button');
+    const mainMenu = document.getElementById('main-menu');
+    const body = document.body;
+    const overlay = document.querySelector('.header__overlay');
+    const menuItems = document.querySelectorAll('.main-menu__items .button-carrot');
+
+    if (!menuButton || !mainMenu) return;
+
+    const openMenu = () => {
+      menuButton.classList.add('active');
+      mainMenu.classList.add('main-menu--open');
+      if (overlay) overlay.classList.add('header__overlay--visible');
+      menuButton.setAttribute('aria-expanded', 'true');
+      body.classList.add('menu-open');
+      menuItems.forEach((item, i) => {
+        setTimeout(() => item.classList.add('menu-item--animate-in'), i * 50);
+      });
+    };
+
+    const closeMenu = () => {
+      menuItems.forEach((item, i) => {
+        setTimeout(() => {
+          item.classList.remove('menu-item--animate-in');
+          item.classList.add('menu-item--animate-out');
+        }, (menuItems.length - 1 - i) * 30);
+      });
+      if (overlay) overlay.classList.remove('header__overlay--visible');
+      mainMenu.classList.remove('main-menu--open');
+      setTimeout(() => {
+        menuButton.classList.remove('active');
+        menuButton.setAttribute('aria-expanded', 'false');
+        body.classList.remove('menu-open');
+        menuItems.forEach((item) => item.classList.remove('menu-item--animate-out'));
+      }, 300);
+    };
+
+    const isOpen = () => mainMenu.classList.contains('main-menu--open');
+
+    menuButton.addEventListener('click', () => (isOpen() ? closeMenu() : openMenu()));
+    if (closeButton) closeButton.addEventListener('click', closeMenu);
+    if (overlay) overlay.addEventListener('click', closeMenu);
+    document.addEventListener('click', (event) => {
+      const t = event.target;
+      if (!isOpen()) return;
+      if (mainMenu.contains(t) || menuButton.contains(t) || (overlay && overlay.contains(t))) return;
+      closeMenu();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isOpen()) closeMenu();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMenu);
+  } else {
+    initMenu();
+  }
+</script>
