@@ -65,6 +65,28 @@ class SiteSettings(Base):
 
 
 # ---------------------------------------------------------------------------
+# Homepage hero (intro + floating images)
+# ---------------------------------------------------------------------------
+class HomePage(Base):
+    """Homepage hero content (intro + floating images).
+
+    Mirrors the home_homepage body's hero_section block.
+    floating_image_ids is an ordered list of Image ids to drift behind the
+    hero intro; editors can reorder/swap them without a code change.
+    """
+
+    __tablename__ = "home_page"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    tenant_id: Mapped[Optional[int]] = mapped_column(Integer, index=True, nullable=True)
+    site_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("sites.id", ondelete="CASCADE"), nullable=True
+    )
+    intro: Mapped[str] = mapped_column(Text, default="")
+    floating_image_ids: Mapped[list] = mapped_column(JSON, default=list)
+
+
+# ---------------------------------------------------------------------------
 # Tags
 # ---------------------------------------------------------------------------
 class Tag(Base):
