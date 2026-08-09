@@ -130,6 +130,7 @@ export const cms = {
   artwork: (slug: string) => get<Artwork>(`/artworks/${slug}`),
   tags: () => get<{ id: number; name: string; slug: string }[]>('/tags'),
     events: () => get<EventItem[]>('/events'),
+    image: (id: number) => get<Image>(`/images/${id}`),
   };
 
 /**
