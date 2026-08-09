@@ -131,6 +131,7 @@ export const cms = {
   tags: () => get<{ id: number; name: string; slug: string }[]>('/tags'),
     events: () => get<EventItem[]>('/events'),
     image: (id: number) => get<Image>(`/images/${id}`),
+    home: () => get<{ intro: string; floating_images: Image[] }>('/home'),
   };
 
 /**

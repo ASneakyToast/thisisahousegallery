@@ -11,6 +11,9 @@ const details = await Promise.all(
     cms.exhibition(ex.slug).catch(() => ex)
   )
 );
+// Homepage hero content (intro + floating images) from the CMS.
+const home = await cms.home().catch(() => ({ intro: '', floating_images: [] }));
+const hasFloating = (home.floating_images ?? []).length > 0;
 ---
 
 <Layout
@@ -18,22 +21,32 @@ const details = await Promise.all(
   bodyClass="home"
 >
   <section class="home__body" id="home-body">
-    <!-- hero-section: intro + CTAs (ported from hero-section.html / hero-links.html) -->
-    <section class="hero-section">
-      <div class="hero-section__content">
-        <h1 class="hero-section__intro">
-          This is a House Gallery serves as a project and exhibition place for the DIY Bay Area art scene.
-        </h1>
-        <div class="hero-section__links">
-          <div class="hero-links">
-            <div class="hero-links__items">
-              <a href="/schedule/" class="button-link">Whens the next show?</a>
-              <a href="/about/" class="button-carrot">Find out who lives here</a>
+    <!-- hero-section: floating images + intro + CTAs (hero-section.html + floating-hero.js) -->
+        <section class="hero-section">
+          {hasFloating && (
+            <div class="floating-hero" data-floating-hero>
+              <div class="floating-hero__container">
+                {home.floating_images.map((img, i) => (
+                  <div class="floating-hero__image" data-floating-image data-image-index={i}>
+                    <img src={bestImageUrl(img, { max: 400 })} alt={img.title || ''} loading="lazy" width={img.width || 400} height={img.height || 300} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div class="hero-section__content">
+            <h1 class="hero-section__intro" set:html={home.intro || 'This is a House Gallery'}></h1>
+            <div class="hero-section__links">
+              <div class="hero-links">
+                <div class="hero-links__items">
+                  <a href="/schedule/" class="button-link">Whens the next show?</a>
+                  <a href="/about/" class="button-carrot">Find out who lives here</a>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
     <!-- horizontal-features: exhibition carousel with arrow + progress nav -->
     <div class="horizontal-features-block" data-horizontal-features>
@@ -167,7 +180,83 @@ const details = await Promise.all(
   }
 
   document.querySelectorAll<HTMLElement>('[data-horizontal-features]').forEach(initCarousel);
-</script>
+  </script>
+
+  <script>
+    // Floating Hero — continuous right-to-left drift of the hero images.
+    // Ported from js/floating-hero.js (same classes + keyframes as the original).
+    class FloatingHero {
+      constructor(element: HTMLElement) {
+        this.element = element;
+        this.container = element.querySelector('.floating-hero__container') as HTMLElement;
+        if (!this.container) return;
+        this.imageSizes = ['tiny', 'small', 'medium', 'large', 'huge'];
+        this.sizeWeights = [20, 30, 25, 20, 5];
+        this.groupCount = 5;
+        this.groupSpeeds = [45, 55, 65, 75, 85];
+        this.groupDelays = [0, 8, 16, 24, 32];
+        this.preferReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.init();
+      }
+      init() {
+        if (this.preferReducedMotion) return;
+        this.setupImages();
+        this.startAnimation();
+      }
+      setupImages() {
+        const images = Array.from(this.container.querySelectorAll<HTMLElement>('[data-floating-image]'));
+        if (images.length === 0) return;
+        this.containerHeight = this.container.offsetHeight;
+        this.images = images;
+        this.createTransformGroups();
+        this.distributeImagesIntoGroups();
+      }
+      createTransformGroups() {
+        const count = Math.min(this.groupCount, Math.ceil(this.images.length / 2));
+        this.groups = [];
+        for (let i = 0; i < count; i++) {
+          const group = document.createElement('div');
+          group.className = 'floating-hero__group';
+          group.style.animationName = 'floating-hero-group';
+          group.style.animationDuration = `${this.groupSpeeds[i] || 45}s`;
+          group.style.animationTimingFunction = 'linear';
+          group.style.animationIterationCount = 'infinite';
+          group.style.animationDelay = `${this.groupDelays[i] || 0}s`;
+          this.container.appendChild(group);
+          this.groups.push(group);
+        }
+      }
+      distributeImagesIntoGroups() {
+        this.images.forEach((img) => {
+          img.remove();
+          const groupIndex = this.images.indexOf(img) % this.groups.length;
+          const group = this.groups[groupIndex];
+          const sizeClass = this.getRandomWeightedSize();
+          img.classList.add(`floating-hero__image--${sizeClass}`);
+          const verticalOffset = (Math.random() - 0.5) * (this.containerHeight * 0.6);
+          img.style.setProperty('--vertical-offset', `${verticalOffset}px`);
+          img.style.setProperty('--horizontal-spacing', `${Math.random() * 300}px`);
+          group.appendChild(img);
+        });
+      }
+      getRandomWeightedSize() {
+        const total = this.sizeWeights.reduce((s, w) => s + w, 0);
+        let r = Math.random() * total;
+        for (let i = 0; i < this.imageSizes.length; i++) {
+          r -= this.sizeWeights[i];
+          if (r <= 0) return this.imageSizes[i];
+        }
+        return this.imageSizes[0];
+      }
+      startAnimation() {
+        (this.groups || []).forEach((g) => {
+          g.style.animationPlayState = 'running';
+        });
+      }
+    }
+
+    document.querySelectorAll<HTMLElement>('[data-floating-hero]').forEach((el) => new FloatingHero(el));
+  </script>
 
 <style>
   .horizontal-features-block__nav {
