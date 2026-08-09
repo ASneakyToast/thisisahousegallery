@@ -128,6 +128,11 @@ class SiteSettingsOut(ORMModel):
     socials: list[dict[str, Any]] = []
 
 
+class HomeOut(ORMModel):
+    intro: str = ""
+    floating_images: list[ImageOut] = []
+
+
 class EventOut(ORMModel):
     id: int
     title: str = ""

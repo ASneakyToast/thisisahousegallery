@@ -19,6 +19,7 @@ from app.models import (
     Event,
     Exhibition,
     ExhibitionPhoto,
+    HomePage,
     Image,
     SiteSettings,
     Tag,
@@ -30,6 +31,7 @@ from app.schemas import (
     EventOut,
     ExhibitionDetailOut,
     ExhibitionOut,
+    HomeOut,
     ImageOut,
     RenditionOut,
     SiteSettingsOut,
@@ -54,6 +56,22 @@ def get_site_settings(db: Session = Depends(get_db)):
     if settings is None:
         raise HTTPException(status_code=404, detail="Site settings not configured")
     return settings
+
+
+@router.get("/home", response_model=HomeOut)
+def get_home(db: Session = Depends(get_db)):
+    home = db.execute(select(HomePage).order_by(HomePage.id)).scalars().first()
+    if home is None:
+        return HomeOut(intro="", floating_images=[])
+    ids = home.floating_image_ids or []
+    images = []
+    if ids:
+        rows = {
+            r.id: r
+            for r in db.execute(select(Image).where(Image.id.in_(ids))).scalars().all()
+        }
+        images = [rows[i] for i in ids if i in rows]
+    return HomeOut(intro=home.intro or "", floating_images=images)
 
 
 @router.get("/tags", response_model=list[TagOut])
