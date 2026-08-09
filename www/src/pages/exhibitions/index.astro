@@ -45,7 +45,7 @@ function formatDate(iso: string | null): string {
               <div class="exhibition-feature-gallery" data-gallery-id={ex.title.toLowerCase().replace(/\s+/g, '-')}>
                 <div class="gallery-container gallery-columns-container masonry">
                   <div class="gallery-images">
-                    {gallery.slice(0, 12).map((img, i) => (
+                    {gallery.map((img, i) => (
                       <button
                         class="gallery-lightbox-item"
                         data-media-type="image"
