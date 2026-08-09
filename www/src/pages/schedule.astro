@@ -2,14 +2,20 @@
 // Schedule — exhibition-driven program page.
 // The gallery's program IS its exhibitions (13 shows, 2023–2026). "Schedule"
 // answers "when do things happen" as a chronological timeline rather than a
-// card grid. Shows are grouped into Upcoming / Happening Now / Past (the first
-// two appear automatically once future-dated shows exist). Each show carries
-// its opening event underneath where one is mapped.
+// card grid. It's split into an Upcoming section and a Past Program, so the
+// past/upcoming distinction is always legible. Each show gets an opening badge
+// on its start date (every show is an opening), and genuinely non-opening
+// programming (talks, workshops, closings) is folded in from the events table.
 import Layout from '../layouts/Layout.astro';
 import ProgramRow from '../components/ProgramRow.astro';
 import { cms, type EventItem, type Exhibition } from '../lib/cms';
 
 const exhibitions: Exhibition[] = await cms.exhibitions().catch(() => []);
+// Photos (opening/installation/showcard) only ship on the detail endpoint, so
+// fetch details in parallel for every show — that's what the thumbnails need.
+const details: Exhibition[] = await Promise.all(
+  exhibitions.map((ex) => cms.exhibition(ex.slug).catch(() => ex))
+);
 const events: EventItem[] = await cms.events().catch(() => []);
 
 const today = new Date();
@@ -20,27 +26,33 @@ function endDate(ex: Exhibition): Date {
 }
 const byDesc = (a: Exhibition, b: Exhibition) => +(endDate(b) ?? 0) - +(endDate(a) ?? 0);
 
-const upcoming = exhibitions.filter((x) => x.start_date && new Date(x.start_date) > today).sort(byDesc);
-const current = exhibitions
+const upcoming = details.filter((x) => x.start_date && new Date(x.start_date) > today).sort(byDesc);
+const current = details
   .filter((x) => {
     const s = x.start_date ? new Date(x.start_date) : null;
     const e = endDate(x);
     return s && s <= today && e >= today;
   })
   .sort(byDesc);
-const past = exhibitions.filter((x) => !upcoming.includes(x) && !current.includes(x)).sort(byDesc);
+const past = details.filter((x) => !upcoming.includes(x) && !current.includes(x)).sort(byDesc);
 
-// Events keyed to a show by title (normalized), since only one is FK-linked.
+// Events keyed to a show by title (normalized). Only NON-opening events get
+// their own badge here — the opening badge is derived per-show from start_date.
 function norm(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 const eventsByShow = new Map<string, EventItem[]>();
 for (const ev of events) {
-  const relTitle = ev.related_exhibition?.title;
-  if (relTitle) {
-    const k = norm(relTitle);
-    eventsByShow.set(k, [...(eventsByShow.get(k) ?? []), ev]);
-  }
+  if (ev.event_type === 'exhibition_opening') continue; // surfaces as the show's opening badge
+  const relTitle = ev.related_exhibition?.title || ev.title;
+  const k = norm(relTitle);
+  eventsByShow.set(k, [...(eventsByShow.get(k) ?? []), ev]);
+}
+function nonOpeningFor(ex: Exhibition): EventItem[] {
+  // Match by exhibition title, else by a show title contained within the event.
+  const exact = eventsByShow.get(norm(ex.title)) ?? [];
+  if (exact.length) return exact;
+  return events.filter((ev) => norm(ev.title).includes(norm(ex.title)));
 }
 ---
 
@@ -55,26 +67,28 @@ for (const ev of events) {
       <section class="program-section program-current">
         <h2 class="section-heading program-heading"><span class="section-icon">🔴</span> Happening Now</h2>
         <div class="program-list">
-          {current.map((ex) => <ProgramRow ex={ex} eventsByShow={eventsByShow} />)}
+          {current.map((ex) => <ProgramRow ex={ex} nonOpeningEvents={nonOpeningFor(ex)} />)}
         </div>
       </section>
     )}
 
-    {upcoming.length > 0 && (
-      <section class="program-section program-upcoming">
-        <h2 class="section-heading program-heading">Coming Up</h2>
+    <section class="program-section program-upcoming">
+      <h2 class="section-heading program-heading">Upcoming</h2>
+      {upcoming.length > 0 ? (
         <div class="program-list">
-          {upcoming.map((ex) => <ProgramRow ex={ex} eventsByShow={eventsByShow} />)}
+          {upcoming.map((ex) => <ProgramRow ex={ex} nonOpeningEvents={nonOpeningFor(ex)} />)}
         </div>
-      </section>
-    )}
+      ) : (
+        <div class="program-empty">
+          <p>No upcoming shows scheduled yet — check back soon.</p>
+        </div>
+      )}
+    </section>
 
     <section class="program-section program-past">
-      <h2 class="section-heading program-heading">
-        {current.length === 0 && upcoming.length === 0 ? 'Program' : 'Past Program'}
-      </h2>
+      <h2 class="section-heading program-heading">Past Program</h2>
       <div class="program-list">
-        {past.map((ex) => <ProgramRow ex={ex} eventsByShow={eventsByShow} />)}
+        {past.map((ex) => <ProgramRow ex={ex} nonOpeningEvents={nonOpeningFor(ex)} />)}
       </div>
     </section>
 
@@ -93,7 +107,8 @@ for (const ev of events) {
 <style>
   .schedule-header { padding-bottom: var(--size-layout-element-spacing, 25px); }
   .schedule-header .type-intro { margin-top: var(--size-layout-element-spacing, 25px); max-width: 600px; }
-  .program-section { padding: 0 var(--size-layout-gutter, 15px); margin-bottom: var(--size-layout-section-spacing, 40px); }
-  .program-heading { border-bottom: 1px solid var(--color-black, #121212); padding-bottom: 0.5rem; }
-  .program-list { display: flex; flex-direction: column; }
+  .program-section { margin-bottom: var(--size-layout-section-spacing, 48px); }
+  .program-heading { border-bottom: 1px solid var(--color-black, #121212); padding: var(--size-layout-element-spacing, 25px) var(--size-layout-gutter, 15px) 0.5rem; }
+  .program-list { padding: 0 var(--size-layout-gutter, 15px); display: flex; flex-direction: column; }
+  .program-empty { padding: var(--size-layout-element-spacing, 25px) var(--size-layout-gutter, 15px); color: var(--color-text-secondary, #666); font-style: italic; }
 </style>
