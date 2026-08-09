@@ -128,4 +128,30 @@ class SiteSettingsOut(ORMModel):
     socials: list[dict[str, Any]] = []
 
 
+class EventOut(ORMModel):
+    id: int
+    title: str = ""
+    slug: str = ""
+    event_type: str = ""
+    tagline: str = ""
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+    all_day: bool = False
+    custom_venue_name: str = ""
+    custom_address: str = ""
+    location_details: str = ""
+    description: str = ""
+    capacity: Optional[int] = None
+    registration_required: bool = False
+    registration_link: str = ""
+    ticket_price: str = ""
+    contact_email: str = ""
+    external_link: str = ""
+    featured_on_schedule: bool = False
+    related_exhibition: Optional[ExhibitionOut] = None
+    featured_image: Optional[ImageOut] = None
+
+
 ArtistDetailOut.model_rebuild()

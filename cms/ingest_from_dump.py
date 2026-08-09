@@ -31,6 +31,7 @@ from app.models import (
     ArtworkArtist,
     ArtworkImage,
     ArtworkTag,
+    Event,
     Exhibition,
     ExhibitionArtist,
     ExhibitionArtwork,
@@ -55,6 +56,7 @@ REQUIRED_TABLES = [
     "exhibitions_exhibitionpage",
     "exhibitions_exhibitionartist",
     "exhibitions_exhibitionartwork",
+    "exhibitions_eventpage",
     "images_customimage",
     "taggit_tag",
     "wagtailcore_page",
@@ -141,6 +143,25 @@ def _parse_date(v):
         return datetime.fromisoformat(str(v).replace(" ", "T"))
     except ValueError:
         return None
+
+
+def _parse_time(v):
+    """Parse an HH:MM:SS time into a datetime (date part ignored)."""
+    if not v:
+        return None
+    from datetime import time as dtime
+    try:
+        return datetime.combine(datetime(2020, 1, 1), dtime.fromisoformat(str(v)))
+    except ValueError:
+        return None
+
+
+def _bool(v):
+    if v in (True, "t", "true", "1", 1):
+        return True
+    if v in (False, "f", "false", "0", 0, None, "\\N"):
+        return False
+    return False
 
 
 def _float(v):
@@ -346,17 +367,48 @@ def ingest(path: Path) -> None:
                     )
                 )
 
+        # Events (title/slug from wagtailcore_page via page_ptr_id)
+        event_id_map: dict[str, int] = {}
+        for ev in data.get("exhibitions_eventpage", []):
+            page = pages_src.get(ev["page_ptr_id"], {})
+            if not page.get("title"):
+                continue
+            rel_exh = ev.get("related_exhibition_id")
+            feat_img = ev.get("featured_image_id")
+            event = Event(
+                title=page.get("title") or "",
+                slug=page.get("slug") or _slugify(page.get("title") or ""),
+                event_type=ev.get("event_type") or "",
+                tagline=ev.get("tagline") or "",
+                related_exhibition_id=exhibition_id_map.get(rel_exh) if rel_exh else None,
+                start_date=_parse_date(ev.get("start_date")),
+                end_date=_parse_date(ev.get("end_date")),
+                start_time=_parse_time(ev.get("start_time")),
+                end_time=_parse_time(ev.get("end_time")),
+                all_day=_bool(ev.get("all_day")),
+                custom_venue_name=ev.get("custom_venue_name") or "",
+                custom_address=ev.get("custom_address") or "",
+                location_details=ev.get("location_details") or "",
+                description=ev.get("description") or "",
+                capacity=_int_or_none(ev.get("capacity")),
+                registration_required=_bool(ev.get("registration_required")),
+                registration_link=ev.get("registration_link") or "",
+                ticket_price=ev.get("ticket_price") or "",
+                contact_email=ev.get("contact_email") or "",
+                external_link=ev.get("external_link") or "",
+                featured_on_schedule=_bool(ev.get("featured_on_schedule")),
+                featured_image_id=image_id_map.get(feat_img) if feat_img else None,
+                tenant_id=site.id,
+            )
+            db.add(event)
+            db.flush()
+            event_id_map[ev["page_ptr_id"]] = event.id
+
         db.commit()
         print("INGEST_OK site=", site.slug)
         print(f"  artists      : {len(artist_id_map)}")
         print(f"  artworks     : {len(artwork_id_map)}")
         print(f"  exhibitions  : {len(exhibition_id_map)}")
+        print(f"  events       : {len(event_id_map)}")
         print(f"  images       : {len(image_id_map)}")
         print(f"  tags         : {len(tag_id_map)}")
-
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("usage: python ingest_from_dump.py <path-to-dump.sql>")
-        sys.exit(1)
-    ingest(Path(sys.argv[1]))

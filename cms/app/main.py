@@ -5,7 +5,7 @@ from sqladmin import Admin, ModelView
 from app.api.v1 import router as v1_router
 from app.config import settings
 from app.db import engine
-from app.models import Artist, Artwork, Exhibition, Image, Site, Tag
+from app.models import Artist, Artwork, Event, Exhibition, Image, Site, Tag
 
 app = FastAPI(
     title="This is a House Gallery Headless CMS",
@@ -48,6 +48,10 @@ class ExhibitionAdmin(ModelView, model=Exhibition):
     column_list = [Exhibition.id, Exhibition.title, Exhibition.slug]
 
 
+class EventAdmin(ModelView, model=Event):
+    column_list = [Event.id, Event.title, Event.slug, Event.event_type, Event.start_date]
+
+
 class ImageAdmin(ModelView, model=Image):
     column_list = [Image.id, Image.title, Image.file_path]
 
@@ -60,5 +64,6 @@ admin.add_view(SiteAdmin)
 admin.add_view(ArtistAdmin)
 admin.add_view(ArtworkAdmin)
 admin.add_view(ExhibitionAdmin)
+admin.add_view(EventAdmin)
 admin.add_view(ImageAdmin)
 admin.add_view(TagAdmin)
