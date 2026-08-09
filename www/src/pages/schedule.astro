@@ -38,12 +38,13 @@ const past = details.filter((x) => !upcoming.includes(x) && !current.includes(x)
 
 // Events keyed to a show by title (normalized). Only NON-opening events get
 // their own badge here — the opening badge is derived per-show from start_date.
+// Filter calls on the raw events list separately so non-opening is the invariant.
 function norm(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
+const nonOpeningEvents = events.filter((ev) => ev.event_type !== 'exhibition_opening');
 const eventsByShow = new Map<string, EventItem[]>();
-for (const ev of events) {
-  if (ev.event_type === 'exhibition_opening') continue; // surfaces as the show's opening badge
+for (const ev of nonOpeningEvents) {
   const relTitle = ev.related_exhibition?.title || ev.title;
   const k = norm(relTitle);
   eventsByShow.set(k, [...(eventsByShow.get(k) ?? []), ev]);
@@ -52,7 +53,7 @@ function nonOpeningFor(ex: Exhibition): EventItem[] {
   // Match by exhibition title, else by a show title contained within the event.
   const exact = eventsByShow.get(norm(ex.title)) ?? [];
   if (exact.length) return exact;
-  return events.filter((ev) => norm(ev.title).includes(norm(ex.title)));
+  return nonOpeningEvents.filter((ev) => norm(ev.title).includes(norm(ex.title)));
 }
 ---
 
@@ -86,7 +87,7 @@ function nonOpeningFor(ex: Exhibition): EventItem[] {
     </section>
 
     <section class="program-section program-past">
-      <h2 class="section-heading program-heading">Past Program</h2>
+      <h2 class="section-heading program-heading">Past</h2>
       <div class="program-list">
         {past.map((ex) => <ProgramRow ex={ex} nonOpeningEvents={nonOpeningFor(ex)} />)}
       </div>
@@ -105,10 +106,11 @@ function nonOpeningFor(ex: Exhibition): EventItem[] {
 </Layout>
 
 <style>
-  .schedule-header { padding-bottom: var(--size-layout-element-spacing, 25px); }
+  .schedule-header { padding-bottom: var(--size-layout-section-spacing, 40px); }
   .schedule-header .type-intro { margin-top: var(--size-layout-element-spacing, 25px); max-width: 600px; }
   .program-section { margin-bottom: var(--size-layout-section-spacing, 48px); }
-  .program-heading { border-bottom: 1px solid var(--color-black, #121212); padding: var(--size-layout-element-spacing, 25px) var(--size-layout-gutter, 15px) 0.5rem; }
+  .program-upcoming { margin-top: var(--size-layout-section-spacing, 48px); }
+  .program-heading { border-bottom: 1px solid var(--color-black, #121212); padding: 0 var(--size-layout-gutter, 15px) 0.5rem; }
   .program-list { padding: 0 var(--size-layout-gutter, 15px); display: flex; flex-direction: column; }
   .program-empty { padding: var(--size-layout-element-spacing, 25px) var(--size-layout-gutter, 15px); color: var(--color-text-secondary, #666); font-style: italic; }
 </style>
