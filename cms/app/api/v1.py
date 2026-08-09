@@ -16,6 +16,7 @@ from app.db import SessionLocal
 from app.models import (
     Artist,
     Artwork,
+    Event,
     Exhibition,
     ExhibitionPhoto,
     Image,
@@ -26,6 +27,7 @@ from app.schemas import (
     ArtistDetailOut,
     ArtistOut,
     ArtworkOut,
+    EventOut,
     ExhibitionDetailOut,
     ExhibitionOut,
     ImageOut,
@@ -57,6 +59,24 @@ def get_site_settings(db: Session = Depends(get_db)):
 @router.get("/tags", response_model=list[TagOut])
 def list_tags(db: Session = Depends(get_db)):
     return db.execute(select(Tag).order_by(Tag.name)).scalars().all()
+
+
+@router.get("/events", response_model=list[EventOut])
+def list_events(
+    event_type: Optional[str] = Query(default=None),
+    featured: Optional[bool] = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    q = select(Event).options(
+        joinedload(Event.related_exhibition),
+        joinedload(Event.featured_image).joinedload(Image.renditions),
+    )
+    if event_type:
+        q = q.where(Event.event_type == event_type)
+    if featured is not None:
+        q = q.where(Event.featured_on_schedule == featured)
+    rows = db.execute(q.order_by(Event.start_date)).unique().scalars().all()
+    return rows
 
 
 @router.get("/exhibitions", response_model=list[ExhibitionOut])
