@@ -5,7 +5,9 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
+
+from app.storage import get_storage
 
 
 class ORMModel(BaseModel):
@@ -32,6 +34,12 @@ class RenditionOut(ORMModel):
     height: int
     url: str = ""
 
+    @model_validator(mode="after")
+    def _populate_url(self) -> "RenditionOut":
+        if self.file_path and not self.url:
+            self.url = get_storage().url(self.file_path)
+        return self
+
 
 class ImageOut(ORMModel):
     id: int
@@ -44,6 +52,12 @@ class ImageOut(ORMModel):
     height: int = 0
     file_url: str = ""
     renditions: list[RenditionOut] = []
+
+    @model_validator(mode="after")
+    def _populate_file_url(self) -> "ImageOut":
+        if self.file_path and not self.file_url:
+            self.file_url = get_storage().url(self.file_path)
+        return self
 
 
 class ArtistOut(ORMModel):

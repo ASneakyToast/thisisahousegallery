@@ -196,22 +196,4 @@ def get_image(image_id: int, db: Session = Depends(get_db)):
     )
     if row is None:
         raise HTTPException(status_code=404, detail="Image not found")
-    return _image_with_urls(row)
-
-
-def _image_with_urls(img: Image) -> ImageOut:
-    """Serialize an Image, populating rendition URLs via the storage layer."""
-    storage = get_storage()
-    data = ImageOut.model_validate(img)
-    data.file_url = storage.url(img.file_path)
-    data.renditions = []
-    for r in img.renditions:
-        r_out = RenditionOut(
-            filter_spec=r.filter_spec,
-            file_path=r.file_path,
-            width=r.width,
-            height=r.height,
-            url=storage.url(r.file_path),
-        )
-        data.renditions.append(r_out)
-    return data
+    return row
