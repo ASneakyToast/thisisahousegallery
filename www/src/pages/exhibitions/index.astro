@@ -1,0 +1,78 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { cms, bestImageUrl, filteredGalleryImages } from '../../lib/cms';
+
+// Fetch details (they carry the photo galleries; the list endpoint does not).
+const exhibitions = await cms.exhibitions();
+const details = await Promise.all(
+  exhibitions.map((ex) => cms.exhibition(ex.slug).catch(() => ex))
+);
+
+function formatDate(iso: string | null): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+---
+
+<Layout title="Exhibitions — This is a House Gallery" bodyClass="exhibitions-index">
+  <div class="body">
+    <div class="exhibition-page-header">
+      <h1 class="title type-title">Exhibitions</h1>
+    </div>
+
+    <div class="exhibitions-listing">
+      {details.map((ex) => {
+        const gallery = filteredGalleryImages(ex);
+        const imgUrl = bestImageUrl(ex.listing_image, { max: 400 }) ??
+          (gallery[0] ? bestImageUrl(gallery[0], { max: 400 }) : undefined);
+        return (
+          <div id={ex.title.toLowerCase().replace(/\s+/g, '-')} class="exhibition-listing-item exhibition-title">
+            <a href={`/exhibitions/${ex.slug}/`} class="exhibition-header-link">
+              <section class="exhibition-header">
+                <h3>{formatDate(ex.start_date)}</h3>
+                <section>
+                  <h2>{ex.title}</h2>
+                  <section class="exhibition-header__artists">
+                    {ex.artists.map((a) => (
+                      <p>{a.name}</p>
+                    ))}
+                  </section>
+                </section>
+              </section>
+            </a>
+
+            {gallery.length > 0 ? (
+              <div class="exhibition-feature-gallery" data-gallery-id={ex.title.toLowerCase().replace(/\s+/g, '-')}>
+                <div class="gallery-container gallery-columns-container masonry">
+                  <div class="gallery-images">
+                    {gallery.slice(0, 12).map((img, i) => (
+                      <button
+                        class="gallery-lightbox-item"
+                        data-media-type="image"
+                        data-index={i}
+                        aria-label={`View ${img.title || ex.title} in lightbox`}
+                      >
+                        <img
+                          src={bestImageUrl(img, { max: 400 })}
+                          alt={img.title || ex.title}
+                          width={img.width || undefined}
+                          height={img.height || undefined}
+                          loading="lazy"
+                          decoding="async"
+                          class="gallery-single-image"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p class="horizontal-features-block__empty">{ex.title} — no photos yet</p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</Layout>
