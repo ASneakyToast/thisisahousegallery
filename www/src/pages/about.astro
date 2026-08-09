@@ -68,14 +68,14 @@ if (!instagramUrl) instagramUrl = 'https://instagram.com/thisisahousegallery';
               <img src={houseImage} alt="The gallery space" class="about-contact__img" loading="lazy" />
             )}
             {email && (
-              <p class="social-media-link__item">
-                <span class="social-media-link__icon" aria-hidden="true">✉</span>
-                <a class="social-media-link__text" href={`mailto:${email}`}>{email}</a>
+              <p class="about-contact__item">
+                <span aria-hidden="true">✉</span>
+                <a href={`mailto:${email}`}>{email}</a>
               </p>
             )}
-            <p class="social-media-link__item social-media-link__item--instagram">
-              <span class="social-media-link__icon" aria-hidden="true">◎</span>
-              <a class="social-media-link__text" href={instagramUrl} target="_blank" rel="noopener">
+            <p class="about-contact__item">
+              <span aria-hidden="true">◎</span>
+              <a href={instagramUrl} target="_blank" rel="noopener">
                 {instagram}
               </a>
             </p>
@@ -107,14 +107,19 @@ if (!instagramUrl) instagramUrl = 'https://instagram.com/thisisahousegallery';
   .about-block:last-child { margin-bottom: 0; }
   .about-block .type-subheading { margin-bottom: var(--size-layout-element-spacing, 25px); }
   .about-block .type-body { line-height: 1.8; }
-  /* Body links follow the site's standard black + underline convention. */
-  .about-block .type-body a {
+  /* Inline body links: reuse the design system's standard link treatment
+     (see .event-artist-name a) — black text, underline fades in on hover. */
+  .about-block .type-body a,
+  .about-contact__item a {
     color: var(--color-black, #121212);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    font-weight: var(--font-weight-normal, 400);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
   }
-  .about-block .type-body a:hover { background: var(--color-hover-background, #efefef); }
+  .about-block .type-body a:hover,
+  .about-contact__item a:hover {
+    border-bottom-color: var(--color-black, #121212);
+  }
 
   .about-aside { border-left: 1px solid var(--color-black, #121212); padding-left: var(--size-layout-section-spacing, 48px); }
   @media (min-width: 900px) { .about-aside { position: sticky; top: 40px; } }
@@ -124,8 +129,13 @@ if (!instagramUrl) instagramUrl = 'https://instagram.com/thisisahousegallery';
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.25rem;
+    gap: var(--size-layout-element-spacing, 25px);
   }
-  .about-contact__card .social-media-link__item { margin: 0; padding: 0.4rem 0; }
-  .about-contact__img { width: 100%; max-width: 260px; border: 1px solid var(--color-black, #121212); margin-bottom: 0.75rem; }
+  .about-contact__item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .about-contact__img { width: 100%; max-width: 260px; border: 1px solid var(--color-black, #121212); margin-bottom: 0.25rem; }
 </style>
