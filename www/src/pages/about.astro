@@ -1,8 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import { cms, bestImageUrl } from '../lib/cms';
 
-let tagline = 'This is a House Gallery serves as a project and exhibition space for the DIY Bay Area art scene.';
 let email = '';
 let instagram = '';
 let instagramUrl = '';
@@ -11,7 +11,6 @@ let instagramUrl = '';
 let houseImage = '';
 try {
   const settings = await cms.siteSettings();
-  if (settings.tagline) tagline = settings.tagline;
   const contact = (settings.contact ?? {}) as Record<string, unknown>;
   if (typeof contact.email === 'string' && contact.email) email = contact.email;
   const socials = (settings.socials ?? []) as Record<string, unknown>[];
@@ -32,10 +31,7 @@ if (!instagramUrl) instagramUrl = 'https://instagram.com/thisisahousegallery';
 
 <Layout title="About — This is a House Gallery" bodyClass="about-page">
   <div class="body">
-    <header class="about-hero">
-      <h1 class="title type-title">About</h1>
-      <p class="type-intro">{tagline}</p>
-    </header>
+    <PageHeader title="About" />
 
     <div class="about-layout">
       <div class="about-main">
@@ -87,11 +83,8 @@ if (!instagramUrl) instagramUrl = 'https://instagram.com/thisisahousegallery';
 </Layout>
 
 <style>
-  .about-hero { padding: var(--size-layout-heading-spacing, 30px) var(--size-layout-gutter, 15px); border-bottom: 1px solid var(--color-black, #121212); }
-  .about-hero .type-intro { max-width: 640px; margin-top: var(--size-layout-element-spacing, 25px); }
-
-  /* Align the layout's left edge with the header/title gutter so the body
-     text lines up with the intro instead of being centered in its own column. */
+  /* Align the body layout's left edge with the shared page-header gutter so
+     the text lines up with the page title instead of sitting its own column. */
   .about-layout {
     display: grid;
     grid-template-columns: 1fr;

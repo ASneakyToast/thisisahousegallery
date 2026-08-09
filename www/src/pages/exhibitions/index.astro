@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import { cms, bestImageUrl, filteredGalleryImages } from '../../lib/cms';
 
 // Fetch details (they carry the photo galleries; the list endpoint does not).
@@ -17,11 +18,9 @@ function formatDate(iso: string | null): string {
 
 <Layout title="Exhibitions — This is a House Gallery" bodyClass="exhibitions-index">
   <div class="body">
-    <div class="exhibition-page-header">
-      <h1 class="title type-title">Exhibitions</h1>
-    </div>
+      <PageHeader title="Exhibitions" />
 
-    <div class="exhibitions-listing">
+      <div class="exhibitions-listing">
       {details.map((ex) => {
         const gallery = filteredGalleryImages(ex);
         const imgUrl = bestImageUrl(ex.listing_image, { max: 400 }) ??
