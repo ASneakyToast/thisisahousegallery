@@ -1,0 +1,221 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { cms, bestImageUrl, showcardImage } from '../lib/cms';
+
+// Details carry the showcard photos (list endpoint does not), so fetch them
+// in parallel for the carousel.
+const settings = await cms.siteSettings();
+const exhibitions = await cms.exhibitions();
+const details = await Promise.all(
+  exhibitions.map((ex) =>
+    cms.exhibition(ex.slug).catch(() => ex)
+  )
+);
+---
+
+<Layout
+  title={settings.site_title || 'This is a House Gallery'}
+  bodyClass="home"
+>
+  <section class="home__body" id="home-body">
+    <!-- hero-section: intro + CTAs (ported from hero-section.html / hero-links.html) -->
+    <section class="hero-section">
+      <div class="hero-section__content">
+        <h1 class="hero-section__intro">
+          This is a House Gallery serves as a project and exhibition place for the DIY Bay Area art scene.
+        </h1>
+        <div class="hero-section__links">
+          <div class="hero-links">
+            <div class="hero-links__items">
+              <a href="/schedule/" class="button-link">Whens the next show?</a>
+              <a href="/about/" class="button-carrot">Find out who lives here</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- horizontal-features: exhibition carousel with arrow + progress nav -->
+    <div class="horizontal-features-block" data-horizontal-features>
+      <h2 class="horizontal-features-block__title">Exhibitions</h2>
+
+      {details.length > 0 ? (
+        <div class="horizontal-features-block__container">
+          <button
+            class="horizontal-features-block__nav horizontal-features-block__nav--prev"
+            type="button"
+            aria-label="Previous exhibitions"
+            tabindex="-1"
+          >‹</button>
+
+          <div
+            class="horizontal-features-block__scroll-container"
+            role="region"
+            aria-label="Exhibitions"
+            tabindex="0"
+          >
+            <div class="horizontal-features-block__track">
+              {details.map((ex) => {
+                const showcard = showcardImage(ex);
+                const imgUrl = bestImageUrl(showcard, { max: 400 })
+                  ?? bestImageUrl(ex.listing_image, { max: 400 })
+                  ?? bestImageUrl(ex.artworks?.find((a) => a.images?.length)?.images?.[0], { max: 400 });
+                return (
+                  <div class="horizontal-features-card" data-exhibition-id={ex.id}>
+                    <a href={`/exhibitions/${ex.slug}/`} class="horizontal-features-card__link" aria-label="View exhibition">
+                      <div class="horizontal-features-card__image-container">
+                        {imgUrl ? (
+                          <img
+                            src={imgUrl}
+                            alt={ex.listing_title || ex.title}
+                            class="horizontal-features-card__image"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div class="horizontal-features-card__placeholder">
+                            <span>{ex.listing_title || ex.title}</span>
+                          </div>
+                        )}
+                      </div>
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <button
+            class="horizontal-features-block__nav horizontal-features-block__nav--next"
+            type="button"
+            aria-label="Next exhibitions"
+          >›</button>
+
+          <div class="horizontal-features-block__progress">
+            <div class="horizontal-features-block__progress-bar" role="progressbar" aria-label="Scroll position"></div>
+          </div>
+        </div>
+      ) : (
+        <div class="horizontal-features-block__empty">
+          <p>No exhibitions selected for display.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Netflix-style horizontal scroll with progressive edge arrows — works with a
+  // mouse (no trackpad), keyboard, and touch. Only the relevant edge arrow
+  // appears based on scroll position: at the start only "next" shows; once you
+  // scroll, "prev" fades in and "next" stays until the end.
+  function initCarousel(block: HTMLElement) {
+    const track = block.querySelector<HTMLElement>('.horizontal-features-block__track');
+    const scrollEl = block.querySelector<HTMLElement>('.horizontal-features-block__scroll-container');
+    const prev = block.querySelector<HTMLButtonElement>('.horizontal-features-block__nav--prev');
+    const next = block.querySelector<HTMLButtonElement>('.horizontal-features-block__nav--next');
+    const bar = block.querySelector<HTMLElement>('.horizontal-features-block__progress-bar');
+    const cards = Array.from(block.querySelectorAll<HTMLElement>('.horizontal-features-card'));
+    if (!track || !scrollEl || !prev || !next || !bar || cards.length === 0) return;
+
+    const cardWidth = () => {
+      const first = cards[0];
+      return first.offsetWidth + parseFloat(getComputedStyle(track).gap || '0');
+    };
+    const step = () => Math.max(1, Math.round(scrollEl.clientWidth / cardWidth()));
+    const maxScroll = () => scrollEl.scrollWidth - scrollEl.clientWidth;
+
+    function update() {
+      const max = maxScroll();
+      const atStart = scrollEl.scrollLeft <= 4;
+      const atEnd = scrollEl.scrollLeft >= max - 4;
+      // Progressive reveal: prev hidden at start, next hidden once you reach the end.
+      prev.classList.toggle('is-hidden', atStart);
+      next.classList.toggle('is-hidden', atEnd);
+      prev.setAttribute('aria-hidden', String(atStart));
+      next.setAttribute('aria-hidden', String(atEnd));
+      prev.tabIndex = atStart ? -1 : 0;
+      next.tabIndex = atEnd ? -1 : 0;
+      const pct = max <= 0 ? 100 : (scrollEl.scrollLeft / max) * 100;
+      bar.style.width = `${pct}%`;
+    }
+
+    function nudge(dir: 1 | -1) {
+      const target = scrollEl.scrollLeft + dir * cardWidth() * step();
+      const clamped = Math.max(0, Math.min(target, maxScroll()));
+      scrollEl.scrollTo({ left: clamped, behavior: 'smooth' });
+    }
+
+    prev.addEventListener('click', () => nudge(-1));
+    next.addEventListener('click', () => nudge(1));
+    scrollEl.addEventListener('scroll', update, { passive: true });
+    scrollEl.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); nudge(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); nudge(1); }
+    });
+    window.addEventListener('resize', () => { update(); });
+    // Re-evaluate when the track changes size (lazy images load, viewport shifts),
+    // so the "next" arrow isn't hidden forever just because images were still
+    // loading when we first measured.
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(() => update());
+      ro.observe(track);
+      ro.observe(scrollEl);
+    }
+    // Initial state — called after layout so scrollWidth is correct.
+    requestAnimationFrame(() => requestAnimationFrame(update));
+    update();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-horizontal-features]').forEach(initCarousel);
+</script>
+
+<style>
+  .horizontal-features-block__nav {
+    position: absolute;
+    z-index: 5;
+    top: 50%; /* vertically centered within the showcard height */
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-black, #121212);
+    background: var(--color-surface, #fff);
+    color: var(--color-black, #121212);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.25s ease, transform 0.2s var(--transition-easing-standard, ease);
+  }
+  .horizontal-features-block__nav:hover:not(.is-hidden) {
+    transform: translateY(-50%) translateY(-2px) scale(1.05);
+    box-shadow: 3px 3px 0 var(--color-black, #121212);
+  }
+  .horizontal-features-block__nav.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+  .horizontal-features-block__nav--prev { left: var(--size-layout-gutter, 15px); }
+  .horizontal-features-block__nav--next { right: var(--size-layout-gutter, 15px); }
+  .horizontal-features-block__nav:focus-visible {
+    outline: 2px solid var(--color-black, #121212);
+    outline-offset: 2px;
+  }
+
+  /* Progress rail sits under the cards (full width, overlapping the arrows zone). */
+  .horizontal-features-block__progress {
+    height: 3px;
+    margin-top: 12px;
+    background: var(--color-black, #121212);
+    opacity: 0.12;
+    overflow: hidden;
+  }
+  .horizontal-features-block__progress-bar {
+    height: 100%;
+    width: 0;
+    background: var(--color-accent, #e91e63);
+    transition: width 0.3s ease;
+  }
+</style>

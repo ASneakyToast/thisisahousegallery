@@ -1,0 +1,300 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { cms, bestImageUrl, showcardImage, photosByCategory } from '../../lib/cms';
+
+export async function getStaticPaths() {
+  const exhibitions = await cms.exhibitions();
+  return exhibitions.map((ex) => ({
+    params: { slug: ex.slug },
+    props: { slug: ex.slug },
+  }));
+}
+
+const { slug } = Astro.props;
+const ex = await cms.exhibition(slug);
+
+function formatDate(iso: string | null): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+// Hero: prefer the showcard (dual front/back) if present, else listing, else an artwork.
+const heroShowcard = showcardImage(ex);
+const heroImg = heroShowcard
+  ? bestImageUrl(heroShowcard, { max: 800 })
+  : bestImageUrl(ex.listing_image, { max: 800 })
+  ?? bestImageUrl(ex.artworks?.find((a) => a.images?.length)?.images?.[0], { max: 800 });
+
+// Artworks split: with images (hover previews) vs without.
+const artworks = (ex.artworks ?? []).filter((a) => a.images?.length);
+const namedArtworks = (ex.artworks ?? []).filter((a) => !a.images?.length);
+
+const photos = photosByCategory(ex);
+const installationPhotos = photos['installation'] ?? [];
+const openingPhotos = photos['opening_reception'] ?? [];
+const inProgressPhotos = photos['in_progress'] ?? [];
+const showcards = photos['showcard'] ?? [];
+---
+
+<Layout title={`${ex.title} — This is a House Gallery`} bodyClass="exhibition-page">
+  <div class="body normal">
+    <!-- Exhibition Hero Section -->
+    <header class="exhibition-hero">
+      <div class="exhibition-hero__content">
+        <div class="exhibition-hero__meta">
+          <time class="exhibition-date-hero" datetime={ex.start_date || undefined}>
+            {ex.start_date && (
+              <>
+                <span class="exhibition-date-hero__main">{formatDate(ex.start_date)}</span>
+                {ex.end_date && ex.end_date !== ex.start_date && (
+                  <span class="exhibition-date-hero__end">{formatDate(ex.end_date)}</span>
+                )}
+              </>
+            )}
+          </time>
+        </div>
+
+        <h1 class="exhibition-title-hero">{ex.title}</h1>
+
+        {ex.artists.length > 0 && (
+          <div class="exhibition-artists-hero">
+            <span class="exhibition-artists-label">Artists:</span>
+            <div class="exhibition-artists-list">
+              {ex.artists.map((a, i) => (
+                <span class="exhibition-artist-name">{a.name}{i < ex.artists.length - 1 ? ',' : ''}</span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {heroShowcard ? (
+        <div class="exhibition-hero__images exhibition-hero__images--single">
+          <div class="exhibition-hero__image">
+            <img
+              src={bestImageUrl(heroShowcard, { max: 800 })}
+              alt={`The promotional showcard for the exhibition '${ex.title}'`}
+              class="exhibition-hero-img exhibition-hero-img--showcard"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
+      ) : heroImg ? (
+        <div class="exhibition-hero__images exhibition-hero__images--single">
+          <div class="exhibition-hero__image">
+            <img src={heroImg} alt={ex.title} class="exhibition-hero-img" loading="lazy" decoding="async" />
+          </div>
+        </div>
+      ) : null}
+    </header>
+
+    <!-- Exhibition Summary / Description -->
+    {ex.listing_summary && (
+      <section class="exhibition-description-section">
+        <div class="exhibition-description-content" set:html={ex.listing_summary}></div>
+      </section>
+    )}
+
+    <!-- Exhibition Photos (installation) -->
+    {installationPhotos.length > 0 && (
+      <section class="exhibition-gallery-section">
+        <div class="exhibition-section-header">
+          <h2 class="exhibition-section-title">Exhibition Photos</h2>
+        </div>
+        <div class="exhibition-images">
+          {installationPhotos.map((img) => (
+            <button
+              class="gallery-lightbox-item"
+              data-media-type="image"
+              aria-label={`View ${img.title || ex.title} in lightbox`}
+            >
+              <img
+                              src={bestImageUrl(img, { max: 400 })}
+                              alt={img.title || ex.title}
+                              width={img.width || undefined}
+                              height={img.height || undefined}
+                              loading="lazy"
+                              decoding="async"
+                              class="gallery-single-image"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  <!-- Artworks Section -->
+                  {artworks.length > 0 && (
+      <section class="exhibition-artworks-section">
+        <div class="exhibition-section-header">
+          <h2 class="exhibition-section-title">Artworks</h2>
+        </div>
+        <div class="exhibition-artworks-grid">
+          {artworks.map((a) => {
+            const preview = bestImageUrl(a.images?.[0], { max: 400 });
+            return (
+              <article class="exhibition-artwork-card" data-artwork-id={a.id} style={preview ? 'cursor: pointer;' : ''}>
+                <div class="exhibition-artwork-content">
+                  <h3 class="exhibition-artwork-title" set:html={a.title}></h3>
+                </div>
+                {preview && (
+                  <div class="exhibition-artwork-hover-preview" data-preview-src={preview}>
+                    <img
+                      src={preview}
+                      alt={`${a.title} preview`}
+                      class="exhibition-artwork-hover-img"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- Named artworks with no image -->
+    {namedArtworks.length > 0 && (
+      <section class="exhibition-artworks-section">
+        <div class="exhibition-section-header">
+          <h2 class="exhibition-section-title">More Works</h2>
+        </div>
+        <div class="exhibition-artworks-grid">
+          {namedArtworks.map((a) => (
+            <article class="exhibition-artwork-card">
+              <div class="exhibition-artwork-content">
+                <h3 class="exhibition-artwork-title" set:html={a.title}></h3>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Opening Reception Gallery -->
+    {openingPhotos.length > 0 && (
+      <section class="opening-gallery-section">
+        <div class="exhibition-section-header">
+          <h2 class="exhibition-section-title">Opening Reception</h2>
+        </div>
+        <div class="exhibition-images">
+          {openingPhotos.map((img) => (
+            <button
+              class="gallery-lightbox-item"
+              data-media-type="image"
+              aria-label={`View ${img.title || ex.title} in lightbox`}
+            >
+              <img
+                src={bestImageUrl(img, { max: 400 })}
+                alt={img.title || ex.title}
+                width={img.width || undefined}
+                height={img.height || undefined}
+                loading="lazy"
+                decoding="async"
+                class="gallery-single-image"
+              />
+            </button>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- In Progress Gallery -->
+    {inProgressPhotos.length > 0 && (
+      <section class="in-progress-gallery-section">
+        <div class="exhibition-section-header">
+          <h2 class="exhibition-section-title">In Progress Shots</h2>
+        </div>
+        <div class="exhibition-images">
+          {inProgressPhotos.map((img) => (
+            <button
+              class="gallery-lightbox-item"
+              data-media-type="image"
+              aria-label={`View ${img.title || ex.title} in lightbox`}
+            >
+              <img
+                src={bestImageUrl(img, { max: 400 })}
+                alt={img.title || ex.title}
+                width={img.width || undefined}
+                height={img.height || undefined}
+                loading="lazy"
+                decoding="async"
+                class="gallery-single-image"
+              />
+            </button>
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</Layout>
+
+<script>
+  // Ported from artwork-hover-animations.js: mouse-following hover preview on
+  // exhibition artwork cards. The preview is moved to <body> on first show so it
+  // is not affected by the card's hover transform (a `position:fixed` element
+  // inside a transformed ancestor becomes relative to that ancestor, drifting as
+  // the card scrolls). Disabled on touch / reduced-motion.
+  const isTouch =
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    matchMedia('(hover: none)').matches ||
+    matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!isTouch) {
+    const cards = document.querySelectorAll<HTMLElement>('.exhibition-artwork-card');
+    cards.forEach((card) => {
+      const preview = card.querySelector<HTMLElement>('.exhibition-artwork-hover-preview');
+      if (!preview) return;
+
+      card.setAttribute('tabindex', '0');
+      preview.style.position = 'fixed';
+
+      // Detach once, re-attach to body so transforms on ancestors can't affect it.
+      if (preview.parentElement !== document.body) {
+        document.body.appendChild(preview);
+      }
+
+      let shown = false;
+      const show = (x: number, y: number) => {
+        if (!shown) {
+          preview.classList.add('show');
+          card.classList.add('hover-active');
+          shown = true;
+        }
+        // Keep the 250x250 box inside the viewport.
+        const left = Math.min(x - 125, window.innerWidth - 260);
+        const top = Math.min(y - 125, window.innerHeight - 260);
+        preview.style.left = `${Math.max(0, left)}px`;
+        preview.style.top = `${Math.max(0, top)}px`;
+      };
+      const hide = () => {
+        preview.classList.remove('show');
+        card.classList.remove('hover-active');
+        shown = false;
+      };
+
+      card.addEventListener('mouseenter', (e) => show((e as MouseEvent).clientX, (e as MouseEvent).clientY));
+      card.addEventListener('mousemove', (e) => show((e as MouseEvent).clientX, (e as MouseEvent).clientY));
+      card.addEventListener('mouseleave', hide);
+      card.addEventListener('focus', () => {
+        const r = card.getBoundingClientRect();
+        show(r.left + r.width / 2, r.top + r.height / 2);
+      });
+      card.addEventListener('blur', hide);
+    });
+  }
+</script>
+
+<style>
+  .exhibition-hero { display: flex; gap: var(--size-layout-large-spacing, 80px); }
+  .exhibition-hero__images--single { flex: 0 0 auto; }
+  .exhibition-hero-img--showcard {
+    max-width: 320px;
+    border: 1px solid var(--color-black, #121212);
+  }
+  .exhibition-hero__content { flex: 1 1 auto; }
+</style>
