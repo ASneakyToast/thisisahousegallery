@@ -68,13 +68,17 @@ if (!instagramUrl) instagramUrl = 'https://instagram.com/thisisahousegallery';
               <img src={houseImage} alt="The gallery space" class="about-contact__img" loading="lazy" />
             )}
             {email && (
-              <p class="about-contact__line">
-                <a class="email-link" href={`mailto:${email}`}>{email}</a>
+              <p class="social-media-link__item">
+                <span class="social-media-link__icon" aria-hidden="true">✉</span>
+                <a class="social-media-link__text" href={`mailto:${email}`}>{email}</a>
               </p>
             )}
-            <a class="about-contact__line" href={instagramUrl} target="_blank" rel="noopener">
-              {instagram}
-            </a>
+            <p class="social-media-link__item social-media-link__item--instagram">
+              <span class="social-media-link__icon" aria-hidden="true">◎</span>
+              <a class="social-media-link__text" href={instagramUrl} target="_blank" rel="noopener">
+                {instagram}
+              </a>
+            </p>
           </div>
         </section>
       </aside>
@@ -103,15 +107,25 @@ if (!instagramUrl) instagramUrl = 'https://instagram.com/thisisahousegallery';
   .about-block:last-child { margin-bottom: 0; }
   .about-block .type-subheading { margin-bottom: var(--size-layout-element-spacing, 25px); }
   .about-block .type-body { line-height: 1.8; }
-  .about-block a { color: var(--color-accent, #e91e63); text-decoration: underline; text-underline-offset: 3px; }
-  .about-block a:hover { background: var(--color-accent, #e91e63); color: #fff; }
+  /* Body links follow the site's standard black + underline convention. */
+  .about-block .type-body a {
+    color: var(--color-black, #121212);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: var(--font-weight-normal, 400);
+  }
+  .about-block .type-body a:hover { background: var(--color-hover-background, #efefef); }
 
   .about-aside { border-left: 1px solid var(--color-black, #121212); padding-left: var(--size-layout-section-spacing, 48px); }
   @media (min-width: 900px) { .about-aside { position: sticky; top: 40px; } }
   @media (max-width: 899px) { .about-aside { border-left: none; border-top: 1px solid var(--color-black, #121212); padding-left: 0; padding-top: var(--size-layout-section-spacing, 48px); } }
 
-  .about-contact__card { display: flex; flex-direction: column; gap: 1rem; }
-  .about-contact__img { width: 100%; max-width: 240px; border: 1px solid var(--color-black, #121212); }
-  .about-contact__line { font-size: var(--font-size-body, 16px); color: var(--color-accent, #e91e63); text-decoration: underline; text-underline-offset: 3px; }
-  .about-contact__line:hover { background: var(--color-accent, #e91e63); color: #fff; }
+  .about-contact__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .about-contact__card .social-media-link__item { margin: 0; padding: 0.4rem 0; }
+  .about-contact__img { width: 100%; max-width: 260px; border: 1px solid var(--color-black, #121212); margin-bottom: 0.75rem; }
 </style>
