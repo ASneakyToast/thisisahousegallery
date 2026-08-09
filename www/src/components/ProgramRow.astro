@@ -1,20 +1,32 @@
 ---
 // A single show row in the schedule program listing.
-import { bestImageUrl, type EventItem, type Exhibition } from '../lib/cms';
+import { bestImageUrl, photosByCategory, type EventItem, type Exhibition } from '../lib/cms';
 
 interface Props {
   ex: Exhibition;
-  eventsByShow: Map<string, EventItem[]>;
+  nonOpeningEvents: EventItem[];
 }
 
-const { ex, eventsByShow } = Astro.props;
-const related = eventsByShow.get(norm(ex.title)) ?? [];
-const img = bestImageUrl(ex.listing_image, { max: 400 })
-  ?? bestImageUrl(ex.artworks?.find((a) => a.images?.length)?.images?.[0], { max: 400 });
+const { ex, nonOpeningEvents } = Astro.props;
 
-function norm(s: string) {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-}
+// Thumbnail priority: opening photos (best captures the event) -> installation
+// -> showcard -> an artwork cover, so we never fall back to a random shot.
+const photos = photosByCategory(ex);
+const openingImg = photos['opening_reception']?.[0];
+const installImg = photos['installation']?.[0];
+const showcardImg = photos['showcard']?.[0];
+const artworkImg = ex.artworks?.find((a) => a.images?.length)?.images?.[0];
+const img = bestImageUrl(openingImg, { max: 400 })
+  ?? bestImageUrl(installImg, { max: 400 })
+  ?? bestImageUrl(showcardImg, { max: 400 })
+  ?? bestImageUrl(artworkImg, { max: 400 });
+
+// Every exhibition IS an opening reception, on its start date. Derive the
+// opening badge directly rather than relying on the sparse events table.
+const start = ex.start_date ? new Date(ex.start_date) : null;
+const openingDate = start
+  ? start.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+  : '';
 
 function fmtRange(ex: Exhibition): string {
   const s = ex.start_date ? new Date(ex.start_date) : null;
@@ -52,9 +64,18 @@ function eventKind(ev: EventItem): string {
     {img && <img src={img} alt={ex.title} class="program-item__thumb" loading="lazy" />}
   </a>
 
-  {related.map((ev) => (
+  {/* Every show has an opening reception on its start date. */}
+  {openingDate && (
     <div class="program-item__event">
-      <span class="program-item__event-badge">{eventKind(ev)}</span>
+      <span class="program-item__event-badge">Exhibition Opening</span>
+      <span class="program-item__event-date">{openingDate}</span>
+    </div>
+  )}
+
+  {/* Non-opening programming (talks, workshops, closings…) reserved from events. */}
+  {nonOpeningEvents.map((ev) => (
+    <div class="program-item__event">
+      <span class="program-item__event-badge program-item__event-badge--alt">{eventKind(ev)}</span>
       <span class="program-item__event-date">{fmtEventDate(ev)}</span>
     </div>
   ))}
@@ -79,6 +100,7 @@ function eventKind(ev: EventItem): string {
   .program-item__artists { font-size: var(--font-size-small, 14px); opacity: 0.7; margin-top: 0.25rem; }
   .program-item__thumb { width: 120px; height: 120px; object-fit: cover; border: 1px solid var(--color-black, #121212); }
   .program-item__event { display: flex; gap: 0.75rem; align-items: center; padding: 0 0 var(--size-layout-element-spacing, 25px) 0; font-size: var(--font-size-small, 14px); }
-  .program-item__event-badge { background: var(--color-accent, #e91e63); color: #fff; padding: 0.15rem 0.5rem; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
+  .program-item__event-badge { background: var(--color-black, #121212); color: #fff; padding: 0.15rem 0.5rem; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
+  .program-item__event-badge--alt { background: var(--color-accent, #e91e63); }
   .program-item__event-date { opacity: 0.8; }
 </style>
