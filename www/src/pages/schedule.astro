@@ -1,0 +1,99 @@
+---
+// Schedule — exhibition-driven program page.
+// The gallery's program IS its exhibitions (13 shows, 2023–2026). "Schedule"
+// answers "when do things happen" as a chronological timeline rather than a
+// card grid. Shows are grouped into Upcoming / Happening Now / Past (the first
+// two appear automatically once future-dated shows exist). Each show carries
+// its opening event underneath where one is mapped.
+import Layout from '../layouts/Layout.astro';
+import ProgramRow from '../components/ProgramRow.astro';
+import { cms, type EventItem, type Exhibition } from '../lib/cms';
+
+const exhibitions: Exhibition[] = await cms.exhibitions().catch(() => []);
+const events: EventItem[] = await cms.events().catch(() => []);
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+function endDate(ex: Exhibition): Date {
+  return ex.end_date ? new Date(ex.end_date) : (ex.start_date ? new Date(ex.start_date) : today);
+}
+const byDesc = (a: Exhibition, b: Exhibition) => +(endDate(b) ?? 0) - +(endDate(a) ?? 0);
+
+const upcoming = exhibitions.filter((x) => x.start_date && new Date(x.start_date) > today).sort(byDesc);
+const current = exhibitions
+  .filter((x) => {
+    const s = x.start_date ? new Date(x.start_date) : null;
+    const e = endDate(x);
+    return s && s <= today && e >= today;
+  })
+  .sort(byDesc);
+const past = exhibitions.filter((x) => !upcoming.includes(x) && !current.includes(x)).sort(byDesc);
+
+// Events keyed to a show by title (normalized), since only one is FK-linked.
+function norm(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+const eventsByShow = new Map<string, EventItem[]>();
+for (const ev of events) {
+  const relTitle = ev.related_exhibition?.title;
+  if (relTitle) {
+    const k = norm(relTitle);
+    eventsByShow.set(k, [...(eventsByShow.get(k) ?? []), ev]);
+  }
+}
+---
+
+<Layout title="Schedule — This is a House Gallery" bodyClass="schedule-page">
+  <div class="body">
+    <header class="schedule-header">
+      <h1 class="title type-title">Schedule</h1>
+      <p class="type-intro">Our program of exhibitions and openings.</p>
+    </header>
+
+    {current.length > 0 && (
+      <section class="program-section program-current">
+        <h2 class="section-heading program-heading"><span class="section-icon">🔴</span> Happening Now</h2>
+        <div class="program-list">
+          {current.map((ex) => <ProgramRow ex={ex} eventsByShow={eventsByShow} />)}
+        </div>
+      </section>
+    )}
+
+    {upcoming.length > 0 && (
+      <section class="program-section program-upcoming">
+        <h2 class="section-heading program-heading">Coming Up</h2>
+        <div class="program-list">
+          {upcoming.map((ex) => <ProgramRow ex={ex} eventsByShow={eventsByShow} />)}
+        </div>
+      </section>
+    )}
+
+    <section class="program-section program-past">
+      <h2 class="section-heading program-heading">
+        {current.length === 0 && upcoming.length === 0 ? 'Program' : 'Past Program'}
+      </h2>
+      <div class="program-list">
+        {past.map((ex) => <ProgramRow ex={ex} eventsByShow={eventsByShow} />)}
+      </div>
+    </section>
+
+    {exhibitions.length === 0 && (
+      <div class="empty-state">
+        <div class="empty-state-content">
+          <span class="empty-state-icon">📅</span>
+          <h3>No Shows Scheduled</h3>
+          <p>Check back soon for upcoming exhibitions and events.</p>
+        </div>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .schedule-header { padding-bottom: var(--size-layout-element-spacing, 25px); }
+  .schedule-header .type-intro { margin-top: var(--size-layout-element-spacing, 25px); max-width: 600px; }
+  .program-section { padding: 0 var(--size-layout-gutter, 15px); margin-bottom: var(--size-layout-section-spacing, 40px); }
+  .program-heading { border-bottom: 1px solid var(--color-black, #121212); padding-bottom: 0.5rem; }
+  .program-list { display: flex; flex-direction: column; }
+</style>
