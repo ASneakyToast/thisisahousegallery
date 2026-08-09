@@ -1,0 +1,30 @@
+---
+// Shared page header used across top-level pages (About / Schedule / Exhibitions).
+// Mirrors the design system's canonical exhibition-page-header treatment so every
+// page title starts in the same place with the same spacing and bottom rule.
+interface Props {
+  title: string;
+  intro?: string;
+}
+const { title, intro } = Astro.props;
+---
+
+<header class="page-header">
+  <h1 class="page-header__title title type-title">{title}</h1>
+  {intro && <p class="page-header__intro type-intro">{intro}</p>}
+</header>
+
+<style>
+  .page-header {
+    padding: var(--size-layout-heading-spacing, 30px) var(--size-layout-gutter, 15px);
+    border-bottom: 1px solid var(--color-black, #121212);
+  }
+  .page-header__title { margin: 0; }
+  /* Intro is optional and styled smaller/subdued, not window-dressing. */
+  .page-header__intro {
+    margin: var(--size-layout-element-spacing, 25px) 0 0;
+    max-width: 600px;
+    font-size: var(--font-size-body, 16px);
+    opacity: 0.8;
+  }
+</style>
