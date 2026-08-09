@@ -94,6 +94,32 @@ export interface SiteSettings {
   socials: Record<string, unknown>[];
 }
 
+export interface EventItem {
+  id: number;
+  title: string;
+  slug: string;
+  event_type: string;
+  tagline: string;
+  start_date: string | null;
+  end_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  all_day: boolean;
+  custom_venue_name: string;
+  custom_address: string;
+  location_details: string;
+  description: string;
+  capacity: number | null;
+  registration_required: boolean;
+  registration_link: string;
+  ticket_price: string;
+  contact_email: string;
+  external_link: string;
+  featured_on_schedule: boolean;
+  related_exhibition: Exhibition | null;
+  featured_image: Image | null;
+}
+
 export const cms = {
   siteSettings: () => get<SiteSettings>('/site-settings'),
   exhibitions: () => get<Exhibition[]>('/exhibitions'),
@@ -103,7 +129,8 @@ export const cms = {
   artworks: () => get<Artwork[]>('/artworks'),
   artwork: (slug: string) => get<Artwork>(`/artworks/${slug}`),
   tags: () => get<{ id: number; name: string; slug: string }[]>('/tags'),
-};
+    events: () => get<EventItem[]>('/events'),
+  };
 
 /**
  * Pick the best image URL for a given display context.

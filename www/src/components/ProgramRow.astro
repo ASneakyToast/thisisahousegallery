@@ -1,0 +1,84 @@
+---
+// A single show row in the schedule program listing.
+import { bestImageUrl, type EventItem, type Exhibition } from '../lib/cms';
+
+interface Props {
+  ex: Exhibition;
+  eventsByShow: Map<string, EventItem[]>;
+}
+
+const { ex, eventsByShow } = Astro.props;
+const related = eventsByShow.get(norm(ex.title)) ?? [];
+const img = bestImageUrl(ex.listing_image, { max: 400 })
+  ?? bestImageUrl(ex.artworks?.find((a) => a.images?.length)?.images?.[0], { max: 400 });
+
+function norm(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function fmtRange(ex: Exhibition): string {
+  const s = ex.start_date ? new Date(ex.start_date) : null;
+  const e = ex.end_date ? new Date(ex.end_date) : null;
+  if (!s) return '';
+  const sTxt = s.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  if (!e || e.getTime() === s.getTime()) return sTxt;
+  return `${sTxt} – ${e.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+}
+function fmtEventDate(ev: EventItem): string {
+  const d = ev.start_date ? new Date(ev.start_date) : null;
+  if (!d) return '';
+  let s = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  if (ev.start_time) s += ' · ' + new Date(ev.start_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  return s;
+}
+function eventKind(ev: EventItem): string {
+  return (ev.event_type || '').replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+---
+
+<div class="program-item" id={ex.title.toLowerCase().replace(/\s+/g, '-')}>
+  <a href={`/exhibitions/${ex.slug}/`} class="program-item__main">
+    <div class="program-item__date">{fmtRange(ex)}</div>
+    <div class="program-item__body">
+      <h3 class="program-item__title">{ex.title}</h3>
+      {ex.artists?.length > 0 && (
+        <div class="program-item__artists">
+          {ex.artists.map((a, i) => (
+            <span>{a.name}{i < ex.artists.length - 1 ? ', ' : ''}</span>
+          ))}
+        </div>
+      )}
+    </div>
+    {img && <img src={img} alt={ex.title} class="program-item__thumb" loading="lazy" />}
+  </a>
+
+  {related.map((ev) => (
+    <div class="program-item__event">
+      <span class="program-item__event-badge">{eventKind(ev)}</span>
+      <span class="program-item__event-date">{fmtEventDate(ev)}</span>
+    </div>
+  ))}
+</div>
+
+<style>
+  .program-item { border-bottom: 1px solid var(--color-black, #121212); }
+  .program-item:last-child { border-bottom: none; }
+  .program-item__main {
+    display: grid;
+    grid-template-columns: minmax(180px, 260px) 1fr auto;
+    gap: var(--size-layout-element-spacing, 25px);
+    align-items: center;
+    padding: var(--size-layout-element-spacing, 25px) 0;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s ease;
+  }
+  .program-item__main:hover { background: var(--color-surface-variant, #f5f5f5); }
+  .program-item__date { font-size: var(--font-size-small, 14px); opacity: 0.7; }
+  .program-item__title { font-family: var(--font-family-heading, monospace); font-weight: var(--font-weight-light, 100); font-size: var(--font-size-subheading, 20px); margin: 0; }
+  .program-item__artists { font-size: var(--font-size-small, 14px); opacity: 0.7; margin-top: 0.25rem; }
+  .program-item__thumb { width: 120px; height: 120px; object-fit: cover; border: 1px solid var(--color-black, #121212); }
+  .program-item__event { display: flex; gap: 0.75rem; align-items: center; padding: 0 0 var(--size-layout-element-spacing, 25px) 0; font-size: var(--font-size-small, 14px); }
+  .program-item__event-badge { background: var(--color-accent, #e91e63); color: #fff; padding: 0.15rem 0.5rem; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
+  .program-item__event-date { opacity: 0.8; }
+</style>

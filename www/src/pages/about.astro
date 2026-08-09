@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { cms } from '../lib/cms';
+
+let tagline = 'This is a House Gallery serves as a project and exhibition place for the DIY Bay Area art scene.';
+let contact: Record<string, unknown> = {};
+try {
+  const settings = await cms.siteSettings();
+  if (settings.tagline) tagline = settings.tagline;
+  contact = settings.contact ?? {};
+} catch {
+  /* CMS unreachable — use defaults */
+}
+const email = typeof contact.email === 'string' ? contact.email : '';
+---
+
+<Layout title="About — This is a House Gallery" bodyClass="about-page">
+  <div class="body">
+    <header class="about-hero">
+      <h1 class="title type-title">About</h1>
+      <p class="type-intro">{tagline}</p>
+    </header>
+
+    <section class="about-body">
+      <div class="about-block">
+        <h2 class="type-subheading">The House</h2>
+        <p class="type-body">
+          This is a House Gallery is a project and exhibition space run out of a
+          house in the East Bay. We make room for the DIY Bay Area art scene —
+          the artists, objects, and communities that don’t always fit the white
+          cube — turning the domestic into a place to show, gather, and argue
+          about what art is for.
+        </p>
+      </div>
+
+      <div class="about-block">
+        <h2 class="type-subheading">Program</h2>
+        <p class="type-body">
+          Exhibitions change month to month, each one an installation in the
+          space and a conversation with the people who made it. Openings are
+          free and open — come through, look close, say hello. See the{" "}
+          <a href="/schedule/">schedule</a> for what’s on, and browse past shows
+          under <a href="/exhibitions/">exhibitions</a>.
+        </p>
+      </div>
+
+      <div class="about-block">
+        <h2 class="type-subheading">Get in Touch</h2>
+        {email ? (
+          <p class="type-body">
+            For inquiries, submissions, or just to say hi, write to{" "}
+            <a class="email-link" href={`mailto:${email}`}>{email}</a>.
+          </p>
+        ) : (
+          <p class="type-body">
+            For inquiries or submissions, reach out via the contact links below.
+          </p>
+        )}
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .about-hero { padding: var(--size-layout-heading-spacing, 30px) var(--size-layout-gutter, 15px); border-bottom: 1px solid var(--color-black, #121212); }
+  .about-hero .type-intro { max-width: 640px; margin-top: var(--size-layout-element-spacing, 25px); }
+  .about-body { max-width: 680px; margin: 0 auto; padding: var(--size-layout-section-spacing, 40px) var(--size-layout-gutter, 15px); }
+  .about-block { margin-bottom: var(--size-layout-section-spacing, 40px); }
+  .about-block .type-subheading { margin-bottom: var(--size-layout-element-spacing, 25px); }
+  .about-block .type-body { line-height: 1.8; }
+  .about-block a { color: var(--color-accent, #e91e63); text-decoration: underline; text-underline-offset: 3px; }
+  .about-block a:hover { background: var(--color-accent, #e91e63); color: #fff; }
+</style>
