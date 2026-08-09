@@ -1,0 +1,30 @@
+/* Single entry point for the House Gallery design system.
+ * Mirrors the load order of the original webpack entry (css/index.js)
+ * so the source files below stay identical to the Wagtail repo's
+ * static_src/css/ — human-editable, framework-portable, reusable.
+ */
+@import './reset.css';
+@import './abstracts/font-files.css';
+@import './abstracts/tokens.css';
+@import './abstracts/hg-type.css';
+@import './abstracts/utilities.css';
+@import './components/buttons.css';
+@import './components/header.css';
+@import './components/footer.css';
+@import './components/main-menu.css';
+@import './components/social-media-links.css';
+@import './components/list_of_links.css';
+@import './components/gallery.css';
+@import './components/exhibition-lightbox.css';
+@import './components/horizontal-features.css';
+@import './components/kiosk.css';
+@import './components/floating-hero.css';
+@import './components/admin-chooser.css';
+@import './components/home/hero_block.css';
+@import './components/exhibitions/exhibitions.css';
+@import './components/exhibitions/exhibition.css';
+@import './components/exhibitions/exhibition-catalog.css';
+@import './components/exhibitions/schedule.css';
+@import './components/exhibitions/event.css';
+@import './components/places/places.css';
+@import './components/newsletter.css';

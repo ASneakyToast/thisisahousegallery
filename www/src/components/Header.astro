@@ -1,0 +1,53 @@
+---
+// Header ported from housegallery/templates/components/header.html
+// + the main-menu block. Nav links mirror the live site's settings.
+const menuLinks = [
+  { text: 'Exhibitions', href: '/exhibitions/', cta: true },
+  { text: 'Schedule', href: '/schedule/', cta: true },
+  { text: 'About us', href: '/about/', cta: false },
+];
+const ctas = menuLinks.filter((l) => l.cta);
+---
+
+<div class="header__overlay"></div>
+<header class="header">
+  <a class="header__logo" href="/">
+    <img src="/house-logo.png" alt="This is a House Gallery" />
+    <p style="font-weight: 100;">This is a House Gallery</p>
+  </a>
+
+  <div class="header__ctas">
+    {ctas.map((l) => (
+      <a href={l.href} class="button-carrot">{l.text}</a>
+    ))}
+  </div>
+
+  <nav class="header__navigation">
+    <button
+      class="header__menu-button"
+      aria-expanded="false"
+      aria-controls="main-menu"
+      aria-label="Toggle menu"
+    >
+      <p>Menu</p>
+      <div class="header__hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </button>
+  </nav>
+</header>
+
+<div id="main-menu" class="main-menu__container" hidden>
+  <button class="main-menu__close-button" aria-label="Close menu">
+    <span class="main-menu__close-icon"></span>
+  </button>
+  <ul class="main-menu__items">
+    {menuLinks.map((l) => (
+      <li>
+        <a class="button-carrot" href={l.href}>{l.text}</a>
+      </li>
+    ))}
+  </ul>
+</div>

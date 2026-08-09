@@ -1,0 +1,32 @@
+---
+import '../styles/main.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  bodyClass?: string;
+}
+
+const { title = 'This is a House Gallery', description = 'This is a House Gallery serves as a project and exhibition place for the DIY Bay Area art scene.', bodyClass = '' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Joel Lithgow" />
+    <link rel="icon" href="/favicon.ico" />
+  </head>
+  <body class={bodyClass}>
+    <Header />
+    <main class="container">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
