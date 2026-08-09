@@ -2,16 +2,27 @@
 import Layout from '../layouts/Layout.astro';
 import { cms } from '../lib/cms';
 
-let tagline = 'This is a House Gallery serves as a project and exhibition place for the DIY Bay Area art scene.';
-let contact: Record<string, unknown> = {};
+let tagline = 'This is a House Gallery serves as a project and exhibition space for the DIY Bay Area art scene.';
+let email = '';
+let instagram = '';
+let instagramUrl = '';
 try {
   const settings = await cms.siteSettings();
   if (settings.tagline) tagline = settings.tagline;
-  contact = settings.contact ?? {};
+  const contact = (settings.contact ?? {}) as Record<string, unknown>;
+  if (typeof contact.email === 'string' && contact.email) email = contact.email;
+  const socials = (settings.socials ?? []) as Record<string, unknown>[];
+  const ig = socials.find((s) => String(s.label ?? s.platform ?? '').toLowerCase().includes('instagram'))
+    ?? socials.find((s) => String(s.url ?? '').toLowerCase().includes('instagram'));
+  if (ig) {
+    instagram = String(ig.label ?? ig.handle ?? '@thisisahousegallery');
+    instagramUrl = String(ig.url ?? '');
+  }
 } catch {
   /* CMS unreachable — use defaults */
 }
-const email = typeof contact.email === 'string' ? contact.email : '';
+if (!instagram) instagram = '@thisisahousegallery';
+if (!instagramUrl) instagramUrl = 'https://instagram.com/thisisahousegallery';
 ---
 
 <Layout title="About — This is a House Gallery" bodyClass="about-page">
@@ -21,53 +32,79 @@ const email = typeof contact.email === 'string' ? contact.email : '';
       <p class="type-intro">{tagline}</p>
     </header>
 
-    <section class="about-body">
-      <div class="about-block">
-        <h2 class="type-subheading">The House</h2>
-        <p class="type-body">
-          This is a House Gallery is a project and exhibition space run out of a
-          house in the East Bay. We make room for the DIY Bay Area art scene —
-          the artists, objects, and communities that don’t always fit the white
-          cube — turning the domestic into a place to show, gather, and argue
-          about what art is for.
-        </p>
+    <div class="about-layout">
+      <div class="about-main">
+        <section class="about-block">
+          <h2 class="type-subheading">The House</h2>
+          <p class="type-body">
+            This is a House Gallery is a project and exhibition space run out of
+            a house in the East Bay, making room for the DIY Bay Area art scene —
+            the artists, objects, and communities that make this city what it is.
+          </p>
+        </section>
+
+        <section class="about-block">
+          <h2 class="type-subheading">Program</h2>
+          <p class="type-body">
+            Shows happen when they happen. When an artist brings work and a
+            conversation is worth starting, we make room for it. Openings are
+            free and open — come through, look close, say hello. See the{" "}
+            <a href="/schedule/">schedule</a> for what’s on, and browse past
+            shows under <a href="/exhibitions/">exhibitions</a>.
+          </p>
+        </section>
       </div>
 
-      <div class="about-block">
-        <h2 class="type-subheading">Program</h2>
-        <p class="type-body">
-          Exhibitions change month to month, each one an installation in the
-          space and a conversation with the people who made it. Openings are
-          free and open — come through, look close, say hello. See the{" "}
-          <a href="/schedule/">schedule</a> for what’s on, and browse past shows
-          under <a href="/exhibitions/">exhibitions</a>.
-        </p>
-      </div>
-
-      <div class="about-block">
-        <h2 class="type-subheading">Get in Touch</h2>
-        {email ? (
-          <p class="type-body">
-            For inquiries, submissions, or just to say hi, write to{" "}
-            <a class="email-link" href={`mailto:${email}`}>{email}</a>.
-          </p>
-        ) : (
-          <p class="type-body">
-            For inquiries or submissions, reach out via the contact links below.
-          </p>
-        )}
-      </div>
-    </section>
+      <aside class="about-aside">
+        <section class="about-block about-contact">
+          <h2 class="type-subheading">Get in Touch</h2>
+          <div class="about-contact__card">
+            <img src="/house-logo.png" alt="This is a House Gallery" class="about-contact__img" />
+            {email && (
+              <p class="about-contact__line">
+                <a class="email-link" href={`mailto:${email}`}>{email}</a>
+              </p>
+            )}
+            <a class="about-contact__line" href={instagramUrl} target="_blank" rel="noopener">
+              {instagram}
+            </a>
+          </div>
+        </section>
+      </aside>
+    </div>
   </div>
 </Layout>
 
 <style>
   .about-hero { padding: var(--size-layout-heading-spacing, 30px) var(--size-layout-gutter, 15px); border-bottom: 1px solid var(--color-black, #121212); }
   .about-hero .type-intro { max-width: 640px; margin-top: var(--size-layout-element-spacing, 25px); }
-  .about-body { max-width: 680px; margin: 0 auto; padding: var(--size-layout-section-spacing, 40px) var(--size-layout-gutter, 15px); }
-  .about-block { margin-bottom: var(--size-layout-section-spacing, 40px); }
+
+  /* Align the layout's left edge with the header/title gutter so the body
+     text lines up with the intro instead of being centered in its own column. */
+  .about-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--size-layout-section-spacing, 48px);
+    padding: var(--size-layout-section-spacing, 48px) var(--size-layout-gutter, 15px);
+  }
+  @media (min-width: 900px) {
+    .about-layout { grid-template-columns: minmax(0, 1fr) 300px; align-items: start; column-gap: var(--size-layout-section-spacing, 48px); }
+  }
+
+  .about-main { max-width: 640px; }
+  .about-block { margin-bottom: var(--size-layout-section-spacing, 48px); }
+  .about-block:last-child { margin-bottom: 0; }
   .about-block .type-subheading { margin-bottom: var(--size-layout-element-spacing, 25px); }
   .about-block .type-body { line-height: 1.8; }
   .about-block a { color: var(--color-accent, #e91e63); text-decoration: underline; text-underline-offset: 3px; }
   .about-block a:hover { background: var(--color-accent, #e91e63); color: #fff; }
+
+  .about-aside { border-left: 1px solid var(--color-black, #121212); padding-left: var(--size-layout-section-spacing, 48px); }
+  @media (min-width: 900px) { .about-aside { position: sticky; top: 40px; } }
+  @media (max-width: 899px) { .about-aside { border-left: none; border-top: 1px solid var(--color-black, #121212); padding-left: 0; padding-top: var(--size-layout-section-spacing, 48px); } }
+
+  .about-contact__card { display: flex; flex-direction: column; gap: 1rem; }
+  .about-contact__img { width: 100%; max-width: 240px; border: 1px solid var(--color-black, #121212); }
+  .about-contact__line { font-size: var(--font-size-body, 16px); color: var(--color-accent, #e91e63); text-decoration: underline; text-underline-offset: 3px; }
+  .about-contact__line:hover { background: var(--color-accent, #e91e63); color: #fff; }
 </style>
