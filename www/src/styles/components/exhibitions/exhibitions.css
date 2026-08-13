@@ -1,9 +1,9 @@
 /* Exhibitions page styles */
 
 /* Page layout structure */
-.exhibitions-index .body {
-  margin: var(--size-layout-heading-spacing) 0;
-}
+/* NOTE: removed the legacy `.exhibitions-index .body { margin: heading-spacing 0 }`
+   rule — the shared PageHeader now owns the title header, and that large margin
+   misaligned the Exhibitions title vs. the other top-level pages. */
 
 .exhibition-page-header {
   padding: var(--size-layout-heading-spacing) var(--size-layout-gutter);
