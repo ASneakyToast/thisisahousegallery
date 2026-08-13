@@ -483,16 +483,14 @@ function galleryDataAttrs(item: GalleryItem) {
           color: var(--color-interactive-secondary-text, #121212);
           letter-spacing: 0.02em;
           text-transform: uppercase;
-          max-width: 20ch;
           transition: color 120ms ease;
           z-index: 1;
-          white-space: nowrap;
         }
         .exhibition-nav__label--next { justify-content: flex-end; }
         .exhibition-nav__label::after {
           content: '';
           position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
+          inset: 0;
           background-color: var(--color-hover-background, #121212);
           transform: scaleX(0);
           transform-origin: left;
