@@ -14,6 +14,17 @@ function formatDate(iso: string | null): string {
   const d = new Date(iso);
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
+
+// Convert a YouTube/Vimeo URL into an embeddable URL for the feature video.
+// Handles youtu.be/, youtube.com/watch?v=, and vimeo.com/ URLs.
+function videoEmbedUrl(u: string): string {
+  if (!u) return '';
+  const youtuBe = u.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/);
+  if (youtuBe) return `https://www.youtube.com/embed/${youtuBe[1]}`;
+  const vimeo = u.match(/vimeo\.com\/(\d+)/);
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
+  return u;
+}
 ---
 
 <Layout title="Exhibitions — This is a House Gallery" bodyClass="exhibitions-index">
@@ -41,7 +52,24 @@ function formatDate(iso: string | null): string {
               </section>
             </a>
 
-            {gallery.length > 0 ? (
+            {(() => {
+              const embed = videoEmbedUrl(ex.video_embed_url || '');
+              if (embed) {
+                return (
+                  <div class="exhibition-feature-video">
+                    <div class="video-container video-responsive">
+                      <iframe
+                        src={embed}
+                        title={ex.title}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  </div>
+                );
+              }
+              return gallery.length > 0 ? (
               <div class="exhibition-feature-gallery" data-gallery-id={ex.title.toLowerCase().replace(/\s+/g, '-')}>
                 <div class="gallery-container gallery-columns-container masonry">
                   <div class="gallery-images">
@@ -68,7 +96,8 @@ function formatDate(iso: string | null): string {
               </div>
             ) : (
               <p class="horizontal-features-block__empty">{ex.title} — no photos yet</p>
-            )}
+            );
+            })()}
           </div>
         );
       })}
