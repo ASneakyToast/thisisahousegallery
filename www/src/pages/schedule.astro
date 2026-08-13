@@ -66,7 +66,7 @@ function nonOpeningFor(ex: Exhibition): EventItem[] {
       <section class="program-section program-current">
         <h2 class="section-heading program-heading"><span class="section-icon">🔴</span> Happening Now</h2>
         <div class="program-list">
-          {current.map((ex) => <ProgramRow ex={ex} nonOpeningEvents={nonOpeningFor(ex)} />)}
+          {current.map((ex) => <ProgramRow ex={ex} showOpening nonOpeningEvents={nonOpeningFor(ex)} />)}
         </div>
       </section>
     )}
@@ -75,7 +75,7 @@ function nonOpeningFor(ex: Exhibition): EventItem[] {
       <h2 class="section-heading program-heading">Upcoming</h2>
       {upcoming.length > 0 ? (
         <div class="program-list">
-          {upcoming.map((ex) => <ProgramRow ex={ex} nonOpeningEvents={nonOpeningFor(ex)} />)}
+          {upcoming.map((ex) => <ProgramRow ex={ex} showOpening nonOpeningEvents={nonOpeningFor(ex)} />)}
         </div>
       ) : (
         <div class="program-empty">
