@@ -26,9 +26,9 @@ const heroImg = heroShowcard
   : bestImageUrl(ex.listing_image, { max: 800 })
   ?? bestImageUrl(ex.artworks?.find((a) => a.images?.length)?.images?.[0], { max: 800 });
 
-// Artworks split: with images (hover previews) vs without.
-const artworks = (ex.artworks ?? []).filter((a) => a.images?.length);
-const namedArtworks = (ex.artworks ?? []).filter((a) => !a.images?.length);
+// Artworks: all of them, in one grid like the original. Those with images get
+// a hover preview and open the lightbox; those without render as plain text.
+const allArtworks = ex.artworks ?? [];
 
 const photos = photosByCategory(ex);
 const installationPhotos = photos['installation'] ?? [];
@@ -201,63 +201,45 @@ function galleryDataAttrs(item: GalleryItem) {
                     </section>
                   )}
 
-                  <!-- Artworks Section -->
-                  {artworks.length > 0 && (
-      <section class="exhibition-artworks-section">
-        <div class="exhibition-section-header">
-          <h2 class="exhibition-section-title">Artworks</h2>
-          <a href={`/exhibitions/${ex.slug}/catalog/`} class="button-carrot">View Printable Catalog</a>
-        </div>
-        <div class="exhibition-artworks-grid">
-          {artworks.map((a) => {
-            const preview = bestImageUrl(a.images?.[0], { max: 400 });
-            return (
-              <article
-                class="exhibition-artwork-card"
-                data-artwork-id={a.id}
-                data-quickview-index={artworkFirstIndex.get(a.title) ?? 0}
-                style={preview ? 'cursor: pointer;' : ''}
-              >
-                <div class="exhibition-artwork-content">
-                  <h3 class="exhibition-artwork-title" set:html={a.title}></h3>
-                </div>
-                {preview && (
-                  <div class="exhibition-artwork-hover-preview" data-preview-src={preview}>
-                    <img
-                      src={preview}
-                      alt={`${a.title} preview`}
-                      class="exhibition-artwork-hover-img"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
-      </section>
-    )}
+                  <!-- Artworks Section: all artworks in one grid, like the original. -->
+                                    {allArtworks.length > 0 && (
+                        <section class="exhibition-artworks-section">
+                          <div class="exhibition-section-header">
+                            <h2 class="exhibition-section-title">Artworks</h2>
+                            <a href={`/exhibitions/${ex.slug}/catalog/`} class="button-carrot">View Printable Catalog</a>
+                          </div>
+                          <div class="exhibition-artworks-grid">
+                            {allArtworks.map((a) => {
+                              const preview = bestImageUrl(a.images?.[0], { max: 400 });
+                              return (
+                                <article
+                                  class="exhibition-artwork-card"
+                                  {...(a.images?.length
+                                    ? { 'data-artwork-id': a.id, 'data-quickview-index': artworkFirstIndex.get(a.title) ?? 0, style: 'cursor: pointer;' }
+                                    : {})}
+                                >
+                                  <div class="exhibition-artwork-content">
+                                    <h3 class="exhibition-artwork-title" set:html={a.title}></h3>
+                                  </div>
+                                  {a.images?.length && preview && (
+                                    <div class="exhibition-artwork-hover-preview" data-preview-src={preview}>
+                                      <img
+                                        src={preview}
+                                        alt={`${a.title} preview`}
+                                        class="exhibition-artwork-hover-img"
+                                        loading="lazy"
+                                        decoding="async"
+                                      />
+                                    </div>
+                                  )}
+                                </article>
+                              );
+                            })}
+                          </div>
+                        </section>
+                      )}
 
-    <!-- Named artworks with no image -->
-    {namedArtworks.length > 0 && (
-      <section class="exhibition-artworks-section">
-        <div class="exhibition-section-header">
-          <h2 class="exhibition-section-title">More Works</h2>
-        </div>
-        <div class="exhibition-artworks-grid">
-          {namedArtworks.map((a) => (
-            <article class="exhibition-artwork-card">
-              <div class="exhibition-artwork-content">
-                <h3 class="exhibition-artwork-title" set:html={a.title}></h3>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-    )}
-
-    <!-- Opening Reception Gallery -->
+                          <!-- Opening Reception Gallery -->
     {openingPhotos.length > 0 && (
       <section class="opening-gallery-section">
         <div class="exhibition-section-header">
