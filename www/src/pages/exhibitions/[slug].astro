@@ -316,9 +316,7 @@ function galleryDataAttrs(item: GalleryItem) {
                 </div>
               </section>
             )}
-  </div>
-
-    {/* Prev/Next exhibition navigation (circular, showcard-front thumbnails).
+      {/* Prev/Next exhibition navigation (circular, showcard-front thumbnails).
             Each link shows the showcard image at its natural aspect ratio plus a
             short label; the title/artist line is intentionally omitted. */}
         {(prev || next) && (
@@ -353,6 +351,8 @@ function galleryDataAttrs(item: GalleryItem) {
             ) : null}
           </nav>
         )}
+
+</div>
 
     {/* Unified gallery (hidden) — the lightbox navigates this full set. */}
   <div class="unified-gallery-container" data-gallery-id={ex.title} hidden>
