@@ -204,6 +204,14 @@ class Artwork(Base):
         secondary="exhibition_artworks", back_populates="artworks"
     )
 
+    @property
+    def materials(self) -> list[Tag]:
+        """Materials are stored as tags (the source artwork had only a
+        ClusterTaggableManager 'materials' field, no separate descriptive
+        tags). Expose the same relationship under 'materials' so the read API
+        and frontend can render them meaningfully."""
+        return self.tags
+
 
 # --- through tables ---
 class ArtworkArtist(Base):
