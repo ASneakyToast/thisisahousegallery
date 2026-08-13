@@ -5,13 +5,27 @@ import { cms, bestImageUrl, showcardImage, photosByCategory } from '../../lib/cm
 
 export async function getStaticPaths() {
   const exhibitions = await cms.exhibitions();
-  return exhibitions.map((ex) => ({
-    params: { slug: ex.slug },
-    props: { slug: ex.slug },
-  }));
+  // Details carry the photos (incl. showcard front images used in nav), so
+  // fetch each and order newest-first to build circular prev/next neighbours.
+  const details = await Promise.all(
+    exhibitions.map((ex) => cms.exhibition(ex.slug).catch(() => ex)),
+  );
+  details.sort((a, b) => (b.start_date ?? '').localeCompare(a.start_date ?? ''));
+    const n = details.length;
+    // Newest-first ordering: "Previous Exhibition" steps toward older editions
+    // and "Next Exhibition" toward newer ones, wrapping around (oldest -> newest
+    // for Previous, newest -> oldest for Next).
+    return details.map((ex, i) => ({
+      params: { slug: ex.slug },
+      props: {
+        slug: ex.slug,
+        prev: n > 1 ? details[(i + 1) % n] : undefined,
+        next: n > 1 ? details[(i - 1 + n) % n] : undefined,
+      },
+    }));
 }
 
-const { slug } = Astro.props;
+const { slug, prev, next } = Astro.props;
 const ex = await cms.exhibition(slug);
 
 function formatDate(iso: string | null): string {
@@ -304,7 +318,35 @@ function galleryDataAttrs(item: GalleryItem) {
             )}
   </div>
 
-  {/* Unified gallery (hidden) — the lightbox navigates this full set. */}
+    {/* Prev/Next exhibition navigation (circular, showcard-front thumbnails). */}
+    {(prev || next) && (
+      <nav class="exhibition-nav" aria-label="Exhibition navigation">
+        {prev ? (
+          <a href={`/exhibitions/${prev.slug}/`} class="exhibition-nav__link exhibition-nav__link--prev">
+            <span class="exhibition-nav__thumb">
+              {showcardImage(prev) ? (
+                <img src={bestImageUrl(showcardImage(prev), { max: 400 })} alt="" loading="lazy" decoding="async" />
+              ) : null}
+            </span>
+            <span class="exhibition-nav__label">Previous Exhibition</span>
+            <span class="exhibition-nav__title">{prev.title}</span>
+          </a>
+        ) : null}
+        {next ? (
+          <a href={`/exhibitions/${next.slug}/`} class="exhibition-nav__link exhibition-nav__link--next">
+            <span class="exhibition-nav__thumb">
+              {showcardImage(next) ? (
+                <img src={bestImageUrl(showcardImage(next), { max: 400 })} alt="" loading="lazy" decoding="async" />
+              ) : null}
+            </span>
+            <span class="exhibition-nav__label">Next Exhibition</span>
+            <span class="exhibition-nav__title">{next.title}</span>
+          </a>
+        ) : null}
+      </nav>
+    )}
+
+    {/* Unified gallery (hidden) — the lightbox navigates this full set. */}
   <div class="unified-gallery-container" data-gallery-id={ex.title} hidden>
     {unifiedItems.map((item) => (
       <button class="gallery-lightbox-item" {...galleryDataAttrs(item)} data-index={unifiedItems.indexOf(item)}>
@@ -388,4 +430,50 @@ function galleryDataAttrs(item: GalleryItem) {
     border: 1px solid var(--color-black, #121212);
   }
   .exhibition-hero__content { flex: 1 1 auto; }
-</style>
+
+    /* Prev/Next exhibition navigation */
+    .exhibition-nav {
+      display: flex;
+      gap: var(--size-layout-large-spacing, 80px);
+      justify-content: space-between;
+      margin: var(--size-layout-heading-spacing, 40px) 0;
+      padding-top: var(--size-layout-element-spacing, 16px);
+      border-top: 1px solid var(--color-border, #ddd);
+    }
+    .exhibition-nav__link {
+      flex: 1 1 0;
+      display: flex;
+      align-items: center;
+      gap: var(--size-10, 10px);
+      text-decoration: none;
+      color: inherit;
+      min-width: 0;
+    }
+    .exhibition-nav__link--next { flex-direction: row-reverse; text-align: right; }
+    .exhibition-nav__thumb {
+      flex: 0 0 auto;
+      width: 96px;
+      height: 96px;
+      overflow: hidden;
+      background: var(--color-grey-light, #eee);
+    }
+    .exhibition-nav__thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .exhibition-nav__label {
+      display: block;
+      font-size: var(--size-11, 0.75rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: 4px;
+    }
+    .exhibition-nav__title { display: block; font-family: var(--font-heading, inherit); }
+    @media (max-width: 640px) {
+      .exhibition-nav { flex-direction: column; gap: var(--size-16, 16px); }
+      .exhibition-nav__link--next { flex-direction: row; text-align: left; }
+    }
+  </style>
