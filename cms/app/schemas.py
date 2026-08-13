@@ -91,6 +91,7 @@ class ArtworkOut(ORMModel):
     artists: list[ArtistOut] = []
     images: list[ImageOut] = []
     tags: list[TagOut] = []
+    materials: list[TagOut] = []
 
 
 class ExhibitionOut(ORMModel):
