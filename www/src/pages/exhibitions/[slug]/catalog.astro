@@ -1,0 +1,126 @@
+---
+// Per-exhibition printable artwork catalog (/exhibitions/[slug]/catalog/).
+// Ported from exhibition_catalog.html. Used mainly by gallery staff to print
+// the catalog; the .no-print controls don't render on paper.
+import Layout from '../../../layouts/Layout.astro';
+import { cms, bestImageUrl } from '../../../lib/cms';
+
+export async function getStaticPaths() {
+  const exhibitions = await cms.exhibitions();
+  return exhibitions.map((ex) => ({ params: { slug: ex.slug } }));
+}
+
+const { slug } = Astro.params;
+const ex = await cms.exhibition(slug);
+
+function formatDate(iso: string | null): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+function formatDateRange(ex: {
+  start_date: string | null;
+  end_date: string | null;
+}): string {
+  const s = formatDate(ex.start_date);
+  const e = ex.end_date ? formatDate(ex.end_date) : '';
+  if (!s) return '';
+  if (!e || e === s) return s;
+  return `${s} – ${e}`;
+}
+// Artwork titles are rich text; strip tags and decode entities for the catalog.
+function cleanTitle(t: string): string {
+  return (t || '').replace(/<[^>]+>/g, '').trim();
+}
+function artistNames(a: { name: string }[] = []): string {
+  return a.map((x) => x.name).join(', ');
+}
+function materialNames(m: { name: string }[] = []): string {
+  return m.map((x) => x.name).join(', ');
+}
+function yearOnly(iso: string | null): string {
+  if (!iso) return '';
+  return String(new Date(iso).getFullYear());
+}
+
+const artworks = ex.artworks ?? [];
+---
+
+<Layout title={`${cleanTitle(ex.title)} — Catalog`} bodyClass="exhibition-catalog-page">
+  <div class="catalog-page">
+    <header class="catalog-header">
+      <div class="catalog-header__branding">
+        <span class="catalog-header__gallery-name">This is a House Gallery</span>
+      </div>
+      <h1 class="catalog-header__title">{cleanTitle(ex.title)}</h1>
+
+      {ex.artists?.length > 0 && (
+        <div class="catalog-header__artists">
+          {ex.artists.map((a, i) => (
+            <span class="catalog-artist-name">{a.name}{i < ex.artists.length - 1 ? ', ' : ''}</span>
+          ))}
+        </div>
+      )}
+
+      <div class="catalog-header__dates">{formatDateRange(ex)}</div>
+
+      <div class="catalog-actions no-print">
+        <button class="catalog-print-btn" onclick="window.print()">Print Catalog</button>
+        <a class="catalog-back-link" href={`/exhibitions/${ex.slug}/`}>&larr; Back to Exhibition</a>
+      </div>
+    </header>
+
+    <section class="catalog-artworks">
+      <ol class="catalog-artworks-list">
+        {artworks.length ? artworks.map((aw, i) => {
+            const img = aw.images?.[0];
+            const imgUrl = img ? bestImageUrl(img, { max: 800 }) : '';
+            const dims = [aw.width_inches, aw.depth_inches, aw.height_inches]
+              .filter((d) => d)
+              .map((d) => `${d}″`)
+              .join(' × ');
+            return (
+              <li class="catalog-entry">
+                <article class="catalog-entry__inner">
+                  <div class="catalog-entry__image">
+                    {imgUrl ? (
+                      <img
+                        src={imgUrl}
+                        alt={cleanTitle(aw.title)}
+                        width={img.width || undefined}
+                        height={img.height || undefined}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div class="catalog-entry__placeholder" aria-label="No image available"></div>
+                    )}
+                  </div>
+                  <div class="catalog-entry__details">
+                    <span class="catalog-entry__number">{i + 1}</span>
+                    <h3 class="catalog-entry__title">{cleanTitle(aw.title)}</h3>
+                    {artistNames(aw.artists as { name: string }[]) && (
+                      <p class="catalog-entry__artist">{artistNames(aw.artists as { name: string }[])}</p>
+                    )}
+                    <div class="catalog-entry__meta">
+                      {aw.date && <span class="catalog-entry__date">{yearOnly(aw.date)}</span>}
+                      {dims && <span class="catalog-entry__size">{dims}</span>}
+                    </div>
+                    {materialNames(aw.materials as { name: string }[]) && (
+                      <p class="catalog-entry__materials">{materialNames(aw.materials as { name: string }[])}</p>
+                    )}
+                    {aw.price && <p class="catalog-entry__price">{aw.price}</p>}
+                  </div>
+                </article>
+              </li>
+            );
+          }) : (
+            <li class="catalog-empty">No artworks in this exhibition.</li>
+          )}
+      </ol>
+    </section>
+
+    <footer class="catalog-footer">
+      <p>This is a House Gallery</p>
+    </footer>
+  </div>
+</Layout>

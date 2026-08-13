@@ -66,6 +66,7 @@ export interface Artwork {
   artifacts: Record<string, unknown>[];
   artists: Artist[];
   images: Image[];
+  materials: { id: number; name: string }[];
   tags: { id: number; name: string; slug: string }[];
 }
 

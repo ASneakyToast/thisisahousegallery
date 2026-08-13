@@ -129,6 +129,7 @@ const showcards = photos['showcard'] ?? [];
       <section class="exhibition-artworks-section">
         <div class="exhibition-section-header">
           <h2 class="exhibition-section-title">Artworks</h2>
+          <a href={`/exhibitions/${ex.slug}/catalog/`} class="button-carrot">View Printable Catalog</a>
         </div>
         <div class="exhibition-artworks-grid">
           {artworks.map((a) => {
