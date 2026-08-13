@@ -5,9 +5,13 @@ import { bestImageUrl, photosByCategory, type EventItem, type Exhibition } from 
 interface Props {
   ex: Exhibition;
   nonOpeningEvents: EventItem[];
+  /** Show the "Exhibition Opening" badge (start-date based). We only show it
+   *  for upcoming/current shows — for the past archive it's just noise on
+   *  every row. */
+  showOpening?: boolean;
 }
 
-const { ex, nonOpeningEvents } = Astro.props;
+const { ex, nonOpeningEvents, showOpening = false } = Astro.props;
 
 // Thumbnail priority: opening photos (best captures the event) -> installation
 // -> showcard -> an artwork cover, so we never fall back to a random shot.
@@ -64,13 +68,14 @@ function eventKind(ev: EventItem): string {
     {img && <img src={img} alt={ex.title} class="program-item__thumb" loading="lazy" />}
   </a>
 
-  {/* Every show has an opening reception on its start date. */}
-  {openingDate && (
-    <div class="program-item__event">
-      <span class="program-item__event-badge">Exhibition Opening</span>
-      <span class="program-item__event-date">{openingDate}</span>
-    </div>
-  )}
+  {/* Every show has an opening reception on its start date — but we only
+        surface it for upcoming/current shows, not the past archive. */}
+    {showOpening && openingDate && (
+      <div class="program-item__event">
+        <span class="program-item__event-badge">Exhibition Opening</span>
+        <span class="program-item__event-date">{openingDate}</span>
+      </div>
+    )}
 
   {/* Non-opening programming (talks, workshops, closings…) reserved from events. */}
   {nonOpeningEvents.map((ev) => (
