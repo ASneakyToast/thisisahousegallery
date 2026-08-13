@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import { cms, bestImageUrl, showcardImage, photosByCategory } from '../../lib/cms';
 
 export async function getStaticPaths() {
@@ -34,6 +35,78 @@ const installationPhotos = photos['installation'] ?? [];
 const openingPhotos = photos['opening_reception'] ?? [];
 const inProgressPhotos = photos['in_progress'] ?? [];
 const showcards = photos['showcard'] ?? [];
+
+// Build the unified gallery the lightbox navigates through, in the same order
+// as the original get_unified_gallery_images: installation -> artwork images
+// (all per artwork) -> opening -> in-progress -> showcards. Each entry carries
+// the data-* attributes the lightbox reads.
+type GalleryItem = {
+  img: NonNullable<(typeof artworks)[number]['images']>[number];
+  type: string;
+  artworkTitle?: string;
+  artworkArtist?: string;
+  artworkDate?: string;
+  artworkMaterials?: string;
+  artworkSize?: string;
+  exhibitionTitle: string;
+  exhibitionDate: string;
+  credit?: string;
+  caption?: string;
+};
+const exDate = ex.end_date ? formatDate(ex.end_date) : formatDate(ex.start_date);
+const unifiedItems: GalleryItem[] = [];
+for (const p of installationPhotos) unifiedItems.push({ img: p, type: 'exhibition', exhibitionTitle: ex.title, exhibitionDate: exDate });
+// artwork images, grouped by artwork, ALL images per artwork
+for (const a of ex.artworks ?? []) {
+  if (!a.images?.length) continue;
+  const artist = (a.artists ?? []).map((x) => x.name).join(', ');
+  const date = a.date ? String(new Date(a.date).getFullYear()) : '';
+  for (const img of a.images) {
+    unifiedItems.push({
+      img, type: 'artwork', artworkTitle: a.title, artworkArtist: artist,
+      artworkDate: date, artworkSize: a.size || undefined, exhibitionTitle: ex.title, exhibitionDate: exDate,
+    });
+  }
+}
+for (const p of openingPhotos) unifiedItems.push({ img: p, type: 'opening', exhibitionTitle: ex.title, exhibitionDate: exDate });
+for (const p of inProgressPhotos) unifiedItems.push({ img: p, type: 'in_progress', exhibitionTitle: ex.title, exhibitionDate: exDate });
+for (const p of showcards) unifiedItems.push({ img: p, type: 'showcards', exhibitionTitle: ex.title, exhibitionDate: exDate });
+
+// First-image index per artwork title, for quickview on the artwork cards.
+const artworkFirstIndex = new Map<string, number>();
+{
+  let lastTitle = '';
+  unifiedItems.forEach((item, i) => {
+    if (item.type === 'artwork' && item.artworkTitle && item.artworkTitle !== lastTitle) {
+      artworkFirstIndex.set(item.artworkTitle, i);
+      lastTitle = item.artworkTitle;
+    }
+  });
+}
+// Map each visible installation/opening photo to its index in the unified gallery.
+function quickviewIndexFor(img: GalleryItem['img'], type: string): number {
+  return unifiedItems.findIndex((u) => u.type === type && u.img.id === img.id);
+}
+function galleryDataAttrs(item: GalleryItem) {
+  const full = bestImageUrl(item.img, { max: 1600 }) ?? item.img.file_url ?? '';
+  const thumb = bestImageUrl(item.img, { max: 400 }) ?? item.img.file_url ?? '';
+  const d = {
+    'data-media-type': 'image',
+    'data-media-src': full,
+    'data-thumbnail-src': thumb,
+    'data-caption': item.caption || item.artworkTitle || item.img.title || '',
+    'data-image-type': item.type,
+    'data-exhibition-title': item.exhibitionTitle,
+    'data-exhibition-date': item.exhibitionDate,
+  } as Record<string, string>;
+  if (item.artworkTitle) d['data-artwork-title'] = item.artworkTitle;
+  if (item.artworkArtist) d['data-artwork-artist'] = item.artworkArtist;
+  if (item.artworkDate) d['data-artwork-date'] = item.artworkDate;
+  if (item.artworkMaterials) d['data-artwork-materials'] = item.artworkMaterials;
+  if (item.artworkSize) d['data-artwork-size'] = item.artworkSize;
+  if (item.img.credit) d['data-image-credit'] = item.img.credit;
+  return d;
+}
 ---
 
 <Layout title={`${ex.title} — This is a House Gallery`} bodyClass="exhibition-page">
@@ -103,24 +176,28 @@ const showcards = photos['showcard'] ?? [];
           <h2 class="exhibition-section-title">Exhibition Photos</h2>
         </div>
         <div class="exhibition-images">
-          {installationPhotos.map((img) => (
-            <button
-              class="gallery-lightbox-item"
-              data-media-type="image"
-              aria-label={`View ${img.title || ex.title} in lightbox`}
-            >
-              <img
-                              src={bestImageUrl(img, { max: 400 })}
-                              alt={img.title || ex.title}
-                              width={img.width || undefined}
-                              height={img.height || undefined}
-                              loading="lazy"
-                              decoding="async"
-                              class="gallery-single-image"
-                            />
-                          </button>
-                        ))}
-                      </div>
+          {installationPhotos.map((img) => {
+            const idx = quickviewIndexFor(img, 'exhibition');
+            return (
+              <button
+                class="gallery-lightbox-item"
+                {...galleryDataAttrs({ img, type: 'exhibition', exhibitionTitle: ex.title, exhibitionDate: exDate })}
+                data-quickview-index={idx}
+                aria-label={`View ${img.title || ex.title} in lightbox`}
+              >
+                <img
+                  src={bestImageUrl(img, { max: 400 })}
+                  alt={img.title || ex.title}
+                  width={img.width || undefined}
+                  height={img.height || undefined}
+                  loading="lazy"
+                  decoding="async"
+                  class="gallery-single-image"
+                />
+              </button>
+            );
+          })}
+        </div>
                     </section>
                   )}
 
@@ -135,7 +212,12 @@ const showcards = photos['showcard'] ?? [];
           {artworks.map((a) => {
             const preview = bestImageUrl(a.images?.[0], { max: 400 });
             return (
-              <article class="exhibition-artwork-card" data-artwork-id={a.id} style={preview ? 'cursor: pointer;' : ''}>
+              <article
+                class="exhibition-artwork-card"
+                data-artwork-id={a.id}
+                data-quickview-index={artworkFirstIndex.get(a.title) ?? 0}
+                style={preview ? 'cursor: pointer;' : ''}
+              >
                 <div class="exhibition-artwork-content">
                   <h3 class="exhibition-artwork-title" set:html={a.title}></h3>
                 </div>
@@ -182,23 +264,27 @@ const showcards = photos['showcard'] ?? [];
           <h2 class="exhibition-section-title">Opening Reception</h2>
         </div>
         <div class="exhibition-images">
-          {openingPhotos.map((img) => (
-            <button
-              class="gallery-lightbox-item"
-              data-media-type="image"
-              aria-label={`View ${img.title || ex.title} in lightbox`}
-            >
-              <img
-                src={bestImageUrl(img, { max: 400 })}
-                alt={img.title || ex.title}
-                width={img.width || undefined}
-                height={img.height || undefined}
-                loading="lazy"
-                decoding="async"
-                class="gallery-single-image"
-              />
-            </button>
-          ))}
+          {openingPhotos.map((img) => {
+            const idx = quickviewIndexFor(img, 'opening');
+            return (
+              <button
+                class="gallery-lightbox-item"
+                {...galleryDataAttrs({ img, type: 'opening', exhibitionTitle: ex.title, exhibitionDate: exDate })}
+                data-quickview-index={idx}
+                aria-label={`View ${img.title || ex.title} in lightbox`}
+              >
+                <img
+                  src={bestImageUrl(img, { max: 400 })}
+                  alt={img.title || ex.title}
+                  width={img.width || undefined}
+                  height={img.height || undefined}
+                  loading="lazy"
+                  decoding="async"
+                  class="gallery-single-image"
+                />
+              </button>
+            );
+          })}
         </div>
       </section>
     )}
@@ -210,30 +296,52 @@ const showcards = photos['showcard'] ?? [];
           <h2 class="exhibition-section-title">In Progress Shots</h2>
         </div>
         <div class="exhibition-images">
-          {inProgressPhotos.map((img) => (
-            <button
-              class="gallery-lightbox-item"
-              data-media-type="image"
-              aria-label={`View ${img.title || ex.title} in lightbox`}
-            >
-              <img
-                src={bestImageUrl(img, { max: 400 })}
-                alt={img.title || ex.title}
-                width={img.width || undefined}
-                height={img.height || undefined}
-                loading="lazy"
-                decoding="async"
-                class="gallery-single-image"
-              />
-            </button>
-          ))}
-        </div>
-      </section>
-    )}
+                  {inProgressPhotos.map((img) => {
+                    const idx = quickviewIndexFor(img, 'in_progress');
+                    return (
+                      <button
+                        class="gallery-lightbox-item"
+                        {...galleryDataAttrs({ img, type: 'in_progress', exhibitionTitle: ex.title, exhibitionDate: exDate })}
+                        data-quickview-index={idx}
+                        aria-label={`View ${img.title || ex.title} in lightbox`}
+                      >
+                        <img
+                          src={bestImageUrl(img, { max: 400 })}
+                          alt={img.title || ex.title}
+                          width={img.width || undefined}
+                          height={img.height || undefined}
+                          loading="lazy"
+                          decoding="async"
+                          class="gallery-single-image"
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
   </div>
+
+  {/* Unified gallery (hidden) — the lightbox navigates this full set. */}
+  <div class="unified-gallery-container" data-gallery-id={ex.title} hidden>
+    {unifiedItems.map((item) => (
+      <button class="gallery-lightbox-item" {...galleryDataAttrs(item)} data-index={unifiedItems.indexOf(item)}>
+        <img src={bestImageUrl(item.img, { max: 400 })} alt="" loading="lazy" />
+      </button>
+    ))}
+  </div>
+
+  <Lightbox />
 </Layout>
 
 <script>
+  // Unified gallery lightbox (photos + artwork quickview).
+  import { UnifiedGalleryLightbox } from '../../lib/lightbox';
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new UnifiedGalleryLightbox().init());
+  } else {
+    new UnifiedGalleryLightbox().init();
+  }
   // Ported from artwork-hover-animations.js: mouse-following hover preview on
   // exhibition artwork cards. The preview is moved to <body> on first show so it
   // is not affected by the card's hover transform (a `position:fixed` element

@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import PageHeader from '../../components/PageHeader.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import { cms, bestImageUrl, filteredGalleryImages } from '../../lib/cms';
 
 // Fetch details (they carry the photo galleries; the list endpoint does not).
@@ -101,6 +102,17 @@ function videoEmbedUrl(u: string): string {
           </div>
         );
       })}
-    </div>
-  </div>
-</Layout>
+          </div>
+        </div>
+
+        <Lightbox />
+      </Layout>
+
+      <script>
+        import { UnifiedGalleryLightbox } from '../../lib/lightbox';
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => new UnifiedGalleryLightbox().init());
+        } else {
+          new UnifiedGalleryLightbox().init();
+        }
+      </script>
