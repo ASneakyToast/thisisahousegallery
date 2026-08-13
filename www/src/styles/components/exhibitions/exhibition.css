@@ -1,7 +1,10 @@
 /* Individual Exhibition Page Styles */
 
 .exhibition-page .body.normal {
-  margin: var(--size-layout-heading-spacing) 0;
+  /* Top margin separates the content from the page header; the bottom is 0 so
+     the prev/next nav's own padding sits flush above the footer instead of
+     stacking extra heading-spacing below it. */
+  margin: var(--size-layout-heading-spacing) 0 0;
   padding: 0 var(--size-layout-gutter);
 }
 
