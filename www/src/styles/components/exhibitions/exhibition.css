@@ -461,12 +461,20 @@
   }
   
   .exhibition-artwork-card {
-    break-inside: avoid;
-    margin-bottom: 1rem;
-    width: 100%;
-    max-width: none;
+      break-inside: avoid;
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: none;
+    }
+
+    /* Let long artwork titles wrap on narrow screens */
+    .exhibition-artwork-title,
+    .exhibition-artwork-artist,
+    .exhibition-artwork-medium {
+      white-space: normal;
+      overflow-wrap: break-word;
+    }
   }
-}
 
 @media (max-width: 480px) {
   .exhibition-title-hero {
