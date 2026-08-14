@@ -161,6 +161,7 @@
 
 .header__menu-button p {
   margin: 0;
+  color: var(--color-text);
   font-size: var(--font-size-label);
   font-family: var(--font-family-label);
   line-height: var(--line-height-label);

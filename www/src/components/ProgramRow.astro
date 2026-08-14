@@ -108,4 +108,25 @@ function eventKind(ev: EventItem): string {
   .program-item__event-badge { background: var(--color-black, #121212); color: #fff; padding: 0.15rem 0.5rem; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
   .program-item__event-badge--alt { background: var(--color-accent, #e91e63); }
   .program-item__event-date { opacity: 0.8; }
+
+  /* Mobile: stack each row into a single column — date on top, then title +
+     body, then the thumbnail — so nothing overflows horizontally. */
+  @media (max-width: 640px) {
+    .program-item__main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--size-layout-item-gap, 15px);
+      align-items: start;
+    }
+    .program-item__thumb {
+      width: 100%;
+      height: auto;
+      max-height: 260px;
+      object-fit: cover;
+      order: 3;
+    }
+    .program-item__date { order: 1; }
+    .program-item__body { order: 2; }
+    .program-item__event { flex-wrap: wrap; }
+  }
 </style>

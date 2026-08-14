@@ -78,6 +78,10 @@ function videoEmbedUrl(u: string): string {
                       <button
                         class="gallery-lightbox-item"
                         data-media-type="image"
+                        data-media-src={bestImageUrl(img, { max: 1600 }) ?? img.file_url ?? ''}
+                        data-thumbnail-src={bestImageUrl(img, { max: 400 }) ?? img.file_url ?? ''}
+                        data-caption={img.title || ex.title}
+                        data-image-type="exhibition"
                         data-index={i}
                         aria-label={`View ${img.title || ex.title} in lightbox`}
                       >

@@ -28,7 +28,7 @@ const hasFloating = (home.floating_images ?? []).length > 0;
               <div class="floating-hero__container">
                 {home.floating_images.map((img, i) => (
                   <div class="floating-hero__image" data-floating-image data-image-index={i}>
-                    <img src={bestImageUrl(img, { max: 400 })} alt={img.title || ''} loading="lazy" width={img.width || 400} height={img.height || 300} />
+                    <img src={bestImageUrl(img, { max: 400 })} alt={img.title || ''} loading="eager" decoding="async" width={img.width || 400} height={img.height || 300} />
                   </div>
                 ))}
               </div>
