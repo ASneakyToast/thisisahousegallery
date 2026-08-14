@@ -1,0 +1,17 @@
+# Netlify config — Model A (build locally, deploy static output).
+#
+# The Astro site is built on your machine (`npm run build` in www/), which
+# fetches the CMS at build time and produces a fully static www/dist/.
+# Netlify just serves those static files — no build command, no CMS access,
+# no server needed. There is nothing here for Netlify's build to run.
+
+[build]
+  publish = "dist"
+  command = ""   # no remote build — the site is already built locally
+
+# Everything is pre-rendered static HTML, so no SPA fallback is needed.
+# If you later add client-side routes, add:
+# [[redirects]]
+#   from = "/*"
+#   to = "/index.html"
+#   status = 200
