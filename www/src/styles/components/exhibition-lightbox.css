@@ -392,111 +392,33 @@
   100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+/* Responsive adjustments — on touch devices the lightbox is photo-only:
+   the controls panel (title/close/metadata/nav) is hidden and the image
+   fills the viewport. Tap the photo to close; swipe left/right to navigate
+   (both already wired in lightbox.ts). */
+@media (max-width: 768px), (hover: none) {
   .exhibition-lightbox__content {
-    flex-direction: column;
     height: 100dvh;
     max-height: 100dvh;
   }
-  
-  .exhibition-lightbox__media-container {
-    flex: 1 1 60%;
-    padding: 16px;
-    height: 60dvh;
-    max-height: 60dvh;
-    min-height: 40dvh;
-  }
-  
+
   .exhibition-lightbox__controls {
-    flex: 0 0 40%;
-    height: 40dvh;
-    max-height: 40dvh;
-    border-left: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    overflow-y: auto;
-    position: relative;
+    display: none;
   }
-  
-  .exhibition-lightbox__controls-header {
-    flex: 0 0 auto;
-    padding: 16px 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  .exhibition-lightbox__artwork-metadata {
-    flex: 1 1 auto;
-    padding: 0;
-    overflow-y: auto;
+
+  .exhibition-lightbox__media-container {
+    flex: 1 1 100%;
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
     min-height: 0;
-  }
-  
-  .exhibition-lightbox__navigation {
-    flex: 0 0 auto;
-    padding: 16px 20px;
-    gap: 16px;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    background: white;
-    position: sticky;
-    bottom: 0;
-  }
-  
-  .exhibition-lightbox__title {
-    font-size: 1.1rem;
-  }
-  
-  .exhibition-lightbox__close {
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
-  }
-  
-  .exhibition-lightbox__nav {
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
+    padding: 12px;
+    box-sizing: border-box;
   }
 }
 
 @media (max-width: 480px) {
   .exhibition-lightbox__media-container {
-    flex: 1 1 65%;
-    height: 65dvh;
-    max-height: 65dvh;
-    min-height: 45dvh;
-    padding: 12px;
-  }
-  
-  .exhibition-lightbox__controls {
-    flex: 0 0 35%;
-    height: 35dvh;
-    max-height: 35dvh;
-  }
-  
-  .exhibition-lightbox__controls-header {
-    padding: 12px 16px;
-  }
-  
-  .exhibition-lightbox__artwork-metadata {
-    padding: 0;
-  }
-  
-  .exhibition-lightbox__navigation {
-    padding: 12px 16px;
-  }
-  
-  .exhibition-lightbox__close {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-  }
-  
-  .exhibition-lightbox__nav {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
+    padding: 8px;
   }
 }
