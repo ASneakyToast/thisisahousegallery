@@ -54,55 +54,53 @@ function videoEmbedUrl(u: string): string {
             </a>
 
             {(() => {
-              const embed = videoEmbedUrl(ex.video_embed_url || '');
-              if (embed) {
-                return (
-                  <div class="exhibition-feature-video">
-                    <div class="video-container video-responsive">
-                      <iframe
-                        src={embed}
-                        title={ex.title}
-                        loading="lazy"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                      ></iframe>
-                    </div>
-                  </div>
-                );
-              }
-              return gallery.length > 0 ? (
-              <div class="exhibition-feature-gallery" data-gallery-id={ex.title.toLowerCase().replace(/\s+/g, '-')}>
-                <div class="gallery-container gallery-columns-container masonry">
-                  <div class="gallery-images">
-                    {gallery.map((img, i) => (
-                      <button
-                        class="gallery-lightbox-item"
-                        data-media-type="image"
-                        data-media-src={bestImageUrl(img, { max: 1600 }) ?? img.file_url ?? ''}
-                        data-thumbnail-src={bestImageUrl(img, { max: 400 }) ?? img.file_url ?? ''}
-                        data-caption={img.title || ex.title}
-                        data-image-type="exhibition"
-                        data-index={i}
-                        aria-label={`View ${img.title || ex.title} in lightbox`}
-                      >
-                        <img
-                          src={bestImageUrl(img, { max: 400 })}
-                          alt={img.title || ex.title}
-                          width={img.width || undefined}
-                          height={img.height || undefined}
-                          loading="lazy"
-                          decoding="async"
-                          class="gallery-single-image"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <p class="horizontal-features-block__empty">{ex.title} — no photos yet</p>
-            );
-            })()}
+                          const embed = videoEmbedUrl(ex.video_embed_url || '');
+                          if (embed) {
+                            return (
+                              <div class="exhibition-feature-video">
+                                <div class="video-container video-responsive">
+                                  <iframe
+                                    src={embed}
+                                    title={ex.title}
+                                    loading="lazy"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen
+                                  ></iframe>
+                                </div>
+                              </div>
+                            );
+                          }
+                          return gallery.length > 0 ? (
+                          <div class="exhibition-feature-gallery" data-gallery-id={ex.title.toLowerCase().replace(/\s+/g, '-')}>
+                            <div class="gallery-container gallery-columns-container masonry">
+                              <div class="gallery-images">
+                                {gallery.map((img, i) => (
+                                  <button
+                                    class="gallery-lightbox-item"
+                                    data-media-type="image"
+                                    data-media-src={bestImageUrl(img, { max: 1600 }) ?? img.file_url ?? ''}
+                                    data-thumbnail-src={bestImageUrl(img, { max: 400 }) ?? img.file_url ?? ''}
+                                    data-caption={img.title || ex.title}
+                                    data-image-type="exhibition"
+                                    data-index={i}
+                                    aria-label={`View ${img.title || ex.title} in lightbox`}
+                                  >
+                                    <img
+                                      src={bestImageUrl(img, { max: 400 })}
+                                      alt={img.title || ex.title}
+                                      width={img.width || undefined}
+                                      height={img.height || undefined}
+                                      loading="lazy"
+                                      decoding="async"
+                                      class="gallery-single-image"
+                                    />
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : null;
+                        })()}
           </div>
         );
       })}

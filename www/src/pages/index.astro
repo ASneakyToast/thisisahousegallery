@@ -85,9 +85,12 @@ const hasFloating = (home.floating_images ?? []).length > 0;
                             loading="lazy"
                           />
                         ) : (
-                          <div class="horizontal-features-card__placeholder">
-                            <span>{ex.listing_title || ex.title}</span>
-                          </div>
+                                                  <div class="horizontal-features-card__placeholder">
+                                                    {ex.artists?.length > 0 && (
+                                                      <span class="horizontal-features-card__placeholder-artists">{ex.artists.map((a) => a.name).join(', ')}</span>
+                                                    )}
+                                                    <span class="horizontal-features-card__placeholder-label">{ex.listing_title || ex.title}</span>
+                                                  </div>
                         )}
                       </div>
                     </a>
