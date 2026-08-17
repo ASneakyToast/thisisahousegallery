@@ -160,4 +160,26 @@ class EventOut(ORMModel):
     featured_image: Optional[ImageOut] = None
 
 
+# ---------------------------------------------------------------------------
+# BFF / page-shaped responses (backend-for-frontend read projections)
+# ---------------------------------------------------------------------------
+class HomeShowOut(BaseModel):
+    slug: str
+    title: str
+    listing_title: str = ""
+    listing_summary: str = ""
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    artists: list[str] = []
+    image_url: Optional[str] = None
+
+
+class HomePageOut(BaseModel):
+    site_title: str = ""
+    tagline: str = ""
+    intro: str = ""
+    floating_image_urls: list[str] = []
+    shows: list[HomeShowOut] = []
+
+
 ArtistDetailOut.model_rebuild()
