@@ -121,6 +121,25 @@ export interface EventItem {
   featured_image: Image | null;
 }
 
+export interface HomeShow {
+  slug: string;
+  title: string;
+  listing_title: string;
+  listing_summary: string;
+  start_date: string | null;
+  end_date: string | null;
+  artists: string[];
+  image_url: string | null;
+}
+
+export interface HomePageData {
+  site_title: string;
+  tagline: string;
+  intro: string;
+  floating_image_urls: string[];
+  shows: HomeShow[];
+}
+
 export const cms = {
   siteSettings: () => get<SiteSettings>('/site-settings'),
   exhibitions: () => get<Exhibition[]>('/exhibitions'),
@@ -133,6 +152,7 @@ export const cms = {
     events: () => get<EventItem[]>('/events'),
     image: (id: number) => get<Image>(`/images/${id}`),
     home: () => get<{ intro: string; floating_images: Image[] }>('/home'),
+    homePage: () => get<HomePageData>('/pages/home'),
   };
 
 /**

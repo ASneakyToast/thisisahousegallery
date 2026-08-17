@@ -32,6 +32,8 @@ from app.schemas import (
     ExhibitionDetailOut,
     ExhibitionOut,
     HomeOut,
+    HomePageOut,
+    HomeShowOut,
     ImageOut,
     RenditionOut,
     SiteSettingsOut,
@@ -235,3 +237,111 @@ def get_image(image_id: int, db: Session = Depends(get_db)):
     if row is None:
         raise HTTPException(status_code=404, detail="Image not found")
     return row
+
+
+# ---------------------------------------------------------------------------
+# BFF / page-shaped endpoints
+# ---------------------------------------------------------------------------
+def _best_image_url(img: Optional[Image], max_width: int = 400) -> Optional[str]:
+    """Pick the smallest rendition >= max_width (else largest), return its URL.
+
+    Mirrors the frontend `bestImageUrl` helper so image-selection logic lives
+    in the backend for the page-shaped endpoints. Note we build the URL from
+    `file_path` via storage (renditions carry no URL until the Pydantic
+    validator populates it on the output schema).
+    """
+    if img is None:
+        return None
+    storage = get_storage()
+    renditions = sorted(img.renditions, key=lambda r: r.width)
+    if not renditions:
+        return storage.url(img.file_path)
+    for r in renditions:
+        if r.width >= max_width:
+            return storage.url(r.file_path)
+    return storage.url(renditions[-1].file_path)
+
+
+def _show_card_image_url(ex) -> Optional[str]:
+    """Resolve an exhibition's homepage thumbnail: showcard photo, else
+    listing image, else the first artwork's first image (best at 400px)."""
+    if getattr(ex, "photos", None):
+        for p in ex.photos:
+            if p.category == "showcard" and p.image:
+                return _best_image_url(p.image, 400)
+    if ex.listing_image:
+        return _best_image_url(ex.listing_image, 400)
+    for a in (ex.artworks or []):
+        if a.images:
+            return _best_image_url(a.images[0], 400)
+    return None
+
+
+@router.get("/pages/home", response_model=HomePageOut)
+def get_page_home(db: Session = Depends(get_db)):
+    """One payload for the static homepage: site settings + hero + shows.
+
+    Collapses what the Astro homepage previously fetched as ~17 requests
+    (site-settings + exhibitions + N detail + home) into a single small call.
+    Shows carry a pre-resolved thumbnail URL and artist names only (no nested
+    artwork/rendition trees), so the payload is light.
+    """
+    settings = db.execute(select(SiteSettings).order_by(SiteSettings.id)).scalars().first()
+    home = db.execute(select(HomePage).order_by(HomePage.id)).scalars().first()
+
+    # Hero floating images (honour ordering), best at 400px
+    floating_urls: list[str] = []
+    if home and home.floating_image_ids:
+        ids = list(home.floating_image_ids)
+        rows = {
+            r.id: r
+            for r in db.execute(select(Image).where(Image.id.in_(ids))).scalars().all()
+        }
+        floating_urls = [
+            url
+            for i in ids
+            if (i in rows) and (url := _best_image_url(rows[i], 400)) is not None
+        ]
+
+    # Shows (newest first), each with a resolved thumbnail
+    exhibitions = (
+        db.execute(
+            select(Exhibition)
+            .options(
+                joinedload(Exhibition.artists),
+                joinedload(Exhibition.artworks)
+                .selectinload(Artwork.images)
+                .selectinload(Image.renditions),
+                joinedload(Exhibition.listing_image).joinedload(Image.renditions),
+                joinedload(Exhibition.photos)
+                .joinedload(ExhibitionPhoto.image)
+                .selectinload(Image.renditions),
+            )
+            .order_by(Exhibition.start_date.desc())
+        )
+        .unique()
+        .scalars()
+        .all()
+    )
+
+    shows = [
+        HomeShowOut(
+            slug=ex.slug,
+            title=ex.title,
+            listing_title=ex.listing_title,
+            listing_summary=ex.listing_summary,
+            start_date=ex.start_date,
+            end_date=ex.end_date,
+            artists=[a.name for a in (ex.artists or [])],
+            image_url=_show_card_image_url(ex),
+        )
+        for ex in exhibitions
+    ]
+
+    return HomePageOut(
+        site_title=(settings.site_title if settings else ""),
+        tagline=(settings.tagline if settings else ""),
+        intro=(home.intro if home else ""),
+        floating_image_urls=floating_urls,
+        shows=shows,
+    )
