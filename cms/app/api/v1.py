@@ -516,3 +516,24 @@ def get_pages_schedule(db: Session = Depends(get_db)):
         related_exhibition_slug=ev.related_exhibition.slug if ev.related_exhibition else None,
     ) for ev in events]
     return SchedulePageOut(shows=shows, events=event_rows)
+
+
+
+@router.get("/pages/exhibition-nav", response_model=ExhibitionNavPageOut)
+def get_pages_exhibition_nav(db: Session = Depends(get_db)):
+    """Lightweight list of all exhibitions for detail page getStaticPaths."""
+    storage = get_storage()
+    exhibitions = (
+        db.execute(
+            select(Exhibition).options(
+                joinedload(Exhibition.artists),
+                joinedload(Exhibition.photos).joinedload(ExhibitionPhoto.image).selectinload(Image.renditions),
+            ).order_by(Exhibition.start_date.desc())
+        ).unique().scalars().all()
+    )
+    shows = [ExhibitionNavItem(
+        slug=ex.slug, title=ex.title, start_date=ex.start_date,
+        artists=[a.name for a in (ex.artists or [])],
+        showcard_url=_best_url(next((p.image for p in (ex.photos or []) if p.category == "showcard"), None), storage, 800),
+    ) for ex in exhibitions]
+    return ExhibitionNavPageOut(shows=shows)

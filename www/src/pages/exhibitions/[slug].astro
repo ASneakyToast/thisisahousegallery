@@ -4,17 +4,11 @@ import Lightbox from '../../components/Lightbox.astro';
 import { cms, bestImageUrl, showcardImage, photosByCategory } from '../../lib/cms';
 
 export async function getStaticPaths() {
-  const exhibitions = await cms.exhibitions();
-  // Details carry the photos (incl. showcard front images used in nav), so
-  // fetch each and order newest-first to build circular prev/next neighbours.
-  const details = await Promise.all(
-    exhibitions.map((ex) => cms.exhibition(ex.slug).catch(() => ex)),
-  );
+  // Use the lightweight nav endpoint instead of exhibitions() + N×details
+  const nav = await cms.exhibitionNav().catch(() => ({ shows: [] }));
+  const details = nav.shows;
   details.sort((a, b) => (b.start_date ?? '').localeCompare(a.start_date ?? ''));
     const n = details.length;
-    // Newest-first ordering: "Previous Exhibition" steps toward older editions
-    // and "Next Exhibition" toward newer ones, wrapping around (oldest -> newest
-    // for Previous, newest -> oldest for Next).
     return details.map((ex, i) => ({
       params: { slug: ex.slug },
       props: {
@@ -320,37 +314,37 @@ function galleryDataAttrs(item: GalleryItem) {
             Each link shows the showcard image at its natural aspect ratio plus a
             short label; the title/artist line is intentionally omitted. */}
         {(prev || next) && (
-          <nav class="exhibition-nav" aria-label="Exhibition navigation">
-            {prev ? (
-              <a href={`/exhibitions/${prev.slug}/`} class="exhibition-nav__link exhibition-nav__link--prev">
-                {showcardImage(prev) ? (
-                  <img
-                    src={bestImageUrl(showcardImage(prev), { max: 800 })}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    class="exhibition-nav__thumb"
-                  />
-                ) : null}
-                <span class="exhibition-nav__label exhibition-nav__label--prev"><span aria-hidden="true">←</span>Previous Exhibition</span>
-              </a>
-            ) : null}
-            {next ? (
-              <a href={`/exhibitions/${next.slug}/`} class="exhibition-nav__link exhibition-nav__link--next">
-                {showcardImage(next) ? (
-                  <img
-                    src={bestImageUrl(showcardImage(next), { max: 800 })}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    class="exhibition-nav__thumb"
-                  />
-                ) : null}
-                <span class="exhibition-nav__label exhibition-nav__label--next">Next Exhibition<span aria-hidden="true">→</span></span>
-              </a>
-            ) : null}
-          </nav>
-        )}
+                  <nav class="exhibition-nav" aria-label="Exhibition navigation">
+                    {prev ? (
+                      <a href={`/exhibitions/${prev.slug}/`} class="exhibition-nav__link exhibition-nav__link--prev">
+                        {prev.showcard_url ? (
+                          <img
+                            src={prev.showcard_url}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            class="exhibition-nav__thumb"
+                          />
+                        ) : null}
+                        <span class="exhibition-nav__label exhibition-nav__label--prev"><span aria-hidden="true">←</span>Previous Exhibition</span>
+                      </a>
+                    ) : null}
+                    {next ? (
+                      <a href={`/exhibitions/${next.slug}/`} class="exhibition-nav__link exhibition-nav__link--next">
+                        {next.showcard_url ? (
+                          <img
+                            src={next.showcard_url}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            class="exhibition-nav__thumb"
+                          />
+                        ) : null}
+                        <span class="exhibition-nav__label exhibition-nav__label--next">Next Exhibition<span aria-hidden="true">→</span></span>
+                      </a>
+                    ) : null}
+                  </nav>
+                )}
 
 </div>
 

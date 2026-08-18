@@ -184,6 +184,19 @@ export interface ScheduleEvent {
   related_exhibition_slug: string | null;
 }
 
+
+export interface ExhibitionNavItem {
+  slug: string;
+  title: string;
+  start_date: string | null;
+  artists: string[];
+  showcard_url: string | null;
+}
+
+export interface ExhibitionNavData {
+  shows: ExhibitionNavItem[];
+}
+
 export interface SchedulePageData {
   shows: ScheduleShow[];
   events: ScheduleEvent[];
@@ -205,6 +218,7 @@ export const cms = {
     homePage: () => get<HomePageData>('/pages/home'),
     exhibitionsPage: () => get<ExhibitionsIndexPageData>('/pages/exhibitions'),
     schedulePage: () => get<SchedulePageData>('/pages/schedule'),
+    exhibitionNav: () => get<ExhibitionNavData>('/pages/exhibition-nav'),
   };
 
 /**

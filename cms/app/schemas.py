@@ -238,4 +238,20 @@ class SchedulePageOut(BaseModel):
     events: list[ScheduleEventOut] = []
 
 
+
+
+# ---------------------------------------------------------------------------
+# BFF — exhibition detail nav (getStaticPaths)
+# ---------------------------------------------------------------------------
+class ExhibitionNavItem(BaseModel):
+    slug: str
+    title: str
+    start_date: Optional[datetime] = None
+    artists: list[str] = []
+    showcard_url: Optional[str] = None
+
+
+class ExhibitionNavPageOut(BaseModel):
+    shows: list[ExhibitionNavItem] = []
+
 ArtistDetailOut.model_rebuild()
