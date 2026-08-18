@@ -159,6 +159,37 @@ export interface ExhibitionsIndexPageData {
   shows: ExhibitionsIndexShow[];
 }
 
+export interface ScheduleShow {
+  slug: string;
+  title: string;
+  listing_title: string;
+  listing_summary: string;
+  start_date: string | null;
+  end_date: string | null;
+  artists: string[];
+  video_embed_url: string;
+  image_url: string | null;
+}
+
+export interface ScheduleEvent {
+  id: number;
+  title: string;
+  slug: string;
+  event_type: string;
+  start_date: string | null;
+  end_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  all_day: boolean;
+  related_exhibition_slug: string | null;
+}
+
+export interface SchedulePageData {
+  shows: ScheduleShow[];
+  events: ScheduleEvent[];
+}
+
+
 export const cms = {
   siteSettings: () => get<SiteSettings>('/site-settings'),
   exhibitions: () => get<Exhibition[]>('/exhibitions'),
@@ -173,6 +204,7 @@ export const cms = {
     home: () => get<{ intro: string; floating_images: Image[] }>('/home'),
     homePage: () => get<HomePageData>('/pages/home'),
     exhibitionsPage: () => get<ExhibitionsIndexPageData>('/pages/exhibitions'),
+    schedulePage: () => get<SchedulePageData>('/pages/schedule'),
   };
 
 /**
