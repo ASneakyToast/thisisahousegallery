@@ -265,4 +265,26 @@ class AboutPageOut(BaseModel):
     instagram_url: str = ""
     house_image_url: Optional[str] = None
 
+
+
+# ---------------------------------------------------------------------------
+# BFF — exhibition catalog page
+# ---------------------------------------------------------------------------
+class CatalogArtworkOut(BaseModel):
+    title: str = ""
+    artist_names: str = ""
+    date: Optional[str] = None
+    dimensions: str = ""
+    materials: str = ""
+    price: str = ""
+    image_url: Optional[str] = None
+
+
+class CatalogPageOut(BaseModel):
+    title: str = ""
+    artists: list[str] = []
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    artworks: list[CatalogArtworkOut] = []
+
 ArtistDetailOut.model_rebuild()

@@ -573,3 +573,35 @@ def get_pages_about(db: Session = Depends(get_db)):
         instagram_url=str(ig.get("url", "https://instagram.com/thisisahousegallery")) if ig else "https://instagram.com/thisisahousegallery",
         house_image_url=house_url,
     )
+
+
+
+@router.get("/pages/catalog/{slug}", response_model=CatalogPageOut)
+def get_pages_catalog(slug: str, db: Session = Depends(get_db)):
+    """Per-exhibition catalog with pre-resolved artwork image URLs."""
+    storage = get_storage()
+    ex = (
+        db.execute(
+            select(Exhibition).options(
+                joinedload(Exhibition.artists),
+                joinedload(Exhibition.artworks).selectinload(Artwork.images).selectinload(Image.renditions),
+                joinedload(Exhibition.artworks).selectinload(Artwork.artists),
+                joinedload(Exhibition.artworks).selectinload(Artwork.tags),
+            ).where(Exhibition.slug == slug)
+        ).unique().scalars().first()
+    )
+    if ex is None:
+        raise HTTPException(status_code=404, detail="Exhibition not found")
+    artworks = [CatalogArtworkOut(
+        title=a.title,
+        artist_names=', '.join(x.name for x in (a.artists or [])),
+        date=str(a.date.year) if a.date else None,
+        dimensions=' × '.join(f'{d}″' for d in [a.width_inches, a.depth_inches, a.height_inches] if d),
+        materials=', '.join(t.name for t in (a.tags or [])),
+        price=a.price or "",
+        image_url=_best_url(a.images[0], storage, 800) if a.images else None,
+    ) for a in (ex.artworks or [])]
+    return CatalogPageOut(
+        title=ex.title, artists=[a.name for a in (ex.artists or [])],
+        start_date=ex.start_date, end_date=ex.end_date, artworks=artworks,
+    )

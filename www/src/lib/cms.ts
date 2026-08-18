@@ -194,6 +194,25 @@ export interface ExhibitionNavItem {
 }
 
 
+
+export interface CatalogArtwork {
+  title: string;
+  artist_names: string;
+  date: string | null;
+  dimensions: string;
+  materials: string;
+  price: string;
+  image_url: string | null;
+}
+
+export interface CatalogPageData {
+  title: string;
+  artists: string[];
+  start_date: string | null;
+  end_date: string | null;
+  artworks: CatalogArtwork[];
+}
+
 export interface AboutPageData {
   email: string;
   instagram_label: string;
@@ -228,6 +247,7 @@ export const cms = {
     schedulePage: () => get<SchedulePageData>('/pages/schedule'),
     exhibitionNav: () => get<ExhibitionNavData>('/pages/exhibition-nav'),
     aboutPage: () => get<AboutPageData>('/pages/about'),
+    catalogPage: (slug: string) => get<CatalogPageData>('/pages/catalog/' + slug),
   };
 
 /**
