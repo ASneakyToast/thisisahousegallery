@@ -290,3 +290,6 @@ static/
 
 # Webpack bundles in static_src
 housegallery/static_src/webpack_bundles/
+
+# Hermes agent working docs
+.hermes/
