@@ -451,3 +451,68 @@ def get_pages_exhibitions(db: Session = Depends(get_db)):
         ))
 
     return ExhibitionsIndexPageOut(shows=shows)
+
+
+# ---------------------------------------------------------------------------
+# BFF — schedule page
+# ---------------------------------------------------------------------------
+def _best_url(img, storage, max_width: int = 400) -> Optional[str]:
+    """Smallest rendition >= max_width (else largest); None if no image."""
+    if img is None:
+        return None
+    rends = sorted(img.renditions, key=lambda r: r.width)
+    if not rends:
+        return storage.url(img.file_path)
+    for r in rends:
+        if r.width >= max_width:
+            return storage.url(r.file_path)
+    return storage.url(rends[-1].file_path)
+
+
+@router.get("/pages/schedule", response_model=SchedulePageOut)
+def get_pages_schedule(db: Session = Depends(get_db)):
+    """One payload for the schedule page: shows (with resolved thumbnails)
+    plus the non-opening events that hang off them."""
+    storage = get_storage()
+    exhibitions = (
+        db.execute(
+            select(Exhibition).options(
+                joinedload(Exhibition.artists),
+                joinedload(Exhibition.artworks).selectinload(Artwork.images).selectinload(Image.renditions),
+                joinedload(Exhibition.listing_image).joinedload(Image.renditions),
+                joinedload(Exhibition.photos).joinedload(ExhibitionPhoto.image).selectinload(Image.renditions),
+            ).order_by(Exhibition.start_date.desc())
+        ).unique().scalars().all()
+    )
+    shows: list[ScheduleShowOut] = []
+    for ex in exhibitions:
+        img_url = None
+        if ex.photos:
+            for cat in ("opening_reception", "installation", "showcard"):
+                if img_url: break
+                for p in ex.photos:
+                    if p.category == cat and p.image:
+                        img_url = _best_url(p.image, storage, 400)
+                        break
+        if img_url is None and ex.listing_image:
+            img_url = _best_url(ex.listing_image, storage, 400)
+        if img_url is None:
+            for a in ex.artworks or []:
+                if a.images:
+                    img_url = _best_url(a.images[0], storage, 400)
+                    break
+        shows.append(ScheduleShowOut(
+            slug=ex.slug, title=ex.title, listing_title=ex.listing_title,
+            listing_summary=ex.listing_summary, start_date=ex.start_date, end_date=ex.end_date,
+            artists=[a.name for a in (ex.artists or [])], video_embed_url=ex.video_embed_url or "", image_url=img_url,
+        ))
+    events = db.execute(
+        select(Event).options(joinedload(Event.related_exhibition)).order_by(Event.start_date)
+    ).unique().scalars().all()
+    event_rows = [ScheduleEventOut(
+        id=ev.id, title=ev.title, slug=ev.slug, event_type=ev.event_type,
+        start_date=ev.start_date, end_date=ev.end_date, start_time=ev.start_time, end_time=ev.end_time,
+        all_day=ev.all_day,
+        related_exhibition_slug=ev.related_exhibition.slug if ev.related_exhibition else None,
+    ) for ev in events]
+    return SchedulePageOut(shows=shows, events=event_rows)

@@ -203,4 +203,39 @@ class ExhibitionsIndexPageOut(BaseModel):
     shows: list[ExhibitionsIndexShow] = []
 
 
+
+
+# ---------------------------------------------------------------------------
+# BFF — schedule page
+# ---------------------------------------------------------------------------
+class ScheduleEventOut(BaseModel):
+    id: int
+    title: str = ""
+    slug: str = ""
+    event_type: str = ""
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+    all_day: bool = False
+    related_exhibition_slug: Optional[str] = None
+
+
+class ScheduleShowOut(BaseModel):
+    slug: str
+    title: str
+    listing_title: str = ""
+    listing_summary: str = ""
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    artists: list[str] = []
+    video_embed_url: str = ""
+    image_url: Optional[str] = None
+
+
+class SchedulePageOut(BaseModel):
+    shows: list[ScheduleShowOut] = []
+    events: list[ScheduleEventOut] = []
+
+
 ArtistDetailOut.model_rebuild()
