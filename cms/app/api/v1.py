@@ -25,6 +25,7 @@ from app.models import (
     Tag,
 )
 from app.schemas import (
+    AboutPageOut,
     ArtistDetailOut,
     ArtistOut,
     ArtworkOut,
@@ -537,3 +538,38 @@ def get_pages_exhibition_nav(db: Session = Depends(get_db)):
         showcard_url=_best_url(next((p.image for p in (ex.photos or []) if p.category == "showcard"), None), storage, 800),
     ) for ex in exhibitions]
     return ExhibitionNavPageOut(shows=shows)
+
+
+
+@router.get("/pages/about", response_model=AboutPageOut)
+def get_pages_about(db: Session = Depends(get_db)):
+    """Contact info + house image for the About page."""
+    storage = get_storage()
+    settings = db.execute(select(SiteSettings).order_by(SiteSettings.id)).scalars().first()
+    contact = (settings.contact or {}) if settings else {}
+    socials = (settings.socials or []) if settings else []
+    ig = None
+    for s_item in socials:
+        label = str(s_item.get("label", s_item.get("platform", ""))).lower()
+        if "instagram" in label:
+            ig = s_item; break
+    if not ig:
+        ig = next((s_item for s_item in socials if "instagram" in str(s_item.get("url", "")).lower()), None)
+    house_url = None
+    img = db.execute(select(Image).where(Image.id == 1253)).scalars().first()
+    if img:
+        rends = sorted(img.renditions, key=lambda r: r.width)
+        if rends:
+            for r in rends:
+                if r.width >= 1200:
+                    house_url = storage.url(r.file_path); break
+            if not house_url:
+                house_url = storage.url(rends[-1].file_path)
+        else:
+            house_url = storage.url(img.file_path)
+    return AboutPageOut(
+        email=str(contact.get("email", "")) if contact else "",
+        instagram_label=str(ig.get("label", ig.get("handle", "@thisisahousegallery"))) if ig else "@thisisahousegallery",
+        instagram_url=str(ig.get("url", "https://instagram.com/thisisahousegallery")) if ig else "https://instagram.com/thisisahousegallery",
+        house_image_url=house_url,
+    )

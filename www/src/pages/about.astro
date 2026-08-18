@@ -1,32 +1,18 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
-import { cms, bestImageUrl } from '../lib/cms';
+import { cms } from '../lib/cms';
 
-let email = '';
-let instagram = '';
-let instagramUrl = '';
-// House/space photo: a real installation shot of the gallery room (CMS image
-// 1253) as a placeholder until a dedicated photo of the house is available.
-let houseImage = '';
-try {
-  const settings = await cms.siteSettings();
-  const contact = (settings.contact ?? {}) as Record<string, unknown>;
-  if (typeof contact.email === 'string' && contact.email) email = contact.email;
-  const socials = (settings.socials ?? []) as Record<string, unknown>[];
-  const ig = socials.find((s) => String(s.label ?? s.platform ?? '').toLowerCase().includes('instagram'))
-    ?? socials.find((s) => String(s.url ?? '').toLowerCase().includes('instagram'));
-  if (ig) {
-    instagram = String(ig.label ?? ig.handle ?? '@thisisahousegallery');
-    instagramUrl = String(ig.url ?? '');
-  }
-  const house = await cms.image(1253).catch(() => null);
-  if (house) houseImage = bestImageUrl(house, { max: 1200 }) ?? house.file_url ?? '';
-} catch {
-  /* CMS unreachable — use defaults */
-}
-if (!instagram) instagram = '@thisisahousegallery';
-if (!instagramUrl) instagramUrl = 'https://instagram.com/thisisahousegallery';
+const page = await cms.aboutPage().catch(() => ({
+  email: '',
+  instagram_label: '@thisisahousegallery',
+  instagram_url: 'https://instagram.com/thisisahousegallery',
+  house_image_url: null,
+}));
+const email = page.email;
+const instagram = page.instagram_label;
+const instagramUrl = page.instagram_url;
+const houseImage = page.house_image_url ?? '';
 ---
 
 <Layout title="About — This is a House Gallery" bodyClass="about-page">
