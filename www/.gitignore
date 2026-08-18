@@ -11,3 +11,4 @@ dev-dist/
 # `lib/` rule would otherwise swallow (it's meant for Python build artifacts).
 !src/lib/
 !src/lib/**
+dist-fresh/
