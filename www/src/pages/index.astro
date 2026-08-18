@@ -1,19 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { cms, bestImageUrl, showcardImage } from '../lib/cms';
+import { cms } from '../lib/cms';
 
-// Details carry the showcard photos (list endpoint does not), so fetch them
-// in parallel for the carousel.
-const settings = await cms.siteSettings();
-const exhibitions = await cms.exhibitions();
-const details = await Promise.all(
-  exhibitions.map((ex) =>
-    cms.exhibition(ex.slug).catch(() => ex)
-  )
-);
-// Homepage hero content (intro + floating images) from the CMS.
-const home = await cms.home().catch(() => ({ intro: '', floating_images: [] }));
-const hasFloating = (home.floating_images ?? []).length > 0;
+// The homepage now consumes a single build-time payload from the CMS
+// (/v1/pages/home) instead of fanning out across ~17 requests
+// (site-settings + exhibitions + N details + home). The backend pre-assembles
+// the hero intro/images and the showcarousel rows with resolved thumbnails.
+const page = await cms.homePage().catch(() => ({
+  site_title: 'This is a House Gallery',
+  tagline: 'This is a House Gallery serves as a project and exhibition place for the DIY Bay Area art scene.',
+  intro: '',
+  floating_image_urls: [] as string[],
+  shows: [] as { slug: string; title: string; listing_title: string; artists: string[]; image_url: string | null }[],
+}));
+const settings = page;
+const home = page;
+const details = page.shows;
+const hasFloating = (home.floating_image_urls ?? []).length > 0;
 ---
 
 <Layout
@@ -24,16 +27,16 @@ const hasFloating = (home.floating_images ?? []).length > 0;
     <!-- hero-section: floating images + intro + CTAs (hero-section.html + floating-hero.js) -->
         <section class="hero-section">
           {hasFloating && (
-            <div class="floating-hero" data-floating-hero>
-              <div class="floating-hero__container">
-                {home.floating_images.map((img, i) => (
-                  <div class="floating-hero__image" data-floating-image data-image-index={i}>
-                    <img src={bestImageUrl(img, { max: 400 })} alt={img.title || ''} loading="eager" decoding="async" width={img.width || 400} height={img.height || 300} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+                      <div class="floating-hero" data-floating-hero>
+                        <div class="floating-hero__container">
+                          {home.floating_image_urls.map((url, i) => (
+                            <div class="floating-hero__image" data-floating-image data-image-index={i}>
+                              <img src={url} alt="" loading="eager" decoding="async" width={400} height={300} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
           <div class="hero-section__content">
             <h1 class="hero-section__intro" set:html={home.intro || 'This is a House Gallery'}></h1>
@@ -68,36 +71,33 @@ const hasFloating = (home.floating_images ?? []).length > 0;
             tabindex="0"
           >
             <div class="horizontal-features-block__track">
-              {details.map((ex) => {
-                const showcard = showcardImage(ex);
-                const imgUrl = bestImageUrl(showcard, { max: 400 })
-                  ?? bestImageUrl(ex.listing_image, { max: 400 })
-                  ?? bestImageUrl(ex.artworks?.find((a) => a.images?.length)?.images?.[0], { max: 400 });
-                return (
-                  <div class="horizontal-features-card" data-exhibition-id={ex.id}>
-                    <a href={`/exhibitions/${ex.slug}/`} class="horizontal-features-card__link" aria-label="View exhibition">
-                      <div class="horizontal-features-card__image-container">
-                        {imgUrl ? (
-                          <img
-                            src={imgUrl}
-                            alt={ex.listing_title || ex.title}
-                            class="horizontal-features-card__image"
-                            loading="lazy"
-                          />
-                        ) : (
-                                                  <div class="horizontal-features-card__placeholder">
-                                                    {ex.artists?.length > 0 && (
-                                                      <span class="horizontal-features-card__placeholder-artists">{ex.artists.map((a) => a.name).join(', ')}</span>
-                                                    )}
-                                                    <span class="horizontal-features-card__placeholder-label">{ex.listing_title || ex.title}</span>
-                                                  </div>
-                        )}
-                      </div>
-                    </a>
-                  </div>
-                );
-              })}
-            </div>
+                          {details.map((ex) => {
+                            const imgUrl = ex.image_url ?? null;
+                            return (
+                              <div class="horizontal-features-card" data-exhibition-slug={ex.slug}>
+                                <a href={`/exhibitions/${ex.slug}/`} class="horizontal-features-card__link" aria-label="View exhibition">
+                                  <div class="horizontal-features-card__image-container">
+                                    {imgUrl ? (
+                                      <img
+                                        src={imgUrl}
+                                        alt={ex.listing_title || ex.title}
+                                        class="horizontal-features-card__image"
+                                        loading="lazy"
+                                      />
+                                    ) : (
+                                      <div class="horizontal-features-card__placeholder">
+                                        {ex.artists?.length > 0 && (
+                                          <span class="horizontal-features-card__placeholder-artists">{ex.artists.join(', ')}</span>
+                                        )}
+                                        <span class="horizontal-features-card__placeholder-label">{ex.listing_title || ex.title}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </a>
+                              </div>
+                            );
+                          })}
+                        </div>
           </div>
 
           <button
@@ -292,11 +292,11 @@ const hasFloating = (home.floating_images ?? []).length > 0;
   .horizontal-features-block__nav--prev { left: var(--size-layout-gutter, 15px); }
   .horizontal-features-block__nav--next { right: var(--size-layout-gutter, 15px); }
   .horizontal-features-block__nav:focus-visible {
-      outline: 2px solid var(--color-black, #121212);
-      outline-offset: 2px;
-    }
+    outline: 2px solid var(--color-black, #121212);
+    outline-offset: 2px;
+  }
 
-    /* Progress rail sits under the cards (full width, overlapping the arrows zone). */
+  /* Progress rail sits under the cards (full width, overlapping the arrows zone). */
   .horizontal-features-block__progress {
     height: 3px;
     margin-top: 12px;

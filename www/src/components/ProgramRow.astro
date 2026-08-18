@@ -1,10 +1,10 @@
 ---
 // A single show row in the schedule program listing.
-import { bestImageUrl, photosByCategory, type EventItem, type Exhibition } from '../lib/cms';
+import { type ScheduleShow, type ScheduleEvent } from '../lib/cms';
 
 interface Props {
-  ex: Exhibition;
-  nonOpeningEvents: EventItem[];
+  ex: ScheduleShow;
+  nonOpeningEvents: ScheduleEvent[];
   /** Show the "Exhibition Opening" badge (start-date based). We only show it
    *  for upcoming/current shows — for the past archive it's just noise on
    *  every row. */
@@ -13,26 +13,15 @@ interface Props {
 
 const { ex, nonOpeningEvents, showOpening = false } = Astro.props;
 
-// Thumbnail priority: opening photos (best captures the event) -> installation
-// -> showcard -> an artwork cover, so we never fall back to a random shot.
-const photos = photosByCategory(ex);
-const openingImg = photos['opening_reception']?.[0];
-const installImg = photos['installation']?.[0];
-const showcardImg = photos['showcard']?.[0];
-const artworkImg = ex.artworks?.find((a) => a.images?.length)?.images?.[0];
-const img = bestImageUrl(openingImg, { max: 400 })
-  ?? bestImageUrl(installImg, { max: 400 })
-  ?? bestImageUrl(showcardImg, { max: 400 })
-  ?? bestImageUrl(artworkImg, { max: 400 });
+const img = ex.image_url ?? undefined;
 
-// Every exhibition IS an opening reception, on its start date. Derive the
-// opening badge directly rather than relying on the sparse events table.
+// Every exhibition IS an opening reception, on its start date.
 const start = ex.start_date ? new Date(ex.start_date) : null;
 const openingDate = start
   ? start.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
   : '';
 
-function fmtRange(ex: Exhibition): string {
+function fmtRange(ex: ScheduleShow): string {
   const s = ex.start_date ? new Date(ex.start_date) : null;
   const e = ex.end_date ? new Date(ex.end_date) : null;
   if (!s) return '';
@@ -40,14 +29,14 @@ function fmtRange(ex: Exhibition): string {
   if (!e || e.getTime() === s.getTime()) return sTxt;
   return `${sTxt} – ${e.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
 }
-function fmtEventDate(ev: EventItem): string {
+function fmtEventDate(ev: ScheduleEvent): string {
   const d = ev.start_date ? new Date(ev.start_date) : null;
   if (!d) return '';
   let s = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   if (ev.start_time) s += ' · ' + new Date(ev.start_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   return s;
 }
-function eventKind(ev: EventItem): string {
+function eventKind(ev: ScheduleEvent): string {
   return (ev.event_type || '').replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 ---
@@ -59,8 +48,8 @@ function eventKind(ev: EventItem): string {
           <h3 class="program-item__title">{ex.title}</h3>
           {ex.artists?.length > 0 && (
             <div class="program-item__artists">
-              {ex.artists.map((a, i) => (
-                <span>{a.name}{i < ex.artists.length - 1 ? ', ' : ''}</span>
+              {ex.artists.map((a) => (
+                <span>{a}{a !== ex.artists[ex.artists.length - 1] ? ', ' : ''}</span>
               ))}
             </div>
           )}
@@ -68,65 +57,21 @@ function eventKind(ev: EventItem): string {
     {img && <img src={img} alt={ex.title} class="program-item__thumb" loading="lazy" />}
   </a>
 
-  {/* Every show has an opening reception on its start date — but we only
-        surface it for upcoming/current shows, not the past archive. */}
-    {showOpening && openingDate && (
-      <div class="program-item__event">
-        <span class="program-item__event-badge">Exhibition Opening</span>
-        <span class="program-item__event-date">{openingDate}</span>
-      </div>
-    )}
-
-  {/* Non-opening programming (talks, workshops, closings…) reserved from events. */}
-  {nonOpeningEvents.map((ev) => (
-    <div class="program-item__event">
-      <span class="program-item__event-badge program-item__event-badge--alt">{eventKind(ev)}</span>
-      <span class="program-item__event-date">{fmtEventDate(ev)}</span>
+  {showOpening && openingDate && (
+    <div class="program-item__opening-badge" title="Exhibition Opening">
+      <span class="program-item__opening-icon">🗓</span>
+      <span class="program-item__opening-date">{openingDate}</span>
     </div>
-  ))}
+  )}
+
+  {nonOpeningEvents.length > 0 && (
+    <div class="program-item__events">
+      {nonOpeningEvents.map((ev) => (
+        <div class="program-item__event">
+          <span class="program-item__event-kind">{eventKind(ev)}</span>
+          <span class="program-item__event-date">{fmtEventDate(ev)}</span>
+        </div>
+      ))}
+    </div>
+  )}
 </div>
-
-<style>
-  .program-item { border-bottom: 1px solid var(--color-black, #121212); }
-  .program-item:last-child { border-bottom: none; }
-  .program-item__main {
-    display: grid;
-    grid-template-columns: minmax(180px, 260px) 1fr auto;
-    gap: var(--size-layout-element-spacing, 25px);
-    align-items: center;
-    padding: var(--size-layout-element-spacing, 25px) 0;
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.2s ease;
-  }
-  .program-item__main:hover { background: var(--color-surface-variant, #f5f5f5); }
-  .program-item__date { font-size: var(--font-size-small, 14px); opacity: 0.7; }
-  .program-item__title { font-family: var(--font-family-heading, monospace); font-weight: var(--font-weight-light, 100); font-size: var(--font-size-subheading, 20px); margin: 0; }
-  .program-item__artists { font-size: var(--font-size-small, 14px); opacity: 0.7; margin-top: 0.25rem; }
-  .program-item__thumb { width: 120px; height: 120px; object-fit: cover; border: 1px solid var(--color-black, #121212); }
-  .program-item__event { display: flex; gap: 0.75rem; align-items: center; padding: 0 0 var(--size-layout-element-spacing, 25px) 0; font-size: var(--font-size-small, 14px); }
-  .program-item__event-badge { background: var(--color-black, #121212); color: #fff; padding: 0.15rem 0.5rem; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
-  .program-item__event-badge--alt { background: var(--color-accent, #e91e63); }
-  .program-item__event-date { opacity: 0.8; }
-
-  /* Mobile: stack each row into a single column — date on top, then title +
-     body, then the thumbnail — so nothing overflows horizontally. */
-  @media (max-width: 640px) {
-    .program-item__main {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: var(--size-layout-item-gap, 15px);
-      align-items: start;
-    }
-    .program-item__thumb {
-      width: 100%;
-      height: auto;
-      max-height: 260px;
-      object-fit: cover;
-      order: 3;
-    }
-    .program-item__date { order: 1; }
-    .program-item__body { order: 2; }
-    .program-item__event { flex-wrap: wrap; }
-  }
-</style>

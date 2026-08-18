@@ -121,6 +121,115 @@ export interface EventItem {
   featured_image: Image | null;
 }
 
+export interface HomeShow {
+  slug: string;
+  title: string;
+  listing_title: string;
+  listing_summary: string;
+  start_date: string | null;
+  end_date: string | null;
+  artists: string[];
+  image_url: string | null;
+}
+
+export interface HomePageData {
+  site_title: string;
+  tagline: string;
+  intro: string;
+  floating_image_urls: string[];
+  shows: HomeShow[];
+}
+
+export interface ExhibitionsIndexImage {
+  thumbnail_url: string;
+  full_url: string;
+}
+
+export interface ExhibitionsIndexShow {
+  slug: string;
+  title: string;
+  start_date: string | null;
+  artists: string[];
+  video_embed_url: string;
+  listing_image_url: string | null;
+  gallery: ExhibitionsIndexImage[];
+}
+
+export interface ExhibitionsIndexPageData {
+  shows: ExhibitionsIndexShow[];
+}
+
+export interface ScheduleShow {
+  slug: string;
+  title: string;
+  listing_title: string;
+  listing_summary: string;
+  start_date: string | null;
+  end_date: string | null;
+  artists: string[];
+  video_embed_url: string;
+  image_url: string | null;
+}
+
+export interface ScheduleEvent {
+  id: number;
+  title: string;
+  slug: string;
+  event_type: string;
+  start_date: string | null;
+  end_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  all_day: boolean;
+  related_exhibition_slug: string | null;
+}
+
+
+export interface ExhibitionNavItem {
+  slug: string;
+  title: string;
+  start_date: string | null;
+  artists: string[];
+  showcard_url: string | null;
+}
+
+
+
+export interface CatalogArtwork {
+  title: string;
+  artist_names: string;
+  date: string | null;
+  dimensions: string;
+  materials: string;
+  price: string;
+  image_url: string | null;
+}
+
+export interface CatalogPageData {
+  title: string;
+  artists: string[];
+  start_date: string | null;
+  end_date: string | null;
+  artworks: CatalogArtwork[];
+}
+
+export interface AboutPageData {
+  email: string;
+  instagram_label: string;
+  instagram_url: string;
+  house_image_url: string | null;
+}
+
+export interface ExhibitionNavData {
+  shows: ExhibitionNavItem[];
+}
+
+export interface SchedulePageData {
+  shows: ScheduleShow[];
+  events: ScheduleEvent[];
+}
+
+
 export const cms = {
   siteSettings: () => get<SiteSettings>('/site-settings'),
   exhibitions: () => get<Exhibition[]>('/exhibitions'),
@@ -133,6 +242,12 @@ export const cms = {
     events: () => get<EventItem[]>('/events'),
     image: (id: number) => get<Image>(`/images/${id}`),
     home: () => get<{ intro: string; floating_images: Image[] }>('/home'),
+    homePage: () => get<HomePageData>('/pages/home'),
+    exhibitionsPage: () => get<ExhibitionsIndexPageData>('/pages/exhibitions'),
+    schedulePage: () => get<SchedulePageData>('/pages/schedule'),
+    exhibitionNav: () => get<ExhibitionNavData>('/pages/exhibition-nav'),
+    aboutPage: () => get<AboutPageData>('/pages/about'),
+    catalogPage: (slug: string) => get<CatalogPageData>('/pages/catalog/' + slug),
   };
 
 /**

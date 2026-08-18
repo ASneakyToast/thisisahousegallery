@@ -2,13 +2,11 @@
 import Layout from '../../layouts/Layout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Lightbox from '../../components/Lightbox.astro';
-import { cms, bestImageUrl, filteredGalleryImages } from '../../lib/cms';
+import { cms } from '../../lib/cms';
 
-// Fetch details (they carry the photo galleries; the list endpoint does not).
-const exhibitions = await cms.exhibitions();
-const details = await Promise.all(
-  exhibitions.map((ex) => cms.exhibition(ex.slug).catch(() => ex))
-);
+// Single BFF payload — no more fan-out across exhibitions() + N x exhibition(slug)
+const page = await cms.exhibitionsPage().catch(() => ({ shows: [] }));
+const details = page.shows;
 
 function formatDate(iso: string | null): string {
   if (!iso) return '';
@@ -17,7 +15,6 @@ function formatDate(iso: string | null): string {
 }
 
 // Convert a YouTube/Vimeo URL into an embeddable URL for the feature video.
-// Handles youtu.be/, youtube.com/watch?v=, and vimeo.com/ URLs.
 function videoEmbedUrl(u: string): string {
   if (!u) return '';
   const youtuBe = u.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/);
@@ -34,9 +31,8 @@ function videoEmbedUrl(u: string): string {
 
       <div class="exhibitions-listing">
       {details.map((ex) => {
-        const gallery = filteredGalleryImages(ex);
-        const imgUrl = bestImageUrl(ex.listing_image, { max: 400 }) ??
-          (gallery[0] ? bestImageUrl(gallery[0], { max: 400 }) : undefined);
+        const gallery = ex.gallery ?? [];
+        const imgUrl = ex.listing_image_url ?? (gallery[0]?.thumbnail_url ?? undefined);
         return (
           <div id={ex.title.toLowerCase().replace(/\s+/g, '-')} class="exhibition-listing-item exhibition-title">
             <a href={`/exhibitions/${ex.slug}/`} class="exhibition-header-link">
@@ -46,7 +42,7 @@ function videoEmbedUrl(u: string): string {
                   <h2>{ex.title}</h2>
                   <section class="exhibition-header__artists">
                     {ex.artists.map((a) => (
-                      <p>{a.name}</p>
+                      <p>{a}</p>
                     ))}
                   </section>
                 </section>
@@ -54,53 +50,51 @@ function videoEmbedUrl(u: string): string {
             </a>
 
             {(() => {
-                          const embed = videoEmbedUrl(ex.video_embed_url || '');
-                          if (embed) {
-                            return (
-                              <div class="exhibition-feature-video">
-                                <div class="video-container video-responsive">
-                                  <iframe
-                                    src={embed}
-                                    title={ex.title}
-                                    loading="lazy"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowfullscreen
-                                  ></iframe>
-                                </div>
-                              </div>
-                            );
-                          }
-                          return gallery.length > 0 ? (
-                          <div class="exhibition-feature-gallery" data-gallery-id={ex.title.toLowerCase().replace(/\s+/g, '-')}>
-                            <div class="gallery-container gallery-columns-container masonry">
-                              <div class="gallery-images">
-                                {gallery.map((img, i) => (
-                                  <button
-                                    class="gallery-lightbox-item"
-                                    data-media-type="image"
-                                    data-media-src={bestImageUrl(img, { max: 1600 }) ?? img.file_url ?? ''}
-                                    data-thumbnail-src={bestImageUrl(img, { max: 400 }) ?? img.file_url ?? ''}
-                                    data-caption={img.title || ex.title}
-                                    data-image-type="exhibition"
-                                    data-index={i}
-                                    aria-label={`View ${img.title || ex.title} in lightbox`}
-                                  >
-                                    <img
-                                      src={bestImageUrl(img, { max: 400 })}
-                                      alt={img.title || ex.title}
-                                      width={img.width || undefined}
-                                      height={img.height || undefined}
-                                      loading="lazy"
-                                      decoding="async"
-                                      class="gallery-single-image"
-                                    />
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        ) : null;
-                        })()}
+              const embed = videoEmbedUrl(ex.video_embed_url || '');
+              if (embed) {
+                return (
+                  <div class="exhibition-feature-video">
+                    <div class="video-container video-responsive">
+                      <iframe
+                        src={embed}
+                        title={ex.title}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  </div>
+                );
+              }
+              return gallery.length > 0 ? (
+              <div class="exhibition-feature-gallery" data-gallery-id={ex.title.toLowerCase().replace(/\s+/g, '-')}>
+                <div class="gallery-container gallery-columns-container masonry">
+                  <div class="gallery-images">
+                    {gallery.map((img, i) => (
+                      <button
+                        class="gallery-lightbox-item"
+                        data-media-type="image"
+                        data-media-src={img.full_url}
+                        data-thumbnail-src={img.thumbnail_url}
+                        data-index={i}
+                        aria-label={`View ${ex.title} in lightbox`}
+                      >
+                        <img
+                          src={img.thumbnail_url}
+                          alt={ex.title}
+                          width={400}
+                          height={300}
+                          loading="lazy"
+                          decoding="async"
+                          class="gallery-single-image"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : null;
+            })()}
           </div>
         );
       })}

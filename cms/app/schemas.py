@@ -160,4 +160,131 @@ class EventOut(ORMModel):
     featured_image: Optional[ImageOut] = None
 
 
+# ---------------------------------------------------------------------------
+# BFF / page-shaped responses (backend-for-frontend read projections)
+# ---------------------------------------------------------------------------
+class HomeShowOut(BaseModel):
+    slug: str
+    title: str
+    listing_title: str = ""
+    listing_summary: str = ""
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    artists: list[str] = []
+    image_url: Optional[str] = None
+
+
+class HomePageOut(BaseModel):
+    site_title: str = ""
+    tagline: str = ""
+    intro: str = ""
+    floating_image_urls: list[str] = []
+    shows: list[HomeShowOut] = []
+
+
+# BFF — exhibitions index page
+# ---------------------------------------------------------------------------
+class ExhibitionsIndexImage(BaseModel):
+    thumbnail_url: str = ""
+    full_url: str = ""
+
+
+class ExhibitionsIndexShow(BaseModel):
+    slug: str
+    title: str
+    start_date: Optional[datetime] = None
+    artists: list[str] = []
+    video_embed_url: str = ""
+    listing_image_url: Optional[str] = None
+    gallery: list[ExhibitionsIndexImage] = []
+
+
+class ExhibitionsIndexPageOut(BaseModel):
+    shows: list[ExhibitionsIndexShow] = []
+
+
+
+
+# ---------------------------------------------------------------------------
+# BFF — schedule page
+# ---------------------------------------------------------------------------
+class ScheduleEventOut(BaseModel):
+    id: int
+    title: str = ""
+    slug: str = ""
+    event_type: str = ""
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+    all_day: bool = False
+    related_exhibition_slug: Optional[str] = None
+
+
+class ScheduleShowOut(BaseModel):
+    slug: str
+    title: str
+    listing_title: str = ""
+    listing_summary: str = ""
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    artists: list[str] = []
+    video_embed_url: str = ""
+    image_url: Optional[str] = None
+
+
+class SchedulePageOut(BaseModel):
+    shows: list[ScheduleShowOut] = []
+    events: list[ScheduleEventOut] = []
+
+
+
+
+# ---------------------------------------------------------------------------
+# BFF — exhibition detail nav (getStaticPaths)
+# ---------------------------------------------------------------------------
+class ExhibitionNavItem(BaseModel):
+    slug: str
+    title: str
+    start_date: Optional[datetime] = None
+    artists: list[str] = []
+    showcard_url: Optional[str] = None
+
+
+class ExhibitionNavPageOut(BaseModel):
+    shows: list[ExhibitionNavItem] = []
+
+
+
+# ---------------------------------------------------------------------------
+# BFF — about page
+# ---------------------------------------------------------------------------
+class AboutPageOut(BaseModel):
+    email: str = ""
+    instagram_label: str = ""
+    instagram_url: str = ""
+    house_image_url: Optional[str] = None
+
+
+
+# ---------------------------------------------------------------------------
+# BFF — exhibition catalog page
+# ---------------------------------------------------------------------------
+class CatalogArtworkOut(BaseModel):
+    title: str = ""
+    artist_names: str = ""
+    date: Optional[str] = None
+    dimensions: str = ""
+    materials: str = ""
+    price: str = ""
+    image_url: Optional[str] = None
+
+
+class CatalogPageOut(BaseModel):
+    title: str = ""
+    artists: list[str] = []
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    artworks: list[CatalogArtworkOut] = []
+
 ArtistDetailOut.model_rebuild()
