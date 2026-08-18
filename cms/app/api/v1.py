@@ -10,7 +10,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.db import SessionLocal
 from app.models import (
@@ -104,7 +104,13 @@ def list_exhibitions(db: Session = Depends(get_db)):
             select(Exhibition)
             .options(
                 joinedload(Exhibition.artists),
-                joinedload(Exhibition.artworks),
+                joinedload(Exhibition.artworks)
+                .selectinload(Artwork.images)
+                .selectinload(Image.renditions),
+                joinedload(Exhibition.artworks)
+                .selectinload(Artwork.artists),
+                joinedload(Exhibition.artworks)
+                .selectinload(Artwork.tags),
                 joinedload(Exhibition.listing_image).joinedload(Image.renditions),
             )
             .order_by(Exhibition.start_date.desc())
@@ -123,9 +129,18 @@ def get_exhibition(slug: str, db: Session = Depends(get_db)):
             select(Exhibition)
             .options(
                 joinedload(Exhibition.artists),
-                joinedload(Exhibition.artworks),
+                joinedload(Exhibition.artworks)
+                .selectinload(Artwork.images)
+                .selectinload(Image.renditions),
+                joinedload(Exhibition.artworks)
+                .selectinload(Artwork.artists),
+                joinedload(Exhibition.artworks)
+                .selectinload(Artwork.tags),
                 joinedload(Exhibition.listing_image).joinedload(Image.renditions),
                 joinedload(Exhibition.photos).joinedload(ExhibitionPhoto.image),
+                joinedload(Exhibition.photos)
+                .joinedload(ExhibitionPhoto.image)
+                .selectinload(Image.renditions),
             )
             .where(Exhibition.slug == slug)
         )

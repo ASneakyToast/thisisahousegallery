@@ -28,7 +28,7 @@ const hasFloating = (home.floating_images ?? []).length > 0;
               <div class="floating-hero__container">
                 {home.floating_images.map((img, i) => (
                   <div class="floating-hero__image" data-floating-image data-image-index={i}>
-                    <img src={bestImageUrl(img, { max: 400 })} alt={img.title || ''} loading="lazy" width={img.width || 400} height={img.height || 300} />
+                    <img src={bestImageUrl(img, { max: 400 })} alt={img.title || ''} loading="eager" decoding="async" width={img.width || 400} height={img.height || 300} />
                   </div>
                 ))}
               </div>
@@ -85,9 +85,12 @@ const hasFloating = (home.floating_images ?? []).length > 0;
                             loading="lazy"
                           />
                         ) : (
-                          <div class="horizontal-features-card__placeholder">
-                            <span>{ex.listing_title || ex.title}</span>
-                          </div>
+                                                  <div class="horizontal-features-card__placeholder">
+                                                    {ex.artists?.length > 0 && (
+                                                      <span class="horizontal-features-card__placeholder-artists">{ex.artists.map((a) => a.name).join(', ')}</span>
+                                                    )}
+                                                    <span class="horizontal-features-card__placeholder-label">{ex.listing_title || ex.title}</span>
+                                                  </div>
                         )}
                       </div>
                     </a>
@@ -289,11 +292,11 @@ const hasFloating = (home.floating_images ?? []).length > 0;
   .horizontal-features-block__nav--prev { left: var(--size-layout-gutter, 15px); }
   .horizontal-features-block__nav--next { right: var(--size-layout-gutter, 15px); }
   .horizontal-features-block__nav:focus-visible {
-    outline: 2px solid var(--color-black, #121212);
-    outline-offset: 2px;
-  }
+      outline: 2px solid var(--color-black, #121212);
+      outline-offset: 2px;
+    }
 
-  /* Progress rail sits under the cards (full width, overlapping the arrows zone). */
+    /* Progress rail sits under the cards (full width, overlapping the arrows zone). */
   .horizontal-features-block__progress {
     height: 3px;
     margin-top: 12px;

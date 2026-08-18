@@ -439,7 +439,20 @@ function galleryDataAttrs(item: GalleryItem) {
   }
   .exhibition-hero__content { flex: 1 1 auto; }
 
-    /* Prev/Next exhibition navigation */
+    /* Mobile: stack the hero — showcard on top, content below — so nothing
+       overflows horizontally. (The media query in exhibition.css targets a grid
+       layout, but this page sets display:flex, so we handle it here.) */
+    @media (max-width: 768px) {
+            .exhibition-hero {
+              flex-direction: column;
+              gap: var(--size-layout-element-spacing, 25px);
+              align-items: flex-start;
+            }
+            .exhibition-hero__images--single { order: 1; overflow: hidden; }
+            .exhibition-hero__content { order: 2; }
+          }
+
+      /* Prev/Next exhibition navigation */
         .exhibition-nav {
           display: flex;
           gap: var(--size-layout-gutter, 15px);

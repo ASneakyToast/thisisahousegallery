@@ -54,17 +54,17 @@ function eventKind(ev: EventItem): string {
 
 <div class="program-item" id={ex.title.toLowerCase().replace(/\s+/g, '-')}>
   <a href={`/exhibitions/${ex.slug}/`} class="program-item__main">
-    <div class="program-item__date">{fmtRange(ex)}</div>
-    <div class="program-item__body">
-      <h3 class="program-item__title">{ex.title}</h3>
-      {ex.artists?.length > 0 && (
-        <div class="program-item__artists">
-          {ex.artists.map((a, i) => (
-            <span>{a.name}{i < ex.artists.length - 1 ? ', ' : ''}</span>
-          ))}
+    {!showOpening && <div class="program-item__date">{fmtRange(ex)}</div>}
+        <div class="program-item__body">
+          <h3 class="program-item__title">{ex.title}</h3>
+          {ex.artists?.length > 0 && (
+            <div class="program-item__artists">
+              {ex.artists.map((a, i) => (
+                <span>{a.name}{i < ex.artists.length - 1 ? ', ' : ''}</span>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </div>
     {img && <img src={img} alt={ex.title} class="program-item__thumb" loading="lazy" />}
   </a>
 
@@ -108,4 +108,25 @@ function eventKind(ev: EventItem): string {
   .program-item__event-badge { background: var(--color-black, #121212); color: #fff; padding: 0.15rem 0.5rem; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
   .program-item__event-badge--alt { background: var(--color-accent, #e91e63); }
   .program-item__event-date { opacity: 0.8; }
+
+  /* Mobile: stack each row into a single column — date on top, then title +
+     body, then the thumbnail — so nothing overflows horizontally. */
+  @media (max-width: 640px) {
+    .program-item__main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--size-layout-item-gap, 15px);
+      align-items: start;
+    }
+    .program-item__thumb {
+      width: 100%;
+      height: auto;
+      max-height: 260px;
+      object-fit: cover;
+      order: 3;
+    }
+    .program-item__date { order: 1; }
+    .program-item__body { order: 2; }
+    .program-item__event { flex-wrap: wrap; }
+  }
 </style>
