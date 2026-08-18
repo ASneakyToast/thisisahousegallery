@@ -10,7 +10,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.db import SessionLocal
 from app.models import (
@@ -31,6 +31,9 @@ from app.schemas import (
     EventOut,
     ExhibitionDetailOut,
     ExhibitionOut,
+    ExhibitionsIndexImage,
+    ExhibitionsIndexPageOut,
+    ExhibitionsIndexShow,
     HomeOut,
     HomePageOut,
     HomeShowOut,
@@ -240,6 +243,7 @@ def get_image(image_id: int, db: Session = Depends(get_db)):
 
 
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # BFF / page-shaped endpoints
 # ---------------------------------------------------------------------------
 def _best_image_url(img: Optional[Image], max_width: int = 400) -> Optional[str]:
@@ -309,13 +313,9 @@ def get_page_home(db: Session = Depends(get_db)):
             select(Exhibition)
             .options(
                 joinedload(Exhibition.artists),
-                joinedload(Exhibition.artworks)
-                .selectinload(Artwork.images)
-                .selectinload(Image.renditions),
+                joinedload(Exhibition.artworks).selectinload(Artwork.images).selectinload(Image.renditions),
                 joinedload(Exhibition.listing_image).joinedload(Image.renditions),
-                joinedload(Exhibition.photos)
-                .joinedload(ExhibitionPhoto.image)
-                .selectinload(Image.renditions),
+                joinedload(Exhibition.photos).joinedload(ExhibitionPhoto.image).selectinload(Image.renditions),
             )
             .order_by(Exhibition.start_date.desc())
         )
@@ -345,3 +345,109 @@ def get_page_home(db: Session = Depends(get_db)):
         floating_image_urls=floating_urls,
         shows=shows,
     )
+
+
+# ---------------------------------------------------------------------------
+# BFF — exhibitions index page
+# ---------------------------------------------------------------------------
+def _rendition_urls(img, storage) -> tuple[Optional[str], Optional[str]]:
+    """Return (thumbnail_url, full_url) for an Image, best at 400 / 1600 px."""
+    if not img:
+        return (None, None)
+    rends = sorted(img.renditions, key=lambda r: r.width)
+    thumbs, fulls = None, None
+    for r in rends:
+        url = storage.url(r.file_path)
+        if r.width >= 400 and thumbs is None:
+            thumbs = url
+        if r.width >= 1600 and fulls is None:
+            fulls = url
+    if thumbs is None and rends:
+        thumbs = storage.url(rends[-1].file_path)
+    if fulls is None and rends:
+        fulls = storage.url(rends[-1].file_path)
+    return (thumbs or storage.url(img.file_path), fulls or storage.url(img.file_path))
+
+
+@router.get("/pages/exhibitions", response_model=ExhibitionsIndexPageOut)
+def get_pages_exhibitions(db: Session = Depends(get_db)):
+    """One payload for the exhibitions index page, pre-assembled.
+
+    Replicates the legacy filter: first showcard → installation + artwork
+    covers (shuffled) → remaining showcards. Opening-reception and in-progress
+    photos are excluded. Every gallery image carries pre-resolved thumbnail
+    (400px) and full-size (1600px) URLs.
+    """
+    storage = get_storage()
+
+    exhibitions = (
+        db.execute(
+            select(Exhibition)
+            .options(
+                joinedload(Exhibition.artists),
+                joinedload(Exhibition.artworks).selectinload(Artwork.images).selectinload(Image.renditions),
+                joinedload(Exhibition.listing_image).joinedload(Image.renditions),
+                joinedload(Exhibition.photos).joinedload(ExhibitionPhoto.image).selectinload(Image.renditions),
+            )
+            .order_by(Exhibition.start_date.desc())
+        )
+        .unique()
+        .scalars()
+        .all()
+    )
+
+    shows: list[ExhibitionsIndexShow] = []
+    for ex in exhibitions:
+        category_photos: dict[str, list] = {"showcard": [], "installation": []}
+        for p in ex.photos or []:
+            if not p.image:
+                continue
+            if p.category in ("opening_reception", "in_progress"):
+                continue
+            category_photos.setdefault(p.category, []).append(p)
+
+        showcard = category_photos.get("showcard", [])
+        first_showcard = showcard[0] if showcard else None
+
+        middle: list[tuple[Optional[str], Optional[str]]] = []
+        for p in category_photos.get("installation", []):
+            t, f = _rendition_urls(p.image, storage)
+            middle.append((t, f or t))
+        for a in ex.artworks or []:
+            if a.images:
+                t, f = _rendition_urls(a.images[0], storage)
+                middle.append((t, f or t))
+
+        import random
+        for i in range(len(middle) - 1, 0, -1):
+            j = random.randint(0, i)
+            middle[i], middle[j] = middle[j], middle[i]
+
+        rest = showcard[1:] if showcard else []
+
+        gallery_images: list[ExhibitionsIndexImage] = []
+        if first_showcard:
+            t, f = _rendition_urls(first_showcard.image, storage)
+            gallery_images.append(ExhibitionsIndexImage(thumbnail_url=t, full_url=f or t))
+        for t, f in middle:
+            gallery_images.append(ExhibitionsIndexImage(thumbnail_url=t, full_url=f or t))
+        for p in rest:
+            t, f = _rendition_urls(p.image, storage)
+            gallery_images.append(ExhibitionsIndexImage(thumbnail_url=t, full_url=f or t))
+
+        li_url = None
+        if ex.listing_image:
+            t, _ = _rendition_urls(ex.listing_image, storage)
+            li_url = t
+
+        shows.append(ExhibitionsIndexShow(
+            slug=ex.slug,
+            title=ex.title,
+            start_date=ex.start_date,
+            artists=[a.name for a in (ex.artists or [])],
+            video_embed_url=ex.video_embed_url or "",
+            listing_image_url=li_url,
+            gallery=gallery_images,
+        ))
+
+    return ExhibitionsIndexPageOut(shows=shows)

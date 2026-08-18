@@ -140,6 +140,25 @@ export interface HomePageData {
   shows: HomeShow[];
 }
 
+export interface ExhibitionsIndexImage {
+  thumbnail_url: string;
+  full_url: string;
+}
+
+export interface ExhibitionsIndexShow {
+  slug: string;
+  title: string;
+  start_date: string | null;
+  artists: string[];
+  video_embed_url: string;
+  listing_image_url: string | null;
+  gallery: ExhibitionsIndexImage[];
+}
+
+export interface ExhibitionsIndexPageData {
+  shows: ExhibitionsIndexShow[];
+}
+
 export const cms = {
   siteSettings: () => get<SiteSettings>('/site-settings'),
   exhibitions: () => get<Exhibition[]>('/exhibitions'),
@@ -153,6 +172,7 @@ export const cms = {
     image: (id: number) => get<Image>(`/images/${id}`),
     home: () => get<{ intro: string; floating_images: Image[] }>('/home'),
     homePage: () => get<HomePageData>('/pages/home'),
+    exhibitionsPage: () => get<ExhibitionsIndexPageData>('/pages/exhibitions'),
   };
 
 /**
