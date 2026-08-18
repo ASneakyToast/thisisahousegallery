@@ -274,8 +274,58 @@ def ingest(src, credit, alt, title_from_filename, dry_run, batch_size):
 def link_exhibition(slug, image_ids, category):
     """Link ingested images to an exhibition as ExhibitionPhoto rows."""
     ids = [int(x.strip()) for x in image_ids.split(",")]
-    click.echo(f"Linking images {ids} to exhibition '{slug}' as {category}")
-    click.echo("(not yet implemented)")
+
+    from sqlalchemy import func, select
+
+    from app.models import Exhibition, ExhibitionPhoto, Image
+
+    with Session(engine) as db:
+        exhibition = db.execute(
+            select(Exhibition).where(Exhibition.slug == slug)
+        ).scalars().first()
+
+        if exhibition is None:
+            click.echo(f"Exhibition '{slug}' not found.", err=True)
+            sys.exit(1)
+
+        # Determine next sort_order
+        max_order = db.execute(
+            select(func.coalesce(func.max(ExhibitionPhoto.sort_order), -1))
+            .where(ExhibitionPhoto.exhibition_id == exhibition.id)
+        ).scalar()
+
+        added = 0
+        skipped = 0
+        for i, img_id in enumerate(ids, start=1):
+            img = db.get(Image, img_id)
+            if img is None:
+                click.echo(f"  SKIP: Image {img_id} not found")
+                skipped += 1
+                continue
+
+            exists = db.execute(
+                select(ExhibitionPhoto).where(
+                    ExhibitionPhoto.exhibition_id == exhibition.id,
+                    ExhibitionPhoto.image_id == img_id,
+                )
+            ).first()
+            if exists:
+                click.echo(f"  SKIP: Image {img_id} already linked")
+                skipped += 1
+                continue
+
+            db.add(ExhibitionPhoto(
+                exhibition_id=exhibition.id,
+                image_id=img_id,
+                category=category,
+                sort_order=max_order + i,
+            ))
+            added += 1
+
+        db.commit()
+        click.echo(f"Linked {added} image(s) to exhibition '{slug}' as {category}")
+        if skipped:
+            click.echo(f"  skipped: {skipped}")
 
 
 # ==============================
@@ -292,8 +342,57 @@ def link_exhibition(slug, image_ids, category):
 def link_artwork(slug, image_ids, caption):
     """Link ingested images to an artwork as ArtworkImage rows."""
     ids = [int(x.strip()) for x in image_ids.split(",")]
-    click.echo(f"Linking images {ids} to artwork '{slug}'")
-    click.echo("(not yet implemented)")
+
+    from sqlalchemy import func, select
+
+    from app.models import Artwork, ArtworkImage, Image
+
+    with Session(engine) as db:
+        artwork = db.execute(
+            select(Artwork).where(Artwork.slug == slug)
+        ).scalars().first()
+
+        if artwork is None:
+            click.echo(f"Artwork '{slug}' not found.", err=True)
+            sys.exit(1)
+
+        max_order = db.execute(
+            select(func.coalesce(func.max(ArtworkImage.sort_order), -1))
+            .where(ArtworkImage.artwork_id == artwork.id)
+        ).scalar()
+
+        added = 0
+        skipped = 0
+        for i, img_id in enumerate(ids, start=1):
+            img = db.get(Image, img_id)
+            if img is None:
+                click.echo(f"  SKIP: Image {img_id} not found")
+                skipped += 1
+                continue
+
+            exists = db.execute(
+                select(ArtworkImage).where(
+                    ArtworkImage.artwork_id == artwork.id,
+                    ArtworkImage.image_id == img_id,
+                )
+            ).first()
+            if exists:
+                click.echo(f"  SKIP: Image {img_id} already linked")
+                skipped += 1
+                continue
+
+            db.add(ArtworkImage(
+                artwork_id=artwork.id,
+                image_id=img_id,
+                caption=caption,
+                sort_order=max_order + i,
+            ))
+            added += 1
+
+        db.commit()
+        click.echo(f"Linked {added} image(s) to artwork '{slug}'")
+        if skipped:
+            click.echo(f"  skipped: {skipped}")
 
 
 if __name__ == "__main__":
