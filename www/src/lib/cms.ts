@@ -193,6 +193,14 @@ export interface ExhibitionNavItem {
   showcard_url: string | null;
 }
 
+
+export interface AboutPageData {
+  email: string;
+  instagram_label: string;
+  instagram_url: string;
+  house_image_url: string | null;
+}
+
 export interface ExhibitionNavData {
   shows: ExhibitionNavItem[];
 }
@@ -219,6 +227,7 @@ export const cms = {
     exhibitionsPage: () => get<ExhibitionsIndexPageData>('/pages/exhibitions'),
     schedulePage: () => get<SchedulePageData>('/pages/schedule'),
     exhibitionNav: () => get<ExhibitionNavData>('/pages/exhibition-nav'),
+    aboutPage: () => get<AboutPageData>('/pages/about'),
   };
 
 /**

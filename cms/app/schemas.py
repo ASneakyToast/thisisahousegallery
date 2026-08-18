@@ -254,4 +254,15 @@ class ExhibitionNavItem(BaseModel):
 class ExhibitionNavPageOut(BaseModel):
     shows: list[ExhibitionNavItem] = []
 
+
+
+# ---------------------------------------------------------------------------
+# BFF — about page
+# ---------------------------------------------------------------------------
+class AboutPageOut(BaseModel):
+    email: str = ""
+    instagram_label: str = ""
+    instagram_url: str = ""
+    house_image_url: Optional[str] = None
+
 ArtistDetailOut.model_rebuild()
