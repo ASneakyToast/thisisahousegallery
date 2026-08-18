@@ -182,4 +182,25 @@ class HomePageOut(BaseModel):
     shows: list[HomeShowOut] = []
 
 
+# BFF — exhibitions index page
+# ---------------------------------------------------------------------------
+class ExhibitionsIndexImage(BaseModel):
+    thumbnail_url: str = ""
+    full_url: str = ""
+
+
+class ExhibitionsIndexShow(BaseModel):
+    slug: str
+    title: str
+    start_date: Optional[datetime] = None
+    artists: list[str] = []
+    video_embed_url: str = ""
+    listing_image_url: Optional[str] = None
+    gallery: list[ExhibitionsIndexImage] = []
+
+
+class ExhibitionsIndexPageOut(BaseModel):
+    shows: list[ExhibitionsIndexShow] = []
+
+
 ArtistDetailOut.model_rebuild()
