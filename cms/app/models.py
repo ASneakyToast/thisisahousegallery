@@ -306,8 +306,9 @@ class Exhibition(Base):
     artists: Mapped[list[Artist]] = relationship(secondary="exhibition_artists")
     artworks: Mapped[list[Artwork]] = relationship(secondary="exhibition_artworks")
     photos: Mapped[list[ExhibitionPhoto]] = relationship(
-        back_populates="exhibition", cascade="all, delete-orphan"
-    )
+            back_populates="exhibition", cascade="all, delete-orphan",
+            order_by="ExhibitionPhoto.sort_order",
+        )
 
 
 class ExhibitionArtist(Base):
