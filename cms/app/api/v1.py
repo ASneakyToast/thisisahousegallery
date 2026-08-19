@@ -29,8 +29,12 @@ from app.schemas import (
     ArtistDetailOut,
     ArtistOut,
     ArtworkOut,
+    CatalogArtworkOut,
+    CatalogPageOut,
     EventOut,
     ExhibitionDetailOut,
+    ExhibitionNavItem,
+    ExhibitionNavPageOut,
     ExhibitionOut,
     ExhibitionsIndexImage,
     ExhibitionsIndexPageOut,
@@ -40,6 +44,9 @@ from app.schemas import (
     HomeShowOut,
     ImageOut,
     RenditionOut,
+    ScheduleEventOut,
+    SchedulePageOut,
+    ScheduleShowOut,
     SiteSettingsOut,
     TagOut,
 )
@@ -156,6 +163,9 @@ def get_exhibition(slug: str, db: Session = Depends(get_db)):
     )
     if row is None:
         raise HTTPException(status_code=404, detail="Exhibition not found")
+    # Sort photos by sort_order for consistent ordering
+    if row.photos:
+        row.photos.sort(key=lambda p: p.sort_order)
     return row
 
 
