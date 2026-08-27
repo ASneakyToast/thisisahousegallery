@@ -108,6 +108,8 @@
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
+  aspect-ratio: 3 / 5;
+  box-sizing: border-box;
   background: var(--color-white, #fefefe);
   color: var(--color-black, #121212);
   padding: 1rem;
