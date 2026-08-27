@@ -157,6 +157,17 @@
   margin-bottom: var(--size-layout-item-gap);
 }
 
+.exhibition-description-content .gcal-link {
+  color: var(--color-text);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  transition: opacity 0.2s ease;
+}
+
+.exhibition-description-content .gcal-link:hover {
+  opacity: 0.7;
+}
+
 /* Exhibition Content Section */
 .exhibition-content-section {
   margin-bottom: var(--size-layout-section-spacing);
